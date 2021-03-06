@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="description" content="A rowing monitor for rowing exercise machines">
+  <meta name="author" content="Lars Berning">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+	<meta name="apple-mobile-web-app-capable" content="yes">
+	<meta name="mobile-web-app-capable" content="yes">
+  <link rel="manifest" href="manifest.json" crossorigin="use-credentials">
+  <link rel="stylesheet" href="style.css">
+  <link rel="icon" sizes="192x192" href="icon.png">
+  <title>Open Rowing Monitor</title>
+</head>
+<body>
+<script src="NoSleep.min.js"></script>
+<script type="module">
+  import { createApp } from './app.js'
+    window.app = createApp()
+</script>
+<div id="dashboard" class="grid">
+  <div class="col">
+    <div class="label">Distance</div>
+    <div class="content">
+      <span class="value" id="distanceTotal"></span>
+      <span class="unit">m</span>
+    </div>
+  </div>
+  <div class="col">
+    <div class="label">Split</div>
+    <div class="content">
+      <span class="value" id="splitFormatted"></span>
+      <span class="unit">/500m</span>
+    </div>
+  </div>
+  <div class="col">
+    <div class="label">Power</div>
+    <div class="content">
+      <span class="value" id="power"></span>
+      <span class="unit">watt</span>
+    </div>
+  </div>
+  <div class="col">
+    <div class="label">SPM</div>
+    <div class="content">
+      <span class="value" id="strokesPerMinute"></span>
+      <span class="unit"></span>
+    </div>
+  </div>
+  <div class="col">
+    <div class="label">Strokes</div>
+    <div class="content">
+      <span class="value" id="strokesTotal"></span>
+      <span class="unit"></span>
+    </div>
+  </div>
+  <div class="col">
+    <div class="label">Calories</div>
+    <div class="content">
+      <span class="value" id="caloriesTotal"></span>
+      <span class="unit">kcal</span>
+    </div>
+  </div>
+  <div class="col">
+    <div class="label">Duration</div>
+    <div class="content">
+      <span class="value" id="durationTotal"></span>
+      <span class="unit"></span>
+    </div>
+  </div>
+  <div class="col">
+    <div class="content">
+      <button onclick="app.toggleFullscreen()">Fullscreen</button>
+      <button onclick="app.reset()">Reset</button>
+    </div>
+  </div>
+</div>
+</body>
+</html>

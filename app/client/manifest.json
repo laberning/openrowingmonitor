@@ -1,0 +1,15 @@
+{
+  "short_name": "Rowing Monitor",
+  "name": "Open Rowing Monitor",
+  "description": "A rowing monitor for rowing exercise machines",
+  "icons": [
+    {
+    "src": "icon.png",
+    "sizes": "192x192",
+    "type": "image/png"
+    }
+  ],
+  "background_color": "0059B3",
+  "display": "fullscreen",
+  "orientation": "any"
+}

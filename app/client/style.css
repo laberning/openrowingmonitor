@@ -1,0 +1,61 @@
+/*
+  Open Rowing Monitor, https://github.com/laberning/openrowingmonitor
+*/
+body {
+    background-color: black;
+    color: white;
+    margin: 0;
+    font-size: calc(16px + (60 - 16) * ((100vw - 300px) / (1920 - 300)));
+    font-family: Verdana, "Lucida Sans Unicode", sans-serif
+}
+
+.grid {
+    display: grid;
+    height: calc(100vh - 2vw);
+    padding: 1vw;
+    grid-gap: 1vw;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    grid-template-rows: repeat(2, minmax(0, 1fr));
+}
+
+.col {
+    border: 1px solid #777777;
+    background: #333333;
+    text-align: center;
+}
+
+@media (orientation: portrait) {
+    .grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        grid-template-rows: repeat(4, minmax(0, 1fr));
+    }
+
+    body {
+        font-size: calc(16px + (60 - 16) * ((100vh - 300px) / (1920 - 300)));
+    }
+}
+
+div.label, div.content {
+    padding: 5%;
+}
+
+span.value {
+    font-size: 150%;
+}
+
+span.unit {
+    font-size: 80%;
+}
+
+button {
+  outline:none;
+  background-color: #666666;
+  border: 1px solid #777777;
+  color: white;
+  padding: 1vw 2vw;
+  margin: 1vw;
+  font-size: 60%;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+}
