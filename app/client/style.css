@@ -2,7 +2,7 @@
   Open Rowing Monitor, https://github.com/laberning/openrowingmonitor
 */
 body {
-    background-color: black;
+    background-color: #000d1b;
     color: white;
     margin: 0;
     font-size: calc(16px + (60 - 16) * ((100vw - 300px) / (1920 - 300)));
@@ -19,8 +19,7 @@ body {
 }
 
 .col {
-    border: 1px solid #777777;
-    background: #333333;
+    background: #002b57;
     text-align: center;
 }
 
@@ -49,8 +48,8 @@ span.unit {
 
 button {
   outline:none;
-  background-color: #666666;
-  border: 1px solid #777777;
+  background-color: #0059B3;
+  border: 0;
   color: white;
   padding: 1vw 2vw;
   margin: 1vw;
