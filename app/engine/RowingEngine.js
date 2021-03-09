@@ -10,6 +10,7 @@
   Physics of Rowing by Anu Dudhia: http://eodg.atm.ox.ac.uk/user/dudhia/rowing/physics
   Also Dave Vernooy has some good explanations here: https://dvernooy.github.io/projects/ergware
 */
+import log from 'loglevel'
 import { createAverager } from './Averager.js'
 import { createTimer } from './Timer.js'
 
@@ -84,7 +85,7 @@ function createRowingEngine () {
     // todo: we should inform the workoutHandler in this case
     // (if we want to track the training history)
     if (currentDt > 3.0) {
-      console.log(`training pause detected: ${currentDt}`)
+      log.debug(`training pause detected: ${currentDt}`)
       return
     }
 
@@ -136,25 +137,25 @@ function createRowingEngine () {
     if (!isInDrivePhase && !wasInDrivePhase) { updateRecoveryPhase(currentDt) }
 
     timer.updateTimers(currentDt)
-    // console.log(`𝑑t: ${currentDt} ω: ${omegaVector[0].toFixed(2)} ωdot: ${omegaDotVector[0].toFixed(2)} ωdotdot: ${omegaDotDot.toFixed(2)} aPos: ${accelerationIsPositive} aChange: ${accelerationIsChanging}`)
+    log.debug(`𝑑t: ${currentDt} ω: ${omegaVector[0].toFixed(2)} ωdot: ${omegaDotVector[0].toFixed(2)} ωdotdot: ${omegaDotDot.toFixed(2)} aPos: ${accelerationIsPositive} aChange: ${accelerationIsChanging}`)
   }
 
   function startDrivePhase (currentDt) {
-    // console.log('*** drive phase started')
+    log.debug('*** drive phase started')
     timer.start('drive')
     jPower = 0.0
     kPower = 0.0
     if (strokeElapsed - driveElapsed !== 0) {
       kDampEstimatorAverager.pushValue(kDampEstimator / (strokeElapsed - driveElapsed))
     }
-    // console.log(`estimated kDamp: ${jMoment * (-1 * kDampEstimatorAverager.weightedAverage())}`)
-    // console.log(`estimated omegaDotDivOmegaSquare: ${-1 * kDampEstimatorAverager.weightedAverage()}`)
+    log.debug(`estimated kDamp: ${jMoment * (-1 * kDampEstimatorAverager.weightedAverage())}`)
+    log.debug(`estimated omegaDotDivOmegaSquare: ${-1 * kDampEstimatorAverager.weightedAverage()}`)
   }
 
   function updateDrivePhase (currentDt) {
     jPower = jPower + jMoment * omegaVector[0] * omegaDotVector[0] * currentDt
     kPower = kPower + kDamp * (omegaVector[0] * omegaVector[0] * omegaVector[0]) * currentDt
-    // console.log(`Jpower: ${jPower}, kPower: ${kPower}`)
+    log.debug(`Jpower: ${jPower}, kPower: ${kPower}`)
   }
 
   function startRecoveryPhase () {
@@ -162,7 +163,7 @@ function createRowingEngine () {
     timer.stop('drive')
     strokeElapsed = timer.getValue('stroke')
     timer.stop('stroke')
-    // console.log(`driveElapsed: ${driveElapsed}, strokeElapsed: ${strokeElapsed}`)
+    log.debug(`driveElapsed: ${driveElapsed}, strokeElapsed: ${strokeElapsed}`)
     timer.start('stroke')
 
     if (strokeElapsed !== 0 && workoutHandler) {
@@ -177,7 +178,7 @@ function createRowingEngine () {
     // stroke finished, reset stroke specific measurements
     kDampEstimator = 0.0
     strokeDistance = 0
-    // console.log('*** recovery phase started')
+    log.debug('*** recovery phase started')
   }
 
   function updateRecoveryPhase (currentDt) {

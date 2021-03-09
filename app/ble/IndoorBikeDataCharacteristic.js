@@ -19,6 +19,7 @@
   while in a connection and the interval is not configurable by the Client
 */
 import bleno from '@abandonware/bleno'
+import log from 'loglevel'
 
 export default class IndoorBikeDataCharacteristic extends bleno.Characteristic {
   constructor () {
@@ -32,13 +33,13 @@ export default class IndoorBikeDataCharacteristic extends bleno.Characteristic {
   }
 
   onSubscribe (maxValueSize, updateValueCallback) {
-    console.log('IndooBikeDataCharacteristic - central subscribed')
+    log.debug('IndooBikeDataCharacteristic - central subscribed')
     this._updateValueCallback = updateValueCallback
     return this.RESULT_SUCCESS
   };
 
   onUnsubscribe () {
-    console.log('IndooBikeDataCharacteristic - central unsubscribed')
+    log.debug('IndooBikeDataCharacteristic - central unsubscribed')
     this._updateValueCallback = null
     return this.RESULT_UNLIKELY_ERROR
   };
@@ -46,7 +47,7 @@ export default class IndoorBikeDataCharacteristic extends bleno.Characteristic {
   notify (data) {
     // ignore events without the mandatory fields
     if (!data.speed) {
-      console.log('can not deliver bike data without mandatory fields')
+      log.error('can not deliver bike data without mandatory fields')
       return this.RESULT_SUCCESS
     }
 
@@ -87,7 +88,7 @@ export default class IndoorBikeDataCharacteristic extends bleno.Characteristic {
       }
       this._updateValueCallback(buffer)
     } else {
-      // console.log('can not notify indoor bike data, no central subscribed')
+      log.debug('can not notify indoor bike data, no central subscribed')
     }
     return this.RESULT_SUCCESS
   }

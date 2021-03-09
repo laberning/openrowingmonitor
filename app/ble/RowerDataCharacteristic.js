@@ -12,6 +12,7 @@
   while in a connection and the interval is not configurable by the Client
 */
 import bleno from '@abandonware/bleno'
+import log from 'loglevel'
 
 export default class RowerDataCharacteristic extends bleno.Characteristic {
   constructor () {
@@ -25,13 +26,13 @@ export default class RowerDataCharacteristic extends bleno.Characteristic {
   }
 
   onSubscribe (maxValueSize, updateValueCallback) {
-    console.log('RowerDataCharacteristic - central subscribed')
+    log.debug('RowerDataCharacteristic - central subscribed')
     this._updateValueCallback = updateValueCallback
     return this.RESULT_SUCCESS
   };
 
   onUnsubscribe () {
-    console.log('RowerDataCharacteristic - central unsubscribed')
+    log.debug('RowerDataCharacteristic - central unsubscribed')
     this._updateValueCallback = null
     return this.RESULT_UNLIKELY_ERROR
   };
@@ -85,7 +86,7 @@ export default class RowerDataCharacteristic extends bleno.Characteristic {
       }
       this._updateValueCallback(buffer)
     } else {
-      // console.log('can not notify rower data, no central subscribed')
+      log.debug('can not notify rower data, no central subscribed')
     }
     return this.RESULT_SUCCESS
   }

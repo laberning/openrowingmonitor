@@ -48,12 +48,12 @@ span.unit {
 
 button {
   outline:none;
-  background-color: #0059B3;
+  background-color: #00468c;
   border: 0;
   color: white;
-  padding: 1vw 2vw;
+  padding: 1.5vw 2vw;
   margin: 1vw;
-  font-size: 60%;
+  font-size: 80%;
   text-align: center;
   text-decoration: none;
   display: inline-block;

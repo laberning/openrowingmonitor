@@ -6,10 +6,6 @@
   everything together while figuring out the physics and model of the application.
   todo: refactor this as we progress
 */
-import { createRowingMachinePeripheral } from './ble/RowingMachinePeripheral.js'
-import { createRowingEngine } from './engine/RowingEngine.js'
-import { createRowingStatistics } from './engine/RowingStatistics.js'
-// import { recordRowingSession } from './tools/RowingRecorder.js'
 // import readline from 'readline'
 // import fs from 'fs'
 import { fork } from 'child_process'
@@ -17,7 +13,14 @@ import WebSocket from 'ws'
 import finalhandler from 'finalhandler'
 import http from 'http'
 import serveStatic from 'serve-static'
+import log from 'loglevel'
+import { createRowingMachinePeripheral } from './ble/RowingMachinePeripheral.js'
+import { createRowingEngine } from './engine/RowingEngine.js'
+import { createRowingStatistics } from './engine/RowingStatistics.js'
+// import { recordRowingSession } from './tools/RowingRecorder.js'
 
+// sets the global log level
+log.setLevel(log.levels.INFO)
 let websocket
 // recordRowingSession('recordings/wrx700_2magnets.csv')
 const peripheral = createRowingMachinePeripheral({
@@ -28,31 +31,30 @@ peripheral.on('controlPoint', (event) => {
   if (event?.req?.name === 'requestControl') {
     event.res = true
   } else if (event?.req?.name === 'reset') {
-    console.log('reset requested')
+    log.debug('reset requested')
     rowingStatistics.reset()
     peripheral.notifyStatus({ name: 'reset' })
     event.res = true
   // todo: we could use these controls once we implement a concept of a rowing session
   } else if (event?.req?.name === 'stop') {
-    console.log('stop requested')
+    log.debug('stop requested')
     peripheral.notifyStatus({ name: 'stoppedOrPausedByUser' })
     event.res = true
   } else if (event?.req?.name === 'pause') {
-    console.log('pause requested')
+    log.debug('pause requested')
     peripheral.notifyStatus({ name: 'stoppedOrPausedByUser' })
     event.res = true
   } else if (event?.req?.name === 'startOrResume') {
-    console.log('startOrResume requested')
+    log.debug('startOrResume requested')
     peripheral.notifyStatus({ name: 'startedOrResumedByUser' })
     event.res = true
   } else {
-    console.log('unhandled Command', event.req)
+    log.info('unhandled Command', event.req)
   }
 })
 
 const gpioTimerService = fork('./app/gpio/GpioTimerService.js')
 gpioTimerService.on('message', (dataPoint) => {
-  // console.log(dataPoint)
   rowingEngine.handleRotationImpulse(dataPoint)
 })
 
@@ -61,7 +63,7 @@ const rowingStatistics = createRowingStatistics()
 rowingEngine.notify(rowingStatistics)
 
 rowingStatistics.on('strokeFinished', (data) => {
-  console.log(`stroke: ${data.strokesTotal}, dur: ${data.strokeTime}s, power: ${data.power}w` +
+  log.info(`stroke: ${data.strokesTotal}, dur: ${data.strokeTime}s, power: ${data.power}w` +
   `, split: ${data.splitFormatted}, ratio: ${data.powerRatio}, dist: ${data.distanceTotal}m` +
   `, cal: ${data.caloriesTotal}kcal, SPM: ${data.strokesPerMinute}, speed: ${data.speed}km/h`)
 
@@ -110,10 +112,10 @@ wss.on('connection', function connection (ws) {
         rowingStatistics.reset()
         peripheral.notifyStatus({ name: 'reset' })
       } else {
-        console.log(`invalid command received: ${data}`)
+        log.info(`invalid command received: ${data}`)
       }
     } catch (err) {
-      console.log(err)
+      log.error(err)
     }
   })
 /*
@@ -155,7 +157,6 @@ function simulateRowing () {
     strokesPerMinute: 10 + 20 * (Math.random() - 0.5),
     speed: (15 + 20 * (Math.random() - 0.5)).toFixed(2)
   }
-  // console.log(metrics)
   peripheral.notifyData(metrics)
 }
 */

@@ -10,6 +10,7 @@
   shall be exposed by the Server. Otherwise, supporting the Fitness Machine Status characteristic is optional.
 */
 import bleno from '@abandonware/bleno'
+import log from 'loglevel'
 
 // see page 67 https://www.bluetooth.com/specifications/specs/fitness-machine-service-1-0
 const StatusOpCode = {
@@ -49,20 +50,20 @@ export default class FitnessMachineStatusCharacteristic extends bleno.Characteri
   }
 
   onSubscribe (maxValueSize, updateValueCallback) {
-    console.log('FitnessMachineStatusCharacteristic - central subscribed')
+    log.debug('FitnessMachineStatusCharacteristic - central subscribed')
     this._updateValueCallback = updateValueCallback
     return this.RESULT_SUCCESS
   }
 
   onUnsubscribe () {
-    console.log('FitnessMachineStatusCharacteristic - central unsubscribed')
+    log.debug('FitnessMachineStatusCharacteristic - central unsubscribed')
     this._updateValueCallback = null
     return this.RESULT_UNLIKELY_ERROR
   }
 
   notify (status) {
     if (!(status && status.name)) {
-      console.log('can not deliver status without name')
+      log.error('can not deliver status without name')
       return this.RESULT_SUCCESS
     }
     if (this._updateValueCallback) {
@@ -78,11 +79,11 @@ export default class FitnessMachineStatusCharacteristic extends bleno.Characteri
           buffer.writeUInt8(StatusOpCode.startedOrResumedByUser, 0)
           break
         default:
-          console.log(`status ${status.name} is not supported`)
+          log.error(`status ${status.name} is not supported`)
       }
       this._updateValueCallback(buffer)
     } else {
-      // console.log('can not notify status, no central subscribed')
+      log.debug('can not notify status, no central subscribed')
     }
     return this.RESULT_SUCCESS
   }

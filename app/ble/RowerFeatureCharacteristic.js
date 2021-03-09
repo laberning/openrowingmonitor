@@ -8,6 +8,7 @@
   are supported in RowerDataCharacteristic and FitnessMachineControlPointCharacteristic.
 */
 import bleno from '@abandonware/bleno'
+import log from 'loglevel'
 
 export default class RowerFeatureCharacteristic extends bleno.Characteristic {
   constructor () {
@@ -29,7 +30,7 @@ export default class RowerFeatureCharacteristic extends bleno.Characteristic {
     // none
     // 0000000 0000000
     const features = [0x24, 0x42, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00]
-    console.log('Features of Rower requested')
+    log.debug('Features of Rower requested')
     callback(this.RESULT_SUCCESS, features.slice(offset, features.length))
   };
 }

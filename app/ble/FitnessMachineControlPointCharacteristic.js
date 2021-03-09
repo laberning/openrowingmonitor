@@ -9,6 +9,7 @@
     - Zwift: uses startOrResume and setIndoorBikeSimulationParameters
 */
 import bleno from '@abandonware/bleno'
+import log from 'loglevel'
 
 // see https://www.bluetooth.com/specifications/specs/fitness-machine-service-1-0 for details
 const ControlPointOpCode = {
@@ -67,7 +68,7 @@ export default class FitnessMachineControlPointCharacteristic extends bleno.Char
       case ControlPointOpCode.requestControl:
         if (!this.controlled) {
           if (this.controlPointCallback({ name: 'requestControl' })) {
-            console.log('requestControl sucessful')
+            log.debug('requestControl sucessful')
             this.controlled = true
             callback(this.buildResponse(opCode, ResultCode.success))
           } else {
@@ -95,7 +96,7 @@ export default class FitnessMachineControlPointCharacteristic extends bleno.Char
         } else if (controlParameter === 2) {
           this.handleSimpleCommand(ControlPointOpCode.stopOrPause, 'pause', callback)
         } else {
-          console.log(`stopOrPause with invalid controlParameter: ${controlParameter}`)
+          log.error(`stopOrPause with invalid controlParameter: ${controlParameter}`)
         }
         break
       }
@@ -116,7 +117,7 @@ export default class FitnessMachineControlPointCharacteristic extends bleno.Char
       }
 
       default:
-        console.log(`opCode ${opCode} is not supported`)
+        log.info(`opCode ${opCode} is not supported`)
         callback(this.buildResponse(opCode, ResultCode.opCodeNotSupported))
     }
   }
@@ -130,7 +131,7 @@ export default class FitnessMachineControlPointCharacteristic extends bleno.Char
         callback(this.buildResponse(opCode, ResultCode.operationFailed))
       }
     } else {
-      console.log(`initating command '${opName}' requires 'requestControl'`)
+      log.info(`initating command '${opName}' requires 'requestControl'`)
       callback(this.buildResponse(opCode, ResultCode.controlNotPermitted))
     }
   }

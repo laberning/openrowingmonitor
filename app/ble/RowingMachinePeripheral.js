@@ -15,6 +15,7 @@ import bleno from '@abandonware/bleno'
 import { EventEmitter } from 'events'
 import FitnessMachineService from './FitnessMachineService.js'
 import DeviceInformationService from './DeviceInformationService.js'
+import log from 'loglevel'
 
 function createRowingMachinePeripheral (options) {
   const emitter = new EventEmitter()
@@ -29,7 +30,7 @@ function createRowingMachinePeripheral (options) {
         peripheralName,
         [fitnessMachineService.uuid, deviceInformationService.uuid],
         (error) => {
-          if (error) console.log(error)
+          if (error) log.error(error)
         }
       )
     } else {
@@ -42,46 +43,45 @@ function createRowingMachinePeripheral (options) {
       bleno.setServices(
         [fitnessMachineService, deviceInformationService],
         (error) => {
-          if (error) console.log(error)
+          if (error) log.error(error)
         })
     }
   })
 
   bleno.on('accept', (clientAddress) => {
-    console.log(`ble central connected: ${clientAddress}`)
+    log.debug(`ble central connected: ${clientAddress}`)
     // todo: do we need this?
     bleno.updateRssi()
   })
 
   bleno.on('disconnect', (clientAddress) => {
-    console.log(`ble central disconnected: ${clientAddress}`)
+    log.debug(`ble central disconnected: ${clientAddress}`)
   })
-  /*
+
   bleno.on('platform', (event) => {
-    console.log('platform', event)
+    log.debug('platform', event)
   })
   bleno.on('addressChange', (event) => {
-    console.log('addressChange', event)
+    log.debug('addressChange', event)
   })
   bleno.on('mtuChange', (event) => {
-    console.log('mtuChange', event)
+    log.debug('mtuChange', event)
   })
   bleno.on('advertisingStartError', (event) => {
-    console.log('advertisingStartError', event)
+    log.debug('advertisingStartError', event)
   })
   bleno.on('advertisingStop', (event) => {
-    console.log('advertisingStop', event)
+    log.debug('advertisingStop', event)
   })
   bleno.on('servicesSet', (event) => {
-    console.log('servicesSet', event)
+    log.debug('servicesSet', event)
   })
   bleno.on('servicesSetError', (event) => {
-    console.log('servicesSetError', event)
+    log.debug('servicesSetError', event)
   })
   bleno.on('rssiUpdate', (event) => {
-    console.log('rssiUpdate', event)
+    log.debug('rssiUpdate', event)
   })
-*/
 
   function controlPointCallback (event) {
     const obj = {

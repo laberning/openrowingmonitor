@@ -8,6 +8,7 @@
   are supported in IndoorBikeDataCharacteristic and FitnessMachineControlPointCharacteristic.
 */
 import bleno from '@abandonware/bleno'
+import log from 'loglevel'
 
 export default class IndoorBikeDataCharacteristic extends bleno.Characteristic {
   constructor (uuid, description, value) {
@@ -29,7 +30,7 @@ export default class IndoorBikeDataCharacteristic extends bleno.Characteristic {
     // none
     // 0000000 0000000
     const features = [0x04, 0x42, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00]
-    console.log('Features of Indoor Bike requested')
+    log.debug('Features of Indoor Bike requested')
     callback(this.RESULT_SUCCESS, features.slice(offset, features.length))
   }
 }
