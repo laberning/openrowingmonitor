@@ -4,7 +4,6 @@ This is the very minimalistic Backlog for further development of this project.
 
 ## Soon
 
-* robust handling of websockets (reconnect, multiple connections)
 * handle training interruptions (set stroke specific metrics to "0" if no impulse detected for x seconds)
 * check todo markers in code and add them to this backlog
 * cleanup of the server.js start file

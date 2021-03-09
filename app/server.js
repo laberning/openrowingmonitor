@@ -21,7 +21,6 @@ import { createRowingStatistics } from './engine/RowingStatistics.js'
 
 // sets the global log level
 log.setLevel(log.levels.INFO)
-let websocket
 // recordRowingSession('recordings/wrx700_2magnets.csv')
 const peripheral = createRowingMachinePeripheral({
   simulateIndoorBike: true
@@ -78,18 +77,14 @@ rowingStatistics.on('strokeFinished', (data) => {
     speed: data.speed
   }
 
-  if (websocket) {
-    websocket.send(JSON.stringify(metrics))
-  }
+  notifyWebClients(metrics)
   peripheral.notifyData(metrics)
 })
 
 rowingStatistics.on('durationUpdate', (data) => {
-  if (websocket) {
-    websocket.send(JSON.stringify({
-      durationTotal: data.durationTotal
-    }))
-  }
+  notifyWebClients({
+    durationTotal: data.durationTotal
+  })
 })
 
 const port = process.env.PORT || 80
@@ -104,7 +99,7 @@ server.listen(port)
 const wss = new WebSocket.Server({ server })
 
 wss.on('connection', function connection (ws) {
-  websocket = ws
+  log.debug('websocket client connected')
   ws.on('message', function incoming (data) {
     try {
       const message = JSON.parse(data)
@@ -118,17 +113,19 @@ wss.on('connection', function connection (ws) {
       log.error(err)
     }
   })
-/*
-  ws.send(JSON.stringify({
-    strokesTotal: 15,
-    distanceTotal: 206,
-    caloriesTotal: 51,
-    power: 174,
-    split: '02:30',
-    strokesPerMinute: 14
-  }))
-  */
+  ws.on('close', function () {
+    log.debug('websocket client disconnected')
+  })
 })
+
+function notifyWebClients (message) {
+  const messageString = JSON.stringify(message)
+  wss.clients.forEach(function each (client) {
+    if (client.readyState === WebSocket.OPEN) {
+      client.send(messageString)
+    }
+  })
+}
 
 /*
 const readInterface = readline.createInterface({
@@ -149,14 +146,15 @@ let simCalories = 0.0
 function simulateRowing () {
   const metrics = {
     strokesTotal: simStroke++,
-    distanceTotal: simDistance += 10.1,
-    caloriesTotal: simCalories += 0.3,
-    power: 80 + 20 * (Math.random() - 0.5),
-    splitFormatted: 160 + 20 * (Math.random() - 0.5),
-    split: 80 + 20 * (Math.random() - 0.5),
-    strokesPerMinute: 10 + 20 * (Math.random() - 0.5),
-    speed: (15 + 20 * (Math.random() - 0.5)).toFixed(2)
+    distanceTotal: Math.round(simDistance += 10.1),
+    caloriesTotal: Math.round(simCalories += 0.3),
+    power: Math.round(80 + 20 * (Math.random() - 0.5)),
+    splitFormatted: '02:30',
+    split: Math.round(80 + 20 * (Math.random() - 0.5)),
+    strokesPerMinute: Math.round(10 + 20 * (Math.random() - 0.5)),
+    speed: Math.round((15 + 20 * (Math.random() - 0.5)).toFixed(2))
   }
   peripheral.notifyData(metrics)
+  notifyWebClients(metrics)
 }
 */

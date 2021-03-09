@@ -7,31 +7,47 @@
 */
 // eslint-disable-next-line no-unused-vars
 export function createApp () {
-  // use the native websocket implementation of browser to communicate with backend
-  // eslint-disable-next-line no-undef
-  const socket = new WebSocket(`ws://${location.host}`)
-
   const fields = ['strokesTotal', 'distanceTotal', 'caloriesTotal', 'power', 'splitFormatted', 'strokesPerMinute', 'durationTotal']
 
-  socket.addEventListener('open', function (event) {
-  })
-
-  socket.addEventListener('message', function (event) {
-    try {
-      const data = JSON.parse(event.data)
-
-      for (const [key, value] of Object.entries(data)) {
-        if (fields.includes(key)) {
-          document.getElementById(key).innerHTML = value
-        }
-      }
-    } catch (err) {
-      console.log(err)
-    }
-  })
-
+  initWebsocket()
   resetFields()
   requestWakeLock()
+
+  function initWebsocket () {
+  // use the native websocket implementation of browser to communicate with backend
+  // eslint-disable-next-line no-undef
+    const socket = new WebSocket(`ws://${location.host}`)
+
+    socket.addEventListener('open', (event) => {
+      console.log('websocket openend')
+    })
+
+    socket.addEventListener('error', (error) => {
+      console.log('websocket error', error)
+      socket.close()
+    })
+
+    socket.addEventListener('close', (event) => {
+      console.log('websocket closed, attempting reconnect')
+      setTimeout(() => {
+        initWebsocket()
+      }, 1000)
+    })
+
+    socket.addEventListener('message', (event) => {
+      try {
+        const data = JSON.parse(event.data)
+
+        for (const [key, value] of Object.entries(data)) {
+          if (fields.includes(key)) {
+            document.getElementById(key).innerHTML = value
+          }
+        }
+      } catch (err) {
+        console.log(err)
+      }
+    })
+  }
 
   async function requestWakeLock () {
     // use the Wake Lock API to prevent the screen from going to standby

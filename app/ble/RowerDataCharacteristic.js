@@ -85,8 +85,6 @@ export default class RowerDataCharacteristic extends bleno.Characteristic {
         buffer.writeUInt16LE(0xFF, 16)
       }
       this._updateValueCallback(buffer)
-    } else {
-      log.debug('can not notify rower data, no central subscribed')
     }
     return this.RESULT_SUCCESS
   }

@@ -87,8 +87,6 @@ export default class IndoorBikeDataCharacteristic extends bleno.Characteristic {
         buffer.writeUInt16LE(0xFF, 13)
       }
       this._updateValueCallback(buffer)
-    } else {
-      log.debug('can not notify indoor bike data, no central subscribed')
     }
     return this.RESULT_SUCCESS
   }
