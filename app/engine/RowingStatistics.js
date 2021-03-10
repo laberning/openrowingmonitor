@@ -4,6 +4,7 @@
 
   This Module calculates the training specific metrics.
 */
+import log from 'loglevel'
 import { EventEmitter } from 'events'
 import { createAverager } from './Averager.js'
 
@@ -17,14 +18,21 @@ function createRowingStatistics () {
   const powerAverager = createAverager(numOfDataPointsForAveraging)
   const speedAverager = createAverager(numOfDataPointsForAveraging)
   const powerRatioAverager = createAverager(numOfDataPointsForAveraging)
+  let trainingRunning = false
   let durationTimer
+  let rowingPausedTimer
   let distanceTotal = 0.0
   let durationTotal = 0
   let strokesTotal = 0
   let caloriesTotal = 0.0
 
   function handleStroke (stroke) {
-    if (!durationTimer) startDurationTimer()
+    if (!trainingRunning) startTraining()
+
+    // if we do not get a stroke for 6 seconds we treat this as a rowing pause
+    if (rowingPausedTimer)clearInterval(rowingPausedTimer)
+    rowingPausedTimer = setTimeout(() => pauseRowing(), 6000)
+
     powerAverager.pushValue(stroke.power)
     speedAverager.pushValue(stroke.distance / stroke.duration)
     powerRatioAverager.pushValue(stroke.durationDrivePhase / stroke.duration)
@@ -50,8 +58,24 @@ function createRowingStatistics () {
     })
   }
 
-  function reset () {
+  // initiated by the rowing engine in case an impulse was not considered
+  // because it was to large
+  function handlePause (duration) {
+  }
+
+  function startTraining () {
+    trainingRunning = true
+    startDurationTimer()
+  }
+
+  function stopTraining () {
+    trainingRunning = false
     stopDurationTimer()
+    if (rowingPausedTimer)clearInterval(rowingPausedTimer)
+  }
+
+  function resetTraining () {
+    stopTraining()
     distanceTotal = 0.0
     strokesTotal = 0
     caloriesTotal = 0.0
@@ -60,6 +84,20 @@ function createRowingStatistics () {
     powerAverager.reset()
     speedAverager.reset()
     powerRatioAverager.reset()
+  }
+
+  // clear the displayed metrics in case the user pauses rowing
+  function pauseRowing () {
+    strokeAverager.reset()
+    powerAverager.reset()
+    speedAverager.reset()
+    powerRatioAverager.reset()
+    log.debug('rowing pause detected')
+    emitter.emit('rowingPaused', {
+      strokesTotal: strokesTotal,
+      distanceTotal: Math.round(distanceTotal),
+      caloriesTotal: Math.round(caloriesTotal)
+    })
   }
 
   function startDurationTimer () {
@@ -86,7 +124,8 @@ function createRowingStatistics () {
 
   return Object.assign(emitter, {
     handleStroke,
-    reset
+    handlePause,
+    reset: resetTraining
   })
 }
 

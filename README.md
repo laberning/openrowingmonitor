@@ -9,8 +9,6 @@ Open Rowing Monitor is a Node.js application that runs on a Raspberry Pi and mea
 
 I currently develop and test it with a [Raspberry Pi 3 Modell B](https://www.raspberrypi.org/products/raspberry-pi-3-model-b/) and a Sportstech WRX700 waterrower. But it should run fine with any rowing machine that uses an air or water resistance mechanism as long as you can add something to measure the speed of the flywheel.
 I suspect it works well with DIY rowing machines like the [Openergo](https://openergo.webs.com) too.
-<!-- markdownlint-disable-next-line no-inline-html -->
-<br clear="left">
 
 ## Features
 
@@ -34,7 +32,7 @@ The web interface visualizes the rowing metrics on any device that can run a bro
 <!-- markdownlint-disable-next-line no-inline-html -->
 <img src="doc/img/openrowingmonitor_frontend.png" width="700"><br clear="left">
 
-### BLE FTMS Support
+### Bluetooth Low Energy Fitness Machine Service (BLE FTMS)
 
 Open Rowing Monitor also implements the Bluetooth Low Energy (BLE) protocol for Fitness Machine Service (FTMS). This allows using your rowing machine with any Fitness Application that supports FTMS.
 
@@ -44,9 +42,9 @@ FTMS supports different types of fitness machines. Open Rowing Monitor currently
 
 **FTMS Indoor Bike** is widely adopted by training applications for bike training. The simulated Indoor Bike offers metrics such as power and distance to the biking application. So why not use your rowing machine to row up a mountain in Zwift, Bkool, Sufferfest or similar :-)
 
-## Why it all started
+## How it all started
 
-I originally started this project, because my rowing machine (Sportstech WRX700) has a very simple computer and I wanted to build something with a clean and simple interface that calculates more realistic metrics.
+I originally started this project, because my rowing machine (Sportstech WRX700) has a very simple computer and I wanted to build something with a clean and simple interface that calculates more realistic metrics. Also, this was a good reason to learn a bit more about Bluetooth and all its specifics.
 
 The original proof of concept version started as a sketch on an ardunio, but when I started adding things like a web frontend and BLE I moved it to the much more powerful Raspberry Pi. Maybe using a Raspi for this small IoT-project is a bit of an overkill, but it has the capacity for further features such as syncing training data or rowing games. And it has USB-Ports that I can use to charge my phone while rowing :-)
 
@@ -58,4 +56,6 @@ Feel free to leave a message in the [GitHub Discussions](https://github.com/labe
 
 Here are some basic [Installation Instructions](doc/installation.md).
 
-This project uses some great work by others, see the [attribution here](doc/attribution.md).
+I plan to add more features, here is the [Development Roadmap](doc/backlog.md).
+
+This project uses some great work by others, see the [Attribution here](doc/attribution.md).

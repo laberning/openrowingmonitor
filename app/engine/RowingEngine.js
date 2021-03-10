@@ -82,10 +82,9 @@ function createRowingEngine () {
 
   // called if the sensor detected an impulse, currentDt is an interval in seconds
   function handleRotationImpulse (currentDt) {
-    // todo: we should inform the workoutHandler in this case
-    // (if we want to track the training history)
+    // impulses that take longer than 3 seconds are considered a pause
     if (currentDt > 3.0) {
-      log.debug(`training pause detected: ${currentDt}`)
+      workoutHandler.handlePause(currentDt)
       return
     }
 

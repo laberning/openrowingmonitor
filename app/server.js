@@ -6,8 +6,6 @@
   everything together while figuring out the physics and model of the application.
   todo: refactor this as we progress
 */
-// import readline from 'readline'
-// import fs from 'fs'
 import { fork } from 'child_process'
 import WebSocket from 'ws'
 import finalhandler from 'finalhandler'
@@ -17,11 +15,12 @@ import log from 'loglevel'
 import { createRowingMachinePeripheral } from './ble/RowingMachinePeripheral.js'
 import { createRowingEngine } from './engine/RowingEngine.js'
 import { createRowingStatistics } from './engine/RowingStatistics.js'
-// import { recordRowingSession } from './tools/RowingRecorder.js'
+// eslint-disable-next-line no-unused-vars
+import { recordRowingSession, replayRowingSession } from './tools/RowingRecorder.js'
 
 // sets the global log level
 log.setLevel(log.levels.INFO)
-// recordRowingSession('recordings/wrx700_2magnets.csv')
+
 const peripheral = createRowingMachinePeripheral({
   simulateIndoorBike: true
 })
@@ -81,6 +80,22 @@ rowingStatistics.on('strokeFinished', (data) => {
   peripheral.notifyData(metrics)
 })
 
+rowingStatistics.on('rowingPaused', (data) => {
+  const metrics = {
+    strokesTotal: data.strokesTotal,
+    distanceTotal: data.distanceTotal,
+    caloriesTotal: data.caloriesTotal,
+    strokesPerMinute: 0,
+    power: 0,
+    // todo: setting split to 0 might be dangerous, depending on what the client does with this
+    splitFormatted: '00:00',
+    split: 0,
+    speed: 0
+  }
+  notifyWebClients(metrics)
+  peripheral.notifyData(metrics)
+})
+
 rowingStatistics.on('durationUpdate', (data) => {
   notifyWebClients({
     durationTotal: data.durationTotal
@@ -127,13 +142,12 @@ function notifyWebClients (message) {
   })
 }
 
+// recordRowingSession('recordings/wrx700_2magnets.csv')
 /*
-const readInterface = readline.createInterface({
-  input: fs.createReadStream('recordings/wrx700_2magnets.csv')
-})
-
-readInterface.on('line', function (line) {
-  rowingEngine.handleRotationImpulse(parseFloat(line))
+replayRowingSession(rowingEngine.handleRotationImpulse, {
+  filename: 'recordings/wrx700_2magnets.csv',
+  realtime: true,
+  loop: true
 })
 */
 

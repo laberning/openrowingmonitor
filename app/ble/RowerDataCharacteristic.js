@@ -39,7 +39,7 @@ export default class RowerDataCharacteristic extends bleno.Characteristic {
 
   notify (data) {
     // ignore events without the mandatory fields
-    if (!(data.strokesPerMinute && data.strokesTotal)) {
+    if (!('strokesPerMinute' in data && 'strokesTotal' in data)) {
       return this.RESULT_SUCCESS
     }
 
@@ -60,19 +60,19 @@ export default class RowerDataCharacteristic extends bleno.Characteristic {
       // Stroke Count
       buffer.writeUInt16LE(data.strokesTotal, 3)
       // Total Distance in meters
-      if (data.distanceTotal) {
+      if ('distanceTotal' in data) {
         writeUInt24LE(data.distanceTotal, buffer, 5)
       }
       // Instantaneous Pace in seconds/500m
-      if (data.split) {
+      if ('split' in data) {
         buffer.writeUInt16LE(data.split, 8)
       }
       // Instantaneous Power in watts
-      if (data.power) {
+      if ('power' in data) {
         buffer.writeUInt16LE(data.power, 10)
       }
-      // Energy
-      if (data.caloriesTotal) {
+      // Energy in kcal
+      if ('caloriesTotal' in data) {
         // Total energy in kcal
         buffer.writeUInt16LE(data.caloriesTotal, 12)
         // Energy per hour

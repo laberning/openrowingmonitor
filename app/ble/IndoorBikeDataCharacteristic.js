@@ -46,7 +46,7 @@ export default class IndoorBikeDataCharacteristic extends bleno.Characteristic {
 
   notify (data) {
     // ignore events without the mandatory fields
-    if (!data.speed) {
+    if (!('speed' in data)) {
       log.error('can not deliver bike data without mandatory fields')
       return this.RESULT_SUCCESS
     }
@@ -66,15 +66,15 @@ export default class IndoorBikeDataCharacteristic extends bleno.Characteristic {
       // Instantaneous Speed in km/h
       buffer.writeUInt16LE(data.speed * 100, 2)
       // Total Distance in meters
-      if (data.distanceTotal) {
+      if ('distanceTotal' in data) {
         writeUInt24LE(data.distanceTotal, buffer, 4)
       }
       // Instantaneous Power in watts
-      if (data.power) {
+      if ('power' in data) {
         buffer.writeUInt16LE(data.power, 7)
       }
       // Energy
-      if (data.caloriesTotal) {
+      if ('caloriesTotal' in data) {
         // Total energy in kcal
         buffer.writeUInt16LE(data.caloriesTotal, 9)
         // Energy per hour
