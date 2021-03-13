@@ -8,6 +8,7 @@
 // eslint-disable-next-line no-unused-vars
 export function createApp () {
   const fields = ['strokesTotal', 'distanceTotal', 'caloriesTotal', 'power', 'splitFormatted', 'strokesPerMinute', 'durationTotal']
+  let socket
 
   initWebsocket()
   resetFields()
@@ -16,7 +17,7 @@ export function createApp () {
   function initWebsocket () {
   // use the native websocket implementation of browser to communicate with backend
   // eslint-disable-next-line no-undef
-    const socket = new WebSocket(`ws://${location.host}`)
+    socket = new WebSocket(`ws://${location.host}`)
 
     socket.addEventListener('open', (event) => {
       console.log('websocket openend')
@@ -96,7 +97,7 @@ export function createApp () {
 
   function reset () {
     resetFields()
-    socket.send(JSON.stringify({ command: 'reset' }))
+    if (socket)socket.send(JSON.stringify({ command: 'reset' }))
   }
 
   return {

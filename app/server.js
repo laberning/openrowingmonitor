@@ -22,7 +22,7 @@ import { recordRowingSession, replayRowingSession } from './tools/RowingRecorder
 log.setLevel(log.levels.INFO)
 
 const peripheral = createRowingMachinePeripheral({
-  simulateIndoorBike: true
+  simulateIndoorBike: false
 })
 
 peripheral.on('controlPoint', (event) => {

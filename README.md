@@ -27,7 +27,7 @@ Open Rowing Monitor implements a physics model to simulate the typical metrics o
 
 ### Web Interface
 
-The web interface visualizes the rowing metrics on any device that can run a browser (i.e. a smartphone that you attach to your rowing machine while training). It uses websockets to show the rowing status in realtime. Besides that it does not do much (yet).
+The web interface visualizes the rowing metrics on any device that can run a browser (i.e. a smartphone that you attach to your rowing machine while training). It uses websockets to show the rowing status in Realtime. Besides that it does not do much (yet).
 
 <!-- markdownlint-disable-next-line no-inline-html -->
 <img src="doc/img/openrowingmonitor_frontend.png" width="700"><br clear="left">
@@ -46,7 +46,7 @@ FTMS supports different types of fitness machines. Open Rowing Monitor currently
 
 I originally started this project, because my rowing machine (Sportstech WRX700) has a very simple computer and I wanted to build something with a clean and simple interface that calculates more realistic metrics. Also, this was a good reason to learn a bit more about Bluetooth and all its specifics.
 
-The original proof of concept version started as a sketch on an ardunio, but when I started adding things like a web frontend and BLE I moved it to the much more powerful Raspberry Pi. Maybe using a Raspi for this small IoT-project is a bit of an overkill, but it has the capacity for further features such as syncing training data or rowing games. And it has USB-Ports that I can use to charge my phone while rowing :-)
+The original proof of concept version started as a sketch on an Arduino, but when I started adding things like a web frontend and BLE I moved it to the much more powerful Raspberry Pi. Maybe using a Raspberry Pi for this small IoT-project is a bit of an overkill, but it has the capacity for further features such as syncing training data or rowing games. And it has USB-Ports that I can use to charge my phone while rowing :-)
 
 ## Further information
 

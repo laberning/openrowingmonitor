@@ -50,7 +50,6 @@ function createRowingMachinePeripheral (options) {
 
   bleno.on('accept', (clientAddress) => {
     log.debug(`ble central connected: ${clientAddress}`)
-    // todo: do we need this?
     bleno.updateRssi()
   })
 
