@@ -12,7 +12,9 @@ import finalhandler from 'finalhandler'
 import http from 'http'
 import serveStatic from 'serve-static'
 import log from 'loglevel'
-import { createRowingMachinePeripheral } from './ble/RowingMachinePeripheral.js'
+import { createFtmsPeripheral } from './ble/FtmsPeripheral.js'
+// eslint-disable-next-line no-unused-vars
+import { createPm5Peripheral } from './ble/Pm5Peripheral.js'
 import { createRowingEngine } from './engine/RowingEngine.js'
 import { createRowingStatistics } from './engine/RowingStatistics.js'
 // eslint-disable-next-line no-unused-vars
@@ -21,9 +23,12 @@ import { recordRowingSession, replayRowingSession } from './tools/RowingRecorder
 // sets the global log level
 log.setLevel(log.levels.INFO)
 
-const peripheral = createRowingMachinePeripheral({
+const peripheral = createFtmsPeripheral({
   simulateIndoorBike: false
 })
+
+// the simulation of a C2 PM5 is not finished yet
+// const peripheral = createPm5Peripheral()
 
 peripheral.on('controlPoint', (event) => {
   if (event?.req?.name === 'requestControl') {

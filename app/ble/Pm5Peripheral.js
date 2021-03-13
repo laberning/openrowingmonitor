@@ -2,33 +2,34 @@
 /*
   Open Rowing Monitor, https://github.com/laberning/openrowingmonitor
 
-  Creates a Bluetooth Low Energy (BLE) Peripheral with all the Services that are required for
-  a Fitness Machine Device
+  Creates a Bluetooth Low Energy (BLE) Peripheral with all the Services that are used by the
+  Concept2 PM5 rowing machine.
 
-  Relevant parts from https://www.bluetooth.com/specifications/specs/fitness-machine-profile-1-0/
-  The Fitness Machine shall instantiate one and only one Fitness Machine Service as Primary Service
-  The User Data Service, if supported, shall be instantiated as a Primary Service.
-  The Fitness Machine may instantiate the Device Information Service
-  (Manufacturer Name String, Model Number String)
+  see: https://www.concept2.co.uk/files/pdf/us/monitors/PM5_BluetoothSmartInterfaceDefinition.pdf
 */
 import bleno from '@abandonware/bleno'
 import { EventEmitter } from 'events'
-import FitnessMachineService from './FitnessMachineService.js'
-import DeviceInformationService from './DeviceInformationService.js'
+import { constants } from './pm5/Pm5Constants.js'
+import DeviceInformationService from './pm5/DeviceInformationService.js'
+import GapService from './pm5/GapService.js'
 import log from 'loglevel'
+import Pm5ControlService from './pm5/Pm5ControlService.js'
+import Pm5RowingService from './pm5/Pm5RowingService.js'
 
-function createRowingMachinePeripheral (options) {
+function createPm5Peripheral (options) {
   const emitter = new EventEmitter()
 
-  const peripheralName = options?.simulateIndoorBike ? 'OpenRowingBike' : 'OpenRowingMonitor'
-  const fitnessMachineService = new FitnessMachineService(options, controlPointCallback)
+  const peripheralName = constants.name
   const deviceInformationService = new DeviceInformationService()
+  const gapService = new GapService()
+  const controlService = new Pm5ControlService()
+  const rowingService = new Pm5RowingService()
 
   bleno.on('stateChange', (state) => {
     if (state === 'poweredOn') {
       bleno.startAdvertising(
         peripheralName,
-        [fitnessMachineService.uuid, deviceInformationService.uuid],
+        [gapService.uuid],
         (error) => {
           if (error) log.error(error)
         }
@@ -41,7 +42,7 @@ function createRowingMachinePeripheral (options) {
   bleno.on('advertisingStart', (error) => {
     if (!error) {
       bleno.setServices(
-        [fitnessMachineService, deviceInformationService],
+        [gapService, deviceInformationService, controlService, rowingService],
         (error) => {
           if (error) log.error(error)
         })
@@ -82,23 +83,14 @@ function createRowingMachinePeripheral (options) {
     log.debug('rssiUpdate', event)
   })
 
-  function controlPointCallback (event) {
-    const obj = {
-      req: event,
-      res: {}
-    }
-    emitter.emit('controlPoint', obj)
-    return obj.res
-  }
-
   // deliver current rowing metrics via BLE
   function notifyData (data) {
-    fitnessMachineService.notifyData(data)
+    // fitnessMachineService.notifyData(data)
   }
 
   // deliver a status change via BLE
   function notifyStatus (status) {
-    fitnessMachineService.notifyStatus(status)
+    // fitnessMachineService.notifyStatus(status)
   }
 
   return Object.assign(emitter, {
@@ -107,4 +99,4 @@ function createRowingMachinePeripheral (options) {
   })
 }
 
-export { createRowingMachinePeripheral }
+export { createPm5Peripheral }

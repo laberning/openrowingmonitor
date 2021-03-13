@@ -36,13 +36,13 @@ export default class IndoorBikeDataCharacteristic extends bleno.Characteristic {
     log.debug('IndooBikeDataCharacteristic - central subscribed')
     this._updateValueCallback = updateValueCallback
     return this.RESULT_SUCCESS
-  };
+  }
 
   onUnsubscribe () {
     log.debug('IndooBikeDataCharacteristic - central unsubscribed')
     this._updateValueCallback = null
     return this.RESULT_UNLIKELY_ERROR
-  };
+  }
 
   notify (data) {
     // ignore events without the mandatory fields
