@@ -10,9 +10,11 @@
   Physics of Rowing by Anu Dudhia: http://eodg.atm.ox.ac.uk/user/dudhia/rowing/physics
   Also Dave Vernooy has some good explanations here: https://dvernooy.github.io/projects/ergware
 */
-import log from 'loglevel'
-import { createAverager } from './Averager.js'
+import loglevel from 'loglevel'
+import { createWeightedAverager } from './WeightedAverager.js'
 import { createTimer } from './Timer.js'
+
+const log = loglevel.getLogger('RowingEngine')
 
 // *****************************************************
 //  These constants are specific to your Rowing Machine
@@ -57,7 +59,7 @@ const distancePerRevolution = 2.0 * Math.PI * Math.pow((kDamp / c), 1.0 / 3.0)
 function createRowingEngine () {
   let workoutHandler
 
-  const kDampEstimatorAverager = createAverager(3)
+  const kDampEstimatorAverager = createWeightedAverager(3)
 
   let kPower = 0.0
   let jPower = 0.0
@@ -149,6 +151,9 @@ function createRowingEngine () {
     }
     log.debug(`estimated kDamp: ${jMoment * (-1 * kDampEstimatorAverager.weightedAverage())}`)
     log.debug(`estimated omegaDotDivOmegaSquare: ${-1 * kDampEstimatorAverager.weightedAverage()}`)
+    workoutHandler.handleStrokeStateChange({
+      strokeState: 'DRIVING'
+    })
   }
 
   function updateDrivePhase (currentDt) {
@@ -170,7 +175,8 @@ function createRowingEngine () {
         power: (jPower + kPower) / strokeElapsed,
         duration: strokeElapsed,
         durationDrivePhase: driveElapsed,
-        distance: strokeDistance
+        distance: strokeDistance,
+        strokeState: 'RECOVERY'
       })
     }
 

@@ -2,9 +2,9 @@
 /*
   Open Rowing Monitor, https://github.com/laberning/openrowingmonitor
 
-  The Averager calculates the average of a continuous flow of data points
+  The Averager calculates the weighted average of a continuous flow of data points
 */
-function createAverager (maxNumOfDataPoints) {
+function createWeightedAverager (maxNumOfDataPoints) {
   let dataPoints = []
 
   function pushValue (dataPoint) {
@@ -18,11 +18,15 @@ function createAverager (maxNumOfDataPoints) {
 
   function weightedAverage () {
     const numOfDataPoints = dataPoints.length
-    const sum = dataPoints
-      .map((dataPoint, index) => Math.pow(2, numOfDataPoints - index - 1) * dataPoint)
-      .reduce((acc, dataPoint) => acc + dataPoint, 0)
-    const weight = Math.pow(2, numOfDataPoints) - 1
-    return sum / weight
+    if (numOfDataPoints > 0) {
+      const sum = dataPoints
+        .map((dataPoint, index) => Math.pow(2, numOfDataPoints - index - 1) * dataPoint)
+        .reduce((acc, dataPoint) => acc + dataPoint, 0)
+      const weight = Math.pow(2, numOfDataPoints) - 1
+      return sum / weight
+    } else {
+      return 0
+    }
   }
 
   function reset () {
@@ -36,4 +40,4 @@ function createAverager (maxNumOfDataPoints) {
   }
 }
 
-export { createAverager }
+export { createWeightedAverager }

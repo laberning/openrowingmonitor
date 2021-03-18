@@ -4,6 +4,8 @@ This is the very minimalistic Backlog for further development of this project.
 
 ## Soon
 
+* refactor Stroke Phase Handling in RowingStatistics and pm5Peripheral
+* calculate the missing averages for FTMS and PM5
 * cleanup of the server.js start file
 * figure out where to set the Service Advertising Data (FTMS.pdf p 15)
 * Web UI: replace fullscreen button with exit Button when started from home screen

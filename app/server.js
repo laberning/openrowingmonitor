@@ -22,6 +22,8 @@ import { recordRowingSession, replayRowingSession } from './tools/RowingRecorder
 
 // sets the global log level
 log.setLevel(log.levels.INFO)
+// some modules can be set individually to filter noise
+log.getLogger('RowingEngine').setLevel(log.levels.INFO)
 
 const peripheral = createFtmsPeripheral({
   simulateIndoorBike: false
@@ -71,6 +73,8 @@ rowingStatistics.on('strokeFinished', (data) => {
   `, cal: ${data.caloriesTotal}kcal, SPM: ${data.strokesPerMinute}, speed: ${data.speed}km/h`)
 
   const metrics = {
+    durationTotal: data.durationTotal,
+    durationTotalFormatted: data.durationTotalFormatted,
     strokesTotal: data.strokesTotal,
     distanceTotal: data.distanceTotal,
     caloriesTotal: data.caloriesTotal,
@@ -78,15 +82,17 @@ rowingStatistics.on('strokeFinished', (data) => {
     splitFormatted: data.splitFormatted,
     split: data.split,
     strokesPerMinute: data.strokesPerMinute,
-    speed: data.speed
+    speed: data.speed,
+    strokeState: data.strokeState
   }
-
   notifyWebClients(metrics)
   peripheral.notifyData(metrics)
 })
 
 rowingStatistics.on('rowingPaused', (data) => {
   const metrics = {
+    durationTotal: data.durationTotal,
+    durationTotalFormatted: data.durationTotalFormatted,
     strokesTotal: data.strokesTotal,
     distanceTotal: data.distanceTotal,
     caloriesTotal: data.caloriesTotal,
@@ -95,7 +101,8 @@ rowingStatistics.on('rowingPaused', (data) => {
     // todo: setting split to 0 might be dangerous, depending on what the client does with this
     splitFormatted: '00:00',
     split: 0,
-    speed: 0
+    speed: 0,
+    strokeState: 'RECOVERY'
   }
   notifyWebClients(metrics)
   peripheral.notifyData(metrics)
@@ -103,7 +110,7 @@ rowingStatistics.on('rowingPaused', (data) => {
 
 rowingStatistics.on('durationUpdate', (data) => {
   notifyWebClients({
-    durationTotal: data.durationTotal
+    durationTotalFormatted: data.durationTotalFormatted
   })
 })
 

@@ -4,9 +4,8 @@
 
   This Module calculates the training specific metrics.
 */
-import log from 'loglevel'
 import { EventEmitter } from 'events'
-import { createAverager } from './Averager.js'
+import { createWeightedAverager } from './WeightedAverager.js'
 
 // The number of strokes that are considered when averaging the calculated metrics
 // Higher values create more stable metrics but make them less responsive
@@ -14,10 +13,10 @@ const numOfDataPointsForAveraging = 3
 
 function createRowingStatistics () {
   const emitter = new EventEmitter()
-  const strokeAverager = createAverager(numOfDataPointsForAveraging)
-  const powerAverager = createAverager(numOfDataPointsForAveraging)
-  const speedAverager = createAverager(numOfDataPointsForAveraging)
-  const powerRatioAverager = createAverager(numOfDataPointsForAveraging)
+  const strokeAverager = createWeightedAverager(numOfDataPointsForAveraging)
+  const powerAverager = createWeightedAverager(numOfDataPointsForAveraging)
+  const speedAverager = createWeightedAverager(numOfDataPointsForAveraging)
+  const powerRatioAverager = createWeightedAverager(numOfDataPointsForAveraging)
   let trainingRunning = false
   let durationTimer
   let rowingPausedTimer
@@ -25,6 +24,8 @@ function createRowingStatistics () {
   let durationTotal = 0
   let strokesTotal = 0
   let caloriesTotal = 0.0
+  let lastStrokeDuration = 0.0
+  let lastStrokeState = 'RECOVERY'
 
   function handleStroke (stroke) {
     if (!trainingRunning) startTraining()
@@ -41,26 +42,42 @@ function createRowingStatistics () {
     strokesTotal++
     // based on: http://eodg.atm.ox.ac.uk/user/dudhia/rowing/physics/ergometer.html#section11
     caloriesTotal += (4 * powerAverager.weightedAverage() + 350) * (stroke.duration) / 4200
+    lastStrokeDuration = stroke.duration
+    lastStrokeState = stroke.strokeState
 
-    const splitTime = 500.0 / speedAverager.weightedAverage()
+    emitter.emit('strokeFinished', getMetrics())
+  }
 
-    emitter.emit('strokeFinished', {
-      strokesTotal: strokesTotal,
+  // initiated by the rowing engine in case an impulse was not considered
+  // because it was too large
+  function handlePause (duration) {
+  }
+
+  // initiated when the stroke state changes
+  function handleStrokeStateChange (state) {
+    // todo: wee need a better mechanism to communicate strokeState updates
+    // this is an initial hacky attempt to see if we can use it for the C2-pm5 protocol
+    lastStrokeState = state.strokeState
+    // emitter.emit('strokeFinished', getMetrics())
+  }
+
+  function getMetrics () {
+    const splitTime = speedAverager.weightedAverage() !== 0 ? (500.0 / speedAverager.weightedAverage()) : 0
+    return {
+      durationTotal,
+      durationTotalFormatted: secondsToTimeString(durationTotal),
+      strokesTotal,
       distanceTotal: Math.round(distanceTotal), // meters
       caloriesTotal: Math.round(caloriesTotal), // kcal
-      strokeTime: stroke.duration.toFixed(2), // seconds
+      strokeTime: lastStrokeDuration.toFixed(2), // seconds
       power: Math.round(powerAverager.weightedAverage()), // watts
       split: splitTime, // seconds/500m
       splitFormatted: secondsToTimeString(splitTime),
       powerRatio: powerRatioAverager.weightedAverage().toFixed(2),
-      strokesPerMinute: Math.round(60.0 / strokeAverager.weightedAverage()),
-      speed: (speedAverager.weightedAverage() * 3.6).toFixed(2) // km/h
-    })
-  }
-
-  // initiated by the rowing engine in case an impulse was not considered
-  // because it was to large
-  function handlePause (duration) {
+      strokesPerMinute: strokeAverager.weightedAverage() !== 0 ? Math.round(60.0 / strokeAverager.weightedAverage()) : 0,
+      speed: (speedAverager.weightedAverage() * 3.6).toFixed(2), // km/h
+      strokeState: lastStrokeState
+    }
   }
 
   function startTraining () {
@@ -88,12 +105,9 @@ function createRowingStatistics () {
 
   // clear the displayed metrics in case the user pauses rowing
   function pauseRowing () {
-    strokeAverager.reset()
-    powerAverager.reset()
-    speedAverager.reset()
-    powerRatioAverager.reset()
-    log.debug('rowing pause detected')
     emitter.emit('rowingPaused', {
+      durationTotal,
+      durationTotalFormatted: secondsToTimeString(durationTotal),
       strokesTotal: strokesTotal,
       distanceTotal: Math.round(distanceTotal),
       caloriesTotal: Math.round(caloriesTotal)
@@ -103,7 +117,10 @@ function createRowingStatistics () {
   function startDurationTimer () {
     durationTimer = setInterval(() => {
       durationTotal++
-      emitter.emit('durationUpdate', { durationTotal: secondsToTimeString(durationTotal) })
+      emitter.emit('durationUpdate', {
+        durationTotal,
+        durationTotalFormatted: secondsToTimeString(durationTotal)
+      })
     }, 1000)
   }
 
@@ -125,6 +142,7 @@ function createRowingStatistics () {
   return Object.assign(emitter, {
     handleStroke,
     handlePause,
+    handleStrokeStateChange,
     reset: resetTraining
   })
 }

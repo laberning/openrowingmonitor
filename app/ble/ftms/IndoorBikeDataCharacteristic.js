@@ -20,6 +20,7 @@
 */
 import bleno from '@abandonware/bleno'
 import log from 'loglevel'
+import BufferBuilder from '../BufferBuilder.js'
 
 export default class IndoorBikeDataCharacteristic extends bleno.Characteristic {
   constructor () {
@@ -52,49 +53,37 @@ export default class IndoorBikeDataCharacteristic extends bleno.Characteristic {
     }
 
     if (this._updateValueCallback) {
-      const buffer = Buffer.alloc(15)
+      const bufferBuilder = new BufferBuilder()
       // Field flags as defined in the Bluetooth Documentation
       // Instantaneous speed (default), Total Distance (4), Instantaneous Power (6)
       // Total / Expended Energy (8)
       // 01010000
-      buffer.writeUInt8(0x50, 0)
+      bufferBuilder.writeUInt8(0x50)
       // 00000001
-      buffer.writeUInt8(0x01, 1)
+      bufferBuilder.writeUInt8(0x01)
 
       // see https://www.bluetooth.com/specifications/specs/gatt-specification-supplement-3/
       // for some of the data types
       // Instantaneous Speed in km/h
-      buffer.writeUInt16LE(data.speed * 100, 2)
+      bufferBuilder.writeUInt16LE(data.speed * 100)
       // Total Distance in meters
-      if ('distanceTotal' in data) {
-        writeUInt24LE(data.distanceTotal, buffer, 4)
-      }
+      bufferBuilder.writeUInt24LE(data.distanceTotal)
       // Instantaneous Power in watts
-      if ('power' in data) {
-        buffer.writeUInt16LE(data.power, 7)
-      }
+      bufferBuilder.writeUInt16LE(data.power)
       // Energy
-      if ('caloriesTotal' in data) {
-        // Total energy in kcal
-        buffer.writeUInt16LE(data.caloriesTotal, 9)
-        // Energy per hour
-        // from specs: if not available the Server shall use the special value 0xFFFF
-        // which means 'Data Not Available''.
-        buffer.writeUInt16LE(0xFFFF, 11)
-        // Energy per minute
-        // from specs: if not available the Server shall use the special value 0xFF
-        // which means 'Data Not Available''.
-        buffer.writeUInt16LE(0xFF, 13)
-      }
-      this._updateValueCallback(buffer)
+      // Total energy in kcal
+      bufferBuilder.writeUInt16LE(data.caloriesTotal)
+      // Energy per hour
+      // from specs: if not available the Server shall use the special value 0xFFFF
+      // which means 'Data Not Available''.
+      bufferBuilder.writeUInt16LE(0xFFFF)
+      // Energy per minute
+      // from specs: if not available the Server shall use the special value 0xFF
+      // which means 'Data Not Available''.
+      bufferBuilder.writeUInt16LE(0xFF)
+
+      this._updateValueCallback(bufferBuilder.getBuffer())
     }
     return this.RESULT_SUCCESS
   }
-}
-
-// the specification uses unsigned integers of length 24 in LE
-// this is a helper to write those into the buffer
-function writeUInt24LE (value, buffer, position) {
-  buffer.writeUInt8(value & 255, position)
-  buffer.writeUInt16LE(value >> 8, position + 1)
 }

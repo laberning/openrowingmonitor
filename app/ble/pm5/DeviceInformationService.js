@@ -6,7 +6,7 @@
 */
 import bleno from '@abandonware/bleno'
 import { constants, getFullUUID } from './Pm5Constants.js'
-import ValueReadCharacteristic from './ValueReadCharacteristic.js'
+import ValueReadCharacteristic from './characteristic/ValueReadCharacteristic.js'
 
 export default class DeviceInformationService extends bleno.PrimaryService {
   constructor () {

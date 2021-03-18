@@ -74,7 +74,7 @@ function createPm5Peripheral (options) {
     log.debug('advertisingStop', event)
   })
   bleno.on('servicesSet', (event) => {
-    log.debug('servicesSet', event)
+    log.debug('servicesSet')
   })
   bleno.on('servicesSetError', (event) => {
     log.debug('servicesSetError', event)
@@ -85,6 +85,7 @@ function createPm5Peripheral (options) {
 
   // deliver current rowing metrics via BLE
   function notifyData (data) {
+    rowingService.notify(data)
     // fitnessMachineService.notifyData(data)
   }
 

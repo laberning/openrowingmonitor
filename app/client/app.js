@@ -7,7 +7,7 @@
 */
 // eslint-disable-next-line no-unused-vars
 export function createApp () {
-  const fields = ['strokesTotal', 'distanceTotal', 'caloriesTotal', 'power', 'splitFormatted', 'strokesPerMinute', 'durationTotal']
+  const fields = ['strokesTotal', 'distanceTotal', 'caloriesTotal', 'power', 'splitFormatted', 'strokesPerMinute', 'durationTotalFormatted']
   let socket
 
   initWebsocket()

@@ -6,7 +6,8 @@ body {
     color: white;
     margin: 0;
     font-size: calc(16px + (60 - 16) * ((100vw - 300px) / (1920 - 300)));
-    font-family: Verdana, "Lucida Sans Unicode", sans-serif
+    font-family: Verdana, "Lucida Sans Unicode", sans-serif;
+    user-select: none;
 }
 
 .grid {

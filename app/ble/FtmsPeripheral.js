@@ -72,8 +72,8 @@ function createFtmsPeripheral (options) {
   bleno.on('advertisingStop', (event) => {
     log.debug('advertisingStop', event)
   })
-  bleno.on('servicesSet', (event) => {
-    log.debug('servicesSet', event)
+  bleno.on('servicesSet', () => {
+    log.debug('servicesSet')
   })
   bleno.on('servicesSetError', (event) => {
     log.debug('servicesSetError', event)
