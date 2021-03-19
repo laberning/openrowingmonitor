@@ -23,7 +23,7 @@ export default class ControlTransmit extends bleno.Characteristic {
   }
 
   onSubscribe (maxValueSize, updateValueCallback) {
-    log.debug('ControlTransmit - central subscribed')
+    log.debug(`ControlTransmit - central subscribed with maxSize: ${maxValueSize}`)
     this._updateValueCallback = updateValueCallback
     return this.RESULT_SUCCESS
   }

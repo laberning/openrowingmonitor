@@ -50,7 +50,7 @@ export default class FitnessMachineStatusCharacteristic extends bleno.Characteri
   }
 
   onSubscribe (maxValueSize, updateValueCallback) {
-    log.debug('FitnessMachineStatusCharacteristic - central subscribed')
+    log.debug(`FitnessMachineStatusCharacteristic - central subscribed with maxSize: ${maxValueSize}`)
     this._updateValueCallback = updateValueCallback
     return this.RESULT_SUCCESS
   }
@@ -82,8 +82,6 @@ export default class FitnessMachineStatusCharacteristic extends bleno.Characteri
           log.error(`status ${status.name} is not supported`)
       }
       this._updateValueCallback(buffer)
-    } else {
-      log.debug('can not notify status, no central subscribed')
     }
     return this.RESULT_SUCCESS
   }

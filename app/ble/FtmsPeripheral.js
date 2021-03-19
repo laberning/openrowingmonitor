@@ -21,6 +21,7 @@ function createFtmsPeripheral (options) {
   const emitter = new EventEmitter()
 
   const peripheralName = options?.simulateIndoorBike ? 'OpenRowingBike' : 'OpenRowingMonitor'
+  // const peripheralName = options?.simulateIndoorBike ? 'OpenRowingBike' : 'S1 Comms 1'
   const fitnessMachineService = new FitnessMachineService(options, controlPointCallback)
   const deviceInformationService = new DeviceInformationService()
 
@@ -71,9 +72,6 @@ function createFtmsPeripheral (options) {
   })
   bleno.on('advertisingStop', (event) => {
     log.debug('advertisingStop', event)
-  })
-  bleno.on('servicesSet', () => {
-    log.debug('servicesSet')
   })
   bleno.on('servicesSetError', (event) => {
     log.debug('servicesSetError', event)

@@ -27,7 +27,7 @@ export default class RowerDataCharacteristic extends bleno.Characteristic {
   }
 
   onSubscribe (maxValueSize, updateValueCallback) {
-    log.debug('RowerDataCharacteristic - central subscribed')
+    log.debug(`RowerDataCharacteristic - central subscribed with maxSize: ${maxValueSize}`)
     this._updateValueCallback = updateValueCallback
     return this.RESULT_SUCCESS
   }
@@ -49,6 +49,8 @@ export default class RowerDataCharacteristic extends bleno.Characteristic {
       // Field flags as defined in the Bluetooth Documentation
       // Stroke Rate (default), Stroke Count (default), Total Distance (2), Instantaneous Pace (3),
       // Instantaneous Power (5), Total / Expended Energy (8)
+      // todo: might add: Average Stroke Rate (1), Average Pace (4), Average Power (6), Heart Rate (9)
+      // Elapsed Time (11), Remaining Time (12)
       // 00101100
       bufferBuilder.writeUInt8(0x2c)
       // 00000001
@@ -70,13 +72,11 @@ export default class RowerDataCharacteristic extends bleno.Characteristic {
       // Total energy in kcal
       bufferBuilder.writeUInt16LE(data.caloriesTotal)
       // Energy per hour
-      // from specs: if not available the Server shall use the special value 0xFFFF
-      // which means 'Data Not Available''.
-      bufferBuilder.writeUInt16LE(0xFFFF)
+      // The Energy per Hour field represents the average expended energy of a user during a
+      // period of one hour.
+      bufferBuilder.writeUInt16LE(data.caloriesPerHour)
       // Energy per minute
-      // from specs: if not available the Server shall use the special value 0xFF
-      // which means 'Data Not Available''.
-      bufferBuilder.writeUInt16LE(0xFF)
+      bufferBuilder.writeUInt16LE(data.caloriesPerMinute)
 
       this._updateValueCallback(bufferBuilder.getBuffer())
     }

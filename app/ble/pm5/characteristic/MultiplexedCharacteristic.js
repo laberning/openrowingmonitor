@@ -25,7 +25,7 @@ export default class MultiplexedCharacteristic extends bleno.Characteristic {
   }
 
   onSubscribe (maxValueSize, updateValueCallback) {
-    log.debug('MultiplexedCharacteristic - central subscribed')
+    log.debug(`MultiplexedCharacteristic - central subscribed with maxSize: ${maxValueSize}`)
     this._updateValueCallback = updateValueCallback
     return this.RESULT_SUCCESS
   }

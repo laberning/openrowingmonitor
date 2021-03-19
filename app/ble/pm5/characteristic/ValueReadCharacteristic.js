@@ -27,7 +27,7 @@ export default class ValueReadCharacteristic extends bleno.Characteristic {
   }
 
   onSubscribe (maxValueSize, updateValueCallback) {
-    log.debug(`characteristic ${this._description ? this._description : this.uuid} - central subscribed`)
+    log.debug(`characteristic ${this._description ? this._description : this.uuid} - central subscribed with maxSize: ${maxValueSize}`)
     this._updateValueCallback = updateValueCallback
     return this.RESULT_SUCCESS
   }

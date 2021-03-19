@@ -29,13 +29,13 @@ const numOfImpulsesPerRevolution = 2
 // However I still keep it constant here, as I still have to figure out the damping physics of a water rower (see below)
 // To measure it for your rowing machine, comment in the logging at the end of "startDrivePhase" function. Then do some
 // strokes on the rower and estimate a value.
-const omegaDotDivOmegaSquare = 0.056
+const omegaDotDivOmegaSquare = 0.046
 
 // The moment of inertia of the flywheel kg*m^2
 // A way to measure it is outlined here: https://dvernooy.github.io/projects/ergware/, "Flywheel moment of inertia"
 // You could also roughly estimate it by just doing some strokes and the comparing the calculated power values for
 // plausibility. Note that the power also depends on omegaDotDivOmegaSquare (see above).
-const jMoment = 0.55
+const jMoment = 0.49
 
 // Set this to true if you are using a water rower
 // The mass of the water starts rotating, when you pull the handle, and therefore acts
@@ -150,7 +150,7 @@ function createRowingEngine () {
       kDampEstimatorAverager.pushValue(kDampEstimator / (strokeElapsed - driveElapsed))
     }
     log.debug(`estimated kDamp: ${jMoment * (-1 * kDampEstimatorAverager.weightedAverage())}`)
-    log.debug(`estimated omegaDotDivOmegaSquare: ${-1 * kDampEstimatorAverager.weightedAverage()}`)
+    log.info(`estimated omegaDotDivOmegaSquare: ${-1 * kDampEstimatorAverager.weightedAverage()}`)
     workoutHandler.handleStrokeStateChange({
       strokeState: 'DRIVING'
     })

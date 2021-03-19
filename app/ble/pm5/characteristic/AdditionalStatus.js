@@ -23,7 +23,7 @@ export default class AdditionalStatus extends bleno.Characteristic {
   }
 
   onSubscribe (maxValueSize, updateValueCallback) {
-    log.debug('AdditionalStatus - central subscribed')
+    log.debug(`AdditionalStatus - central subscribed with maxSize: ${maxValueSize}`)
     this._updateValueCallback = updateValueCallback
     return this.RESULT_SUCCESS
   }

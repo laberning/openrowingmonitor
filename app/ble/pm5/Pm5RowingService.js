@@ -26,6 +26,7 @@ import GeneralStatus from './characteristic/GeneralStatus.js'
 import AdditionalStatus from './characteristic/AdditionalStatus.js'
 import AdditionalStatus2 from './characteristic/AdditionalStatus2.js'
 import AdditionalStrokeData from './characteristic/AdditionalStrokeData.js'
+import StrokeData from './characteristic/StrokeData.js'
 
 export default class PM5RowingService extends bleno.PrimaryService {
   constructor () {
@@ -33,6 +34,7 @@ export default class PM5RowingService extends bleno.PrimaryService {
     const generalStatus = new GeneralStatus(multiplexedCharacteristic)
     const additionalStatus = new AdditionalStatus(multiplexedCharacteristic)
     const additionalStatus2 = new AdditionalStatus2(multiplexedCharacteristic)
+    const strokeData = new StrokeData(multiplexedCharacteristic)
     const additionalStrokeData = new AdditionalStrokeData(multiplexedCharacteristic)
     super({
       uuid: getFullUUID('0030'),
@@ -46,7 +48,7 @@ export default class PM5RowingService extends bleno.PrimaryService {
         // C2 rowing general status and additional status samplerate
         new ValueReadCharacteristic(getFullUUID('0034'), 'samplerate', 'samplerate'),
         // C2 rowing stroke data
-        new ValueReadCharacteristic(getFullUUID('0035'), 'stroke data', 'stroke data'),
+        strokeData,
         // C2 rowing additional stroke data
         additionalStrokeData,
         // C2 rowing split/interval data
@@ -68,6 +70,7 @@ export default class PM5RowingService extends bleno.PrimaryService {
     this.generalStatus = generalStatus
     this.additionalStatus = additionalStatus
     this.additionalStatus2 = additionalStatus2
+    this.strokeData = strokeData
     this.additionalStrokeData = additionalStrokeData
     this.multiplexedCharacteristic = multiplexedCharacteristic
   }
@@ -76,6 +79,7 @@ export default class PM5RowingService extends bleno.PrimaryService {
     this.generalStatus.notify(data)
     this.additionalStatus.notify(data)
     this.additionalStatus2.notify(data)
+    this.strokeData.notify(data)
     this.additionalStrokeData.notify(data)
   }
 }

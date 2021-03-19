@@ -5,6 +5,7 @@
   This Module calculates the training specific metrics.
 */
 import { EventEmitter } from 'events'
+import { createMovingIntervalAverager } from './MovingIntervalAverager.js'
 import { createWeightedAverager } from './WeightedAverager.js'
 
 // The number of strokes that are considered when averaging the calculated metrics
@@ -17,6 +18,8 @@ function createRowingStatistics () {
   const powerAverager = createWeightedAverager(numOfDataPointsForAveraging)
   const speedAverager = createWeightedAverager(numOfDataPointsForAveraging)
   const powerRatioAverager = createWeightedAverager(numOfDataPointsForAveraging)
+  const caloriesAveragerMinute = createMovingIntervalAverager(60)
+  const caloriesAveragerHour = createMovingIntervalAverager(60 * 60)
   let trainingRunning = false
   let durationTimer
   let rowingPausedTimer
@@ -34,14 +37,17 @@ function createRowingStatistics () {
     if (rowingPausedTimer)clearInterval(rowingPausedTimer)
     rowingPausedTimer = setTimeout(() => pauseRowing(), 6000)
 
+    // based on: http://eodg.atm.ox.ac.uk/user/dudhia/rowing/physics/ergometer.html#section11
+    const calories = (4 * powerAverager.weightedAverage() + 350) * (stroke.duration) / 4200
     powerAverager.pushValue(stroke.power)
     speedAverager.pushValue(stroke.distance / stroke.duration)
     powerRatioAverager.pushValue(stroke.durationDrivePhase / stroke.duration)
     strokeAverager.pushValue(stroke.duration)
+    caloriesAveragerMinute.pushValue(calories, stroke.duration)
+    caloriesAveragerHour.pushValue(calories, stroke.duration)
+    caloriesTotal += calories
     distanceTotal += stroke.distance
     strokesTotal++
-    // based on: http://eodg.atm.ox.ac.uk/user/dudhia/rowing/physics/ergometer.html#section11
-    caloriesTotal += (4 * powerAverager.weightedAverage() + 350) * (stroke.duration) / 4200
     lastStrokeDuration = stroke.duration
     lastStrokeState = stroke.strokeState
 
@@ -51,6 +57,8 @@ function createRowingStatistics () {
   // initiated by the rowing engine in case an impulse was not considered
   // because it was too large
   function handlePause (duration) {
+    caloriesAveragerMinute.pushValue(0, duration)
+    caloriesAveragerHour.pushValue(0, duration)
   }
 
   // initiated when the stroke state changes
@@ -69,12 +77,14 @@ function createRowingStatistics () {
       strokesTotal,
       distanceTotal: Math.round(distanceTotal), // meters
       caloriesTotal: Math.round(caloriesTotal), // kcal
+      caloriesPerMinute: Math.round(caloriesAveragerMinute.average()),
+      caloriesPerHour: Math.round(caloriesAveragerHour.average()),
       strokeTime: lastStrokeDuration.toFixed(2), // seconds
       power: Math.round(powerAverager.weightedAverage()), // watts
       split: splitTime, // seconds/500m
       splitFormatted: secondsToTimeString(splitTime),
       powerRatio: powerRatioAverager.weightedAverage().toFixed(2),
-      strokesPerMinute: strokeAverager.weightedAverage() !== 0 ? Math.round(60.0 / strokeAverager.weightedAverage()) : 0,
+      strokesPerMinute: strokeAverager.weightedAverage() !== 0 ? (60.0 / strokeAverager.weightedAverage()).toFixed(1) : 0,
       speed: (speedAverager.weightedAverage() * 3.6).toFixed(2), // km/h
       strokeState: lastStrokeState
     }
@@ -97,6 +107,8 @@ function createRowingStatistics () {
     strokesTotal = 0
     caloriesTotal = 0.0
     durationTotal = 0
+    caloriesAveragerMinute.reset()
+    caloriesAveragerHour.reset()
     strokeAverager.reset()
     powerAverager.reset()
     speedAverager.reset()

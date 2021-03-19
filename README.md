@@ -27,20 +27,22 @@ Open Rowing Monitor implements a physics model to simulate the typical metrics o
 
 ### Web Interface
 
-The web interface visualizes the rowing metrics on any device that can run a browser (i.e. a smartphone that you attach to your rowing machine while training). It uses websockets to show the rowing status in Realtime. Besides that it does not do much (yet).
+The web interface visualizes the rowing metrics on any device that can run a browser (i.e. a smartphone that you attach to your rowing machine while training). It uses web sockets to show the rowing status in Realtime. Besides that it does not do much (yet).
 
 <!-- markdownlint-disable-next-line no-inline-html -->
 <img src="doc/img/openrowingmonitor_frontend.png" width="700"><br clear="left">
 
-### Bluetooth Low Energy Fitness Machine Service (BLE FTMS)
+### Bluetooth Low Energy (BLE)
 
-Open Rowing Monitor also implements the Bluetooth Low Energy (BLE) protocol for Fitness Machine Service (FTMS). This allows using your rowing machine with any Fitness Application that supports FTMS.
+Open Rowing Monitor also implements different Bluetooth Low Energy (BLE) protocols so you can use your rowing machine with different fitness applications.
 
-FTMS supports different types of fitness machines. Open Rowing Monitor currently supports the type **FTMS Rower** and simulates the type **FTMS Indoor Bike**.
+Fitness Machine Service (FTMS) is a standardized GATT protocol for different types of fitness machines. Open Rowing Monitor currently supports the type **FTMS Rower** and simulates the type **FTMS Indoor Bike**.
 
 **FTMS Rower** allows all rower specific metrics (such as stroke rate) to be present, unfortunately not many training applications exist that support this type (the only one I'm aware of is Kinomap but let me know if there are more).
 
 **FTMS Indoor Bike** is widely adopted by training applications for bike training. The simulated Indoor Bike offers metrics such as power and distance to the biking application. So why not use your rowing machine to row up a mountain in Zwift, Bkool, Sufferfest or similar :-)
+
+**Concept2 PM** Open Rowing Monitor also implements part of the Concept2 PM Bluetooth Smart Communication Interface Definition. This is still work in progress and may not work with all applications that support C2 rowing machines.
 
 ## How it all started
 

@@ -7,30 +7,41 @@
   todo: refactor this as we progress
 */
 import { fork } from 'child_process'
-import WebSocket from 'ws'
-import finalhandler from 'finalhandler'
-import http from 'http'
-import serveStatic from 'serve-static'
 import log from 'loglevel'
+import config from './config.js'
 import { createFtmsPeripheral } from './ble/FtmsPeripheral.js'
-// eslint-disable-next-line no-unused-vars
 import { createPm5Peripheral } from './ble/Pm5Peripheral.js'
 import { createRowingEngine } from './engine/RowingEngine.js'
 import { createRowingStatistics } from './engine/RowingStatistics.js'
+import { createWebServer } from './WebServer.js'
 // eslint-disable-next-line no-unused-vars
 import { recordRowingSession, replayRowingSession } from './tools/RowingRecorder.js'
 
-// sets the global log level
-log.setLevel(log.levels.INFO)
-// some modules can be set individually to filter noise
-log.getLogger('RowingEngine').setLevel(log.levels.INFO)
+// set the log levels
+log.setLevel(config.loglevel.default)
+for (const [loggerName, logLevel] of Object.entries(config.loglevel)) {
+  if (loggerName !== 'default') {
+    log.getLogger(loggerName).setLevel(logLevel)
+  }
+}
 
-const peripheral = createFtmsPeripheral({
-  simulateIndoorBike: false
-})
+log.info(`==== Open Rowing Monitor ${process.env.npm_package_version} ====\n`)
 
-// the simulation of a C2 PM5 is not finished yet
-// const peripheral = createPm5Peripheral()
+let peripheral
+if (config.bluetoothMode === 'PM5') {
+  log.info('bluetooth profile: Concept2 PM5')
+  peripheral = createPm5Peripheral()
+} else if (config.bluetoothMode === 'FTMSBIKE') {
+  log.info('bluetooth profile: FTMS Indoor Bike')
+  peripheral = createFtmsPeripheral({
+    simulateIndoorBike: true
+  })
+} else {
+  log.info('bluetooth profile: FTMS Rower')
+  peripheral = createFtmsPeripheral({
+    simulateIndoorBike: false
+  })
+}
 
 peripheral.on('controlPoint', (event) => {
   if (event?.req?.name === 'requestControl') {
@@ -70,14 +81,16 @@ rowingEngine.notify(rowingStatistics)
 rowingStatistics.on('strokeFinished', (data) => {
   log.info(`stroke: ${data.strokesTotal}, dur: ${data.strokeTime}s, power: ${data.power}w` +
   `, split: ${data.splitFormatted}, ratio: ${data.powerRatio}, dist: ${data.distanceTotal}m` +
-  `, cal: ${data.caloriesTotal}kcal, SPM: ${data.strokesPerMinute}, speed: ${data.speed}km/h`)
-
+  `, cal: ${data.caloriesTotal}kcal, SPM: ${data.strokesPerMinute}, speed: ${data.speed}km/h` +
+  `, cal/hour: ${data.caloriesPerHour}kcal, cal/minute: ${data.caloriesPerMinute}kcal`)
   const metrics = {
     durationTotal: data.durationTotal,
     durationTotalFormatted: data.durationTotalFormatted,
     strokesTotal: data.strokesTotal,
     distanceTotal: data.distanceTotal,
     caloriesTotal: data.caloriesTotal,
+    caloriesPerMinute: data.caloriesPerMinute,
+    caloriesPerHour: data.caloriesPerHour,
     power: data.power,
     splitFormatted: data.splitFormatted,
     split: data.split,
@@ -85,7 +98,7 @@ rowingStatistics.on('strokeFinished', (data) => {
     speed: data.speed,
     strokeState: data.strokeState
   }
-  notifyWebClients(metrics)
+  webServer.notifyClients(metrics)
   peripheral.notifyData(metrics)
 })
 
@@ -96,6 +109,8 @@ rowingStatistics.on('rowingPaused', (data) => {
     strokesTotal: data.strokesTotal,
     distanceTotal: data.distanceTotal,
     caloriesTotal: data.caloriesTotal,
+    caloriesPerMinute: 0,
+    caloriesPerHour: 0,
     strokesPerMinute: 0,
     power: 0,
     // todo: setting split to 0 might be dangerous, depending on what the client does with this
@@ -104,55 +119,25 @@ rowingStatistics.on('rowingPaused', (data) => {
     speed: 0,
     strokeState: 'RECOVERY'
   }
-  notifyWebClients(metrics)
+  webServer.notifyClients(metrics)
   peripheral.notifyData(metrics)
 })
 
 rowingStatistics.on('durationUpdate', (data) => {
-  notifyWebClients({
+  webServer.notifyClients({
     durationTotalFormatted: data.durationTotalFormatted
   })
 })
 
-const port = process.env.PORT || 80
-const serve = serveStatic('./app/client', { index: ['index.html'] })
-
-const server = http.createServer((req, res) => {
-  serve(req, res, finalhandler(req, res))
+const webServer = createWebServer()
+webServer.on('messageReceived', (message) => {
+  if (message.command === 'reset') {
+    rowingStatistics.reset()
+    peripheral.notifyStatus({ name: 'reset' })
+  } else {
+    log.warn(`invalid command received: ${message}`)
+  }
 })
-
-server.listen(port)
-
-const wss = new WebSocket.Server({ server })
-
-wss.on('connection', function connection (ws) {
-  log.debug('websocket client connected')
-  ws.on('message', function incoming (data) {
-    try {
-      const message = JSON.parse(data)
-      if (message && message.command === 'reset') {
-        rowingStatistics.reset()
-        peripheral.notifyStatus({ name: 'reset' })
-      } else {
-        log.info(`invalid command received: ${data}`)
-      }
-    } catch (err) {
-      log.error(err)
-    }
-  })
-  ws.on('close', function () {
-    log.debug('websocket client disconnected')
-  })
-})
-
-function notifyWebClients (message) {
-  const messageString = JSON.stringify(message)
-  wss.clients.forEach(function each (client) {
-    if (client.readyState === WebSocket.OPEN) {
-      client.send(messageString)
-    }
-  })
-}
 
 // recordRowingSession('recordings/wrx700_2magnets.csv')
 /*
@@ -161,26 +146,4 @@ replayRowingSession(rowingEngine.handleRotationImpulse, {
   realtime: true,
   loop: true
 })
-*/
-
-// for temporary simulation of usage
-/*
-setInterval(simulateRowing, 2000)
-let simStroke = 0
-let simDistance = 0.0
-let simCalories = 0.0
-function simulateRowing () {
-  const metrics = {
-    strokesTotal: simStroke++,
-    distanceTotal: Math.round(simDistance += 10.1),
-    caloriesTotal: Math.round(simCalories += 0.3),
-    power: Math.round(80 + 20 * (Math.random() - 0.5)),
-    splitFormatted: '02:30',
-    split: Math.round(80 + 20 * (Math.random() - 0.5)),
-    strokesPerMinute: Math.round(10 + 20 * (Math.random() - 0.5)),
-    speed: Math.round((15 + 20 * (Math.random() - 0.5)).toFixed(2))
-  }
-  peripheral.notifyData(metrics)
-  notifyWebClients(metrics)
-}
 */

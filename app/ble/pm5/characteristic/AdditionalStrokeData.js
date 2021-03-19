@@ -23,7 +23,7 @@ export default class AdditionalStrokeData extends bleno.Characteristic {
   }
 
   onSubscribe (maxValueSize, updateValueCallback) {
-    log.debug('AdditionalStrokeData - central subscribed')
+    log.debug(`AdditionalStrokeData - central subscribed with maxSize: ${maxValueSize}`)
     this._updateValueCallback = updateValueCallback
     return this.RESULT_SUCCESS
   }
