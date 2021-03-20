@@ -111,6 +111,10 @@ rowingStatistics.on('rowingPaused', (data) => {
   peripheralManager.notifyMetrics('rowingPaused', metrics)
 })
 
+rowingStatistics.on('strokeStateChanged', (metrics) => {
+  peripheralManager.notifyMetrics('strokeStateChanged', metrics)
+})
+
 rowingStatistics.on('durationUpdate', (data) => {
   webServer.notifyClients({
     durationTotalFormatted: data.durationTotalFormatted

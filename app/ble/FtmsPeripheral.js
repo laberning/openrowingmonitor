@@ -12,14 +12,11 @@
   (Manufacturer Name String, Model Number String)
 */
 import bleno from '@abandonware/bleno'
-import { EventEmitter } from 'events'
 import FitnessMachineService from './ftms/FitnessMachineService.js'
 import DeviceInformationService from './ftms/DeviceInformationService.js'
 import log from 'loglevel'
 
-function createFtmsPeripheral (options) {
-  const emitter = new EventEmitter()
-
+function createFtmsPeripheral (controlCallback, options) {
   const peripheralName = options?.simulateIndoorBike ? 'OpenRowingBike' : 'OpenRowingMonitor'
   // const peripheralName = options?.simulateIndoorBike ? 'OpenRowingBike' : 'S1 Comms 1'
   const fitnessMachineService = new FitnessMachineService(options, controlPointCallback)
@@ -72,7 +69,7 @@ function createFtmsPeripheral (options) {
       req: event,
       res: {}
     }
-    emitter.emit('controlPoint', obj)
+    if (controlCallback) controlCallback(obj)
     return obj.res
   }
 
@@ -99,22 +96,24 @@ function createFtmsPeripheral (options) {
     }
   }
 
-  // deliver current rowing metrics via BLE
-  function notifyData (data) {
-    fitnessMachineService.notifyData(data)
+  // present current rowing metrics to FTMS central
+  function notifyData (type, data) {
+    if (type === 'strokeFinished' || type === 'rowingPaused') {
+      fitnessMachineService.notifyData(data)
+    }
   }
 
-  // deliver a status change via BLE
+  // present current rowing status to FTMS central
   function notifyStatus (status) {
     fitnessMachineService.notifyStatus(status)
   }
 
-  return Object.assign(emitter, {
+  return {
     triggerAdvertising,
     notifyData,
     notifyStatus,
     destroy
-  })
+  }
 }
 
 export { createFtmsPeripheral }

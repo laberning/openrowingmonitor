@@ -151,7 +151,7 @@ function createRowingEngine () {
     }
     log.debug(`estimated kDamp: ${jMoment * (-1 * kDampEstimatorAverager.weightedAverage())}`)
     log.info(`estimated omegaDotDivOmegaSquare: ${-1 * kDampEstimatorAverager.weightedAverage()}`)
-    workoutHandler.handleStrokeStateChange({
+    workoutHandler.handleStrokeStateChanged({
       strokeState: 'DRIVING'
     })
   }

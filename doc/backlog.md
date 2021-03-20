@@ -4,7 +4,6 @@ This is the very minimalistic Backlog for further development of this project.
 
 ## Soon
 
-* refactor Stroke Phase Handling in RowingStatistics and pm5Peripheral
 * Web UI: hint, when screen is not in always on mode
 * Web UI: replace fullscreen button with exit Button when started from home screen
 * investigate: occasionally stroke rate is too high - seems to happen after rowing pause

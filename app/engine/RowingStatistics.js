@@ -62,11 +62,11 @@ function createRowingStatistics () {
   }
 
   // initiated when the stroke state changes
-  function handleStrokeStateChange (state) {
+  function handleStrokeStateChanged (state) {
     // todo: wee need a better mechanism to communicate strokeState updates
     // this is an initial hacky attempt to see if we can use it for the C2-pm5 protocol
     lastStrokeState = state.strokeState
-    // emitter.emit('strokeFinished', getMetrics())
+    emitter.emit('strokeStateChanged', getMetrics())
   }
 
   function getMetrics () {
@@ -154,7 +154,7 @@ function createRowingStatistics () {
   return Object.assign(emitter, {
     handleStroke,
     handlePause,
-    handleStrokeStateChange,
+    handleStrokeStateChanged,
     reset: resetTraining
   })
 }

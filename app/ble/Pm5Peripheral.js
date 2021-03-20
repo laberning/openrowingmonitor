@@ -8,7 +8,6 @@
   see: https://www.concept2.co.uk/files/pdf/us/monitors/PM5_BluetoothSmartInterfaceDefinition.pdf
 */
 import bleno from '@abandonware/bleno'
-import { EventEmitter } from 'events'
 import { constants } from './pm5/Pm5Constants.js'
 import DeviceInformationService from './pm5/DeviceInformationService.js'
 import GapService from './pm5/GapService.js'
@@ -16,9 +15,7 @@ import log from 'loglevel'
 import Pm5ControlService from './pm5/Pm5ControlService.js'
 import Pm5RowingService from './pm5/Pm5RowingService.js'
 
-function createPm5Peripheral (options) {
-  const emitter = new EventEmitter()
-
+function createPm5Peripheral (controlCallback, options) {
   const peripheralName = constants.name
   const deviceInformationService = new DeviceInformationService()
   const gapService = new GapService()
@@ -90,23 +87,21 @@ function createPm5Peripheral (options) {
     }
   }
 
-  // deliver current rowing metrics via BLE
-  function notifyData (data) {
-    rowingService.notify(data)
-    // fitnessMachineService.notifyData(data)
+  // present current rowing metrics to C2-PM5 central
+  function notifyData (type, data) {
+    rowingService.notifyData(type, data)
   }
 
-  // deliver a status change via BLE
+  // present current rowing status to C2-PM5 central
   function notifyStatus (status) {
-    // fitnessMachineService.notifyStatus(status)
   }
 
-  return Object.assign(emitter, {
+  return {
     triggerAdvertising,
     notifyData,
     notifyStatus,
     destroy
-  })
+  }
 }
 
 export { createPm5Peripheral }

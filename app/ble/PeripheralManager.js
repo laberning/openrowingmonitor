@@ -36,7 +36,7 @@ function createPeripheralManager () {
   }
 
   function notifyMetrics (type, metrics) {
-    peripheral.notifyData(metrics)
+    peripheral.notifyData(type, metrics)
   }
 
   function notifyStatus (status) {
@@ -46,29 +46,25 @@ function createPeripheralManager () {
   async function createPeripheral (newMode) {
     if (peripheral) {
       await peripheral.destroy()
-      peripheral.off('controlPoint', emitControlPointEvent)
     }
 
     if (newMode === 'PM5') {
       log.info('bluetooth profile: Concept2 PM5')
-      peripheral = createPm5Peripheral()
+      peripheral = createPm5Peripheral(controlCallback)
       mode = 'PM5'
     } else if (newMode === 'FTMSBIKE') {
       log.info('bluetooth profile: FTMS Indoor Bike')
-      peripheral = createFtmsPeripheral({
+      peripheral = createFtmsPeripheral(controlCallback, {
         simulateIndoorBike: true
       })
       mode = 'FTMSBIKE'
     } else {
       log.info('bluetooth profile: FTMS Rower')
-      peripheral = createFtmsPeripheral({
+      peripheral = createFtmsPeripheral(controlCallback, {
         simulateIndoorBike: false
       })
       mode = 'FTMS'
     }
-    // todo: re-emitting is not that great, maybe use callbacks instead
-    peripheral.on('control', emitControlPointEvent)
-
     peripheral.triggerAdvertising()
 
     emitter.emit('control', {
@@ -79,7 +75,7 @@ function createPeripheralManager () {
     })
   }
 
-  function emitControlPointEvent (event) {
+  function controlCallback (event) {
     emitter.emit('control', event)
   }
 

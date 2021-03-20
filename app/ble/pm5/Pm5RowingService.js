@@ -75,11 +75,16 @@ export default class PM5RowingService extends bleno.PrimaryService {
     this.multiplexedCharacteristic = multiplexedCharacteristic
   }
 
-  notify (data) {
-    this.generalStatus.notify(data)
-    this.additionalStatus.notify(data)
-    this.additionalStatus2.notify(data)
-    this.strokeData.notify(data)
-    this.additionalStrokeData.notify(data)
+  notifyData (type, data) {
+    if (type === 'strokeFinished' || type === 'rowingPaused') {
+      this.generalStatus.notify(data)
+      this.additionalStatus.notify(data)
+      this.additionalStatus2.notify(data)
+      this.strokeData.notify(data)
+      this.additionalStrokeData.notify(data)
+    } else if (type === 'strokeStateChanged') {
+      // the stroke state is delivered via the GeneralStatus Characteristic, so we only need to notify that one
+      this.generalStatus.notify(data)
+    }
   }
 }
