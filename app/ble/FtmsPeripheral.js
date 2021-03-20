@@ -26,17 +26,7 @@ function createFtmsPeripheral (options) {
   const deviceInformationService = new DeviceInformationService()
 
   bleno.on('stateChange', (state) => {
-    if (state === 'poweredOn') {
-      bleno.startAdvertising(
-        peripheralName,
-        [fitnessMachineService.uuid, deviceInformationService.uuid],
-        (error) => {
-          if (error) log.error(error)
-        }
-      )
-    } else {
-      bleno.stopAdvertising()
-    }
+    triggerAdvertising(state)
   })
 
   bleno.on('advertisingStart', (error) => {
@@ -70,9 +60,6 @@ function createFtmsPeripheral (options) {
   bleno.on('advertisingStartError', (event) => {
     log.debug('advertisingStartError', event)
   })
-  bleno.on('advertisingStop', (event) => {
-    log.debug('advertisingStop', event)
-  })
   bleno.on('servicesSetError', (event) => {
     log.debug('servicesSetError', event)
   })
@@ -89,6 +76,29 @@ function createFtmsPeripheral (options) {
     return obj.res
   }
 
+  function destroy () {
+    return new Promise((resolve) => {
+      bleno.disconnect()
+      bleno.removeAllListeners()
+      bleno.stopAdvertising(resolve)
+    })
+  }
+
+  function triggerAdvertising (eventState) {
+    const activeState = eventState || bleno.state
+    if (activeState === 'poweredOn') {
+      bleno.startAdvertising(
+        peripheralName,
+        [fitnessMachineService.uuid, deviceInformationService.uuid],
+        (error) => {
+          if (error) log.error(error)
+        }
+      )
+    } else {
+      bleno.stopAdvertising()
+    }
+  }
+
   // deliver current rowing metrics via BLE
   function notifyData (data) {
     fitnessMachineService.notifyData(data)
@@ -100,8 +110,10 @@ function createFtmsPeripheral (options) {
   }
 
   return Object.assign(emitter, {
+    triggerAdvertising,
     notifyData,
-    notifyStatus
+    notifyStatus,
+    destroy
   })
 }
 

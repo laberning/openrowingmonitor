@@ -9,11 +9,10 @@
 import { fork } from 'child_process'
 import log from 'loglevel'
 import config from './config.js'
-import { createFtmsPeripheral } from './ble/FtmsPeripheral.js'
-import { createPm5Peripheral } from './ble/Pm5Peripheral.js'
 import { createRowingEngine } from './engine/RowingEngine.js'
 import { createRowingStatistics } from './engine/RowingStatistics.js'
 import { createWebServer } from './WebServer.js'
+import { createPeripheralManager } from './ble/PeripheralManager.js'
 // eslint-disable-next-line no-unused-vars
 import { recordRowingSession, replayRowingSession } from './tools/RowingRecorder.js'
 
@@ -27,42 +26,31 @@ for (const [loggerName, logLevel] of Object.entries(config.loglevel)) {
 
 log.info(`==== Open Rowing Monitor ${process.env.npm_package_version} ====\n`)
 
-let peripheral
-if (config.bluetoothMode === 'PM5') {
-  log.info('bluetooth profile: Concept2 PM5')
-  peripheral = createPm5Peripheral()
-} else if (config.bluetoothMode === 'FTMSBIKE') {
-  log.info('bluetooth profile: FTMS Indoor Bike')
-  peripheral = createFtmsPeripheral({
-    simulateIndoorBike: true
-  })
-} else {
-  log.info('bluetooth profile: FTMS Rower')
-  peripheral = createFtmsPeripheral({
-    simulateIndoorBike: false
-  })
-}
+const peripheralManager = createPeripheralManager()
 
-peripheral.on('controlPoint', (event) => {
+peripheralManager.on('control', (event) => {
   if (event?.req?.name === 'requestControl') {
     event.res = true
   } else if (event?.req?.name === 'reset') {
     log.debug('reset requested')
     rowingStatistics.reset()
-    peripheral.notifyStatus({ name: 'reset' })
+    peripheralManager.notifyStatus({ name: 'reset' })
     event.res = true
   // todo: we could use these controls once we implement a concept of a rowing session
   } else if (event?.req?.name === 'stop') {
     log.debug('stop requested')
-    peripheral.notifyStatus({ name: 'stoppedOrPausedByUser' })
+    peripheralManager.notifyStatus({ name: 'stoppedOrPausedByUser' })
     event.res = true
   } else if (event?.req?.name === 'pause') {
     log.debug('pause requested')
-    peripheral.notifyStatus({ name: 'stoppedOrPausedByUser' })
+    peripheralManager.notifyStatus({ name: 'stoppedOrPausedByUser' })
     event.res = true
   } else if (event?.req?.name === 'startOrResume') {
     log.debug('startOrResume requested')
-    peripheral.notifyStatus({ name: 'startedOrResumedByUser' })
+    peripheralManager.notifyStatus({ name: 'startedOrResumedByUser' })
+    event.res = true
+  } else if (event?.req?.name === 'peripheralMode') {
+    webServer.notifyClients({ peripheralMode: event.req.peripheralMode })
     event.res = true
   } else {
     log.info('unhandled Command', event.req)
@@ -99,7 +87,7 @@ rowingStatistics.on('strokeFinished', (data) => {
     strokeState: data.strokeState
   }
   webServer.notifyClients(metrics)
-  peripheral.notifyData(metrics)
+  peripheralManager.notifyMetrics('strokeFinished', metrics)
 })
 
 rowingStatistics.on('rowingPaused', (data) => {
@@ -120,7 +108,7 @@ rowingStatistics.on('rowingPaused', (data) => {
     strokeState: 'RECOVERY'
   }
   webServer.notifyClients(metrics)
-  peripheral.notifyData(metrics)
+  peripheralManager.notifyMetrics('rowingPaused', metrics)
 })
 
 rowingStatistics.on('durationUpdate', (data) => {
@@ -133,10 +121,16 @@ const webServer = createWebServer()
 webServer.on('messageReceived', (message) => {
   if (message.command === 'reset') {
     rowingStatistics.reset()
-    peripheral.notifyStatus({ name: 'reset' })
+    peripheralManager.notifyStatus({ name: 'reset' })
+  } if (message.command === 'switchPeripheralMode') {
+    peripheralManager.switchPeripheralMode()
   } else {
     log.warn(`invalid command received: ${message}`)
   }
+})
+
+webServer.on('clientConnected', () => {
+  webServer.notifyClients({ peripheralMode: peripheralManager.getPeripheralMode() })
 })
 
 // recordRowingSession('recordings/wrx700_2magnets.csv')

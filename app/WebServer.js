@@ -30,6 +30,7 @@ function createWebServer () {
 
   wss.on('connection', function connection (ws) {
     log.debug('websocket client connected')
+    emitter.emit('clientConnected', ws)
     ws.on('message', function incoming (data) {
       try {
         const message = JSON.parse(data)

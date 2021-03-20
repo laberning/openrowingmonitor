@@ -25,7 +25,7 @@
     <div class="label">Distance</div>
     <div class="content">
       <span class="value" id="distanceTotal"></span>
-      <span class="unit">m</span>
+      <span class="unit" id="distanceTotalUnit">m</span>
     </div>
   </div>
   <div class="col">
@@ -73,6 +73,7 @@
   <div class="col">
     <div class="content">
       <button onclick="app.toggleFullscreen()">Fullscreen</button>
+      <button onclick="app.switchPeripheralMode()" id="peripheralMode">Bluetooth Mode</button>
       <button onclick="app.reset()">Reset</button>
     </div>
   </div>

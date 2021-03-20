@@ -7,7 +7,19 @@
 */
 // eslint-disable-next-line no-unused-vars
 export function createApp () {
-  const fields = ['strokesTotal', 'distanceTotal', 'caloriesTotal', 'power', 'splitFormatted', 'strokesPerMinute', 'durationTotalFormatted']
+  const fields = ['strokesTotal', 'distanceTotal', 'caloriesTotal', 'power', 'splitFormatted', 'strokesPerMinute', 'durationTotalFormatted', 'peripheralMode']
+  const fieldFormatter = {
+    peripheralMode: (value) => {
+      if (value === 'PM5') {
+        return 'Concept2 PM5'
+      } else if (value === 'FTMSBIKE') {
+        return 'FTMS (Bike)'
+      } else {
+        return 'FTMS (Rower)'
+      }
+    },
+    distanceTotal: (value) => value >= 10000 ? { value: (value / 1000).toFixed(1), unit: 'km' } : { value, unit: 'm' }
+  }
   let socket
 
   initWebsocket()
@@ -41,7 +53,13 @@ export function createApp () {
 
         for (const [key, value] of Object.entries(data)) {
           if (fields.includes(key)) {
-            document.getElementById(key).innerHTML = value
+            const valueFormatted = fieldFormatter[key] ? fieldFormatter[key](value) : value
+            if (valueFormatted.value && valueFormatted.unit) {
+              document.getElementById(key).innerHTML = valueFormatted.value
+              document.getElementById(`${key}Unit`).innerHTML = valueFormatted.unit
+            } else {
+              document.getElementById(key).innerHTML = valueFormatted
+            }
           }
         }
       } catch (err) {
@@ -100,8 +118,13 @@ export function createApp () {
     if (socket)socket.send(JSON.stringify({ command: 'reset' }))
   }
 
+  function switchPeripheralMode () {
+    if (socket)socket.send(JSON.stringify({ command: 'switchPeripheralMode' }))
+  }
+
   return {
     toggleFullscreen,
-    reset
+    reset,
+    switchPeripheralMode
   }
 }
