@@ -4,8 +4,6 @@ This is the very minimalistic Backlog for further development of this project.
 
 ## Soon
 
-* Web UI: hint, when screen is not in always on mode
-* Web UI: replace fullscreen button with exit Button when started from home screen
 * investigate: occasionally stroke rate is too high - seems to happen after rowing pause
 * figure out where to set the Service Advertising Data (FTMS.pdf p 15)
 * investigate bug: crash, when one unsubscribe to BLE "Generic Attribute", probably a bleno bug "handleAttribute.emit is not a function"

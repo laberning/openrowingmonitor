@@ -11,5 +11,6 @@
   ],
   "background_color": "0059B3",
   "display": "fullscreen",
-  "orientation": "any"
+  "orientation": "any",
+  "start_url": "/#:standalone:"
 }

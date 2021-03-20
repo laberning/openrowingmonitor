@@ -11,15 +11,23 @@ export function createApp () {
   const fieldFormatter = {
     peripheralMode: (value) => {
       if (value === 'PM5') {
-        return 'Concept2 PM5'
+        return 'C2 PM5'
       } else if (value === 'FTMSBIKE') {
-        return 'FTMS (Bike)'
+        return 'FTMS Bike'
       } else {
-        return 'FTMS (Rower)'
+        return 'FTMS Rower'
       }
     },
     distanceTotal: (value) => value >= 10000 ? { value: (value / 1000).toFixed(1), unit: 'km' } : { value, unit: 'm' }
   }
+  const standalone = (window.location.hash === '#:standalone:')
+
+  if (standalone) {
+    document.getElementById('closeButton').style.display = 'inline-block'
+  } else {
+    document.getElementById('fullscreenButton').style.display = 'inline-block'
+  }
+
   let socket
 
   initWebsocket()
@@ -69,29 +77,29 @@ export function createApp () {
   }
 
   async function requestWakeLock () {
-    // use the Wake Lock API to prevent the screen from going to standby
-    if (!('wakeLock' in navigator)) {
-      console.log('Browser does not support Wake Lock API (or maybe we are not using SSL).' +
-      'Now enforcing the screen with a hack, user has to click once for this to work...')
-      // Chrome enables the new Wake Lock API only if the connection is secured via SSL
-      // This is quite annoying for IoT use cases like this one, where the device sits on the
-      // local network and is directly addressed by its IP.
-      // In this case the only way of using SSL is by creating a self signed certificate, and
-      // that would pop up different warnings in the browser (and also prevents fullscreen via
-      // a home screen icon so it can show these warnings). Okay, enough ranting :-)
-      // In this case we use the good old hacky way of keeping the screen on via a hidden video.
-      // eslint-disable-next-line no-undef
-      const noSleep = new NoSleep()
-      document.addEventListener('click', function enableNoSleep () {
-        document.removeEventListener('click', enableNoSleep, false)
-        noSleep.enable()
-      }, false)
-    } else {
-      try {
-        await navigator.wakeLock.request('screen')
-        console.log('Wake Lock is active')
-      } catch (err) {
-        console.log(err)
+    // Chrome enables the new Wake Lock API only if the connection is secured via SSL
+    // This is quite annoying for IoT use cases like this one, where the device sits on the
+    // local network and is directly addressed by its IP.
+    // In this case the only way of using SSL is by creating a self signed certificate, and
+    // that would pop up different warnings in the browser (and also prevents fullscreen via
+    // a home screen icon so it can show these warnings). Okay, enough ranting :-)
+    // In this case we use the good old hacky way of keeping the screen on via a hidden video.
+    // eslint-disable-next-line no-undef
+    const noSleep = new NoSleep()
+    checkAlwaysOn()
+    setInterval(() => {
+      checkAlwaysOn()
+    }, 3000)
+    document.addEventListener('click', function enableNoSleep () {
+      document.removeEventListener('click', enableNoSleep, false)
+      noSleep.enable().then(checkAlwaysOn)
+    }, false)
+
+    function checkAlwaysOn () {
+      if (noSleep.isEnabled) {
+        document.getElementById('alwaysOnHint').style.display = 'none'
+      } else {
+        document.getElementById('alwaysOnHint').style.display = 'grid'
       }
     }
   }
@@ -113,6 +121,10 @@ export function createApp () {
     }
   }
 
+  function close () {
+    window.close()
+  }
+
   function reset () {
     resetFields()
     if (socket)socket.send(JSON.stringify({ command: 'reset' }))
@@ -125,6 +137,7 @@ export function createApp () {
   return {
     toggleFullscreen,
     reset,
+    close,
     switchPeripheralMode
   }
 }

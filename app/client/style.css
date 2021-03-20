@@ -8,6 +8,7 @@ body {
     font-size: calc(16px + (60 - 16) * ((100vw - 300px) / (1920 - 300)));
     font-family: Verdana, "Lucida Sans Unicode", sans-serif;
     user-select: none;
+    overscroll-behavior: contain;
 }
 
 .grid {
@@ -52,10 +53,30 @@ button {
   background-color: #00468c;
   border: 0;
   color: white;
-  padding: 1.5vw 2vw;
-  margin: 1vw;
-  font-size: 80%;
+  padding: 1.2vw 1.5vw;
+  margin: 0.8vw;
+  font-size: 70%;
   text-align: center;
   text-decoration: none;
   display: inline-block;
+}
+
+#fullscreenButton, #closeButton {
+  display:none;
+}
+
+.popup {
+  display: none;
+  position: fixed;
+  border: solid 0.3vw white;
+  align-items: center;
+  justify-content: center;
+  padding: 10px;
+  width: 50vw;
+  height: 10vh;
+  left: 24vw;
+  top: 5vw;
+  background: rgba(80, 0, 0, 0.95);
+  font-size: 60%;
+  z-index: 20;
 }

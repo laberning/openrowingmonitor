@@ -72,11 +72,15 @@
   </div>
   <div class="col">
     <div class="content">
-      <button onclick="app.toggleFullscreen()">Fullscreen</button>
+      <button onclick="app.toggleFullscreen()" id="fullscreenButton">Fullscreen</button>
+      <button onclick="app.close()" id="closeButton">Exit</button>
       <button onclick="app.switchPeripheralMode()" id="peripheralMode">Bluetooth Mode</button>
       <button onclick="app.reset()">Reset</button>
     </div>
   </div>
+</div>
+<div class="popup" id="alwaysOnHint">
+  <p>Tap the screen to prevent display sleep.</p>
 </div>
 </body>
 </html>
