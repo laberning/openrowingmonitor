@@ -76,3 +76,4 @@ node_modules
 .DS_Store
 ._*
 tmp/
+build/

@@ -15,7 +15,7 @@ import EventEmitter from 'events'
 function createWebServer () {
   const emitter = new EventEmitter()
   const port = process.env.PORT || 80
-  const serve = serveStatic('./app/client', { index: ['index.html'] })
+  const serve = serveStatic('./build', { index: ['index.html'] })
 
   const server = http.createServer((req, res) => {
     serve(req, res, finalhandler(req, res))

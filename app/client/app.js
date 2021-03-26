@@ -2,10 +2,10 @@
 /*
   Open Rowing Monitor, https://github.com/laberning/openrowingmonitor
 
-  This is currently a very simple Web UI that displays the training metrics. Does not use any bundling
-  or transpiling yet.
+  This is currently a very simple Web UI that displays the training metrics.
 */
-// eslint-disable-next-line no-unused-vars
+import NoSleep from 'nosleep.js'
+
 export function createApp () {
   const fields = ['strokesTotal', 'distanceTotal', 'caloriesTotal', 'power', 'splitFormatted', 'strokesPerMinute', 'durationTotalFormatted', 'peripheralMode']
   const fieldFormatter = {
@@ -37,7 +37,7 @@ export function createApp () {
   function initWebsocket () {
   // use the native websocket implementation of browser to communicate with backend
   // eslint-disable-next-line no-undef
-    socket = new WebSocket(`ws://${location.host}`)
+    socket = new WebSocket(`ws://${location.host}/websocket`)
 
     socket.addEventListener('open', (event) => {
       console.log('websocket openend')

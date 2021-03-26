@@ -3,7 +3,7 @@
 <!-- markdownlint-disable-next-line no-inline-html -->
 <img width="200" height="200" align="left" src="doc/img/openrowingmonitor_icon.png">
 
-An open source rowing monitor for rowing exercise machines.
+An open source rowing monitor for rowing exercise machines. It upgrades a rowing machine into a real smart trainer that can be used with training applications and games.
 
 Open Rowing Monitor is a Node.js application that runs on a Raspberry Pi and measures the rotation of the rower's flywheel to calculate rowing specific metrics, such as power, split time, speed, stroke rate, distance and calories.
 
@@ -42,7 +42,7 @@ Fitness Machine Service (FTMS) is a standardized GATT protocol for different typ
 
 **FTMS Indoor Bike** is widely adopted by training applications for bike training. The simulated Indoor Bike offers metrics such as power and distance to the biking application. So why not use your rowing machine to row up a mountain in Zwift, Bkool, Sufferfest or similar :-)
 
-**Concept2 PM** Open Rowing Monitor also implements part of the Concept2 PM Bluetooth Smart Communication Interface Definition. This is still work in progress and may not work with all applications that support C2 rowing machines.
+**Concept2 PM** Open Rowing Monitor also implements part of the Concept2 PM Bluetooth Smart Communication Interface Definition. This is still work in progress and only implements the most common parts of the spec, so it will not work with all applications that support the C2 rowing machines.
 
 ## How it all started
 
