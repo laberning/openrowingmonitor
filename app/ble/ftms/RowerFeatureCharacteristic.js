@@ -23,13 +23,14 @@ export default class RowerFeatureCharacteristic extends bleno.Characteristic {
   onReadRequest (offset, callback) {
     // see https://www.bluetooth.com/specifications/specs/fitness-machine-service-1-0 for details
     // Fitness Machine Features for the RowerDataCharacteristic
-    // Total Distance Supported (2), Pace Supported (5),
-    // Expended Energy Supported (9), Power Measurement Supported (14)
-    // 00100100 01000010
+    // Total Distance Supported (2), Pace Supported (5), Expended Energy Supported (9),
+    // Heart Rate Measurement Supported (10), Elapsed Time Supported (bit 12),
+    // Power Measurement Supported (14)
+    // 00100100 01010110
     // Target Setting Features for the RowerDataCharacteristic
     // none
     // 0000000 0000000
-    const features = [0x24, 0x42, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00]
+    const features = [0x24, 0x56, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00]
     log.debug('Features of Rower requested')
     callback(this.RESULT_SUCCESS, features.slice(offset, features.length))
   };

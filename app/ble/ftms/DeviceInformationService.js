@@ -12,8 +12,6 @@ export default class DeviceInformationService extends bleno.PrimaryService {
       // uuid of "Device Information Service"
       uuid: '180a',
       characteristics: [
-        /* new SerialNumberCharacteristic(device),
-        new HardwareRevisionCharacteristic(device) */
       ]
     })
   }

@@ -31,17 +31,20 @@ export default class IndoorBikeDataCharacteristic extends bleno.Characteristic {
       properties: ['notify']
     })
     this._updateValueCallback = null
+    this._subscriberMaxValueSize = null
   }
 
   onSubscribe (maxValueSize, updateValueCallback) {
-    log.debug(`IndooBikeDataCharacteristic - central subscribed with maxSize: ${maxValueSize}`)
+    log.debug(`IndoorBikeDataCharacteristic - central subscribed with maxSize: ${maxValueSize}`)
     this._updateValueCallback = updateValueCallback
+    this._subscriberMaxValueSize = maxValueSize
     return this.RESULT_SUCCESS
   }
 
   onUnsubscribe () {
-    log.debug('IndooBikeDataCharacteristic - central unsubscribed')
+    log.debug('IndoorBikeDataCharacteristic - central unsubscribed')
     this._updateValueCallback = null
+    this._subscriberMaxValueSize = null
     return this.RESULT_UNLIKELY_ERROR
   }
 
@@ -56,11 +59,11 @@ export default class IndoorBikeDataCharacteristic extends bleno.Characteristic {
       const bufferBuilder = new BufferBuilder()
       // Field flags as defined in the Bluetooth Documentation
       // Instantaneous speed (default), Total Distance (4), Instantaneous Power (6)
-      // Total / Expended Energy (8)
+      // Total / Expended Energy (8), Heart Rate (9), Elapsed Time (11)
       // 01010000
       bufferBuilder.writeUInt8(0x50)
-      // 00000001
-      bufferBuilder.writeUInt8(0x01)
+      // 00001011
+      bufferBuilder.writeUInt8(0x0B)
 
       // see https://www.bluetooth.com/specifications/specs/gatt-specification-supplement-3/
       // for some of the data types
@@ -78,8 +81,16 @@ export default class IndoorBikeDataCharacteristic extends bleno.Characteristic {
       // period of one hour.
       bufferBuilder.writeUInt16LE(data.caloriesPerHour)
       // Energy per minute
-      bufferBuilder.writeUInt16LE(data.caloriesPerMinute)
+      bufferBuilder.writeUInt8(data.caloriesPerMinute)
+      // Heart Rate: Beats per minute with a resolution of 1
+      bufferBuilder.writeUInt8(data.heartRate)
+      // Elapsed Time: Seconds with a resolution of 1
+      bufferBuilder.writeUInt16LE(data.durationTotal)
 
+      const buffer = bufferBuilder.getBuffer()
+      if (buffer.length > this._subscriberMaxValueSize) {
+        log.warn(`IndoorBikeDataCharacteristic - notification of ${buffer.length} bytes is too large for the subscriber`)
+      }
       this._updateValueCallback(bufferBuilder.getBuffer())
     }
     return this.RESULT_SUCCESS

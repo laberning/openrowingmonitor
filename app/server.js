@@ -87,6 +87,7 @@ rowingStatistics.on('strokeFinished', (data) => {
     split: data.split,
     strokesPerMinute: data.strokesPerMinute,
     speed: data.speed,
+    heartRate: 0,
     strokeState: data.strokeState
   }
   webServer.notifyClients(metrics)
@@ -107,6 +108,7 @@ rowingStatistics.on('rowingPaused', (data) => {
     splitFormatted: '∞',
     split: Infinity,
     speed: 0,
+    heartRate: 0,
     strokeState: 'RECOVERY'
   }
   webServer.notifyClients(metrics)
