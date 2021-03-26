@@ -70,7 +70,7 @@ function createRowingStatistics () {
   }
 
   function getMetrics () {
-    const splitTime = speedAverager.weightedAverage() !== 0 ? (500.0 / speedAverager.weightedAverage()) : 0
+    const splitTime = speedAverager.weightedAverage() !== 0 ? (500.0 / speedAverager.weightedAverage()) : Infinity
     return {
       durationTotal,
       durationTotalFormatted: secondsToTimeString(durationTotal),
@@ -143,6 +143,7 @@ function createRowingStatistics () {
 
   // converts a timeStamp in seconds to a human readable hh:mm:ss format
   function secondsToTimeString (secondsTimeStamp) {
+    if (secondsTimeStamp === Infinity) return '∞'
     const hours = Math.floor(secondsTimeStamp / 60 / 60)
     const minutes = Math.floor(secondsTimeStamp / 60) - (hours * 60)
     const seconds = Math.floor(secondsTimeStamp % 60)

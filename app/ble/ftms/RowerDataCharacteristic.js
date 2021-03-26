@@ -65,7 +65,8 @@ export default class RowerDataCharacteristic extends bleno.Characteristic {
       // Total Distance in meters
       bufferBuilder.writeUInt24LE(data.distanceTotal)
       // Instantaneous Pace in seconds/500m
-      bufferBuilder.writeUInt16LE(data.split)
+      // if split is infinite (i.e. while pausing), use the highest possible number
+      bufferBuilder.writeUInt16LE(data.split !== Infinity ? data.split : 0xFFFF)
       // Instantaneous Power in watts
       bufferBuilder.writeUInt16LE(data.power)
       // Energy in kcal

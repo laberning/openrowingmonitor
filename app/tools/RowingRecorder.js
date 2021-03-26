@@ -14,8 +14,8 @@ function recordRowingSession (filename) {
   // to track time close to realtime
   const gpioTimerService = fork('./app/gpio/GpioTimerService.js')
   gpioTimerService.on('message', (dataPoint) => {
-    log.debug(dataPoint.delta)
-    fs.appendFile(filename, `${dataPoint.delta}\n`, (err) => { if (err) log.error(err) })
+    log.debug(dataPoint)
+    fs.appendFile(filename, `${dataPoint}\n`, (err) => { if (err) log.error(err) })
   })
 }
 

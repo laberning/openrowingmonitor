@@ -87,9 +87,6 @@ export function createApp () {
     // eslint-disable-next-line no-undef
     const noSleep = new NoSleep()
     checkAlwaysOn()
-    setInterval(() => {
-      checkAlwaysOn()
-    }, 3000)
     document.addEventListener('click', function enableNoSleep () {
       document.removeEventListener('click', enableNoSleep, false)
       noSleep.enable().then(checkAlwaysOn)

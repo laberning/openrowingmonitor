@@ -6,8 +6,6 @@ This is the very minimalistic Backlog for further development of this project.
 
 * investigate: occasionally stroke rate is too high - seems to happen after rowing pause
 * figure out where to set the Service Advertising Data (FTMS.pdf p 15)
-* investigate bug: crash, when one unsubscribe to BLE "Generic Attribute", probably a bleno bug "handleAttribute.emit is not a function"
-* what value should we use for split, if we are in a rowing pause? technically should be infinity...
 * set up a Raspberry Pi with the installation instructions to see if they are correct
 
 ## Later

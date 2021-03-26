@@ -8,13 +8,15 @@
 */
 import { fork } from 'child_process'
 import log from 'loglevel'
+// eslint-disable-next-line no-unused-vars
+import fs from 'fs'
 import config from './config.js'
 import { createRowingEngine } from './engine/RowingEngine.js'
 import { createRowingStatistics } from './engine/RowingStatistics.js'
 import { createWebServer } from './WebServer.js'
 import { createPeripheralManager } from './ble/PeripheralManager.js'
 // eslint-disable-next-line no-unused-vars
-import { recordRowingSession, replayRowingSession } from './tools/RowingRecorder.js'
+import { replayRowingSession } from './tools/RowingRecorder.js'
 
 // set the log levels
 log.setLevel(config.loglevel.default)
@@ -60,6 +62,7 @@ peripheralManager.on('control', (event) => {
 const gpioTimerService = fork('./app/gpio/GpioTimerService.js')
 gpioTimerService.on('message', (dataPoint) => {
   rowingEngine.handleRotationImpulse(dataPoint)
+  // fs.appendFile('recordings/wrx700_2magnets_long.csv', `${dataPoint}\n`, (err) => { if (err) log.error(err) })
 })
 
 const rowingEngine = createRowingEngine()
@@ -101,9 +104,8 @@ rowingStatistics.on('rowingPaused', (data) => {
     caloriesPerHour: 0,
     strokesPerMinute: 0,
     power: 0,
-    // todo: setting split to 0 might be dangerous, depending on what the client does with this
-    splitFormatted: '00:00',
-    split: 0,
+    splitFormatted: '∞',
+    split: Infinity,
     speed: 0,
     strokeState: 'RECOVERY'
   }
@@ -137,7 +139,6 @@ webServer.on('clientConnected', () => {
   webServer.notifyClients({ peripheralMode: peripheralManager.getPeripheralMode() })
 })
 
-// recordRowingSession('recordings/wrx700_2magnets.csv')
 /*
 replayRowingSession(rowingEngine.handleRotationImpulse, {
   filename: 'recordings/wrx700_2magnets.csv',

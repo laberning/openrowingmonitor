@@ -46,7 +46,8 @@ export default class AdditionalStatus extends bleno.Characteristic {
       // heartRate: UInt8 in bpm, 255 if invalid
       bufferBuilder.writeUInt8(255)
       // currentPace: UInt16LE in 0.01 sec/500m
-      bufferBuilder.writeUInt16LE(data.split * 100)
+      // if split is infinite (i.e. while pausing), use the highest possible number
+      bufferBuilder.writeUInt16LE(data.split !== Infinity ? data.split * 100 : 0xFFFF)
       // averagePace: UInt16LE in 0.01 sec/500m
       let averagePace = 0
       if (data.distanceTotal && data.distanceTotal !== 0) {
