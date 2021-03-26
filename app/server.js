@@ -87,7 +87,8 @@ rowingStatistics.on('strokeFinished', (data) => {
     split: data.split,
     strokesPerMinute: data.strokesPerMinute,
     speed: data.speed,
-    heartRate: 0,
+    // todo: no real measurement of heartRate yet
+    heartRate: Math.max(data.caloriesPerMinute * 7, 50),
     strokeState: data.strokeState
   }
   webServer.notifyClients(metrics)
@@ -108,7 +109,8 @@ rowingStatistics.on('rowingPaused', (data) => {
     splitFormatted: '∞',
     split: Infinity,
     speed: 0,
-    heartRate: 0,
+    // todo: no real measurement of heartRate yet
+    heartRate: Math.max(data.caloriesPerMinute * 7, 50),
     strokeState: 'RECOVERY'
   }
   webServer.notifyClients(metrics)

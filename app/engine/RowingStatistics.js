@@ -117,13 +117,7 @@ function createRowingStatistics () {
 
   // clear the displayed metrics in case the user pauses rowing
   function pauseRowing () {
-    emitter.emit('rowingPaused', {
-      durationTotal,
-      durationTotalFormatted: secondsToTimeString(durationTotal),
-      strokesTotal: strokesTotal,
-      distanceTotal: Math.round(distanceTotal),
-      caloriesTotal: Math.round(caloriesTotal)
-    })
+    emitter.emit('rowingPaused', getMetrics())
   }
 
   function startDurationTimer () {
