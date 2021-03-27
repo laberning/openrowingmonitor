@@ -7,6 +7,7 @@ This is the very minimalistic Backlog for further development of this project.
 * investigate: occasionally stroke rate is too high - seems to happen after rowing pause
 * figure out where to set the Service Advertising Data (FTMS.pdf p 15)
 * set up a Raspberry Pi with the installation instructions to see if they are correct
+* record a longer rowing session and analyze two encountered problems: 1) rarely the stroke rate doubles for a short duration (might be a problem with stroke detection when measurements are imprecise), 2) in one occasion the measured power jumped to a very high value after a break (40000 watts)
 
 ## Later
 

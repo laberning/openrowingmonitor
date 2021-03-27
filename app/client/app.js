@@ -23,9 +23,11 @@ export function createApp () {
   const standalone = (window.location.hash === '#:standalone:')
 
   if (standalone) {
-    document.getElementById('closeButton').style.display = 'inline-block'
+    document.getElementById('close-button').style.display = 'inline-block'
+    document.getElementById('fullscreen-button').style.display = 'none'
   } else {
-    document.getElementById('fullscreenButton').style.display = 'inline-block'
+    document.getElementById('fullscreen-button').style.display = 'inline-block'
+    document.getElementById('close-button').style.display = 'none'
   }
 
   let socket
@@ -40,7 +42,7 @@ export function createApp () {
     socket = new WebSocket(`ws://${location.host}/websocket`)
 
     socket.addEventListener('open', (event) => {
-      console.log('websocket openend')
+      console.log('websocket opened')
     })
 
     socket.addEventListener('error', (error) => {
@@ -86,19 +88,10 @@ export function createApp () {
     // In this case we use the good old hacky way of keeping the screen on via a hidden video.
     // eslint-disable-next-line no-undef
     const noSleep = new NoSleep()
-    checkAlwaysOn()
     document.addEventListener('click', function enableNoSleep () {
       document.removeEventListener('click', enableNoSleep, false)
-      noSleep.enable().then(checkAlwaysOn)
+      noSleep.enable()
     }, false)
-
-    function checkAlwaysOn () {
-      if (noSleep.isEnabled) {
-        document.getElementById('alwaysOnHint').style.display = 'none'
-      } else {
-        document.getElementById('alwaysOnHint').style.display = 'grid'
-      }
-    }
   }
 
   function resetFields () {
