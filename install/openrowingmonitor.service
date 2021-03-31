@@ -1,0 +1,13 @@
+[Unit]
+Description=Open Rowing Monitor
+After=multi-user.target
+
+[Service]
+Type=simple
+User=root
+Restart=on-failure
+WorkingDirectory=/opt/openrowingmonitor
+ExecStart=npm start
+
+[Install]
+WantedBy=multi-user.target
