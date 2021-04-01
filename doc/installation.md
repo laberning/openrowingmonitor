@@ -1,6 +1,6 @@
 # Set up of Open Rowing Monitor
 
-This guide roughly explains how to set up your device. I will probably build an automated installation script from this later.
+This guide roughly explains how to set up the rowing software and hardware.
 
 ## Requirements
 
@@ -13,73 +13,29 @@ This guide roughly explains how to set up your device. I will probably build an 
 
 ## Software Installation
 
-### Set up the Raspberry Pi
+### Initialization of the Raspberry Pi
 
 * Install **Raspberry Pi OS Lite** on the SD Card i.e. with the [Raspberry Pi Imager](https://www.raspberrypi.org/software)
 * Connect the device to your network ([headless](https://www.raspberrypi.org/documentation/configuration/wireless/headless.md) or via [command line](https://www.raspberrypi.org/documentation/configuration/wireless/wireless-cli.md))
 * Enable [SSH](https://www.raspberrypi.org/documentation/remote-access/ssh/README.md)
 
-### Open a SSH-Connection and set up the dependencies
+### Installation of the Open Rowing Monitor
+
+Connect to the device with SSH and initiate the following command to set up all required dependencies and to install Open Rowing Monitor as an automatically starting system service:
 
 ```zsh
-sudo apt-get update
-sudo apt-get dist-upgrade
-sudo systemctl disable bluetooth
-sudo apt-get install bluetooth bluez libbluetooth-dev libudev-dev
+/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/laberning/openrowingmonitor/HEAD/install/install.sh)"
 ```
 
-### Install Node.js
-
-```zsh
-curl -fsSL https://deb.nodesource.com/setup_14.x | bash -
-apt-get install -y nodejs
-```
-
-### If you want to run Bluetooth Low Energy and the webserver on port 80 without root
+### If you want to run Bluetooth Low Energy and the Web-Server on port 80 without root
 
 ```zsh
 sudo setcap cap_net_bind_service,cap_net_raw=+eip $(eval readlink -f `which node`)
 ```
 
-### Download Open Rowing Monitor and install dependencies
-
-```zsh
-curl -LJO https://github.com/laberning/openrowingmonitor/archive/main.zip
-unzip main.zip -d ~/openrowingmonitor
-rm main.zip
-cd ~/openrowingmonitor
-npm install
-```
-
-### Configuration and Startup
-
-You should now be able to start the Rowing Monitor: `npm start`
-
-You should now adjust the rower specific parameters in `app/engine/RowingEngine.js` to suit your rowing machine.
-
-### Automatically start Open Rowing Monitor while booting
-
-Create file `/lib/systemd/system/openrowingmonitor.service` with the following content:
-
-```Properties
-[Unit]
-Description=Open Rowing Monitor
-After=multi-user.target
-
-[Service]
-Type=simple
-User=pi
-# Restart=on-failure
-WorkingDirectory=/home/pi/openrowingmonitor
-ExecStart=/bin/bash -c 'PATH=/home/pi/.nvm/versions/node/v14.15.5/bin:$PATH exec npm start'
-
-[Install]
-WantedBy=multi-user.target
-```
-
 ## Hardware Installation
 
-Basically all that's left to do is hook up your sensor to the GPIO pins of the Raspberry Pi.
+Basically all that's left to do is hook up your sensor to the GPIO pins of the Raspberry Pi and configure the rowing machine specific parameters of the software.
 
 Open Rowing Monitor reads the sensor signal from GPIO port 17 and expects it to pull on GND if the sensor is closed. To get a stable reading you should add a pull-up resistor to that pin. I prefer to use the internal resistor of the Raspberry Pi to keep the wiring simple but of course you can also go with an external circuit.
 
@@ -98,8 +54,10 @@ How to connect this to your rowing machine is specific to your device. You need 
 ![Connecting the reed sensor](img/raspberrypi_reedsensor_wiring.jpg)
 *Connecting the reed sensor*
 
-If your machine does not have something like this or if the sensor is not acessible, you can still build something similar quite easily. Some ideas on what to use:
+If your machine does not have something like this or if the sensor is not accessible, you can still build something similar quite easily. Some ideas on what to use:
 
 * Reed sensor (i.e. of an old bike tachometer)
 * PAS sensor (i.e. from an E-bike)
 * Optical chopper wheel
+
+You should now adjust the rower specific parameters in `app/engine/RowingEngine.js` to suit your rowing machine.

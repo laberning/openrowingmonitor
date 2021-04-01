@@ -20,13 +20,14 @@ cancel() {
 }
 
 print "Installation script for Open Rowing Monitor"
+print
+print "This script will set up Open Rowing Monitor on a Raspberry Pi 3 / 4 with Raspberry Pi OS (Lite)."
+print "You should only run this script on a SD Card that does not contain any important data."
+print
 
 if [[ "$(uname -n)" != "raspberrypi" ]]; then
   cancel "This script currently only works on Raspberry Pi OS, you will have to do a manual installation."
 fi
-
-print "This script will set up Open Rowing Monitor on a Raspberry Pi 3 / 4 with Raspberry Pi OS (lite)."
-print "You should only run this script on a SD Card that does not contain any important other data."
 
 VERSION=$(grep -oP '(?<=^VERSION=).+' /etc/os-release | tr -d '"')
 if [[ $VERSION != "10 (buster)" ]]; then
@@ -34,9 +35,11 @@ if [[ $VERSION != "10 (buster)" ]]; then
   print "You are running Raspberry Pi OS $VERSION, are you sure that you want to continue?"
 fi
 
+print
 read -p "Press RETURN to continue or CTRL + C to abort"
 
-print "installing dependencies..."
+print
+print "Installing System dependencies..."
 sudo apt-get -y update
 sudo apt-get -y dist-upgrade
 sudo systemctl disable bluetooth
@@ -45,7 +48,8 @@ sudo apt-get -y install bluetooth bluez libbluetooth-dev libudev-dev git
 curl -fsSL https://deb.nodesource.com/setup_14.x | sudo -E bash -
 sudo apt-get install -y nodejs
 
-print "installing openrowingmonitor..."
+print
+print "Installing Open Rowing Monitor..."
 INSTALL_DIR="/opt/openrowingmonitor"
 GIT_REMOTE="https://github.com/laberning/openrowingmonitor.git"
 
@@ -68,14 +72,18 @@ sudo git reset --hard origin/main
 # otherwise node-gyp would fail while building the system dependencies
 sudo npm config set user 0
 
-print "downloading and compiling dependencies..."
+print
+print "Downloading and compiling Runtime dependencies..."
 sudo npm install
 sudo npm run build
 
+print
+print "Setting up Open Rowing Monitor as autostarting system service..."
 sudo cp install/openrowingmonitor.service /lib/systemd/system/
 sudo systemctl daemon-reload
 sudo systemctl enable openrowingmonitor
 sudo systemctl restart openrowingmonitor
 
-print "installation finished"
-print "Open Rowing Monitor should now be up and running... (open http://<ip-of-this-device> to verify)"
+print
+print "Installation of Open Rowing Monitor finished"
+print "Open Rowing Monitor should now be up and running."
