@@ -7,7 +7,8 @@
 import NoSleep from 'nosleep.js'
 
 export function createApp () {
-  const fields = ['strokesTotal', 'distanceTotal', 'caloriesTotal', 'power', 'splitFormatted', 'strokesPerMinute', 'durationTotalFormatted', 'peripheralMode']
+  const fields = ['strokesTotal', 'distanceTotal', 'caloriesTotal', 'power', 'heartrate',
+    'splitFormatted', 'strokesPerMinute', 'durationTotalFormatted', 'peripheralMode']
   const fieldFormatter = {
     peripheralMode: (value) => {
       if (value === 'PM5') {
@@ -18,7 +19,10 @@ export function createApp () {
         return 'FTMS Rower'
       }
     },
-    distanceTotal: (value) => value >= 10000 ? { value: (value / 1000).toFixed(1), unit: 'km' } : { value, unit: 'm' }
+    distanceTotal:
+    (value) => value >= 10000
+      ? { value: (value / 1000).toFixed(1), unit: 'km' }
+      : { value, unit: 'm' }
   }
   const standalone = (window.location.hash === '#:standalone:')
 
@@ -61,14 +65,31 @@ export function createApp () {
       try {
         const data = JSON.parse(event.data)
 
+        // show heart rate, if present
+        if (data.heartrate !== undefined) {
+          if (data.heartrate !== 0) {
+            document.getElementById('heartrate-container').style.display = 'inline-block'
+            document.getElementById('strokes-total-container').style.display = 'none'
+          } else {
+            document.getElementById('strokes-total-container').style.display = 'inline-block'
+            document.getElementById('heartrate-container').style.display = 'none'
+          }
+        }
+
+        let activeFields = fields
+        // if we are in reset state only update heart rate and peripheral mode
+        if (data.strokesTotal === 0) {
+          activeFields = ['heartrate', 'peripheralMode']
+        }
+
         for (const [key, value] of Object.entries(data)) {
-          if (fields.includes(key)) {
+          if (activeFields.includes(key)) {
             const valueFormatted = fieldFormatter[key] ? fieldFormatter[key](value) : value
-            if (valueFormatted.value && valueFormatted.unit) {
-              document.getElementById(key).innerHTML = valueFormatted.value
-              document.getElementById(`${key}Unit`).innerHTML = valueFormatted.unit
+            if (valueFormatted.value !== undefined && valueFormatted.unit !== undefined) {
+              if (document.getElementById(key)) document.getElementById(key).innerHTML = valueFormatted.value
+              if (document.getElementById(`${key}Unit`)) document.getElementById(`${key}Unit`).innerHTML = valueFormatted.unit
             } else {
-              document.getElementById(key).innerHTML = valueFormatted
+              if (document.getElementById(key)) document.getElementById(key).innerHTML = valueFormatted
             }
           }
         }
@@ -95,8 +116,8 @@ export function createApp () {
   }
 
   function resetFields () {
-    for (const key of fields) {
-      document.getElementById(key).innerHTML = '--'
+    for (const key of fields.filter((elem) => elem !== 'peripheralMode')) {
+      if (document.getElementById(key)) document.getElementById(key).innerHTML = '--'
     }
   }
 

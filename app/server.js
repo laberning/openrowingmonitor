@@ -69,62 +69,27 @@ const rowingEngine = createRowingEngine()
 const rowingStatistics = createRowingStatistics()
 rowingEngine.notify(rowingStatistics)
 
-rowingStatistics.on('strokeFinished', (data) => {
-  log.info(`stroke: ${data.strokesTotal}, dur: ${data.strokeTime}s, power: ${data.power}w` +
-  `, split: ${data.splitFormatted}, ratio: ${data.powerRatio}, dist: ${data.distanceTotal}m` +
-  `, cal: ${data.caloriesTotal}kcal, SPM: ${data.strokesPerMinute}, speed: ${data.speed}km/h` +
-  `, cal/hour: ${data.caloriesPerHour}kcal, cal/minute: ${data.caloriesPerMinute}kcal`)
-  const metrics = {
-    durationTotal: data.durationTotal,
-    durationTotalFormatted: data.durationTotalFormatted,
-    strokesTotal: data.strokesTotal,
-    distanceTotal: data.distanceTotal,
-    caloriesTotal: data.caloriesTotal,
-    caloriesPerMinute: data.caloriesPerMinute,
-    caloriesPerHour: data.caloriesPerHour,
-    power: data.power,
-    splitFormatted: data.splitFormatted,
-    split: data.split,
-    strokesPerMinute: data.strokesPerMinute,
-    speed: data.speed,
-    // todo: no real measurement of heartRate yet
-    heartRate: Math.max(data.caloriesPerMinute * 7, 50),
-    strokeState: data.strokeState
-  }
+rowingStatistics.on('strokeFinished', (metrics) => {
+  log.info(`stroke: ${metrics.strokesTotal}, dur: ${metrics.strokeTime}s, power: ${metrics.power}w` +
+  `, split: ${metrics.splitFormatted}, ratio: ${metrics.powerRatio}, dist: ${metrics.distanceTotal}m` +
+  `, cal: ${metrics.caloriesTotal}kcal, SPM: ${metrics.strokesPerMinute}, speed: ${metrics.speed}km/h` +
+  `, cal/hour: ${metrics.caloriesPerHour}kcal, cal/minute: ${metrics.caloriesPerMinute}kcal`)
   webServer.notifyClients(metrics)
   peripheralManager.notifyMetrics('strokeFinished', metrics)
-})
-
-rowingStatistics.on('rowingPaused', (data) => {
-  const metrics = {
-    durationTotal: data.durationTotal,
-    durationTotalFormatted: data.durationTotalFormatted,
-    strokesTotal: data.strokesTotal,
-    distanceTotal: data.distanceTotal,
-    caloriesTotal: data.caloriesTotal,
-    caloriesPerMinute: 0,
-    caloriesPerHour: 0,
-    strokesPerMinute: 0,
-    power: 0,
-    splitFormatted: '∞',
-    split: Infinity,
-    speed: 0,
-    // todo: no real measurement of heartRate yet
-    heartRate: Math.max(data.caloriesPerMinute * 7, 50),
-    strokeState: 'RECOVERY'
-  }
-  webServer.notifyClients(metrics)
-  peripheralManager.notifyMetrics('rowingPaused', metrics)
 })
 
 rowingStatistics.on('strokeStateChanged', (metrics) => {
   peripheralManager.notifyMetrics('strokeStateChanged', metrics)
 })
 
-rowingStatistics.on('durationUpdate', (data) => {
-  webServer.notifyClients({
-    durationTotalFormatted: data.durationTotalFormatted
-  })
+rowingStatistics.on('metricsUpdate', (metrics) => {
+  webServer.notifyClients(metrics)
+  peripheralManager.notifyMetrics('metricsUpdate', metrics)
+})
+
+const bleCentralService = fork('./app/ble/CentralService.js')
+bleCentralService.on('message', (heartrateMeasurement) => {
+  rowingStatistics.handleHeartrateMeasurement(heartrateMeasurement)
 })
 
 const webServer = createWebServer()
@@ -132,10 +97,10 @@ webServer.on('messageReceived', (message) => {
   if (message.command === 'reset') {
     rowingStatistics.reset()
     peripheralManager.notifyStatus({ name: 'reset' })
-  } if (message.command === 'switchPeripheralMode') {
+  } else if (message.command === 'switchPeripheralMode') {
     peripheralManager.switchPeripheralMode()
   } else {
-    log.warn(`invalid command received: ${message}`)
+    log.warn('invalid command received:', message)
   }
 })
 

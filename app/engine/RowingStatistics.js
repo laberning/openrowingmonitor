@@ -23,12 +23,26 @@ function createRowingStatistics () {
   let trainingRunning = false
   let durationTimer
   let rowingPausedTimer
+  let heartrateResetTimer
   let distanceTotal = 0.0
   let durationTotal = 0
   let strokesTotal = 0
   let caloriesTotal = 0.0
+  let heartrate = 0
+  let heartrateBatteryLevel = 0
   let lastStrokeDuration = 0.0
   let lastStrokeState = 'RECOVERY'
+  let lastMetrics = {}
+
+  // send metrics to the clients periodically, if the data has changed
+  setInterval(emitMetrics, 1000)
+  function emitMetrics () {
+    const currentMetrics = getMetrics()
+    if (Object.entries(currentMetrics).toString() !== Object.entries(lastMetrics).toString()) {
+      emitter.emit('metricsUpdate', currentMetrics)
+      lastMetrics = currentMetrics
+    }
+  }
 
   function handleStroke (stroke) {
     if (!trainingRunning) startTraining()
@@ -69,6 +83,18 @@ function createRowingStatistics () {
     emitter.emit('strokeStateChanged', getMetrics())
   }
 
+  // initiated when new heart rate value is received from heart rate sensor
+  function handleHeartrateMeasurement (value) {
+    // set the heart rate to zero, if we did not receive a value for some time
+    if (heartrateResetTimer)clearInterval(heartrateResetTimer)
+    heartrateResetTimer = setTimeout(() => {
+      heartrate = 0
+      heartrateBatteryLevel = 0
+    }, 2000)
+    heartrate = value.heartrate
+    heartrateBatteryLevel = value.batteryLevel
+  }
+
   function getMetrics () {
     const splitTime = speedAverager.weightedAverage() !== 0 ? (500.0 / speedAverager.weightedAverage()) : Infinity
     return {
@@ -86,7 +112,9 @@ function createRowingStatistics () {
       powerRatio: powerRatioAverager.weightedAverage().toFixed(2),
       strokesPerMinute: strokeAverager.weightedAverage() !== 0 ? (60.0 / strokeAverager.weightedAverage()).toFixed(1) : 0,
       speed: (speedAverager.weightedAverage() * 3.6).toFixed(2), // km/h
-      strokeState: lastStrokeState
+      strokeState: lastStrokeState,
+      heartrate,
+      heartrateBatteryLevel
     }
   }
 
@@ -115,18 +143,18 @@ function createRowingStatistics () {
     powerRatioAverager.reset()
   }
 
-  // clear the displayed metrics in case the user pauses rowing
+  // clear the metrics in case the user pauses rowing
   function pauseRowing () {
-    emitter.emit('rowingPaused', getMetrics())
+    strokeAverager.reset()
+    powerAverager.reset()
+    speedAverager.reset()
+    powerRatioAverager.reset()
+    lastStrokeState = 'RECOVERY'
   }
 
   function startDurationTimer () {
     durationTimer = setInterval(() => {
       durationTotal++
-      emitter.emit('durationUpdate', {
-        durationTotal,
-        durationTotalFormatted: secondsToTimeString(durationTotal)
-      })
     }, 1000)
   }
 
@@ -149,6 +177,7 @@ function createRowingStatistics () {
   return Object.assign(emitter, {
     handleStroke,
     handlePause,
+    handleHeartrateMeasurement,
     handleStrokeStateChanged,
     reset: resetTraining
   })

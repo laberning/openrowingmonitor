@@ -98,7 +98,7 @@ function createFtmsPeripheral (controlCallback, options) {
 
   // present current rowing metrics to FTMS central
   function notifyData (type, data) {
-    if (type === 'strokeFinished' || type === 'rowingPaused') {
+    if (type === 'strokeFinished' || type === 'metricsUpdate') {
       fitnessMachineService.notifyData(data)
     }
   }

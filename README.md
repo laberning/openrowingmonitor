@@ -24,6 +24,7 @@ Open Rowing Monitor implements a physics model to simulate the typical metrics o
 * Strokes per Minute
 * Calories used (kcal)
 * Training Duration
+* Heart Rate (requires BLE Heart Rate Monitor)
 
 ### Web Interface
 

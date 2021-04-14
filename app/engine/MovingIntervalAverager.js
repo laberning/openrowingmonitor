@@ -23,7 +23,11 @@ function createMovingIntervalAverager (movingDuration) {
   }
 
   function average () {
-    return sum / duration * movingDuration
+    if (duration > 0) {
+      return sum / duration * movingDuration
+    } else {
+      return 0
+    }
   }
 
   function reset () {

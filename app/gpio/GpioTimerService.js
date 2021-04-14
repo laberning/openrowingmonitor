@@ -1,6 +1,10 @@
 'use strict'
 /*
   Open Rowing Monitor, https://github.com/laberning/openrowingmonitor
+
+  Measures the time between impulses on the GPIO pin. Started in a
+  separate thread, since we want the measured time to be as close as
+  possible to real time.
 */
 import process from 'process'
 import { Gpio } from 'onoff'

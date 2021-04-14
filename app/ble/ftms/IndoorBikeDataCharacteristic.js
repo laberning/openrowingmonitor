@@ -83,7 +83,7 @@ export default class IndoorBikeDataCharacteristic extends bleno.Characteristic {
       // Energy per minute
       bufferBuilder.writeUInt8(data.caloriesPerMinute)
       // Heart Rate: Beats per minute with a resolution of 1
-      bufferBuilder.writeUInt8(data.heartRate)
+      bufferBuilder.writeUInt8(data.heartrate)
       // Elapsed Time: Seconds with a resolution of 1
       bufferBuilder.writeUInt16LE(data.durationTotal)
 

@@ -43,8 +43,8 @@ export default class AdditionalStatus extends bleno.Characteristic {
       bufferBuilder.writeUInt16LE(data.speed * 1000 / 3.6)
       // strokeRate: UInt8 in strokes/min
       bufferBuilder.writeUInt8(data.strokesPerMinute)
-      // heartRate: UInt8 in bpm, 255 if invalid
-      bufferBuilder.writeUInt8(255)// data.heartRate
+      // heartrate: UInt8 in bpm, 255 if invalid
+      bufferBuilder.writeUInt8(data.heartrate)
       // currentPace: UInt16LE in 0.01 sec/500m
       // if split is infinite (i.e. while pausing), use the highest possible number
       bufferBuilder.writeUInt16LE(data.split !== Infinity ? data.split * 100 : 0xFFFF)

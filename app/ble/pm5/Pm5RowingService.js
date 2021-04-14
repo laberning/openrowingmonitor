@@ -76,7 +76,7 @@ export default class PM5RowingService extends bleno.PrimaryService {
   }
 
   notifyData (type, data) {
-    if (type === 'strokeFinished' || type === 'rowingPaused') {
+    if (type === 'strokeFinished' || type === 'metricsUpdate') {
       this.generalStatus.notify(data)
       this.additionalStatus.notify(data)
       this.additionalStatus2.notify(data)

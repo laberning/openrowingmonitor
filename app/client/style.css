@@ -67,7 +67,6 @@ div.label, div.content {
 
 button {
   outline:none;
-  /* background-color: #00468c; */
   background-color: #365080;
   border: 0;
   color: white;
@@ -80,6 +79,10 @@ button {
   width: 3.5em;
 }
 
-#close-button {
+#close-button, #heartrate-container {
   display:none;
+}
+
+#heartrate-container, #strokes-total-container {
+  width:100%;
 }
