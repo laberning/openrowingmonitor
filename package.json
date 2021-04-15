@@ -24,7 +24,7 @@
     "test:watch": "uvu --watch"
   },
   "dependencies": {
-    "@abandonware/bleno": "^0.5.1-3",
+    "@abandonware/bleno": "^0.5.1-4",
     "@abandonware/noble": "^1.9.2-13",
     "finalhandler": "^1.1.2",
     "http": "0.0.1-security",
