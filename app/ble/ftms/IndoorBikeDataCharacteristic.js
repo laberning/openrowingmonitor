@@ -58,10 +58,10 @@ export default class IndoorBikeDataCharacteristic extends bleno.Characteristic {
     if (this._updateValueCallback) {
       const bufferBuilder = new BufferBuilder()
       // Field flags as defined in the Bluetooth Documentation
-      // Instantaneous speed (default), Total Distance (4), Instantaneous Power (6)
-      // Total / Expended Energy (8), Heart Rate (9), Elapsed Time (11)
-      // 01010000
-      bufferBuilder.writeUInt8(0x50)
+      // Instantaneous speed (default), Instantaneous Cadence (2), Total Distance (4),
+      // Instantaneous Power (6), Total / Expended Energy (8), Heart Rate (9), Elapsed Time (11)
+      // 01010100
+      bufferBuilder.writeUInt8(0x54)
       // 00001011
       bufferBuilder.writeUInt8(0x0B)
 
@@ -69,6 +69,8 @@ export default class IndoorBikeDataCharacteristic extends bleno.Characteristic {
       // for some of the data types
       // Instantaneous Speed in km/h
       bufferBuilder.writeUInt16LE(data.speed * 100)
+      // Instantaneous Cadence in rotations per minute (we use this to communicate the strokes per minute)
+      bufferBuilder.writeUInt16LE(data.strokesPerMinute * 2)
       // Total Distance in meters
       bufferBuilder.writeUInt24LE(data.distanceTotal)
       // Instantaneous Power in watts
