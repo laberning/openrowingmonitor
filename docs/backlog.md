@@ -4,7 +4,6 @@ This is the very minimalistic Backlog for further development of this project.
 
 ## Soon
 
-* monitor battery level of heart rate monitor and show hint if battery is low
 * add an update script to simplify the migration to new versions
 * validate FTMS with more training applications and harden implementation (i.e. Holofit and Coxswain)
 * record a longer rowing session and analyze two encountered problems: 1) rarely the stroke rate doubles for a short duration (might be a problem with stroke detection when measurements are imprecise), 2) in one occasion the measured power jumped to a very high value after a break (40000 watts)

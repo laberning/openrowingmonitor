@@ -70,6 +70,12 @@ export function createApp () {
           if (data.heartrate !== 0) {
             document.getElementById('heartrate-container').style.display = 'inline-block'
             document.getElementById('strokes-total-container').style.display = 'none'
+            if (data.heartrateBatteryLevel !== undefined) {
+              document.getElementById('heartrate-battery-container').style.display = 'inline-block'
+              setHeartrateMonitorBatteryLevel(data.heartrateBatteryLevel)
+            } else {
+              document.getElementById('heartrate-battery-container').style.display = 'none'
+            }
           } else {
             document.getElementById('strokes-total-container').style.display = 'inline-block'
             document.getElementById('heartrate-container').style.display = 'none'
@@ -143,6 +149,13 @@ export function createApp () {
 
   function switchPeripheralMode () {
     if (socket)socket.send(JSON.stringify({ command: 'switchPeripheralMode' }))
+  }
+
+  function setHeartrateMonitorBatteryLevel (batteryLevel) {
+    if (document.getElementById('battery-level') !== null) {
+      // 416 is the max width value of the battery bar in the SVG graphic
+      document.getElementById('battery-level').setAttribute('width', `${batteryLevel * 416 / 100}px`)
+    }
   }
 
   return {
