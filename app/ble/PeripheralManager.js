@@ -5,7 +5,7 @@
   This manager creates the different Bluetooth Low Energy (BLE) Peripherals and allows
   switching between them
 */
-import config from '../config.js'
+import config from '../tools/ConfigManager.js'
 import { createFtmsPeripheral } from './FtmsPeripheral.js'
 import { createPm5Peripheral } from './Pm5Peripheral.js'
 import log from 'loglevel'

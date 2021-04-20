@@ -77,3 +77,4 @@ node_modules
 ._*
 tmp/
 build/
+config/config.js

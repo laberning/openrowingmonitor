@@ -16,51 +16,45 @@ import { createTimer } from './Timer.js'
 
 const log = loglevel.getLogger('RowingEngine')
 
-// *****************************************************
-//  These constants are specific to your Rowing Machine
-// *****************************************************
+function createRowingEngine (rowerSettings) {
+  // How many impulses are triggered per revolution of the flywheel
+  // i.e. the number of magnets if used with a reed sensor
+  const numOfImpulsesPerRevolution = rowerSettings.numOfImpulsesPerRevolution
 
-// How many impulses are triggered per revolution of the flywheel
-// i.e. the number of magnets if used with a reed sensor
-const numOfImpulsesPerRevolution = 2
+  // Needed to determine the damping constant of the rowing machine. This value can be measured in the recovery phase
+  // of the stroke (some ergometers do this constantly).
+  // However I still keep it constant here, as I still have to figure out the damping physics of a water rower (see below)
+  // To measure it for your rowing machine, comment in the logging at the end of "startDrivePhase" function. Then do some
+  // strokes on the rower and estimate a value.
+  const omegaDotDivOmegaSquare = rowerSettings.omegaDotDivOmegaSquare
 
-// Needed to determine the damping constant of the rowing machine. This value can be measured in the recovery phase
-// of the stroke (some ergometers do this constantly).
-// However I still keep it constant here, as I still have to figure out the damping physics of a water rower (see below)
-// To measure it for your rowing machine, comment in the logging at the end of "startDrivePhase" function. Then do some
-// strokes on the rower and estimate a value.
-const omegaDotDivOmegaSquare = 0.046
+  // The moment of inertia of the flywheel kg*m^2
+  // A way to measure it is outlined here: https://dvernooy.github.io/projects/ergware/, "Flywheel moment of inertia"
+  // You could also roughly estimate it by just doing some strokes and the comparing the calculated power values for
+  // plausibility. Note that the power also depends on omegaDotDivOmegaSquare (see above).
+  const jMoment = rowerSettings.jMoment
 
-// The moment of inertia of the flywheel kg*m^2
-// A way to measure it is outlined here: https://dvernooy.github.io/projects/ergware/, "Flywheel moment of inertia"
-// You could also roughly estimate it by just doing some strokes and the comparing the calculated power values for
-// plausibility. Note that the power also depends on omegaDotDivOmegaSquare (see above).
-const jMoment = 0.49
+  // Set this to true if you are using a water rower
+  // The mass of the water starts rotating, when you pull the handle, and therefore acts
+  // like a massive flywheel
+  // Liquids are a tricky thing and therefore the dumping constant does not seem to be
+  // that constant on water rowers...
+  // This is WIP, but for now this setting is used to figure out the drive and recovery phases
+  // differently on water rowers
+  const liquidFlywheel = rowerSettings.liquidFlywheel
 
-// Set this to true if you are using a water rower
-// The mass of the water starts rotating, when you pull the handle, and therefore acts
-// like a massive flywheel
-// Liquids are a tricky thing and therefore the dumping constant does not seem to be
-// that constant on water rowers...
-// This is WIP, but for now this setting is used to figure out the drive and recovery phases
-// differently on water rowers
-const liquidFlywheel = true
+  // A constant that is commonly used to convert flywheel revolutions to a rowed distance
+  // see here: http://eodg.atm.ox.ac.uk/user/dudhia/rowing/physics/ergometer.html#section9
+  const c = 2.8
 
-// A constant that is commonly used to convert flywheel revolutions to a rowed distance
-// see here: http://eodg.atm.ox.ac.uk/user/dudhia/rowing/physics/ergometer.html#section9
-const c = 2.8
+  // jMoment * ωdot = -kDamp * ω^2 during non-power part of stroke
+  const kDamp = jMoment * omegaDotDivOmegaSquare
 
-// jMoment * ωdot = -kDamp * ω^2 during non-power part of stroke
-const kDamp = jMoment * omegaDotDivOmegaSquare
+  // s = (k/c)^(1/3)*θ
+  const distancePerRevolution = 2.0 * Math.PI * Math.pow((kDamp / c), 1.0 / 3.0)
 
-// s = (k/c)^(1/3)*θ
-const distancePerRevolution = 2.0 * Math.PI * Math.pow((kDamp / c), 1.0 / 3.0)
-
-function createRowingEngine () {
   let workoutHandler
-
   const kDampEstimatorAverager = createWeightedAverager(3)
-
   let kPower = 0.0
   let jPower = 0.0
   let kDampEstimator = 0.0

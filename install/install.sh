@@ -76,6 +76,9 @@ print
 print "Downloading and compiling Runtime dependencies..."
 sudo npm install
 sudo npm run build
+if ! [[ -f "config/config.js" ]]; then
+    cp install/config.js config/
+fi
 
 print
 print "Setting up Open Rowing Monitor as autostarting system service..."

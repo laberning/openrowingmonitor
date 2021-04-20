@@ -10,7 +10,7 @@ import { fork } from 'child_process'
 import log from 'loglevel'
 // eslint-disable-next-line no-unused-vars
 import fs from 'fs'
-import config from './config.js'
+import config from './tools/ConfigManager.js'
 import { createRowingEngine } from './engine/RowingEngine.js'
 import { createRowingStatistics } from './engine/RowingStatistics.js'
 import { createWebServer } from './WebServer.js'
@@ -65,7 +65,7 @@ gpioTimerService.on('message', (dataPoint) => {
   // fs.appendFile('recordings/wrx700_2magnets_long.csv', `${dataPoint}\n`, (err) => { if (err) log.error(err) })
 })
 
-const rowingEngine = createRowingEngine()
+const rowingEngine = createRowingEngine(config.rowerSettings)
 const rowingStatistics = createRowingStatistics()
 rowingEngine.notify(rowingStatistics)
 

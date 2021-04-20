@@ -1,6 +1,6 @@
 {
   "name": "openrowingmonitor",
-  "version": "0.7.0",
+  "version": "0.7.1",
   "description": "A rowing monitor for rowing exercise machines",
   "main": "app/server.js",
   "author": "Lars Berning",

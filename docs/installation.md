@@ -60,4 +60,4 @@ If your machine does not have something like this or if the sensor is not access
 * PAS sensor (i.e. from an E-bike)
 * Optical chopper wheel
 
-You should now adjust the rower specific parameters in `app/engine/RowingEngine.js` to suit your rowing machine.
+You should now adjust the rower specific parameters in `config/config.js` to suit your rowing machine.
