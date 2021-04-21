@@ -62,7 +62,7 @@ peripheralManager.on('control', (event) => {
 const gpioTimerService = fork('./app/gpio/GpioTimerService.js')
 gpioTimerService.on('message', (dataPoint) => {
   rowingEngine.handleRotationImpulse(dataPoint)
-  // fs.appendFile('recordings/wrx700_2magnets_long.csv', `${dataPoint}\n`, (err) => { if (err) log.error(err) })
+  // fs.appendFile('recordings/WRX700_2magnets.csv', `${dataPoint}\n`, (err) => { if (err) log.error(err) })
 })
 
 const rowingEngine = createRowingEngine(config.rowerSettings)
