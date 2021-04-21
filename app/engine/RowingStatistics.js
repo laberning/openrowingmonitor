@@ -111,7 +111,9 @@ function createRowingStatistics () {
       splitFormatted: secondsToTimeString(splitTime),
       powerRatio: powerRatioAverager.weightedAverage().toFixed(2),
       strokesPerMinute: strokeAverager.weightedAverage() !== 0 ? (60.0 / strokeAverager.weightedAverage()).toFixed(1) : 0,
+      cadence: strokeAverager.weightedAverage() !== 0 ? Math.round(60.0 / strokeAverager.weightedAverage()) : 0,
       speed: (speedAverager.weightedAverage() * 3.6).toFixed(2), // km/h
+      speedmeters : (speedAverager.weightedAverage()).toFixed(2), // m/s
       strokeState: lastStrokeState,
       heartrate,
       heartrateBatteryLevel
