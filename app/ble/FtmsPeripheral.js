@@ -14,11 +14,11 @@
 import bleno from '@abandonware/bleno'
 import FitnessMachineService from './ftms/FitnessMachineService.js'
 import DeviceInformationService from './ftms/DeviceInformationService.js'
+import config from '../tools/ConfigManager.js'
 import log from 'loglevel'
 
 function createFtmsPeripheral (controlCallback, options) {
-  const peripheralName = options?.simulateIndoorBike ? 'OpenRowingBike' : 'OpenRowingMonitor'
-  // const peripheralName = options?.simulateIndoorBike ? 'OpenRowingBike' : 'S1 Comms 1'
+  const peripheralName = options?.simulateIndoorBike ? config.ftmsBikePeripheralName : config.ftmsRowerPeripheralName
   const fitnessMachineService = new FitnessMachineService(options, controlPointCallback)
   const deviceInformationService = new DeviceInformationService()
 

@@ -4,7 +4,6 @@ This is the very minimalistic Backlog for further development of this project.
 
 ## Soon
 
-* add a configuration option to change the FMTS device name
 * add support for ANT+ heart rate monitors with USB dongles
 * add an option to the installation script to directly attach a touchscreen to the Raspberry Pi and automatically show WebUI on this in kiosk mode
 * validate FTMS with more training applications and harden implementation (i.e. Holofit and Coxswain)
