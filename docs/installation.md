@@ -27,6 +27,14 @@ Connect to the device with SSH and initiate the following command to set up all 
 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/laberning/openrowingmonitor/HEAD/install/install.sh)"
 ```
 
+### Updating to a new version
+
+Open Rowing Monitor does not provide proper releases (yet), but you can update to the latest development version with this command:
+
+```zsh
+sudo /opt/openrowingmonitor/install/update.sh
+```
+
 ### If you want to run Bluetooth Low Energy and the Web-Server on port 80 without root
 
 ```zsh
