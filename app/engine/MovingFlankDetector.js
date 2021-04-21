@@ -1,0 +1,65 @@
+'use strict'
+/*
+  Open Rowing Monitor, https://github.com/laberning/openrowingmonitor
+
+  This keeps an array, which we can test for an upgoing or downgoing flank
+*/
+function createMovingFlankDetector (flankLength, initValue, numberOfErrorsAllowed) {
+  const dataPoints = new Array(flankLength)
+  dataPoints.fill(initValue)
+
+  function pushValue (dataPoint) {
+    // add the new dataPoint to the array, we have to move datapoints starting at the oldst ones
+    let i = flankLength -1
+    while ( i > 0) {
+      // older datapoints are moved toward the higher numbers
+      dataPoints[i] = dataPoints[i-1]
+      i = i -1
+    }
+    dataPoints[0] = dataPoint
+  }
+
+  function isDecelerating () {
+    let i = flankLength - 1
+    let numberOfErrors = 0
+    while ( i > 0) {
+       if (dataPoints[i] < dataPoints[i-1]) {
+          // Oldest interval (dataPoints[i]) is shorter than the younger one (datapoint[i-1], as the distance is fixed, we are decelerating
+       } else {
+          numberOfErrors = numberOfErrors + 1
+       }
+      i = i - 1
+    }
+    if (numberOfErrors > numberOfErrorsAllowed) {
+      return false
+    } else {
+      return true
+    }
+  }
+
+  function isAccelerating () {
+    let i = flankLength - 1
+    let numberOfErrors = 0
+    while ( i > 0) {
+       if (dataPoints[i] > dataPoints[i-1]) {
+          // Oldest interval (dataPoints[i]) is longer than the younger one (datapoint[i-1], as the distance is fixed, we are accelerating
+       } else {
+          numberOfErrors = numberOfErrors + 1
+       }
+      i = i - 1
+    }
+    if (numberOfErrors > numberOfErrorsAllowed) {
+      return false
+    } else {
+      return true
+    }
+  }
+
+  return {
+    pushValue,
+    isDecelerating,
+    isAccelerating
+  }
+}
+
+export { createMovingFlankDetector }
