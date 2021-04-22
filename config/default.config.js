@@ -26,6 +26,16 @@ export default {
   // supported modes: FTMS, FTMSBIKE, PM5
   bluetoothMode: 'FTMS',
 
+  // turn this on if you want support for Bluetooth Low Energy heart rate monitors
+  // will currenty the hear rate and battery level of the first device found
+  heartrateMonitorBLE: true,
+
+  // turn this on if you want support for ANT+ heart rate monitors
+  // you will need an ANT+ USB stick for this to work, the following models might work:
+  // - Garmin USB or USB2 ANT+ or an off-brand clone of it (ID 0x1008)
+  // - Garmin mini ANT+ (ID 0x1009)
+  heartrateMonitorANT: false,
+
   // defines the name that is used to announce the FTMS Rower via Bluetooth Low Energy (BLE)
   // some rowing training applications expect that the rowing device is announced with a certain name
   ftmsRowerPeripheralName: 'OpenRowingMonitor',

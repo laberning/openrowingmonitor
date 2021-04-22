@@ -15,6 +15,7 @@ import { createRowingEngine } from './engine/RowingEngine.js'
 import { createRowingStatistics } from './engine/RowingStatistics.js'
 import { createWebServer } from './WebServer.js'
 import { createPeripheralManager } from './ble/PeripheralManager.js'
+import { createAntManager } from './ant/AntManager.js'
 // eslint-disable-next-line no-unused-vars
 import { replayRowingSession } from './tools/RowingRecorder.js'
 
@@ -87,10 +88,19 @@ rowingStatistics.on('metricsUpdate', (metrics) => {
   peripheralManager.notifyMetrics('metricsUpdate', metrics)
 })
 
-const bleCentralService = fork('./app/ble/CentralService.js')
-bleCentralService.on('message', (heartrateMeasurement) => {
-  rowingStatistics.handleHeartrateMeasurement(heartrateMeasurement)
-})
+if (config.heartrateMonitorBLE) {
+  const bleCentralService = fork('./app/ble/CentralService.js')
+  bleCentralService.on('message', (heartrateMeasurement) => {
+    rowingStatistics.handleHeartrateMeasurement(heartrateMeasurement)
+  })
+}
+
+if (config.heartrateMonitorANT) {
+  const antManager = createAntManager()
+  antManager.on('heartrateMeasurement', (heartrateMeasurement) => {
+    rowingStatistics.handleHeartrateMeasurement(heartrateMeasurement)
+  })
+}
 
 const webServer = createWebServer()
 webServer.on('messageReceived', (message) => {

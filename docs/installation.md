@@ -35,10 +35,25 @@ Open Rowing Monitor does not provide proper releases (yet), but you can update t
 sudo /opt/openrowingmonitor/install/update.sh
 ```
 
-### If you want to run Bluetooth Low Energy and the Web-Server on port 80 without root
+### Running Open Rowing Monitor without root permissions
+
+The default installation will run Open Rowing Monitor with root permissions. If you want you can also run it as user by modifying the following system services:
+
+#### To use BLE and open the Web-Server on port 80
+
+Issue the following command:
 
 ```zsh
 sudo setcap cap_net_bind_service,cap_net_raw=+eip $(eval readlink -f `which node`)
+```
+
+#### To access ANT+ USB sticks
+
+Create a file `/etc/udev/rules.d/51-garmin-usb.rules` with the following content:
+
+```zsh
+ATTRS{idVendor}=="0fcf", ATTRS{idProduct}=="1008", MODE="0666"
+ATTRS{idVendor}=="0fcf", ATTRS{idProduct}=="1009", MODE="0666"
 ```
 
 ## Hardware Installation
@@ -68,4 +83,4 @@ If your machine does not have something like this or if the sensor is not access
 * PAS sensor (i.e. from an E-bike)
 * Optical chopper wheel
 
-You should now adjust the rower specific parameters in `config/config.js` to suit your rowing machine.
+You should now adjust the rower specific parameters in `config/config.js` to suit your rowing machine. Have a look at [config/default.config.js](../config/default.config.js) to see what config parameters are available.
