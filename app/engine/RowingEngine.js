@@ -12,6 +12,7 @@
 */
 import loglevel from 'loglevel'
 import { createWeightedAverager } from './WeightedAverager.js'
+import { createMovingFlankDetector } from './MovingFlankDetector.js'
 import { createTimer } from './Timer.js'
 
 const log = loglevel.getLogger('RowingEngine')
@@ -45,7 +46,7 @@ function createRowingEngine (rowerSettings) {
 
   // A constant that is commonly used to convert flywheel revolutions to a rowed distance
   // see here: http://eodg.atm.ox.ac.uk/user/dudhia/rowing/physics/ergometer.html#section9
-  const c = 2.8
+  const c = rowerSettings.magicConstant
 
   // jMoment * ωdot = -kDamp * ω^2 during non-power part of stroke
   const kDamp = jMoment * omegaDotDivOmegaSquare
@@ -55,10 +56,15 @@ function createRowingEngine (rowerSettings) {
 
   let workoutHandler
   const kDampEstimatorAverager = createWeightedAverager(3)
+  const PreviousDt = createWeightedAverager(2)
+  PreviousDt.pushValue(rowerSettings.maximumTimeBetweenMagnets)
+  const flankDetector = createMovingFlankDetector(rowerSettings.numOfImpulsesPerRevolution, rowerSettings.maximumTimeBetweenMagnets, 0)
+  let prevDt = rowerSettings.maximumTimeBetweenMagnets
   let kPower = 0.0
   let jPower = 0.0
   let kDampEstimator = 0.0
   let strokeElapsed = 0.0
+  let recoveryElapsed = 0.0
   let driveElapsed = 0.0
   let strokeDistance = 0.0
   const omegaVector = new Array(2)
@@ -83,6 +89,16 @@ function createRowingEngine (rowerSettings) {
       workoutHandler.handlePause(currentDt)
       return
     }
+
+    // Noisefilter on the value of currentDt: it should be within sane levels and should not deviate too much from the previous reading
+    if (currentDt < rowerSettings.minimumTimeBetweenMagnets || currentDt > rowerSettings.maximumTimeBetweenMagnets || currentDt < (rowerSettings.maximumDownwardChange * PreviousDt.weightedAverage()) || currentDt > (rowerSettings.maximumUpwardChange * PreviousDt.weightedAverage())) {
+      // impulses are outside plausible ranges, so we assume it is close to the previous one
+      currentDt = prevDt
+      log.debug(`Noisefilter corrected currentDt, ${currentDt} was incredible, changed to ${prevDt}`)
+    }
+    prevDt = currentDt
+    PreviousDt.pushValue(currentDt)
+    flankDetector.pushValue(currentDt)
 
     // each revolution of the flywheel adds distance of distancePerRevolution
     strokeDistance += distancePerRevolution / numOfImpulsesPerRevolution
@@ -109,9 +125,9 @@ function createRowingEngine (rowerSettings) {
     // used to be 15
     const accelerationIsPositive = omegaDotVector[0] > 0
 
-    wasInDrivePhase = isInDrivePhase
-
     if (liquidFlywheel) {
+      wasInDrivePhase = isInDrivePhase
+
       // Identification of drive and recovery phase on water rowers is still Work in Progress
       // ω does not seem to decay that linear on water rower in recovery phase, so this would not be
       // a good indicator here.
@@ -120,9 +136,38 @@ function createRowingEngine (rowerSettings) {
       // This would mean, that the stroke ratio and the estimation of kDamp is a bit off.
       // todo: do some measurements and find a better stable indicator for water rowers
       isInDrivePhase = accelerationIsPositive
+      // handle the current impulse, depending on where we are in the stroke
+      if (isInDrivePhase && !wasInDrivePhase) { startDrivePhase(currentDt) }
+      if (!isInDrivePhase && wasInDrivePhase) { startRecoveryPhase() }
+      if (isInDrivePhase && wasInDrivePhase) { updateDrivePhase(currentDt) }
+      if (!isInDrivePhase && !wasInDrivePhase) { updateRecoveryPhase(currentDt) }
     } else {
-      // ω decays linear on rowers with a solid flywheel, so we can use that to differentiate the phases
-      isInDrivePhase = accelerationIsChanging || (accelerationIsPositive && wasInDrivePhase)
+      // Here we use a finite state machine that goes between "Drive" and "Recovery", provinding sufficient time has passed and there is a credible flank
+      // We analyse the current impulse, depending on where we are in the stroke
+      if ( wasInDrivePhase ) {
+	// During the previous magnet, we were in the "Drive" phase
+	strokeElapsed = timer.getValue('drive')
+	if ( (strokeElapsed > rowerSettings.minimumDriveTime) && flankDetector.isDecelerating()) {
+	   // We are long enough in the Drive phase, and we see a clear deceleration, thus we need to change to the Recovery phase
+	   startRecoveryPhase()
+	   isInDrivePhase = false
+	} else {
+	   // We are too short in the Drive phase or we don't see a clear deceleration, so let's stay in the drive phase
+ 	   updateDrivePhase(currentDt)
+	}
+      } else {
+	// During the previous magnet, we were in the "Recovery" phase
+	recoveryElapsed = timer.getValue('stroke')
+	if ( (recoveryElapsed > rowerSettings.minimumRecoveryTime ) && flankDetector.isAccelerating() ) {
+	  // We are long enough in the Recovery phase, and we see a clear acceleration, thus we need to change to the Drive phase
+	  startDrivePhase(currentDt)
+	  isInDrivePhase = true
+	} else {
+	  // We are too short in the Recovery phase or we don't see a clear acceleration, so let's stay in the Recovery phase
+	  updateRecoveryPhase(currentDt)
+	}
+      }
+    wasInDrivePhase = isInDrivePhase
     }
 
     // handle the current impulse, depending on where we are in the stroke
