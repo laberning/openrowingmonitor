@@ -16,6 +16,18 @@ export default {
     // i.e. the number of magnets if used with a reed sensor
     numOfImpulsesPerRevolution: 1,
 
+    // Filter values for sanity checks
+    // First are the sane minimum and maximum times between magnets during active rows
+    minimumTimeBetweenMagnets: 0.014,
+    maximumTimeBetweenMagnets: 0.036,
+    // Procentual change between successive intervals
+    maximumDownwardChange: 0.85,  // effectively the maximum deceleration
+    maximumUpwardChange: 1.15,    // effectively the maximum acceleration
+    // Settings for the phase detection
+    minimumDriveTime: 0.300,
+    minimumRecoveryTime: 0.750,
+
+
     // Needed to determine the damping constant of the rowing machine. This value can be measured in the recovery phase
     // of the stroke (some ergometers do this constantly).
     // However I still keep it constant here, as I still have to figure out the damping physics of a water rower (see below)
@@ -28,6 +40,10 @@ export default {
     // You could also roughly estimate it by just doing some strokes and the comparing the calculated power values for
     // plausibility. Note that the power also depends on omegaDotDivOmegaSquare (see above).
     jMoment: 0.49,
+
+    // A constant that is commonly used to convert flywheel revolutions to a rowed distance
+    // see here: http://eodg.atm.ox.ac.uk/user/dudhia/rowing/physics/ergometer.html#section9
+    magicConstant: 2.8,
 
     // Set this to true if you are using a water rower
     // The mass of the water starts rotating, when you pull the handle, and therefore acts
@@ -53,5 +69,23 @@ export default {
     omegaDotDivOmegaSquare: 0.019,
     jMoment: 0.4,
     liquidFlywheel: true
+  },
+
+  // NordicTrack RX800 Air Rower
+  RX800: {
+    numOfImpulsesPerRevolution: 4,
+    minimumTimeBetweenMagnets: 0.014,
+    maximumTimeBetweenMagnets: 0.036,
+    maximumDownwardChange: 0.85,
+    maximumUpwardChange: 1.15,
+    minimumDriveTime: 0.300,
+    minimumRecoveryTime: 0.750,
+    // omegaDotDivOmegaSquare: 0.0033521068215422397,  // Damper setting 10
+    // omegaDotDivOmegaSquare: 0.002689134, // Damper setting 8
+    omegaDotDivOmegaSquare: 0.004438342, // Damper setting 6
+    jMoment: 0.063,
+    magicConstant: 1.75,
+    liquidFlywheel: false
   }
+
 }
