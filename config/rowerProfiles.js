@@ -19,10 +19,10 @@ export default {
     // Filter values for sanity checks
     // First are the sane minimum and maximum times between magnets during active rows
     minimumTimeBetweenMagnets: 0.014,
-    maximumTimeBetweenMagnets: 0.036,
+    maximumTimeBetweenMagnets: 0.5,
     // Procentual change between successive intervals
-    maximumDownwardChange: 0.85,  // effectively the maximum deceleration
-    maximumUpwardChange: 1.15,    // effectively the maximum acceleration
+    maximumDownwardChange: 0.2,  // effectively the maximum deceleration
+    maximumUpwardChange: 1.75,    // effectively the maximum acceleration
     // Settings for the phase detection
     minimumDriveTime: 0.300,
     minimumRecoveryTime: 0.750,
@@ -60,6 +60,12 @@ export default {
     numOfImpulsesPerRevolution: 2,
     omegaDotDivOmegaSquare: 0.046,
     jMoment: 0.49,
+    minimumTimeBetweenMagnets: 0.1,
+    maximumTimeBetweenMagnets: 0.4,
+    maximumDownwardChange: 0.40,
+    maximumUpwardChange: 1.50,
+    minimumDriveTime: 0.500,
+    minimumRecoveryTime: 0.800,
     liquidFlywheel: true
   },
 
@@ -68,9 +74,15 @@ export default {
     numOfImpulsesPerRevolution: 1,
     omegaDotDivOmegaSquare: 0.019,
     jMoment: 0.4,
+    minimumTimeBetweenMagnets: 0.15,
+    maximumTimeBetweenMagnets: 0.5,
+    maximumDownwardChange: 0.25,
+    maximumUpwardChange: 1.75,
+    minimumDriveTime: 0.500,
+    minimumRecoveryTime: 0.800,
     liquidFlywheel: true
   },
-
+  
   // NordicTrack RX800 Air Rower
   RX800: {
     numOfImpulsesPerRevolution: 4,
@@ -87,5 +99,4 @@ export default {
     magicConstant: 1.75,
     liquidFlywheel: false
   }
-
 }
