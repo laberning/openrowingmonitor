@@ -25,7 +25,7 @@ print "This script will set up Open Rowing Monitor on a Raspberry Pi 3 / 4 with 
 print "You should only run this script on a SD Card that does not contain any important data."
 print
 
-if [[ "$(uname -n)" != "raspberrypi" ]]; then
+if [[ "$(cat /sys/firmware/devicetree/base/model | head -n1 | awk '{print $1;}')" != "raspberrypi" ]]; then
   cancel "This script currently only works on Raspberry Pi OS, you will have to do a manual installation."
 fi
 
