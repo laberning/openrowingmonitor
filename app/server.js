@@ -70,10 +70,13 @@ const rowingStatistics = createRowingStatistics()
 rowingEngine.notify(rowingStatistics)
 
 rowingStatistics.on('strokeFinished', (metrics) => {
+  var d = new Date();
+  var timestamp = d.toISOString();
   log.info(`stroke: ${metrics.strokesTotal}, dur: ${metrics.strokeTime}s, power: ${metrics.power}w` +
   `, split: ${metrics.splitFormatted}, ratio: ${metrics.powerRatio}, dist: ${metrics.distanceTotal}m` +
   `, cal: ${metrics.caloriesTotal}kcal, SPM: ${metrics.strokesPerMinute}, speed: ${metrics.speed}km/h` +
   `, cal/hour: ${metrics.caloriesPerHour}kcal, cal/minute: ${metrics.caloriesPerMinute}kcal`)
+  fs.appendFile('exports/currentlog.tcx', `<Trackpoint>\n <Time>${timestamp}</Time>\n <DistanceMeters>${metrics.distanceTotal}</DistanceMeters>\n <Cadence>${metrics.cadence}</Cadence>\n <SensorState>Present</SensorState>\n <Extensions>\n  <ns3:TPX>\n  <ns3:Watts>${metrics.power}</ns3:Watts>\n  <ns3:Speed>${metrics.speedmeters}</ns3:Speed>\n  </ns3:TPX>\n </Extensions>\n</Trackpoint>\n`, (err) => { if (err) log.error(err) })
   webServer.notifyClients(metrics)
   peripheralManager.notifyMetrics('strokeFinished', metrics)
 })
