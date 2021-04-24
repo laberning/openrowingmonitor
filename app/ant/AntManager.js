@@ -17,18 +17,17 @@ function createAntManager () {
   const emitter = new EventEmitter()
   const antStick = new Ant.GarminStick2()
   const antStick3 = new Ant.GarminStick3()
+  // it seems that we have to use two separate heart rate sensors to support both old and new
+  // ant sticks, since the library requires them to be bound before open is called
   const heartrateSensor = new Ant.HeartRateSensor(antStick)
+  const heartrateSensor3 = new Ant.HeartRateSensor(antStick3)
 
   heartrateSensor.on('hbData', (data) => {
     emitter.emit('heartrateMeasurement', { heartrate: data.ComputedHeartRate, batteryLevel: data.BatteryLevel })
   })
 
-  heartrateSensor.on('attached', () => {
-    log.info('heart rate sensor attached')
-  })
-
-  heartrateSensor.on('detached', () => {
-    log.info('heart rate sensor detached')
+  heartrateSensor3.on('hbData', (data) => {
+    emitter.emit('heartrateMeasurement', { heartrate: data.ComputedHeartRate, batteryLevel: data.BatteryLevel })
   })
 
   antStick.on('startup', () => {
@@ -38,7 +37,7 @@ function createAntManager () {
 
   antStick3.on('startup', () => {
     log.info('mini ANT+ stick found')
-    heartrateSensor.attach(0, 0)
+    heartrateSensor3.attach(0, 0)
   })
 
   antStick.on('shutdown', () => {
@@ -50,11 +49,11 @@ function createAntManager () {
   })
 
   if (!antStick.open()) {
-    log.debug('classic ANT+ stick not found')
+    log.debug('classic ANT+ stick NOT found')
   }
 
   if (!antStick3.open()) {
-    log.debug('mini ANT+ stick not found')
+    log.debug('mini ANT+ stick NOT found')
   }
 
   return Object.assign(emitter, {
