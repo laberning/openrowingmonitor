@@ -8,8 +8,18 @@
 */
 import process from 'process'
 import { Gpio } from 'onoff'
+import os from 'os'
 
 export function createGpioTimerService () {
+  // Setting top (near-real-time) priority for the Gpio process, as we don't want to miss anything
+  log.debug('Setting priority for the Gpio-service to maximum (-20)')
+  try{
+    // Setting priority of current process
+    os.setPriority(-20);
+  }catch(err){
+    log.error(": error occured"+err)
+  }
+  
   // mode can be rising, falling, both
   const reedSensor = new Gpio(17, 'in', 'rising')
   // use hrtime for time measurement to get a higher time precision
