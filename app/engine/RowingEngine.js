@@ -169,13 +169,6 @@ function createRowingEngine (rowerSettings) {
       }
     wasInDrivePhase = isInDrivePhase
     }
-
-    // handle the current impulse, depending on where we are in the stroke
-    if (isInDrivePhase && !wasInDrivePhase) { startDrivePhase(currentDt) }
-    if (!isInDrivePhase && wasInDrivePhase) { startRecoveryPhase() }
-    if (isInDrivePhase && wasInDrivePhase) { updateDrivePhase(currentDt) }
-    if (!isInDrivePhase && !wasInDrivePhase) { updateRecoveryPhase(currentDt) }
-
     timer.updateTimers(currentDt)
     log.debug(`𝑑t: ${currentDt} ω: ${omegaVector[0].toFixed(2)} ωdot: ${omegaDotVector[0].toFixed(2)} ωdotdot: ${omegaDotDot.toFixed(2)} aPos: ${accelerationIsPositive} aChange: ${accelerationIsChanging}`)
   }
