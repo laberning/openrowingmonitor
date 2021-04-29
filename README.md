@@ -24,7 +24,7 @@ Open Rowing Monitor implements a physics model to simulate the typical metrics o
 * Strokes per Minute
 * Calories used (kcal)
 * Training Duration
-* Heart Rate (requires a BLE Heart Rate Monitor)
+* Heart Rate (supports BLE and ANT+ heart rate monitors, ANT+ requires an ANT+ USB stick)
 
 ### Web Interface
 

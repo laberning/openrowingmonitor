@@ -74,7 +74,7 @@ sudo npm config set user 0
 
 print
 print "Downloading and compiling Runtime dependencies..."
-sudo npm install
+sudo npm ci
 sudo npm run build
 if ! [[ -f "config/config.js" ]]; then
     cp install/config.js config/
