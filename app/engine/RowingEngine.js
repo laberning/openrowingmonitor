@@ -45,7 +45,7 @@ function createRowingEngine (rowerSettings) {
 
   // A constant that is commonly used to convert flywheel revolutions to a rowed distance
   // see here: http://eodg.atm.ox.ac.uk/user/dudhia/rowing/physics/ergometer.html#section9
-  const c = 2.8
+  const c = rowerSettings.magicConstant
 
   // jMoment * ωdot = -kDamp * ω^2 during non-power part of stroke
   const kDamp = jMoment * omegaDotDivOmegaSquare
