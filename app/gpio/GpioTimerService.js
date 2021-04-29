@@ -6,18 +6,21 @@
   separate thread, since we want the measured time to be as close as
   possible to real time.
 */
+import loglevel from 'loglevel'
 import process from 'process'
 import { Gpio } from 'onoff'
 import os from 'os'
 
+const log = loglevel.getLogger('RowingEngine')
+
 export function createGpioTimerService () {
   // Setting top (near-real-time) priority for the Gpio process, as we don't want to miss anything
   log.debug('Setting priority for the Gpio-service to maximum (-20)')
-  try{
+  try {
     // Setting priority of current process
-    os.setPriority(-20);
-  }catch(err){
-    log.error(": error occured"+err)
+    os.setPriority(-20)
+  } catch (err) {
+    log.error(": error occured" + err)
   }
   
   // mode can be rising, falling, both
