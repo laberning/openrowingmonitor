@@ -144,30 +144,30 @@ function createRowingEngine (rowerSettings) {
     } else {
       // Here we use a finite state machine that goes between "Drive" and "Recovery", provinding sufficient time has passed and there is a credible flank
       // We analyse the current impulse, depending on where we are in the stroke
-      if ( wasInDrivePhase ) {
-	// During the previous magnet, we were in the "Drive" phase
-	strokeElapsed = timer.getValue('drive')
-	if ( (strokeElapsed > rowerSettings.minimumDriveTime) && flankDetector.isDecelerating()) {
-	   // We are long enough in the Drive phase, and we see a clear deceleration, thus we need to change to the Recovery phase
-	   startRecoveryPhase()
-	   isInDrivePhase = false
-	} else {
-	   // We are too short in the Drive phase or we don't see a clear deceleration, so let's stay in the drive phase
- 	   updateDrivePhase(currentDt)
-	}
+      if (wasInDrivePhase) {
+        // During the previous magnet, we were in the "Drive" phase
+        strokeElapsed = timer.getValue('drive')
+        if ((strokeElapsed > rowerSettings.minimumDriveTime) && flankDetector.isDecelerating()) {
+          // We are long enough in the Drive phase, and we see a clear deceleration, thus we need to change to the Recovery phase
+          startRecoveryPhase()
+          isInDrivePhase = false
+        } else {
+          // We are too short in the Drive phase or we don't see a clear deceleration, so let's stay in the drive phase
+          updateDrivePhase(currentDt)
+        }
       } else {
-	// During the previous magnet, we were in the "Recovery" phase
-	recoveryElapsed = timer.getValue('stroke')
-	if ( (recoveryElapsed > rowerSettings.minimumRecoveryTime ) && flankDetector.isAccelerating() ) {
-	  // We are long enough in the Recovery phase, and we see a clear acceleration, thus we need to change to the Drive phase
-	  startDrivePhase(currentDt)
-	  isInDrivePhase = true
-	} else {
-	  // We are too short in the Recovery phase or we don't see a clear acceleration, so let's stay in the Recovery phase
-	  updateRecoveryPhase(currentDt)
-	}
+        // During the previous magnet, we were in the "Recovery" phase
+        recoveryElapsed = timer.getValue('stroke')
+        if ((recoveryElapsed > rowerSettings.minimumRecoveryTime) && flankDetector.isAccelerating()) {
+          // We are long enough in the Recovery phase, and we see a clear acceleration, thus we need to change to the Drive phase
+          startDrivePhase(currentDt)
+          isInDrivePhase = true
+        } else {
+          // We are too short in the Recovery phase or we don't see a clear acceleration, so let's stay in the Recovery phase
+          updateRecoveryPhase(currentDt)
+        }
       }
-    wasInDrivePhase = isInDrivePhase
+      wasInDrivePhase = isInDrivePhase
     }
     timer.updateTimers(currentDt)
     log.debug(`𝑑t: ${currentDt} ω: ${omegaVector[0].toFixed(2)} ωdot: ${omegaDotVector[0].toFixed(2)} ωdotdot: ${omegaDotDot.toFixed(2)} aPos: ${accelerationIsPositive} aChange: ${accelerationIsChanging}`)
