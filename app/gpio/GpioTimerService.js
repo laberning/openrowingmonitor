@@ -6,21 +6,22 @@
   separate thread, since we want the measured time to be as close as
   possible to real time.
 */
-import loglevel from 'loglevel'
 import process from 'process'
 import { Gpio } from 'onoff'
 import os from 'os'
+import config from '../tools/ConfigManager.js'
+import log from 'loglevel'
 
-const log = loglevel.getLogger('RowingEngine')
+log.setLevel(config.loglevel.default)
 
 export function createGpioTimerService () {
-  // Setting top (near-real-time) priority for the Gpio process, as we don't want to miss anything
-  log.debug('Setting priority for the Gpio-service to maximum (-20)')
+  // setting top (near-real-time) priority for the Gpio process, as we don't want to miss anything
+  log.debug('setting priority for the Gpio-service to maximum (-20)')
   try {
-    // Setting priority of current process
+    // setting priority of current process
     os.setPriority(-20)
   } catch (err) {
-    log.error(': error occured' + err)
+    log.error('error while setting priority of Gpio-Thread: ', err)
   }
   // mode can be rising, falling, both
   const reedSensor = new Gpio(17, 'in', 'rising')
