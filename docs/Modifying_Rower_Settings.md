@@ -3,6 +3,7 @@
 This guide helps you to adjust the rowing monitor specifically for your rower or even for you
 
 ## Why have setings
+
 No rowingmachine is the same, and their physical construction is important for the Rowing Monitor to understand to be able to understand your rowing. Easiest way is to select your rower from owerProfiles.js and put its name in default.config.js instead of "rowerProfiles.DEFAULT".
 
 If your rower isn't there, this guide will help you set it up (please send in the data and settings, so we can add it to the OpenRowingMonitor).
