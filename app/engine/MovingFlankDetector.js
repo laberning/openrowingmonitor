@@ -8,16 +8,16 @@
   They are arranged that dataPoints[0] is the youngest, and dataPoints[flankLength] the youngest
 */
 function createMovingFlankDetector (flankLength, initValue, numberOfErrorsAllowed) {
-  const dataPoints = new Array(flankLength+1)
+  const dataPoints = new Array(flankLength + 1)
   dataPoints.fill(initValue)
 
   function pushValue (dataPoint) {
     // add the new dataPoint to the array, we have to move datapoints starting at the oldst ones
     let i = flankLength
-    while ( i > 0) {
+    while (i > 0) {
       // older datapoints are moved toward the higher numbers
-      dataPoints[i] = dataPoints[i-1]
-      i = i -1
+      dataPoints[i] = dataPoints[i - 1]
+      i = i - 1
     }
     dataPoints[0] = dataPoint
   }
@@ -25,12 +25,12 @@ function createMovingFlankDetector (flankLength, initValue, numberOfErrorsAllowe
   function isDecelerating () {
     let i = flankLength
     let numberOfErrors = 0
-    while ( i > 0) {
-       if (dataPoints[i] < dataPoints[i-1]) {
-          // Oldest interval (dataPoints[i]) is shorter than the younger one (datapoint[i-1], as the distance is fixed, we are decelerating
-       } else {
-          numberOfErrors = numberOfErrors + 1
-       }
+    while (i > 0) {
+      if (dataPoints[i] < dataPoints[i - 1]) {
+        // Oldest interval (dataPoints[i]) is shorter than the younger one (datapoint[i-1], as the distance is fixed, we are decelerating
+      } else {
+        numberOfErrors = numberOfErrors + 1
+      }
       i = i - 1
     }
     if (numberOfErrors > numberOfErrorsAllowed) {
@@ -43,12 +43,12 @@ function createMovingFlankDetector (flankLength, initValue, numberOfErrorsAllowe
   function isAccelerating () {
     let i = flankLength
     let numberOfErrors = 0
-    while ( i > 0) {
-       if (dataPoints[i] > dataPoints[i-1]) {
-          // Oldest interval (dataPoints[i]) is longer than the younger one (datapoint[i-1], as the distance is fixed, we are accelerating
-       } else {
-          numberOfErrors = numberOfErrors + 1
-       }
+    while (i > 0) {
+      if (dataPoints[i] > dataPoints[i - 1]) {
+        // Oldest interval (dataPoints[i]) is longer than the younger one (datapoint[i-1], as the distance is fixed, we are accelerating
+      } else {
+        numberOfErrors = numberOfErrors + 1
+      }
       i = i - 1
     }
     if (numberOfErrors > numberOfErrorsAllowed) {
