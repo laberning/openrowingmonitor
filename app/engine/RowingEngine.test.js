@@ -66,4 +66,16 @@ test('sample data for DKNR320 should produce plausible results with rower profil
   assert.ok(workoutEvaluator.getMinStrokePower() > 75, `minimum stroke power should be above 75w, but is ${workoutEvaluator.getMinStrokePower()}w`)
 })
 
+test('sample data for RX800 should produce plausible results with rower profile', async () => {
+  const rowingEngine = createRowingEngine(rowerProfiles.RX800)
+  const workoutEvaluator = createWorkoutEvaluator()
+  rowingEngine.notify(workoutEvaluator)
+  await replayRowingSession(rowingEngine.handleRotationImpulse, { filename: 'recordings/RX800.csv' })
+  assert.is(workoutEvaluator.getNumOfStrokes(), 10, 'number of strokes does not meet expectation')
+  // todo: maximum power of the first stroke is too high because it does not contain a recovery part
+  // should fix that in the RowingEngine and adjust the maximum power here to 260
+  assert.ok(workoutEvaluator.getMaxStrokePower() < 310, `maximum stroke power should be below 310w, but is ${workoutEvaluator.getMaxStrokePower()}w`)
+  assert.ok(workoutEvaluator.getMinStrokePower() > 160, `minimum stroke power should be above 160w, but is ${workoutEvaluator.getMinStrokePower()}w`)
+})
+
 test.run()
