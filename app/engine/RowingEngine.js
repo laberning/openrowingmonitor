@@ -56,8 +56,6 @@ function createRowingEngine (rowerSettings) {
 
   let workoutHandler
   const kDampEstimatorAverager = createWeightedAverager(3)
-  const PreviousDt = createWeightedAverager(2)
-  PreviousDt.pushValue(rowerSettings.maximumTimeBetweenMagnets)
   const flankDetector = createMovingFlankDetector(rowerSettings.numOfImpulsesPerRevolution, rowerSettings.maximumTimeBetweenMagnets, 0)
   let prevDt = rowerSettings.maximumTimeBetweenMagnets
   let kPower = 0.0
@@ -91,13 +89,12 @@ function createRowingEngine (rowerSettings) {
     }
 
     // Noisefilter on the value of currentDt: it should be within sane levels and should not deviate too much from the previous reading
-    if (currentDt < rowerSettings.minimumTimeBetweenMagnets || currentDt > rowerSettings.maximumTimeBetweenMagnets || currentDt < (rowerSettings.maximumDownwardChange * PreviousDt.weightedAverage()) || currentDt > (rowerSettings.maximumUpwardChange * PreviousDt.weightedAverage())) {
+    if (currentDt < rowerSettings.minimumTimeBetweenMagnets || currentDt > rowerSettings.maximumTimeBetweenMagnets || currentDt < (rowerSettings.maximumDownwardChange * PrevDt) || currentDt > (rowerSettings.maximumUpwardChange * PrevDt.weightedAverage())) {
       // impulses are outside plausible ranges, so we assume it is close to the previous one
       currentDt = prevDt
       log.debug(`Noisefilter corrected currentDt, ${currentDt} was incredible, changed to ${prevDt}`)
     }
     prevDt = currentDt
-    PreviousDt.pushValue(currentDt)
     flankDetector.pushValue(currentDt)
 
     // each revolution of the flywheel adds distance of distancePerRevolution
