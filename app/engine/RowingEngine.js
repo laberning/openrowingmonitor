@@ -89,7 +89,7 @@ function createRowingEngine (rowerSettings) {
     }
 
     // Noisefilter on the value of currentDt: it should be within sane levels and should not deviate too much from the previous reading
-    if (currentDt < rowerSettings.minimumTimeBetweenMagnets || currentDt > rowerSettings.maximumTimeBetweenMagnets || currentDt < (rowerSettings.maximumDownwardChange * PrevDt) || currentDt > (rowerSettings.maximumUpwardChange * PrevDt.weightedAverage())) {
+    if (currentDt < rowerSettings.minimumTimeBetweenMagnets || currentDt > rowerSettings.maximumTimeBetweenMagnets || currentDt < (rowerSettings.maximumDownwardChange * prevDt) || currentDt > (rowerSettings.maximumUpwardChange * prevDt)) {
       // impulses are outside plausible ranges, so we assume it is close to the previous one
       currentDt = prevDt
       log.debug(`Noisefilter corrected currentDt, ${currentDt} was incredible, changed to ${prevDt}`)
