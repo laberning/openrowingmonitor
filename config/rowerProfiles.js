@@ -62,20 +62,14 @@ export default {
   // Sportstech WRX700
   WRX700: {
     numOfImpulsesPerRevolution: 2,
-    minimumTimeBetweenMagnets: 0.1,
-    maximumTimeBetweenMagnets: 0.4,
-    maximumDownwardChange: 0.40,
-    maximumUpwardChange: 1.50,
+    minimumTimeBetweenMagnets: 0.05,
+    maximumTimeBetweenMagnets: 1,
+    maximumDownwardChange: 0.25,
+    maximumUpwardChange: 2,
     minimumDriveTime: 0.500,
     minimumRecoveryTime: 0.800,
     omegaDotDivOmegaSquare: 0.046,
     jMoment: 0.49,
-    minimumTimeBetweenMagnets: 0.1,
-    maximumTimeBetweenMagnets: 0.4,
-    maximumDownwardChange: 0.40,
-    maximumUpwardChange: 1.50,
-    minimumDriveTime: 0.500,
-    minimumRecoveryTime: 0.800,
     liquidFlywheel: true
   },
 
@@ -90,12 +84,6 @@ export default {
     minimumRecoveryTime: 0.800,
     omegaDotDivOmegaSquare: 0.019,
     jMoment: 0.4,
-    minimumTimeBetweenMagnets: 0.15,
-    maximumTimeBetweenMagnets: 0.5,
-    maximumDownwardChange: 0.25,
-    maximumUpwardChange: 1.75,
-    minimumDriveTime: 0.500,
-    minimumRecoveryTime: 0.800,
     liquidFlywheel: true
   },
   
