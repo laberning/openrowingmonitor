@@ -28,6 +28,15 @@ for (const [loggerName, logLevel] of Object.entries(config.loglevel)) {
 
 log.info(`==== Open Rowing Monitor ${process.env.npm_package_version} ====\n`)
 
+// Setting top (near-real-time) priority for the Gpio process, as we don't want to miss anything
+log.debug('Setting priority for the processing of datapoints to maximum (-20)')
+try {
+  // Setting priority of current process
+  os.setPriority(-20)
+} catch (err) {
+  log.error(': error occured' + err)
+}
+
 const peripheralManager = createPeripheralManager()
 
 peripheralManager.on('control', (event) => {
@@ -70,8 +79,8 @@ const rowingStatistics = createRowingStatistics()
 rowingEngine.notify(rowingStatistics)
 
 rowingStatistics.on('strokeFinished', (metrics) => {
-  var d = new Date();
-  var timestamp = d.toISOString();
+  const d = new Date()
+  const timestamp = d.toISOString()
   log.info(`stroke: ${metrics.strokesTotal}, dur: ${metrics.strokeTime}s, power: ${metrics.power}w` +
   `, split: ${metrics.splitFormatted}, ratio: ${metrics.powerRatio}, dist: ${metrics.distanceTotal}m` +
   `, cal: ${metrics.caloriesTotal}kcal, SPM: ${metrics.strokesPerMinute}, speed: ${metrics.speed}km/h` +
