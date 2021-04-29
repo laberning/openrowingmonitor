@@ -11,7 +11,7 @@ Settings important for Open Rowing Monitor:
 * numOfImpulsesPerRevolution: tells Open Rowing Monitor how many impulses per rotation of the flywheel to expect. Although sometimes not easy to detect, you can sometimes find it in the manual under the parts-list
 * liquidFlywheel: tells OpenRowingMonitor if you are using a waterrower (true) or a solid flywheel with magnetic or air-resistance (false)
 * omegaDotDivOmegaSquare: tells OpenRowingMonitor how much damping and thus resistance your flywheel is offering. This is typically also dependent on your damper-setting (if present). To measure it for your rowing machine, comment in the logging at the end of "startDrivePhase" function. Then do some strokes on the rower and estimate a value based on the logging.
-* jMoment: The inertia of the flywheel, which in practice influences your power values and distance. This typically 
+* jMoment: The inertia of the flywheel, which in practice influences your power values and distance. This typically is set by rowing and see what kind of power is displayed on the monitor. Typical ranges are weigth dependent (see https://www.rowingmachine-guide.com/tabata-rowing-workouts.html).
 * Noise reduction settings. You should only change these settings if you experience issues.
   * minimumTimeBetweenImpulses
   * maximumTimeBetweenImpulses
