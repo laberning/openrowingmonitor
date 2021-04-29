@@ -20,7 +20,7 @@ export function createGpioTimerService () {
     // Setting priority of current process
     os.setPriority(-20)
   } catch (err) {
-    log.error(": error occured" + err)
+    log.error(': error occured' + err)
   }
   
   // mode can be rising, falling, both
