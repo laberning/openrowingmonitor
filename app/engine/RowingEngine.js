@@ -62,7 +62,6 @@ function createRowingEngine (rowerSettings) {
   let jPower = 0.0
   let kDampEstimator = 0.0
   let strokeElapsed = 0.0
-  let recoveryElapsed = 0.0
   let driveElapsed = 0.0
   let strokeDistance = 0.0
   const omegaVector = new Array(2)
@@ -92,10 +91,9 @@ function createRowingEngine (rowerSettings) {
     if (currentDt < rowerSettings.minimumTimeBetweenMagnets || currentDt > rowerSettings.maximumTimeBetweenMagnets || currentDt < (rowerSettings.maximumDownwardChange * prevDt) || currentDt > (rowerSettings.maximumUpwardChange * prevDt)) {
       // impulses are outside plausible ranges, so we assume it is close to the previous one
       currentDt = prevDt
-      log.debug(`Noisefilter corrected currentDt, ${currentDt} was incredible, changed to ${prevDt}`)
+      log.debug(`Noisefilter corrected currentDt, ${currentDt} was dubious, changed to ${prevDt}`)
     }
     prevDt = currentDt
-    flankDetector.pushValue(currentDt)
 
     // each revolution of the flywheel adds distance of distancePerRevolution
     strokeDistance += distancePerRevolution / numOfImpulsesPerRevolution
@@ -139,6 +137,8 @@ function createRowingEngine (rowerSettings) {
       if (isInDrivePhase && wasInDrivePhase) { updateDrivePhase(currentDt) }
       if (!isInDrivePhase && !wasInDrivePhase) { updateRecoveryPhase(currentDt) }
     } else {
+      flankDetector.pushValue(currentDt)
+
       // Here we use a finite state machine that goes between "Drive" and "Recovery", provinding sufficient time has passed and there is a credible flank
       // We analyse the current impulse, depending on where we are in the stroke
       if (wasInDrivePhase) {
@@ -154,7 +154,7 @@ function createRowingEngine (rowerSettings) {
         }
       } else {
         // During the previous magnet, we were in the "Recovery" phase
-        recoveryElapsed = timer.getValue('stroke')
+        const recoveryElapsed = timer.getValue('stroke')
         if ((recoveryElapsed > rowerSettings.minimumRecoveryTime) && flankDetector.isAccelerating()) {
           // We are long enough in the Recovery phase, and we see a clear acceleration, thus we need to change to the Drive phase
           startDrivePhase(currentDt)
