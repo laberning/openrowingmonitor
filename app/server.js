@@ -10,7 +10,6 @@ import { fork } from 'child_process'
 import log from 'loglevel'
 // eslint-disable-next-line no-unused-vars
 import fs from 'fs'
-import os from 'os'
 import config from './tools/ConfigManager.js'
 import { createRowingEngine } from './engine/RowingEngine.js'
 import { createRowingStatistics } from './engine/RowingStatistics.js'
@@ -29,15 +28,6 @@ for (const [loggerName, logLevel] of Object.entries(config.loglevel)) {
 }
 
 log.info(`==== Open Rowing Monitor ${process.env.npm_package_version} ====\n`)
-
-// Setting top (near-real-time) priority for the Gpio process, as we don't want to miss anything
-log.debug('Setting priority for the processing of datapoints to maximum (-20)')
-try {
-  // Setting priority of current process
-  os.setPriority(-20)
-} catch (err) {
-  log.error(': error occured' + err)
-}
 
 const peripheralManager = createPeripheralManager()
 
