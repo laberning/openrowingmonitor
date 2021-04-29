@@ -22,7 +22,6 @@ export function createGpioTimerService () {
   } catch (err) {
     log.error(': error occured' + err)
   }
-  
   // mode can be rising, falling, both
   const reedSensor = new Gpio(17, 'in', 'rising')
   // use hrtime for time measurement to get a higher time precision
