@@ -10,6 +10,7 @@ import { fork } from 'child_process'
 import log from 'loglevel'
 // eslint-disable-next-line no-unused-vars
 import fs from 'fs'
+import os from 'os'
 import config from './tools/ConfigManager.js'
 import { createRowingEngine } from './engine/RowingEngine.js'
 import { createRowingStatistics } from './engine/RowingStatistics.js'
@@ -79,8 +80,8 @@ const rowingStatistics = createRowingStatistics()
 rowingEngine.notify(rowingStatistics)
 
 rowingStatistics.on('strokeFinished', (metrics) => {
-  const d = new Date()
-  const timestamp = d.toISOString()
+  // const d = new Date()
+  // const timestamp = d.toISOString()
   log.info(`stroke: ${metrics.strokesTotal}, dur: ${metrics.strokeTime}s, power: ${metrics.power}w` +
   `, split: ${metrics.splitFormatted}, ratio: ${metrics.powerRatio}, dist: ${metrics.distanceTotal}m` +
   `, cal: ${metrics.caloriesTotal}kcal, SPM: ${metrics.strokesPerMinute}, speed: ${metrics.speed}km/h` +
