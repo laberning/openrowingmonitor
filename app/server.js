@@ -71,16 +71,26 @@ const rowingStatistics = createRowingStatistics()
 rowingEngine.notify(rowingStatistics)
 
 rowingStatistics.on('strokeFinished', (metrics) => {
-  // const d = new Date()
-  // const timestamp = d.toISOString()
   log.info(`stroke: ${metrics.strokesTotal}, dur: ${metrics.strokeTime}s, power: ${metrics.power}w` +
   `, split: ${metrics.splitFormatted}, ratio: ${metrics.powerRatio}, dist: ${metrics.distanceTotal}m` +
   `, cal: ${metrics.caloriesTotal}kcal, SPM: ${metrics.strokesPerMinute}, speed: ${metrics.speed}km/h` +
   `, cal/hour: ${metrics.caloriesPerHour}kcal, cal/minute: ${metrics.caloriesPerMinute}kcal`)
-  /* Quick hack to generate tcx-trackpoints to get the basic concepts of TCX-export working
-  fs.appendFile('exports/currentlog.tcx', `<Trackpoint>\n <Time>${timestamp}</Time>\n <DistanceMeters>${metrics.distanceTotal}</DistanceMeters>\n <Cadence>${metrics.cadence}</Cadence>\n <SensorState>Present</SensorState>\n <Extensions>\n  <ns3:TPX>\n  <ns3:Watts>${metrics.power}</ns3:Watts>\n  <ns3:Speed>${metrics.speedmeters}</ns3:Speed>\n  </ns3:TPX>\n </Extensions>\n</Trackpoint>\n`, (err) => { if (err) log.error(err) })
-  webServer.notifyClients(metrics)
+  // Quick hack to generate tcx-trackpoints to get the basic concepts of TCX-export working
+  /*
+  const d = new Date()
+  const timestamp = d.toISOString()
+  fs.appendFile('exports/currentlog.tcx',
+  `<Trackpoint>\n <Time>${timestamp}</Time>\n` +
+  `<DistanceMeters>${metrics.distanceTotal}</DistanceMeters>\n` +
+  `<Cadence>${Math.round(metrics.strokesPerMinute)}</Cadence>\n` +
+  '<SensorState>Present</SensorState>\n' +
+  '<Extensions>\n  <ns3:TPX>\n' +
+  `<ns3:Watts>${metrics.power}</ns3:Watts>\n` +
+  `<ns3:Speed>${(metrics.speed / 3.6).toFixed(2)}</ns3:Speed>\n` +
+  '</ns3:TPX>\n </Extensions>\n</Trackpoint>\n',
+  (err) => { if (err) log.error(err) })
   */
+  webServer.notifyClients(metrics)
   peripheralManager.notifyMetrics('strokeFinished', metrics)
 })
 
