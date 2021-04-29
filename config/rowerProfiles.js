@@ -29,6 +29,14 @@ export default {
     // plausibility. Note that the power also depends on omegaDotDivOmegaSquare (see above).
     jMoment: 0.49,
 
+    // A constant that is commonly used to convert flywheel revolutions to a rowed distance
+    // see here: http://eodg.atm.ox.ac.uk/user/dudhia/rowing/physics/ergometer.html#section9
+    // Concept2 seems to use 2.8, which they admit is an arbitrary number which came close
+    // to their expectations. So for your rower, you have to find a credible distance for your effort.
+    // Also note that the rowed distance also depends on jMoment, so please calibrate that before changing this constant.
+    // PLEASE NOTE: INcreasing this number DEcreases your rowed meters
+    magicConstant: 2.8,
+    
     // Set this to true if you are using a water rower
     // The mass of the water starts rotating, when you pull the handle, and therefore acts
     // like a massive flywheel
@@ -42,6 +50,12 @@ export default {
   // Sportstech WRX700
   WRX700: {
     numOfImpulsesPerRevolution: 2,
+    minimumTimeBetweenMagnets: 0.1,
+    maximumTimeBetweenMagnets: 0.4,
+    maximumDownwardChange: 0.40,
+    maximumUpwardChange: 1.50,
+    minimumDriveTime: 0.500,
+    minimumRecoveryTime: 0.800,
     omegaDotDivOmegaSquare: 0.046,
     jMoment: 0.49,
     liquidFlywheel: true
@@ -50,8 +64,80 @@ export default {
   // DKN R-320 Air Rower
   DKNR320: {
     numOfImpulsesPerRevolution: 1,
+    minimumTimeBetweenMagnets: 0.15,
+    maximumTimeBetweenMagnets: 0.5,
+    maximumDownwardChange: 0.25,
+    maximumUpwardChange: 1.75,
+    minimumDriveTime: 0.500,
+    minimumRecoveryTime: 0.800,
     omegaDotDivOmegaSquare: 0.019,
     jMoment: 0.4,
     liquidFlywheel: true
+  },
+  
+  // NordicTrack RX800 Air Rower
+  RX800: {
+    liquidFlywheel: false,
+    numOfImpulsesPerRevolution: 4,
+    
+    // Damper setting 10
+    minimumTimeBetweenMagnets: 0.018,
+    maximumTimeBetweenMagnets: 0.0338,
+    maximumDownwardChange: 0.69,
+    maximumUpwardChange: 1.3,
+    minimumDriveTime: 0.300,
+    minimumRecoveryTime: 0.750,
+    omegaDotDivOmegaSquare: 0.00543660639574872,
+    jMoment: 0.174,
+    magicConstant: 3.75
+    //
+
+    /* Damper setting 8
+    minimumTimeBetweenMagnets: 0.017,
+    maximumTimeBetweenMagnets: 0.034,
+    maximumDownwardChange: 0.8,
+    maximumUpwardChange: 1.15,
+    minimumDriveTime: 0.300,
+    minimumRecoveryTime: 0.750,
+    omegaDotDivOmegaSquare: 0.005305471,
+    jMoment: 0.155, // still under investigation
+    magicConstant: 4 // still under investigation
+    */
+
+    /* Damper setting 6
+    minimumTimeBetweenMagnets: 0.017,
+    maximumTimeBetweenMagnets: 0.034,
+    maximumDownwardChange: 0.85,
+    maximumUpwardChange: 1.15,
+    minimumDriveTime: 0.300,
+    minimumRecoveryTime: 0.750,
+    omegaDotDivOmegaSquare: 0.0047,
+    jMoment: 0.135, // still under investigation
+    magicConstant: 4.25 // still under investigation
+    */
+
+    /* Damper setting 4
+    minimumTimeBetweenMagnets: 0.019,
+    maximumTimeBetweenMagnets: 0.032,
+    maximumDownwardChange: 0.70,
+    maximumUpwardChange: 1.30,
+    minimumDriveTime: 0.300,
+    minimumRecoveryTime: 0.750,
+    omegaDotDivOmegaSquare: 0.00355272,
+    jMoment: 0.125,
+    magicConstant: 4.4
+    */
+
+    /* Damper setting 2
+    minimumTimeBetweenMagnets: 0.016,
+    maximumTimeBetweenMagnets: 0.033,
+    maximumDownwardChange: 0.85,
+    maximumUpwardChange: 1.15,
+    minimumDriveTime: 0.300,
+    minimumRecoveryTime: 0.750,
+    omegaDotDivOmegaSquare: 0.002263966,
+    jMoment: 0.111,
+    magicConstant: 4.6
+    */
   }
 }
