@@ -82,9 +82,6 @@ rowingStatistics.on('strokeFinished', (metrics) => {
   fs.appendFile('exports/currentlog.tcx',
   `<Trackpoint>\n <Time>${timestamp}</Time>\n` +
   `<DistanceMeters>${metrics.distanceTotal}</DistanceMeters>\n` +
-  '<HeartRateBpm>\n' +
-  `  <Value>${metrics.heartrate}</Value>\n` +
-  '</HeartRateBpm>\n' +
   `<Cadence>${Math.round(metrics.strokesPerMinute)}</Cadence>\n` +
   '<SensorState>Present</SensorState>\n' +
   '<Extensions>\n  <ns3:TPX>\n' +
