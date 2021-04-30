@@ -87,11 +87,15 @@ function createRowingEngine (rowerSettings) {
       return
     }
 
-    // Noisefilter on the value of currentDt: it should be within sane levels and should not deviate too much from the previous reading
+    // remember the state of drive phase from the previous impulse, we need it to detect state changes
+    wasInDrivePhase = isInDrivePhase
+
+    // STEP 1: reduce noise in the measurements by applying some sanity checks
+    // noise filter on the value of currentDt: it should be within sane levels and should not deviate too much from the previous reading
     if (currentDt < rowerSettings.minimumTimeBetweenMagnets || currentDt > rowerSettings.maximumTimeBetweenMagnets || currentDt < (rowerSettings.maximumDownwardChange * prevDt) || currentDt > (rowerSettings.maximumUpwardChange * prevDt)) {
       // impulses are outside plausible ranges, so we assume it is close to the previous one
       currentDt = prevDt
-      log.debug(`Noisefilter corrected currentDt, ${currentDt} was dubious, changed to ${prevDt}`)
+      log.debug(`noise filter corrected currentDt, ${currentDt} was dubious, changed to ${prevDt}`)
     }
     prevDt = currentDt
 
@@ -120,9 +124,8 @@ function createRowingEngine (rowerSettings) {
     // used to be 15
     const accelerationIsPositive = omegaDotVector[0] > 0
 
+    // STEP 2: detect where we are in the rowing phase (drive or recovery)
     if (liquidFlywheel) {
-      wasInDrivePhase = isInDrivePhase
-
       // Identification of drive and recovery phase on water rowers is still Work in Progress
       // ω does not seem to decay that linear on water rower in recovery phase, so this would not be
       // a good indicator here.
@@ -131,41 +134,29 @@ function createRowingEngine (rowerSettings) {
       // This would mean, that the stroke ratio and the estimation of kDamp is a bit off.
       // todo: do some measurements and find a better stable indicator for water rowers
       isInDrivePhase = accelerationIsPositive
-      // handle the current impulse, depending on where we are in the stroke
-      if (isInDrivePhase && !wasInDrivePhase) { startDrivePhase(currentDt) }
-      if (!isInDrivePhase && wasInDrivePhase) { startRecoveryPhase() }
-      if (isInDrivePhase && wasInDrivePhase) { updateDrivePhase(currentDt) }
-      if (!isInDrivePhase && !wasInDrivePhase) { updateRecoveryPhase(currentDt) }
     } else {
       flankDetector.pushValue(currentDt)
-
       // Here we use a finite state machine that goes between "Drive" and "Recovery", provinding sufficient time has passed and there is a credible flank
       // We analyse the current impulse, depending on where we are in the stroke
       if (wasInDrivePhase) {
-        // During the previous magnet, we were in the "Drive" phase
-        strokeElapsed = timer.getValue('drive')
-        if ((strokeElapsed > rowerSettings.minimumDriveTime) && flankDetector.isDecelerating()) {
-          // We are long enough in the Drive phase, and we see a clear deceleration, thus we need to change to the Recovery phase
-          startRecoveryPhase()
-          isInDrivePhase = false
-        } else {
-          // We are too short in the Drive phase or we don't see a clear deceleration, so let's stay in the drive phase
-          updateDrivePhase(currentDt)
-        }
+        // during the previous impulse, we were in the "Drive" phase
+        const strokeElapsed = timer.getValue('drive')
+        // finish drive phase if we have been long enough in the Drive phase, and we see a clear deceleration
+        isInDrivePhase = !((strokeElapsed > rowerSettings.minimumDriveTime) && flankDetector.isDecelerating())
       } else {
-        // During the previous magnet, we were in the "Recovery" phase
+        // during the previous impulse, we were in the "Recovery" phase
         const recoveryElapsed = timer.getValue('stroke')
-        if ((recoveryElapsed > rowerSettings.minimumRecoveryTime) && flankDetector.isAccelerating()) {
-          // We are long enough in the Recovery phase, and we see a clear acceleration, thus we need to change to the Drive phase
-          startDrivePhase(currentDt)
-          isInDrivePhase = true
-        } else {
-          // We are too short in the Recovery phase or we don't see a clear acceleration, so let's stay in the Recovery phase
-          updateRecoveryPhase(currentDt)
-        }
+        // if we are long enough in the Recovery phase, and we see a clear acceleration, we need to change to the Drive phase
+        isInDrivePhase = ((recoveryElapsed > rowerSettings.minimumRecoveryTime) && flankDetector.isAccelerating())
       }
-      wasInDrivePhase = isInDrivePhase
     }
+
+    // STEP 3: handle the current impulse, depending on where we are in the stroke
+    if (isInDrivePhase && !wasInDrivePhase) { startDrivePhase(currentDt) }
+    if (!isInDrivePhase && wasInDrivePhase) { startRecoveryPhase() }
+    if (isInDrivePhase && wasInDrivePhase) { updateDrivePhase(currentDt) }
+    if (!isInDrivePhase && !wasInDrivePhase) { updateRecoveryPhase(currentDt) }
+
     timer.updateTimers(currentDt)
     log.debug(`𝑑t: ${currentDt} ω: ${omegaVector[0].toFixed(2)} ωdot: ${omegaDotVector[0].toFixed(2)} ωdotdot: ${omegaDotDot.toFixed(2)} aPos: ${accelerationIsPositive} aChange: ${accelerationIsChanging}`)
   }
@@ -201,7 +192,9 @@ function createRowingEngine (rowerSettings) {
 
     if (strokeElapsed !== 0 && workoutHandler) {
       workoutHandler.handleStroke({
-        power: (jPower + kPower) / strokeElapsed,
+        // if the recoveryPhase is shorter than 0.2 seconds we set it to 2 seconds, this mitigates the problem
+        // that we do not have a recovery phase on the first stroke
+        power: (jPower + kPower) / (((strokeElapsed - driveElapsed) < 0.2) ? strokeElapsed + 2 : strokeElapsed),
         duration: strokeElapsed,
         durationDrivePhase: driveElapsed,
         distance: strokeDistance,
