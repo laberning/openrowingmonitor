@@ -23,6 +23,8 @@ Settings important for Open Rowing Monitor:
   * minimumDriveTime
   * minimumRecoveryTime
 
-For the noise reduction settings and stroke detection settings, you can use the Excel tool. When OpenRowingMonitor records a log (comment out the line in server.js), you can paste the values in the first column of the "Raw Data" tab (please observe that the Raspberry uses a point as seperator, and your version of Excel might expect a comma).
+For the noise reduction settings and stroke detection settings, you can use the Excel tool. When OpenRowingMonitor records a log (comment out the line in server.js), you can paste the values in the first column of the "Raw Data" tab (please observe that the Raspberry uses a point as seperator, and your version of Excel might expect a comma). From there, the Excel file simulates the calculations the OpenRowingMonitor makes, allowing you to play with these settings.
 
 By changing the noise reduction settings, you can remove any obvious errors. You don't need to filter everything: it is just to remove obvious errors that might frustrate the stroke detection, but in the end you can't prevent every piece of noise out there. Begin with the noise filtering, when you are satisfied, you can adjust the stroke detection.
+
+Please note that changing the noise filtering and stroke detection settings will affect your omegaDotDivOmegaSquare and jMoment. So it is best to start with rowing a few strokes to determine settings for noise filtering and stroke detection, and then move on to the other settings.
