@@ -25,7 +25,8 @@ print "This script will set up Open Rowing Monitor on a Raspberry Pi 3 / 4 with 
 print "You should only run this script on a SD Card that does not contain any important data."
 print
 
-if [[ "$(uname -n)" != "raspberrypi" ]]; then
+OSID=$(grep -oP '(?<=^ID=).+' /etc/os-release | tr -d '"')
+if [[ $OSID != "raspbian" ]]; then
   cancel "This script currently only works on Raspberry Pi OS, you will have to do a manual installation."
 fi
 
@@ -34,6 +35,8 @@ if [[ $VERSION != "10 (buster)" ]]; then
   print "Warning: So far this install script has only been tested with Raspberry Pi OS 10 (buster)."
   print "You are running Raspberry Pi OS $VERSION, are you sure that you want to continue?"
 fi
+
+# todo: once we know what hardware we support we can check for that via /sys/firmware/devicetree/base/model
 
 print
 read -p "Press RETURN to continue or CTRL + C to abort"

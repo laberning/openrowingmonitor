@@ -12,6 +12,7 @@
 */
 import loglevel from 'loglevel'
 import { createWeightedAverager } from './WeightedAverager.js'
+import { createMovingFlankDetector } from './MovingFlankDetector.js'
 import { createTimer } from './Timer.js'
 
 const log = loglevel.getLogger('RowingEngine')
@@ -55,6 +56,8 @@ function createRowingEngine (rowerSettings) {
 
   let workoutHandler
   const kDampEstimatorAverager = createWeightedAverager(3)
+  const flankDetector = createMovingFlankDetector(rowerSettings.numOfImpulsesPerRevolution, rowerSettings.maximumTimeBetweenMagnets, 0)
+  let prevDt = rowerSettings.maximumTimeBetweenMagnets
   let kPower = 0.0
   let jPower = 0.0
   let kDampEstimator = 0.0
@@ -84,6 +87,18 @@ function createRowingEngine (rowerSettings) {
       return
     }
 
+    // remember the state of drive phase from the previous impulse, we need it to detect state changes
+    wasInDrivePhase = isInDrivePhase
+
+    // STEP 1: reduce noise in the measurements by applying some sanity checks
+    // noise filter on the value of currentDt: it should be within sane levels and should not deviate too much from the previous reading
+    if (currentDt < rowerSettings.minimumTimeBetweenMagnets || currentDt > rowerSettings.maximumTimeBetweenMagnets || currentDt < (rowerSettings.maximumDownwardChange * prevDt) || currentDt > (rowerSettings.maximumUpwardChange * prevDt)) {
+      // impulses are outside plausible ranges, so we assume it is close to the previous one
+      currentDt = prevDt
+      log.debug(`noise filter corrected currentDt, ${currentDt} was dubious, changed to ${prevDt}`)
+    }
+    prevDt = currentDt
+
     // each revolution of the flywheel adds distance of distancePerRevolution
     strokeDistance += distancePerRevolution / numOfImpulsesPerRevolution
 
@@ -109,8 +124,7 @@ function createRowingEngine (rowerSettings) {
     // used to be 15
     const accelerationIsPositive = omegaDotVector[0] > 0
 
-    wasInDrivePhase = isInDrivePhase
-
+    // STEP 2: detect where we are in the rowing phase (drive or recovery)
     if (liquidFlywheel) {
       // Identification of drive and recovery phase on water rowers is still Work in Progress
       // ω does not seem to decay that linear on water rower in recovery phase, so this would not be
@@ -121,11 +135,23 @@ function createRowingEngine (rowerSettings) {
       // todo: do some measurements and find a better stable indicator for water rowers
       isInDrivePhase = accelerationIsPositive
     } else {
-      // ω decays linear on rowers with a solid flywheel, so we can use that to differentiate the phases
-      isInDrivePhase = accelerationIsChanging || (accelerationIsPositive && wasInDrivePhase)
+      flankDetector.pushValue(currentDt)
+      // Here we use a finite state machine that goes between "Drive" and "Recovery", provinding sufficient time has passed and there is a credible flank
+      // We analyse the current impulse, depending on where we are in the stroke
+      if (wasInDrivePhase) {
+        // during the previous impulse, we were in the "Drive" phase
+        const strokeElapsed = timer.getValue('drive')
+        // finish drive phase if we have been long enough in the Drive phase, and we see a clear deceleration
+        isInDrivePhase = !((strokeElapsed > rowerSettings.minimumDriveTime) && flankDetector.isDecelerating())
+      } else {
+        // during the previous impulse, we were in the "Recovery" phase
+        const recoveryElapsed = timer.getValue('stroke')
+        // if we are long enough in the Recovery phase, and we see a clear acceleration, we need to change to the Drive phase
+        isInDrivePhase = ((recoveryElapsed > rowerSettings.minimumRecoveryTime) && flankDetector.isAccelerating())
+      }
     }
 
-    // handle the current impulse, depending on where we are in the stroke
+    // STEP 3: handle the current impulse, depending on where we are in the stroke
     if (isInDrivePhase && !wasInDrivePhase) { startDrivePhase(currentDt) }
     if (!isInDrivePhase && wasInDrivePhase) { startRecoveryPhase() }
     if (isInDrivePhase && wasInDrivePhase) { updateDrivePhase(currentDt) }
@@ -166,7 +192,9 @@ function createRowingEngine (rowerSettings) {
 
     if (strokeElapsed !== 0 && workoutHandler) {
       workoutHandler.handleStroke({
-        power: (jPower + kPower) / strokeElapsed,
+        // if the recoveryPhase is shorter than 0.2 seconds we set it to 2 seconds, this mitigates the problem
+        // that we do not have a recovery phase on the first stroke
+        power: (jPower + kPower) / (((strokeElapsed - driveElapsed) < 0.2) ? strokeElapsed + 2 : strokeElapsed),
         duration: strokeElapsed,
         durationDrivePhase: driveElapsed,
         distance: strokeDistance,

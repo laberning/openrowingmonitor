@@ -16,6 +16,18 @@ export default {
     // i.e. the number of magnets if used with a reed sensor
     numOfImpulsesPerRevolution: 1,
 
+    // Filter values for sanity checks
+    // First are the sane minimum and maximum times between magnets during active rows
+    minimumTimeBetweenMagnets: 0.014,
+    maximumTimeBetweenMagnets: 0.5,
+    // Procentual change between successive intervals
+    maximumDownwardChange: 0.2,  // effectively the maximum deceleration
+    maximumUpwardChange: 1.75,    // effectively the maximum acceleration
+    // Settings for the phase detection
+    minimumDriveTime: 0.300,
+    minimumRecoveryTime: 0.750,
+
+
     // Needed to determine the damping constant of the rowing machine. This value can be measured in the recovery phase
     // of the stroke (some ergometers do this constantly).
     // However I still keep it constant here, as I still have to figure out the damping physics of a water rower (see below)
@@ -50,10 +62,10 @@ export default {
   // Sportstech WRX700
   WRX700: {
     numOfImpulsesPerRevolution: 2,
-    minimumTimeBetweenMagnets: 0.1,
-    maximumTimeBetweenMagnets: 0.4,
-    maximumDownwardChange: 0.40,
-    maximumUpwardChange: 1.50,
+    minimumTimeBetweenMagnets: 0.05,
+    maximumTimeBetweenMagnets: 1,
+    maximumDownwardChange: 0.25,
+    maximumUpwardChange: 2,
     minimumDriveTime: 0.500,
     minimumRecoveryTime: 0.800,
     omegaDotDivOmegaSquare: 0.046,
@@ -77,8 +89,8 @@ export default {
   
   // NordicTrack RX800 Air Rower
   RX800: {
-    liquidFlywheel: false,
     numOfImpulsesPerRevolution: 4,
+    liquidFlywheel: false,
     
     // Damper setting 10
     minimumTimeBetweenMagnets: 0.018,
