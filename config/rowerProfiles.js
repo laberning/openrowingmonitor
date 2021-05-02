@@ -10,23 +10,23 @@
 */
 export default {
 
-  // Profile for an example rower
+  // The default rower profile
   DEFAULT: {
     // How many impulses are triggered per revolution of the flywheel
     // i.e. the number of magnets if used with a reed sensor
     numOfImpulsesPerRevolution: 1,
 
-    // Filter values for sanity checks
-    // First are the sane minimum and maximum times between magnets during active rows
-    minimumTimeBetweenMagnets: 0.014,
-    maximumTimeBetweenMagnets: 0.5,
-    // Procentual change between successive intervals
-    maximumDownwardChange: 0.2,  // effectively the maximum deceleration
-    maximumUpwardChange: 1.75,    // effectively the maximum acceleration
-    // Settings for the phase detection
+    // Filter Settings to reduce noise in the measured data
+    // Minimum and maximum duration between impulses in seconds during active rowing. Measurements outside of this range
+    // will be replaced by a default value.
+    minimumTimeBetweenImpulses: 0.014,
+    maximumTimeBetweenImpulses: 0.5,
+    // Percentage change between successive intervals
+    maximumDownwardChange: 0.2, // effectively the maximum deceleration
+    maximumUpwardChange: 1.75, // effectively the maximum acceleration
+    // Settings for the rowing phase detection (in seconds)
     minimumDriveTime: 0.300,
     minimumRecoveryTime: 0.750,
-
 
     // Needed to determine the damping constant of the rowing machine. This value can be measured in the recovery phase
     // of the stroke (some ergometers do this constantly).
@@ -46,9 +46,9 @@ export default {
     // Concept2 seems to use 2.8, which they admit is an arbitrary number which came close
     // to their expectations. So for your rower, you have to find a credible distance for your effort.
     // Also note that the rowed distance also depends on jMoment, so please calibrate that before changing this constant.
-    // PLEASE NOTE: INcreasing this number DEcreases your rowed meters
+    // PLEASE NOTE: Increasing this number decreases your rowed meters
     magicConstant: 2.8,
-    
+
     // Set this to true if you are using a water rower
     // The mass of the water starts rotating, when you pull the handle, and therefore acts
     // like a massive flywheel
@@ -62,8 +62,8 @@ export default {
   // Sportstech WRX700
   WRX700: {
     numOfImpulsesPerRevolution: 2,
-    minimumTimeBetweenMagnets: 0.05,
-    maximumTimeBetweenMagnets: 1,
+    minimumTimeBetweenImpulses: 0.05,
+    maximumTimeBetweenImpulses: 1,
     maximumDownwardChange: 0.25,
     maximumUpwardChange: 2,
     minimumDriveTime: 0.500,
@@ -76,8 +76,8 @@ export default {
   // DKN R-320 Air Rower
   DKNR320: {
     numOfImpulsesPerRevolution: 1,
-    minimumTimeBetweenMagnets: 0.15,
-    maximumTimeBetweenMagnets: 0.5,
+    minimumTimeBetweenImpulses: 0.15,
+    maximumTimeBetweenImpulses: 0.5,
     maximumDownwardChange: 0.25,
     maximumUpwardChange: 1.75,
     minimumDriveTime: 0.500,
@@ -86,15 +86,15 @@ export default {
     jMoment: 0.4,
     liquidFlywheel: true
   },
-  
+
   // NordicTrack RX800 Air Rower
   RX800: {
     numOfImpulsesPerRevolution: 4,
     liquidFlywheel: false,
-    
+
     // Damper setting 10
-    minimumTimeBetweenMagnets: 0.018,
-    maximumTimeBetweenMagnets: 0.0338,
+    minimumTimeBetweenImpulses: 0.018,
+    maximumTimeBetweenImpulses: 0.0338,
     maximumDownwardChange: 0.69,
     maximumUpwardChange: 1.3,
     minimumDriveTime: 0.300,
@@ -105,8 +105,8 @@ export default {
     //
 
     /* Damper setting 8
-    minimumTimeBetweenMagnets: 0.017,
-    maximumTimeBetweenMagnets: 0.034,
+    minimumTimeBetweenImpulses: 0.017,
+    maximumTimeBetweenImpulses: 0.034,
     maximumDownwardChange: 0.8,
     maximumUpwardChange: 1.15,
     minimumDriveTime: 0.300,
@@ -117,8 +117,8 @@ export default {
     */
 
     /* Damper setting 6
-    minimumTimeBetweenMagnets: 0.017,
-    maximumTimeBetweenMagnets: 0.034,
+    minimumTimeBetweenImpulses: 0.017,
+    maximumTimeBetweenImpulses: 0.034,
     maximumDownwardChange: 0.85,
     maximumUpwardChange: 1.15,
     minimumDriveTime: 0.300,
@@ -129,8 +129,8 @@ export default {
     */
 
     /* Damper setting 4
-    minimumTimeBetweenMagnets: 0.019,
-    maximumTimeBetweenMagnets: 0.032,
+    minimumTimeBetweenImpulses: 0.019,
+    maximumTimeBetweenImpulses: 0.032,
     maximumDownwardChange: 0.70,
     maximumUpwardChange: 1.30,
     minimumDriveTime: 0.300,
@@ -141,8 +141,8 @@ export default {
     */
 
     /* Damper setting 2
-    minimumTimeBetweenMagnets: 0.016,
-    maximumTimeBetweenMagnets: 0.033,
+    minimumTimeBetweenImpulses: 0.016,
+    maximumTimeBetweenImpulses: 0.033,
     maximumDownwardChange: 0.85,
     maximumUpwardChange: 1.15,
     minimumDriveTime: 0.300,

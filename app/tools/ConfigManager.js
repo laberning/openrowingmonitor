@@ -15,7 +15,7 @@ async function getConfig () {
   return customConfig !== undefined ? deepMerge(defaultConfig, customConfig.default) : defaultConfig
 }
 
-function deepMerge (...objects) {
+export function deepMerge (...objects) {
   const isObject = obj => obj && typeof obj === 'object'
 
   return objects.reduce((prev, obj) => {

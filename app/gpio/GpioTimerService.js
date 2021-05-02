@@ -21,7 +21,7 @@ export function createGpioTimerService () {
     // setting priority of current process
     os.setPriority(-20)
   } catch (err) {
-    log.error('error while setting priority of Gpio-Thread: ', err)
+    log.debug('need root permission to set priority of Gpio-Thread')
   }
   // mode can be rising, falling, both
   const reedSensor = new Gpio(17, 'in', 'rising')

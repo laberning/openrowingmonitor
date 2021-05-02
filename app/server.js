@@ -135,7 +135,7 @@ webServer.on('clientConnected', () => {
 
 /*
 replayRowingSession(rowingEngine.handleRotationImpulse, {
-  filename: 'recordings/wrx700_2magnets.csv',
+  filename: 'recordings/WRX700_2magnets.csv',
   realtime: true,
   loop: true
 })

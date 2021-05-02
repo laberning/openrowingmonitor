@@ -2,18 +2,18 @@
 
 This guide helps you to adjust the rowing monitor specifically for your rower or even for you
 
-## Why have setings
+## Why have settings
 
-No rowingmachine is the same, and their physical construction is important for the Rowing Monitor to understand to be able to understand your rowing. Easiest way is to select your rower from owerProfiles.js and put its name in default.config.js instead of "rowerProfiles.DEFAULT".
+No rowing machine is the same, and their physical construction is important for the Rowing Monitor to understand to be able to understand your rowing. The easiest way is to select your rower profile from `config/rowerProfiles.js` and put its name in `config.js` (i.e. `rowerSettings: rowerProfiles.WRX700`).
 
-If your rower isn't there, this guide will help you set it up (please send in the data and settings, so we can add it to the OpenRowingMonitor).
+If your rower isn't in there, this guide will help you set it up (please send in the data and settings, so we can add it to the OpenRowingMonitor).
 
 Settings important for Open Rowing Monitor:
 
 * numOfImpulsesPerRevolution: tells Open Rowing Monitor how many impulses per rotation of the flywheel to expect. Although sometimes not easy to detect, you can sometimes find it in the manual under the parts-list
-* liquidFlywheel: tells OpenRowingMonitor if you are using a waterrower (true) or a solid flywheel with magnetic or air-resistance (false)
+* liquidFlywheel: tells OpenRowingMonitor if you are using a water rower (true) or a solid flywheel with magnetic or air-resistance (false)
 * omegaDotDivOmegaSquare: tells OpenRowingMonitor how much damping and thus resistance your flywheel is offering. This is typically also dependent on your damper-setting (if present). To measure it for your rowing machine, comment in the logging at the end of "startDrivePhase" function. Then do some strokes on the rower and estimate a value based on the logging.
-* jMoment: The inertia of the flywheel, which in practice influences your power values and distance. This typically is set by rowing and see what kind of power is displayed on the monitor. Typical ranges are weigth dependent (see [this explanation](https://www.rowingmachine-guide.com/tabata-rowing-workouts.html)).
+* jMoment: The inertia of the flywheel, which in practice influences your power values and distance. This typically is set by rowing and see what kind of power is displayed on the monitor. Typical ranges are weight dependent (see [this explanation](https://www.rowingmachine-guide.com/tabata-rowing-workouts.html)).
 * Noise reduction settings. You should only change these settings if you experience issues.
   * minimumTimeBetweenImpulses
   * maximumTimeBetweenImpulses
@@ -23,7 +23,7 @@ Settings important for Open Rowing Monitor:
   * minimumDriveTime
   * minimumRecoveryTime
 
-For the noise reduction settings and stroke detection settings, you can use the Excel tool. When OpenRowingMonitor records a log (comment out the line in server.js), you can paste the values in the first column of the "Raw Data" tab (please observe that the Raspberry uses a point as seperator, and your version of Excel might expect a comma). From there, the Excel file simulates the calculations the OpenRowingMonitor makes, allowing you to play with these settings.
+For the noise reduction settings and stroke detection settings, you can use the Excel tool. When OpenRowingMonitor records a log (comment out the line in `server.js`), you can paste the values in the first column of the "Raw Data" tab (please observe that the Raspberry uses a point as separator, and your version of Excel might expect a comma). From there, the Excel file simulates the calculations the OpenRowingMonitor makes, allowing you to play with these settings.
 
 By changing the noise reduction settings, you can remove any obvious errors. You don't need to filter everything: it is just to remove obvious errors that might frustrate the stroke detection, but in the end you can't prevent every piece of noise out there. Begin with the noise filtering, when you are satisfied, you can adjust the stroke detection.
 

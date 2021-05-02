@@ -9,6 +9,7 @@ import loglevel from 'loglevel'
 import rowerProfiles from '../../config/rowerProfiles.js'
 import { createRowingEngine } from './RowingEngine.js'
 import { replayRowingSession } from '../tools/RowingRecorder.js'
+import { deepMerge } from '../tools/ConfigManager.js'
 
 const log = loglevel.getLogger('RowingEngine.test')
 log.setLevel('warn')
@@ -32,44 +33,57 @@ const createWorkoutEvaluator = function () {
   function getMinStrokePower () {
     return strokes.map((stroke) => stroke.power).reduce((acc, power) => Math.max(acc, power))
   }
+  function getDistance () {
+    return strokes.reduce((acc, stroke) => acc + stroke.distance, 0)
+  }
   return {
     handleStroke,
     handleStrokeStateChanged,
     handlePause,
     getNumOfStrokes,
     getMaxStrokePower,
-    getMinStrokePower
+    getMinStrokePower,
+    getDistance
   }
 }
 
 test('sample data for WRX700 should produce plausible results with rower profile', async () => {
-  const rowingEngine = createRowingEngine(rowerProfiles.WRX700)
+  const rowingEngine = createRowingEngine(deepMerge(rowerProfiles.DEFAULT, rowerProfiles.WRX700))
   const workoutEvaluator = createWorkoutEvaluator()
   rowingEngine.notify(workoutEvaluator)
   await replayRowingSession(rowingEngine.handleRotationImpulse, { filename: 'recordings/WRX700_2magnets.csv' })
   assert.is(workoutEvaluator.getNumOfStrokes(), 16, 'number of strokes does not meet expectation')
-  assert.ok(workoutEvaluator.getMaxStrokePower() < 220, `maximum stroke power should be below 220w, but is ${workoutEvaluator.getMaxStrokePower()}w`)
-  assert.ok(workoutEvaluator.getMinStrokePower() > 50, `minimum stroke power should be above 50w, but is ${workoutEvaluator.getMinStrokePower()}w`)
+  assertPowerRange(workoutEvaluator, 50, 220)
+  assertDistanceRange(workoutEvaluator, 140, 144)
 })
 
 test('sample data for DKNR320 should produce plausible results with rower profile', async () => {
-  const rowingEngine = createRowingEngine(rowerProfiles.DKNR320)
+  const rowingEngine = createRowingEngine(deepMerge(rowerProfiles.DEFAULT, rowerProfiles.DKNR320))
   const workoutEvaluator = createWorkoutEvaluator()
   rowingEngine.notify(workoutEvaluator)
   await replayRowingSession(rowingEngine.handleRotationImpulse, { filename: 'recordings/DKNR320.csv' })
   assert.is(workoutEvaluator.getNumOfStrokes(), 10, 'number of strokes does not meet expectation')
-  assert.ok(workoutEvaluator.getMaxStrokePower() < 200, `maximum stroke power should be below 200w, but is ${workoutEvaluator.getMaxStrokePower()}w`)
-  assert.ok(workoutEvaluator.getMinStrokePower() > 75, `minimum stroke power should be above 75w, but is ${workoutEvaluator.getMinStrokePower()}w`)
+  assertPowerRange(workoutEvaluator, 75, 200)
+  assertDistanceRange(workoutEvaluator, 64, 67)
 })
 
 test('sample data for RX800 should produce plausible results with rower profile', async () => {
-  const rowingEngine = createRowingEngine(rowerProfiles.RX800)
+  const rowingEngine = createRowingEngine(deepMerge(rowerProfiles.DEFAULT, rowerProfiles.RX800))
   const workoutEvaluator = createWorkoutEvaluator()
   rowingEngine.notify(workoutEvaluator)
   await replayRowingSession(rowingEngine.handleRotationImpulse, { filename: 'recordings/RX800.csv' })
   assert.is(workoutEvaluator.getNumOfStrokes(), 10, 'number of strokes does not meet expectation')
-  assert.ok(workoutEvaluator.getMaxStrokePower() < 260, `maximum stroke power should be below 260, but is ${workoutEvaluator.getMaxStrokePower()}w`)
-  assert.ok(workoutEvaluator.getMinStrokePower() > 160, `minimum stroke power should be above 160w, but is ${workoutEvaluator.getMinStrokePower()}w`)
+  assertPowerRange(workoutEvaluator, 160, 260)
+  assertDistanceRange(workoutEvaluator, 88, 92)
 })
 
+function assertPowerRange (evaluator, minPower, maxPower) {
+  assert.ok(evaluator.getMinStrokePower() > minPower, `minimum stroke power should be above ${minPower}w, but is ${evaluator.getMinStrokePower()}w`)
+  assert.ok(evaluator.getMaxStrokePower() < maxPower, `maximum stroke power should be below ${maxPower}w, but is ${evaluator.getMaxStrokePower()}w`)
+}
+
+function assertDistanceRange (evaluator, minDistance, maxDistance) {
+  console.log(evaluator.getDistance().toFixed(2))
+  assert.ok(evaluator.getDistance() >= minDistance && evaluator.getDistance() <= maxDistance, `distance should be between ${minDistance}m and ${maxDistance}m, but is ${evaluator.getDistance().toFixed(2)}m`)
+}
 test.run()
