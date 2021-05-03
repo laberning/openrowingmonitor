@@ -13,14 +13,14 @@
 */
 import bleno from '@abandonware/bleno'
 import FitnessMachineService from './ftms/FitnessMachineService.js'
-import DeviceInformationService from './ftms/DeviceInformationService.js'
+// import DeviceInformationService from './ftms/DeviceInformationService.js'
 import config from '../tools/ConfigManager.js'
 import log from 'loglevel'
 
 function createFtmsPeripheral (controlCallback, options) {
   const peripheralName = options?.simulateIndoorBike ? config.ftmsBikePeripheralName : config.ftmsRowerPeripheralName
   const fitnessMachineService = new FitnessMachineService(options, controlPointCallback)
-  const deviceInformationService = new DeviceInformationService()
+  // const deviceInformationService = new DeviceInformationService()
 
   bleno.on('stateChange', (state) => {
     triggerAdvertising(state)
@@ -29,7 +29,8 @@ function createFtmsPeripheral (controlCallback, options) {
   bleno.on('advertisingStart', (error) => {
     if (!error) {
       bleno.setServices(
-        [fitnessMachineService, deviceInformationService],
+        // [fitnessMachineService, deviceInformationService],
+        [fitnessMachineService],
         (error) => {
           if (error) log.error(error)
         })
@@ -86,7 +87,8 @@ function createFtmsPeripheral (controlCallback, options) {
     if (activeState === 'poweredOn') {
       bleno.startAdvertising(
         peripheralName,
-        [fitnessMachineService.uuid, deviceInformationService.uuid],
+        // [fitnessMachineService.uuid, deviceInformationService.uuid],
+        [fitnessMachineService.uuid],
         (error) => {
           if (error) log.error(error)
         }
