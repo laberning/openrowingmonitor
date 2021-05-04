@@ -7,13 +7,13 @@
   Please note: The array contains flankLenght + 1 measured currentDt's, thus flankLenght number of flanks between them
   They are arranged that dataPoints[0] is the youngest, and dataPoints[flankLength] the youngest
 */
-function createMovingFlankDetector (flankLength, initValue, numberOfErrorsAllowed) {
-  const dataPoints = new Array(flankLength + 1)
-  dataPoints.fill(initValue)
+function createMovingFlankDetector (rowerSettings) {
+  const dataPoints = new Array(rowerSettings.flankLength + 1)
+  dataPoints.fill(rowerSettings.maximumTimeBetweenImpulses)
 
   function pushValue (dataPoint) {
     // add the new dataPoint to the array, we have to move datapoints starting at the oldst ones
-    let i = flankLength
+    let i = rowerSettings.flankLength
     while (i > 0) {
       // older datapoints are moved toward the higher numbers
       dataPoints[i] = dataPoints[i - 1]
@@ -23,7 +23,7 @@ function createMovingFlankDetector (flankLength, initValue, numberOfErrorsAllowe
   }
 
   function isDecelerating () {
-    let i = flankLength
+    let i = rowerSettings.flankLength
     let numberOfErrors = 0
     while (i > 0) {
       if (dataPoints[i] < dataPoints[i - 1]) {
@@ -33,7 +33,7 @@ function createMovingFlankDetector (flankLength, initValue, numberOfErrorsAllowe
       }
       i = i - 1
     }
-    if (numberOfErrors > numberOfErrorsAllowed) {
+    if (numberOfErrors > rowerSettings.numberOfErrorsAllowed) {
       return false
     } else {
       return true
@@ -51,7 +51,7 @@ function createMovingFlankDetector (flankLength, initValue, numberOfErrorsAllowe
       }
       i = i - 1
     }
-    if (numberOfErrors > numberOfErrorsAllowed) {
+    if (numberOfErrors > rowerSettings.numberOfErrorsAllowed) {
       return false
     } else {
       return true
