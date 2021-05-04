@@ -41,7 +41,7 @@ function createMovingFlankDetector (rowerSettings) {
   }
 
   function isAccelerating () {
-    let i = flankLength
+    let i = rowerSettings.flankLength
     let numberOfErrors = 0
     while (i > 0) {
       if (dataPoints[i] > dataPoints[i - 1]) {
