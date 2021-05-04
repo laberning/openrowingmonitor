@@ -10,11 +10,12 @@
 */
 export default {
 
-  // Profile for an example rower
+  // The default rower profile
   DEFAULT: {
     // How many impulses are triggered per revolution of the flywheel
     // i.e. the number of magnets if used with a reed sensor
     numOfImpulsesPerRevolution: 1,
+
 
     // Filter values for sanity checks
     // First are the sane minimum and maximum times between magnets during active rows
@@ -47,9 +48,9 @@ export default {
     // Concept2 seems to use 2.8, which they admit is an arbitrary number which came close
     // to their expectations. So for your rower, you have to find a credible distance for your effort.
     // Also note that the rowed distance also depends on jMoment, so please calibrate that before changing this constant.
-    // PLEASE NOTE: INcreasing this number DEcreases your rowed meters
+    // PLEASE NOTE: Increasing this number decreases your rowed meters
     magicConstant: 2.8,
-    
+
     // Set this to true if you are using a water rower
     // The mass of the water starts rotating, when you pull the handle, and therefore acts
     // like a massive flywheel
@@ -79,7 +80,6 @@ export default {
   // DKN R-320 Air Rower
   DKNR320: {
     numOfImpulsesPerRevolution: 1,
-    
     minimumImpulseLength: 0.15,
     maximumImpulseLength: 0.5,
     maximumDownwardChange: 0.25,
@@ -92,7 +92,7 @@ export default {
     jMoment: 0.4,
     liquidFlywheel: true
   },
-  
+
   // NordicTrack RX800 Air Rower
   RX800: {
     numOfImpulsesPerRevolution: 4,
@@ -103,6 +103,10 @@ export default {
     // Damper setting 10
     minimumImpulseLength: 0.018,
     maximumImpulseLength: 0.0338,
+
+    // Damper setting 10
+    minimumTimeBetweenImpulses: 0.018,
+    maximumTimeBetweenImpulses: 0.0338,
     maximumDownwardChange: 0.69,
     maximumUpwardChange: 1.3,
     minimumDriveTime: 0.300,
@@ -115,6 +119,8 @@ export default {
     /* Damper setting 8
     minimumImpulseLength: 0.017,
     maximumImpulseLength: 0.034,
+    minimumTimeBetweenImpulses: 0.017,
+    maximumTimeBetweenImpulses: 0.034,
     maximumDownwardChange: 0.8,
     maximumUpwardChange: 1.15,
     minimumDriveTime: 0.300,

@@ -80,7 +80,7 @@ print "Downloading and compiling Runtime dependencies..."
 sudo npm ci
 sudo npm run build
 if ! [[ -f "config/config.js" ]]; then
-    cp install/config.js config/
+    sudo cp install/config.js config/
 fi
 
 print

@@ -21,24 +21,29 @@ export function createGpioTimerService () {
     // setting priority of current process
     os.setPriority(-20)
   } catch (err) {
-    log.error('error while setting priority of Gpio-Thread: ', err)
+    log.debug('need root permission to set priority of Gpio-Thread')
   }
-  // mode can be rising, falling, both
-  const reedSensor = new Gpio(17, 'in', 'rising')
-  // use hrtime for time measurement to get a higher time precision
-  let hrStartTime = process.hrtime()
 
-  // assumes that GPIO-Port 17 is set to pullup and reed is connected to GND
-  // therefore the value is 1 if the reed sensor is open
-  reedSensor.watch((err, value) => {
-    if (err) {
-      throw err
-    }
-    const hrDelta = process.hrtime(hrStartTime)
-    hrStartTime = process.hrtime()
-    const delta = hrDelta[0] + hrDelta[1] / 1e9
-    process.send(delta)
-  })
+  if (Gpio.accessible) {
+    // mode can be rising, falling, both
+    const reedSensor = new Gpio(17, 'in', 'rising')
+    // use hrtime for time measurement to get a higher time precision
+    let hrStartTime = process.hrtime()
+
+    // assumes that GPIO-Port 17 is set to pullup and reed is connected to GND
+    // therefore the value is 1 if the reed sensor is open
+    reedSensor.watch((err, value) => {
+      if (err) {
+        throw err
+      }
+      const hrDelta = process.hrtime(hrStartTime)
+      hrStartTime = process.hrtime()
+      const delta = hrDelta[0] + hrDelta[1] / 1e9
+      process.send(delta)
+    })
+  } else {
+    log.info('reading from Gpio is not (yet) supported on this platform')
+  }
 }
 
 createGpioTimerService()
