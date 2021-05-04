@@ -56,7 +56,7 @@ function createRowingEngine (rowerSettings) {
 
   let workoutHandler
   const kDampEstimatorAverager = createWeightedAverager(3)
-  const flankDetector = createMovingFlankDetector(rowerSettings.numOfImpulsesPerRevolution, rowerSettings.maximumTimeBetweenImpulses, 0)
+  const flankDetector = createMovingFlankDetector(rowerSettings)
   let prevDt = rowerSettings.maximumTimeBetweenImpulses
   let kPower = 0.0
   let jPower = 0.0
