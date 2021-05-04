@@ -18,15 +18,16 @@ export default {
 
     // Filter values for sanity checks
     // First are the sane minimum and maximum times between magnets during active rows
-    minimumTimeBetweenMagnets: 0.014,
-    maximumTimeBetweenMagnets: 0.5,
+    minimumImpulseLength: 0.014,
+    maximumImpulseLength: 0.5,
     // Procentual change between successive intervals
     maximumDownwardChange: 0.2,  // effectively the maximum deceleration
     maximumUpwardChange: 1.75,    // effectively the maximum acceleration
     // Settings for the phase detection
+    flankLength: 1,
     minimumDriveTime: 0.300,
     minimumRecoveryTime: 0.750,
-
+    numberOfErrorsAllowed: 0,
 
     // Needed to determine the damping constant of the rowing machine. This value can be measured in the recovery phase
     // of the stroke (some ergometers do this constantly).
@@ -62,12 +63,14 @@ export default {
   // Sportstech WRX700
   WRX700: {
     numOfImpulsesPerRevolution: 2,
-    minimumTimeBetweenMagnets: 0.05,
-    maximumTimeBetweenMagnets: 1,
+    minimumImpulseLength: 0.05,
+    maximumImpulseLength: 1,
     maximumDownwardChange: 0.25,
     maximumUpwardChange: 2,
+    flankLength: 2,
     minimumDriveTime: 0.500,
     minimumRecoveryTime: 0.800,
+    numberOfErrorsAllowed: 0,
     omegaDotDivOmegaSquare: 0.046,
     jMoment: 0.49,
     liquidFlywheel: true
@@ -76,12 +79,15 @@ export default {
   // DKN R-320 Air Rower
   DKNR320: {
     numOfImpulsesPerRevolution: 1,
-    minimumTimeBetweenMagnets: 0.15,
-    maximumTimeBetweenMagnets: 0.5,
+    
+    minimumImpulseLength: 0.15,
+    maximumImpulseLength: 0.5,
     maximumDownwardChange: 0.25,
     maximumUpwardChange: 1.75,
+    flankLength: 2,
     minimumDriveTime: 0.500,
     minimumRecoveryTime: 0.800,
+    numberOfErrorsAllowed: 0,
     omegaDotDivOmegaSquare: 0.019,
     jMoment: 0.4,
     liquidFlywheel: true
@@ -90,11 +96,13 @@ export default {
   // NordicTrack RX800 Air Rower
   RX800: {
     numOfImpulsesPerRevolution: 4,
+    flankLength: 3,
     liquidFlywheel: false,
+    numberOfErrorsAllowed: 0,
     
     // Damper setting 10
-    minimumTimeBetweenMagnets: 0.018,
-    maximumTimeBetweenMagnets: 0.0338,
+    minimumImpulseLength: 0.018,
+    maximumImpulseLength: 0.0338,
     maximumDownwardChange: 0.69,
     maximumUpwardChange: 1.3,
     minimumDriveTime: 0.300,
@@ -105,8 +113,8 @@ export default {
     //
 
     /* Damper setting 8
-    minimumTimeBetweenMagnets: 0.017,
-    maximumTimeBetweenMagnets: 0.034,
+    minimumImpulseLength: 0.017,
+    maximumImpulseLength: 0.034,
     maximumDownwardChange: 0.8,
     maximumUpwardChange: 1.15,
     minimumDriveTime: 0.300,
@@ -117,8 +125,8 @@ export default {
     */
 
     /* Damper setting 6
-    minimumTimeBetweenMagnets: 0.017,
-    maximumTimeBetweenMagnets: 0.034,
+    minimumImpulseLength: 0.017,
+    maximumImpulseLength: 0.034,
     maximumDownwardChange: 0.85,
     maximumUpwardChange: 1.15,
     minimumDriveTime: 0.300,
@@ -129,8 +137,8 @@ export default {
     */
 
     /* Damper setting 4
-    minimumTimeBetweenMagnets: 0.019,
-    maximumTimeBetweenMagnets: 0.032,
+    minimumImpulseLength: 0.019,
+    maximumImpulseLength: 0.032,
     maximumDownwardChange: 0.70,
     maximumUpwardChange: 1.30,
     minimumDriveTime: 0.300,
@@ -141,8 +149,8 @@ export default {
     */
 
     /* Damper setting 2
-    minimumTimeBetweenMagnets: 0.016,
-    maximumTimeBetweenMagnets: 0.033,
+    minimumImpulseLength: 0.016,
+    maximumImpulseLength: 0.033,
     maximumDownwardChange: 0.85,
     maximumUpwardChange: 1.15,
     minimumDriveTime: 0.300,
