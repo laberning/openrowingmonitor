@@ -109,7 +109,7 @@ export default {
     minimumRecoveryTime: 0.750,
     omegaDotDivOmegaSquare: 0.002801304,
     jMoment: 0.210,
-    magicConstant: 3.08
+    magicConstant: 3.0
     //
 
     /* Damper setting 8
