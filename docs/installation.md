@@ -4,7 +4,10 @@ This guide roughly explains how to set up the rowing software and hardware.
 
 ## Requirements
 
-* A Raspberry Pi that supports Bluetooth Low Energy (Pi 3 or Pi 4). Probably this also runs on other devices.
+* A Raspberry Pi that supports Bluetooth Low Energy. Probably this also runs on other devices.
+  * Raspberry Pi Zero W or WH
+  * Raspberry Pi 3 Model A+, B or B+
+  * Raspberry Pi 4 Model B
 * An SD Card, any size above 4GB should be fine
 * A rowing machine (obviously) with some way to measure the rotation of the flywheel
   * the WRX700 has a build in reed sensor that I can directly connect to the GPIO pins of the Raspberry Pi

@@ -7,7 +7,7 @@ An open source rowing monitor for rowing exercise machines. It upgrades a rowing
 
 Open Rowing Monitor is a Node.js application that runs on a Raspberry Pi and measures the rotation of the rower's flywheel to calculate rowing specific metrics, such as power, split time, speed, stroke rate, distance and calories.
 
-I currently develop and test it with a [Raspberry Pi 3 Modell B](https://www.raspberrypi.org/products/raspberry-pi-3-model-b/) and a Sportstech WRX700 waterrower. But it should run fine with any rowing machine that uses an air or water resistance mechanism as long as you can add something to measure the speed of the flywheel.
+I currently develop and test it with a Sportstech WRX700 waterrower. But it should run fine with any rowing machine that uses an air or water resistance mechanism as long as you can add something to measure the speed of the flywheel.
 I suspect it works well with DIY rowing machines like the [Openergo](https://openergo.webs.com) too.
 
 ## Features
@@ -47,7 +47,7 @@ Fitness Machine Service (FTMS) is a standardized GATT protocol for different typ
 
 ## Installation
 
-You will need a Raspberry Pi 3 or 4 with a fresh installation of Raspberry Pi OS Lite for this. Connect to the device with SSH and initiate the following command to set up all required dependencies and to install Open Rowing Monitor as an automatically starting system service:
+You will need a Raspberry Pi Zero W, Raspberry Pi 3 or a Raspberry Pi 4 with a fresh installation of Raspberry Pi OS 10 (Lite) for this. Connect to the device with SSH and initiate the following command to set up all required dependencies and to install Open Rowing Monitor as an automatically starting system service:
 
 ```zsh
 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/laberning/openrowingmonitor/HEAD/install/install.sh)"

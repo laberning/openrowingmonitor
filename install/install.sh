@@ -19,19 +19,23 @@ cancel() {
   exit 1
 }
 
-print "Installation script for Open Rowing Monitor"
+print "This script will set up Open Rowing Monitor on one of the following devices"
+print "  Raspberry Pi Zero W or WH"
+print "  Raspberry Pi 3 Model A+, B or B+"
+print "  Raspberry Pi 4 Model B"
 print
-print "This script will set up Open Rowing Monitor on a Raspberry Pi 3 / 4 with Raspberry Pi OS (Lite)."
-print "You should only run this script on a SD Card that does not contain any important data."
-print
+print "You should only run this script on a SD Card that contains Raspberry Pi OS 10 (Lite)"
+print "and does not contain any important data."
 
 OSID=$(grep -oP '(?<=^ID=).+' /etc/os-release | tr -d '"')
 if [[ $OSID != "raspbian" ]]; then
+  print
   cancel "This script currently only works on Raspberry Pi OS, you will have to do a manual installation."
 fi
 
 VERSION=$(grep -oP '(?<=^VERSION=).+' /etc/os-release | tr -d '"')
 if [[ $VERSION != "10 (buster)" ]]; then
+  print
   print "Warning: So far this install script has only been tested with Raspberry Pi OS 10 (buster)."
   print "You are running Raspberry Pi OS $VERSION, are you sure that you want to continue?"
 fi
@@ -48,8 +52,31 @@ sudo apt-get -y dist-upgrade
 sudo systemctl disable bluetooth
 sudo apt-get -y install bluetooth bluez libbluetooth-dev libudev-dev git
 
-curl -fsSL https://deb.nodesource.com/setup_14.x | sudo -E bash -
-sudo apt-get install -y nodejs
+print
+ARCHITECTURE=$(uname -m)
+if [[ $ARCHITECTURE == "armv6l" ]];
+then
+  print "You are running a system with ARM v6 architecture. Official support for Node.js has been discontinued"
+  print "for ARM v6. Installing experimental unofficial build of Node.js..."
+
+  NODEJS_VERSION=v14.16.1
+  sudo rm -rf /opt/nodejs
+  sudo mkdir -p /opt/nodejs
+  sudo curl https://unofficial-builds.nodejs.org/download/release/$NODEJS_VERSION/node-$NODEJS_VERSION-linux-armv6l.tar.gz | sudo tar -xz --strip 1 -C /opt/nodejs/
+
+  sudo ln -sfn /opt/nodejs/bin/node /usr/bin/node
+  sudo ln -sfn /opt/nodejs/bin/node /usr/sbin/node
+  sudo ln -sfn /opt/nodejs/bin/node /sbin/node
+  sudo ln -sfn /opt/nodejs/bin/node /usr/local/bin/node
+  sudo ln -sfn /opt/nodejs/bin/npm /usr/bin/npm
+  sudo ln -sfn /opt/nodejs/bin/npm /usr/sbin/npm
+  sudo ln -sfn /opt/nodejs/bin/npm /sbin/npm
+  sudo ln -sfn /opt/nodejs/bin/npm /usr/local/bin/npm
+else
+  print "Installing Node.js..."
+  curl -fsSL https://deb.nodesource.com/setup_14.x | sudo -E bash -
+  sudo apt-get install -y nodejs
+fi
 
 print
 print "Installing Open Rowing Monitor..."
