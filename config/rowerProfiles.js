@@ -108,7 +108,7 @@ export default {
     minimumDriveTime: 0.300,
     minimumRecoveryTime: 0.750,
     omegaDotDivOmegaSquare: 0.002801304,
-    jMoment: 0.230,
+    jMoment: 0.210,
     magicConstant: 3.08
     //
 
