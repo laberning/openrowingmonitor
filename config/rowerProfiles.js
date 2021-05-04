@@ -103,31 +103,25 @@ export default {
     // Damper setting 10
     minimumImpulseLength: 0.018,
     maximumImpulseLength: 0.0338,
-
-    // Damper setting 10
-    minimumTimeBetweenImpulses: 0.018,
-    maximumTimeBetweenImpulses: 0.0338,
     maximumDownwardChange: 0.69,
     maximumUpwardChange: 1.3,
     minimumDriveTime: 0.300,
     minimumRecoveryTime: 0.750,
-    omegaDotDivOmegaSquare: 0.00543660639574872,
-    jMoment: 0.174,
-    magicConstant: 3.75
+    omegaDotDivOmegaSquare: 0.002801304,
+    jMoment: 0.230,
+    magicConstant: 3.08
     //
 
     /* Damper setting 8
     minimumImpulseLength: 0.017,
     maximumImpulseLength: 0.034,
-    minimumTimeBetweenImpulses: 0.017,
-    maximumTimeBetweenImpulses: 0.034,
     maximumDownwardChange: 0.8,
     maximumUpwardChange: 1.15,
     minimumDriveTime: 0.300,
     minimumRecoveryTime: 0.750,
-    omegaDotDivOmegaSquare: 0.005305471,
-    jMoment: 0.155, // still under investigation
-    magicConstant: 4 // still under investigation
+    omegaDotDivOmegaSquare: 0.002664339,
+    jMoment: 0.190, // still under investigation
+    magicConstant: 3.20 // still under investigation
     */
 
     /* Damper setting 6
@@ -137,33 +131,33 @@ export default {
     maximumUpwardChange: 1.15,
     minimumDriveTime: 0.300,
     minimumRecoveryTime: 0.750,
-    omegaDotDivOmegaSquare: 0.0047,
-    jMoment: 0.135, // still under investigation
-    magicConstant: 4.25 // still under investigation
+    omegaDotDivOmegaSquare: 0.00237393,
+    jMoment: 0.169, // still under investigation
+    magicConstant: 3.92 // still under investigation
     */
 
     /* Damper setting 4
-    minimumImpulseLength: 0.019,
-    maximumImpulseLength: 0.032,
-    maximumDownwardChange: 0.70,
-    maximumUpwardChange: 1.30,
+    minimumImpulseLength: 0.015,
+    maximumImpulseLength: 0.034,
+    maximumDownwardChange: 0.66,
+    maximumUpwardChange: 1.53,
     minimumDriveTime: 0.300,
     minimumRecoveryTime: 0.750,
-    omegaDotDivOmegaSquare: 0.00355272,
-    jMoment: 0.125,
-    magicConstant: 4.4
+    omegaDotDivOmegaSquare: 0.001848033,
+    jMoment: 0.137,
+    magicConstant: 4
     */
 
     /* Damper setting 2
-    minimumImpulseLength: 0.016,
-    maximumImpulseLength: 0.033,
-    maximumDownwardChange: 0.85,
+    minimumImpulseLength: 0.015,
+    maximumImpulseLength: 0.040,
+    maximumDownwardChange: 0.83,
     maximumUpwardChange: 1.15,
     minimumDriveTime: 0.300,
     minimumRecoveryTime: 0.750,
-    omegaDotDivOmegaSquare: 0.002263966,
-    jMoment: 0.111,
-    magicConstant: 4.6
+    omegaDotDivOmegaSquare: 0.001124278,
+    jMoment: 0.132,
+    magicConstant: 4.2
     */
   }
 }
