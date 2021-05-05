@@ -30,5 +30,10 @@ export default {
       jMoment: 0.3,
       liquidFlywheel: false
     }
+
+    // example: set a rower profile, but overwrite some settings:
+    rowerSettings: Object.assign(rowerProfiles.DKNR320, {
+      autoAdjustDampingConstant: true
+    })
   */
 }

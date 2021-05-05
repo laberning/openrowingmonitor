@@ -27,7 +27,7 @@ function createRowingEngine (rowerSettings) {
   // However I still keep it constant here, as I still have to figure out the damping physics of a water rower (see below)
   // To measure it for your rowing machine, comment in the logging at the end of "startDrivePhase" function. Then do some
   // strokes on the rower and estimate a value.
-  const omegaDotDivOmegaSquare = rowerSettings.omegaDotDivOmegaSquare
+  let omegaDotDivOmegaSquare = rowerSettings.omegaDotDivOmegaSquare
 
   // The moment of inertia of the flywheel kg*m^2
   // A way to measure it is outlined here: https://dvernooy.github.io/projects/ergware/, "Flywheel moment of inertia"
@@ -49,13 +49,13 @@ function createRowingEngine (rowerSettings) {
   const c = rowerSettings.magicConstant
 
   // jMoment * ωdot = -kDamp * ω^2 during non-power part of stroke
-  const kDamp = jMoment * omegaDotDivOmegaSquare
+  let kDamp = jMoment * omegaDotDivOmegaSquare
 
   // s = (k/c)^(1/3)*θ
   const distancePerRevolution = 2.0 * Math.PI * Math.pow((kDamp / c), 1.0 / 3.0)
 
   let workoutHandler
-  const kDampEstimatorAverager = createWeightedAverager(3)
+  const kDampEstimatorAverager = createWeightedAverager(5)
   const flankDetector = createMovingFlankDetector(rowerSettings)
   let prevDt = rowerSettings.maximumTimeBetweenImpulses
   let kPower = 0.0
@@ -169,8 +169,15 @@ function createRowingEngine (rowerSettings) {
     if (strokeElapsed - driveElapsed !== 0) {
       kDampEstimatorAverager.pushValue(kDampEstimator / (strokeElapsed - driveElapsed))
     }
-    log.debug(`estimated kDamp: ${jMoment * (-1 * kDampEstimatorAverager.weightedAverage())}`)
-    log.info(`estimated omegaDotDivOmegaSquare: ${-1 * kDampEstimatorAverager.weightedAverage()}`)
+    const _kDamp = jMoment * (-1 * kDampEstimatorAverager.weightedAverage())
+    const _omegaDotDivOmegaSquare = -1 * kDampEstimatorAverager.weightedAverage()
+    log.debug(`estimated kDamp: ${_kDamp}`)
+    log.info(`estimated omegaDotDivOmegaSquare: ${_omegaDotDivOmegaSquare}`)
+    if (rowerSettings.autoAdjustDampingConstant) {
+      log.debug('auto adjusting kDamp and omegaDotDivOmegaSquare to new values')
+      kDamp = _kDamp
+      omegaDotDivOmegaSquare = _omegaDotDivOmegaSquare
+    }
     workoutHandler.handleStrokeStateChanged({
       strokeState: 'DRIVING'
     })
