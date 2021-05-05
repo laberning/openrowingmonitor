@@ -12,6 +12,7 @@
 */
 import loglevel from 'loglevel'
 import { createWeightedAverager } from './WeightedAverager.js'
+import { createMovingAverager } from './MovingAverager.js'
 import { createMovingFlankDetector } from './MovingFlankDetector.js'
 import { createTimer } from './Timer.js'
 
@@ -57,7 +58,9 @@ function createRowingEngine (rowerSettings) {
   let workoutHandler
   const kDampEstimatorAverager = createWeightedAverager(3)
   const flankDetector = createMovingFlankDetector(rowerSettings)
-  let prevDt = rowerSettings.maximumTimeBetweenImpulses
+  const movingAverage = createMovingAverager(rowerSettings)
+  let cleanCurrentDt = rowerSettings.maximumImpulseLength
+  let previousCleanCurrentDt = rowerSettings.maximumImpulseLength
   let kPower = 0.0
   let jPower = 0.0
   let kDampEstimator = 0.0
@@ -92,12 +95,23 @@ function createRowingEngine (rowerSettings) {
 
     // STEP 1: reduce noise in the measurements by applying some sanity checks
     // noise filter on the value of currentDt: it should be within sane levels and should not deviate too much from the previous reading
-    if (currentDt < rowerSettings.minimumTimeBetweenImpulses || currentDt > rowerSettings.maximumTimeBetweenImpulses || currentDt < (rowerSettings.maximumDownwardChange * prevDt) || currentDt > (rowerSettings.maximumUpwardChange * prevDt)) {
+    if (currentDt < rowerSettings.minimumTimeBetweenImpulses || currentDt > rowerSettings.maximumTimeBetweenImpulses) {
       // impulses are outside plausible ranges, so we assume it is close to the previous one
-      currentDt = prevDt
-      log.debug(`noise filter corrected currentDt, ${currentDt} was dubious, changed to ${prevDt}`)
+      log.debug(`noise filter corrected currentDt, ${currentDt} was not between minimumImpulseLength and maximumImpulseLength, changed to ${previousCleanCurrentDt}`)
+      currentDt = previousCleanCurrentDt
     }
-    prevDt = currentDt
+
+    // lets test if pushing this value would fit the curve we are looking for
+    movingAverage.pushValue(currentDt)
+
+    if (movingAverage.getMovingAverage() < (rowerSettings.maximumDownwardChange * previousCleanCurrentDt) || movingAverage.getMovingAverage() > (rowerSettings.maximumUpwardChange * previousCleanCurrentDt)) {
+      // impulses are outside plausible ranges, so we assume it is close to the previous one
+      log.debug(`noise filter corrected currentDt, ${currentDt} was too much of an accelleration/decelleration, changed to previous value, ${previousCleanCurrentDt}`)
+      movingAverage.replaceLastPushedValue(previousCleanCurrentDt)
+    }
+
+    // determine the moving average, to reduce noise
+    cleanCurrentDt = movingAverage.getMovingAverage()
 
     // each revolution of the flywheel adds distance of distancePerRevolution
     strokeDistance += distancePerRevolution / numOfImpulsesPerRevolution
@@ -106,12 +120,12 @@ function createRowingEngine (rowerSettings) {
 
     // angular speed ω = 2π𝑛, revolutions per minute 𝑛 = 1/𝑑t, 𝑑t is the time for one revolution of flywheel
     // => ω = 2π/measured time for last impulse * impulses per revolution
-    omegaVector[0] = (2.0 * Math.PI) / (currentDt * numOfImpulsesPerRevolution)
+    omegaVector[0] = (2.0 * Math.PI) / (cleanCurrentDt * numOfImpulsesPerRevolution)
     // angular velocity ωdot = 𝑑ω/𝑑t
     omegaDotVector[1] = omegaDotVector[0]
-    omegaDotVector[0] = (omegaVector[0] - omegaVector[1]) / (currentDt)
+    omegaDotVector[0] = (omegaVector[0] - omegaVector[1]) / (cleanCurrentDt)
     // we use the derivative of the velocity (ωdotdot) to classify the different phases of the stroke
-    omegaDotDot = (omegaDotVector[0] - omegaDotVector[1]) / (currentDt)
+    omegaDotDot = (omegaDotVector[0] - omegaDotVector[1]) / (cleanCurrentDt)
 
     // a stroke consists of a drive phase (when you pull the handle) and a recovery phase (when the handle returns)
     // calculate screeners to find drive portion of stroke - see spreadsheet if you want to understand this
@@ -135,7 +149,7 @@ function createRowingEngine (rowerSettings) {
       // todo: do some measurements and find a better stable indicator for water rowers
       isInDrivePhase = accelerationIsPositive
     } else {
-      flankDetector.pushValue(currentDt)
+      flankDetector.pushValue(cleanCurrentDt)
       // Here we use a finite state machine that goes between "Drive" and "Recovery", provinding sufficient time has passed and there is a credible flank
       // We analyse the current impulse, depending on where we are in the stroke
       if (wasInDrivePhase) {
@@ -152,13 +166,13 @@ function createRowingEngine (rowerSettings) {
     }
 
     // STEP 3: handle the current impulse, depending on where we are in the stroke
-    if (isInDrivePhase && !wasInDrivePhase) { startDrivePhase(currentDt) }
+    if (isInDrivePhase && !wasInDrivePhase) { startDrivePhase(cleanCurrentDt) }
     if (!isInDrivePhase && wasInDrivePhase) { startRecoveryPhase() }
-    if (isInDrivePhase && wasInDrivePhase) { updateDrivePhase(currentDt) }
-    if (!isInDrivePhase && !wasInDrivePhase) { updateRecoveryPhase(currentDt) }
+    if (isInDrivePhase && wasInDrivePhase) { updateDrivePhase(cleanCurrentDt) }
+    if (!isInDrivePhase && !wasInDrivePhase) { updateRecoveryPhase(cleanCurrentDt) }
 
-    timer.updateTimers(currentDt)
-    log.debug(`𝑑t: ${currentDt} ω: ${omegaVector[0].toFixed(2)} ωdot: ${omegaDotVector[0].toFixed(2)} ωdotdot: ${omegaDotDot.toFixed(2)} aPos: ${accelerationIsPositive} aChange: ${accelerationIsChanging}`)
+    timer.updateTimers(cleanCurrentDt)
+    log.debug(`𝑑t: ${cleanCurrentDt} ω: ${omegaVector[0].toFixed(2)} ωdot: ${omegaDotVector[0].toFixed(2)} ωdotdot: ${omegaDotDot.toFixed(2)} aPos: ${accelerationIsPositive} aChange: ${accelerationIsChanging}`)
   }
 
   function startDrivePhase (currentDt) {
