@@ -90,7 +90,8 @@ function createRowingEngine (rowerSettings) {
       return
     }
 
-    // remember the state of drive phase from the previous impulse, we need it to detect state changes
+    // remember the impulsetime and state of drive phase from the previous impulse, we need it to detect state changes
+    previousCleanCurrentDt = cleanCurrentDt
     wasInDrivePhase = isInDrivePhase
 
     // STEP 1: reduce noise in the measurements by applying some sanity checks
