@@ -18,10 +18,15 @@ export default {
 
     // Filter Settings to reduce noise in the measured data
     // Minimum and maximum duration between impulses in seconds during active rowing. Measurements outside of this range
-    // will be replaced by a default value.
+    // will be replaced by the previous value.
     minimumTimeBetweenImpulses: 0.014,
     maximumTimeBetweenImpulses: 0.5,
-    // Percentage change between successive intervals
+    
+    // Smoothing of the curve
+    smoothing: 1,
+    
+    // Percentage change between successive intervals, if the flywheel accelerates/decelerates too fast
+    // it will also be replaced by the previous value
     maximumDownwardChange: 0.2, // effectively the maximum deceleration
     maximumUpwardChange: 1.75, // effectively the maximum acceleration
     // Settings for the rowing phase detection (in seconds)
@@ -66,6 +71,7 @@ export default {
     numOfImpulsesPerRevolution: 2,
     minimumTimeBetweenImpulses: 0.05,
     maximumTimeBetweenImpulses: 1,
+    smoothing: 1,
     maximumDownwardChange: 0.25,
     maximumUpwardChange: 2,
     flankLength: 2,
@@ -82,6 +88,7 @@ export default {
     numOfImpulsesPerRevolution: 1,
     minimumTimeBetweenImpulses: 0.15,
     maximumTimeBetweenImpulses: 0.5,
+    smoothing: 1,
     maximumDownwardChange: 0.25,
     maximumUpwardChange: 1.75,
     flankLength: 2,
@@ -96,6 +103,8 @@ export default {
   // NordicTrack RX800 Air Rower
   RX800: {
     numOfImpulsesPerRevolution: 4,
+    flankLength: 3,
+    smoothing: 3,
     liquidFlywheel: false,
 
     // Damper setting 10
@@ -103,7 +112,6 @@ export default {
     maximumTimeBetweenImpulses: 0.0338,
     maximumDownwardChange: 0.69,
     maximumUpwardChange: 1.3,
-    flankLength: 3,
     numberOfErrorsAllowed: 0,
     minimumDriveTime: 0.300,
     minimumRecoveryTime: 0.750,
