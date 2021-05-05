@@ -83,7 +83,6 @@ function assertPowerRange (evaluator, minPower, maxPower) {
 }
 
 function assertDistanceRange (evaluator, minDistance, maxDistance) {
-  console.log(evaluator.getDistance().toFixed(2))
   assert.ok(evaluator.getDistance() >= minDistance && evaluator.getDistance() <= maxDistance, `distance should be between ${minDistance}m and ${maxDistance}m, but is ${evaluator.getDistance().toFixed(2)}m`)
 }
 test.run()

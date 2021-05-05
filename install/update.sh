@@ -47,7 +47,7 @@ else
     sudo git reset --hard origin/main
 
     print "Updating Runtime dependencies..."
-    sudo npm ci
+    sudo npm install
     sudo npm run build
 
     print "Starting Open Rowing Monitor..."
