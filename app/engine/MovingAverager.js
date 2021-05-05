@@ -36,7 +36,7 @@ function createMovingAverager (rowerSettings) {
       arrayTotal = arrayTotal + dataPoints[i]
       i = i - 1
     }
-    const arrayAverage = arrayTotal / rowerSettings.flankLength
+    const arrayAverage = arrayTotal / rowerSettings.smoothing
     return arrayAverage
   }
 
