@@ -25,6 +25,8 @@ export default {
     maximumDownwardChange: 0.2, // effectively the maximum deceleration
     maximumUpwardChange: 1.75, // effectively the maximum acceleration
     // Settings for the rowing phase detection (in seconds)
+    flankLength: 1,
+    numberOfErrorsAllowed: 0,
     minimumDriveTime: 0.300,
     minimumRecoveryTime: 0.750,
 
@@ -66,6 +68,8 @@ export default {
     maximumTimeBetweenImpulses: 1,
     maximumDownwardChange: 0.25,
     maximumUpwardChange: 2,
+    flankLength: 2,
+    numberOfErrorsAllowed: 0,
     minimumDriveTime: 0.500,
     minimumRecoveryTime: 0.800,
     omegaDotDivOmegaSquare: 0.046,
@@ -80,6 +84,8 @@ export default {
     maximumTimeBetweenImpulses: 0.5,
     maximumDownwardChange: 0.25,
     maximumUpwardChange: 1.75,
+    flankLength: 2,
+    numberOfErrorsAllowed: 0,
     minimumDriveTime: 0.500,
     minimumRecoveryTime: 0.800,
     omegaDotDivOmegaSquare: 0.019,
@@ -97,6 +103,8 @@ export default {
     maximumTimeBetweenImpulses: 0.0338,
     maximumDownwardChange: 0.69,
     maximumUpwardChange: 1.3,
+    flankLength: 3,
+    numberOfErrorsAllowed: 0,
     minimumDriveTime: 0.300,
     minimumRecoveryTime: 0.750,
     omegaDotDivOmegaSquare: 0.00543660639574872,
