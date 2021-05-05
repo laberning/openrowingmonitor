@@ -59,8 +59,8 @@ function createRowingEngine (rowerSettings) {
   const kDampEstimatorAverager = createWeightedAverager(5)
   const flankDetector = createMovingFlankDetector(rowerSettings)
   const movingAverage = createMovingAverager(rowerSettings)
-  let cleanCurrentDt = rowerSettings.maximumImpulseLength
-  let previousCleanCurrentDt = rowerSettings.maximumImpulseLength
+  let cleanCurrentDt = rowerSettings.maximumTimeBetweenImpulses
+  let previousCleanCurrentDt = rowerSettings.maximumTimeBetweenImpulses
   let kPower = 0.0
   let jPower = 0.0
   let kDampEstimator = 0.0
@@ -98,7 +98,7 @@ function createRowingEngine (rowerSettings) {
     // noise filter on the value of currentDt: it should be within sane levels and should not deviate too much from the previous reading
     if (currentDt < rowerSettings.minimumTimeBetweenImpulses || currentDt > rowerSettings.maximumTimeBetweenImpulses) {
       // impulses are outside plausible ranges, so we assume it is close to the previous one
-      log.debug(`noise filter corrected currentDt, ${currentDt} was not between minimumImpulseLength and maximumImpulseLength, changed to ${previousCleanCurrentDt}`)
+      log.debug(`noise filter corrected currentDt, ${currentDt} was not between minimumTimeBetweenImpulses and maximumTimeBetweenImpulses, changed to ${previousCleanCurrentDt}`)
       currentDt = previousCleanCurrentDt
     }
 
