@@ -29,17 +29,18 @@ export default {
     // it will also be replaced by the previous value
     maximumDownwardChange: 0.2, // effectively the maximum deceleration
     maximumUpwardChange: 1.75, // effectively the maximum acceleration
-    // Settings for the rowing phase detection (in seconds)
-    flankLength: 1,
+    flankLength: 2,
     numberOfErrorsAllowed: 0,
-    minimumDriveTime: 0.300,
-    minimumRecoveryTime: 0.750,
+    // Settings for the rowing phase detection (in seconds)
+    minimumDriveTime: 0.500,
+    minimumRecoveryTime: 0.800,
 
     // Needed to determine the damping constant of the rowing machine. This value can be measured in the recovery phase
-    // of the stroke (some ergometers do this constantly).
-    // However I still keep it constant here, as I still have to figure out the damping physics of a water rower (see below)
-    // To measure it for your rowing machine, comment in the logging at the end of "startDrivePhase" function. Then do some
-    // strokes on the rower and estimate a value.
+    // of the stroke.
+    // To display it for your rowing machine, set the logging level of the RowingEngine to 'info'. Then start rowing and
+    // you will see the measured values in the log.
+    // Open Rowing Monitor can also automatically adjust this value based on the measured damping. To do so, set the setting
+    // autoAdjustDampingConstant to true (see below).
     omegaDotDivOmegaSquare: 0.02,
 
     // The moment of inertia of the flywheel kg*m^2
@@ -47,6 +48,11 @@ export default {
     // You could also roughly estimate it by just doing some strokes and the comparing the calculated power values for
     // plausibility. Note that the power also depends on omegaDotDivOmegaSquare (see above).
     jMoment: 0.49,
+
+    // Set this to true, if you want to automatically update omegaDotDivOmegaSquare and kDamp based on the measured
+    // values in the stroke recovery phase. If your rower produces stable damping values, then this could be a good
+    // option to dynamically adjust your measurements to the damper setting of your rower.
+    autoAdjustDampingConstant: false,
 
     // A constant that is commonly used to convert flywheel revolutions to a rowed distance
     // see here: http://eodg.atm.ox.ac.uk/user/dudhia/rowing/physics/ergometer.html#section9
@@ -71,13 +77,6 @@ export default {
     numOfImpulsesPerRevolution: 2,
     minimumTimeBetweenImpulses: 0.05,
     maximumTimeBetweenImpulses: 1,
-    smoothing: 1,
-    maximumDownwardChange: 0.25,
-    maximumUpwardChange: 2,
-    flankLength: 2,
-    numberOfErrorsAllowed: 0,
-    minimumDriveTime: 0.500,
-    minimumRecoveryTime: 0.800,
     omegaDotDivOmegaSquare: 0.046,
     jMoment: 0.49,
     liquidFlywheel: true
@@ -88,13 +87,6 @@ export default {
     numOfImpulsesPerRevolution: 1,
     minimumTimeBetweenImpulses: 0.15,
     maximumTimeBetweenImpulses: 0.5,
-    smoothing: 1,
-    maximumDownwardChange: 0.25,
-    maximumUpwardChange: 1.75,
-    flankLength: 2,
-    numberOfErrorsAllowed: 0,
-    minimumDriveTime: 0.500,
-    minimumRecoveryTime: 0.800,
     omegaDotDivOmegaSquare: 0.019,
     jMoment: 0.4,
     liquidFlywheel: true
