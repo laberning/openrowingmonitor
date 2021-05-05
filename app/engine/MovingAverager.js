@@ -10,7 +10,7 @@
 */
 function createMovingAverager (rowerSettings) {
   const dataPoints = new Array(rowerSettings.smoothing)
-  dataPoints.fill(rowerSettings.maximumImpulseLength)
+  dataPoints.fill(rowerSettings.maximumTimeBetweenImpulses)
 
   function pushValue (dataPoint) {
     // add the new dataPoint to the array, we have to move datapoints starting at the oldst ones
