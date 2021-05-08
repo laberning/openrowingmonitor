@@ -31,12 +31,12 @@
     "http": "0.0.1-security",
     "loglevel": "^1.7.1",
     "nosleep.js": "^0.12.0",
-    "onoff": "^6.0.2",
+    "onoff": "^6.0.3",
     "serve-static": "^1.14.1",
     "ws": "^7.4.5"
   },
   "devDependencies": {
-    "eslint": "^7.24.0",
+    "eslint": "^7.26.0",
     "eslint-config-standard": "^16.0.2",
     "eslint-plugin-import": "^2.22.1",
     "eslint-plugin-node": "^11.1.0",
@@ -44,7 +44,7 @@
     "husky": "^6.0.0",
     "markdownlint-cli": "^0.27.1",
     "npm-run-all": "^4.1.5",
-    "snowpack": "^3.3.5",
+    "snowpack": "^3.3.7",
     "uvu": "^0.5.1",
     "uvu-watch": "^1.0.11"
   }

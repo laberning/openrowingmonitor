@@ -26,6 +26,10 @@ body {
     padding: 0.5em 0.2em 0 0.2em;
 }
 
+.col.actions {
+  padding: 0.5em 0 0 0;
+}
+
 @media (orientation: portrait) {
     .grid {
         grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -82,8 +86,8 @@ button {
   border: 0;
   color: white;
   padding: 0.5em 0.9em 0.3em 0.9em;
-  margin: 0.2em;
-  font-size: 70%;
+  margin: 0.2em 0;
+  font-size: 60%;
   text-align: center;
   text-decoration: none;
   display: inline-block;
