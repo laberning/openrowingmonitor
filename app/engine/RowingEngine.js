@@ -51,9 +51,6 @@ function createRowingEngine (rowerSettings) {
   // jMoment * ωdot = -kDamp * ω^2 during non-power part of stroke
   let kDamp = jMoment * omegaDotDivOmegaSquare
 
-  // s = (k/c)^(1/3)*θ
-  const distancePerRevolution = 2.0 * Math.PI * Math.pow((kDamp / c), 1.0 / 3.0)
-
   let workoutHandler
   const kDampEstimatorAverager = createWeightedAverager(5)
   const flankDetector = createMovingFlankDetector(rowerSettings)
@@ -100,6 +97,8 @@ function createRowingEngine (rowerSettings) {
     prevDt = currentDt
 
     // each revolution of the flywheel adds distance of distancePerRevolution
+    // s = (k/c)^(1/3)*θ
+    const distancePerRevolution = 2.0 * Math.PI * Math.pow((kDamp / c), 1.0 / 3.0)
     strokeDistance += distancePerRevolution / numOfImpulsesPerRevolution
 
     omegaVector[1] = omegaVector[0]
