@@ -21,6 +21,7 @@ This guide roughly explains how to set up the rowing software and hardware.
 * Install **Raspberry Pi OS Lite** on the SD Card i.e. with the [Raspberry Pi Imager](https://www.raspberrypi.org/software)
 * Connect the device to your network ([headless](https://www.raspberrypi.org/documentation/configuration/wireless/headless.md) or via [command line](https://www.raspberrypi.org/documentation/configuration/wireless/wireless-cli.md))
 * Enable [SSH](https://www.raspberrypi.org/documentation/remote-access/ssh/README.md)
+* Starting with Raspberry Pi Imager 1.6 it is now possible to directly set the network and ssh configuration when writing the SD Card, just press `Ctrl-Shift-X`(see [here](https://www.raspberrypi.org/blog/raspberry-pi-imager-update-to-v1-6/) for a description)
 
 ### Installation of the Open Rowing Monitor
 

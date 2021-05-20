@@ -45,6 +45,14 @@ Fitness Machine Service (FTMS) is a standardized GATT protocol for different typ
 
 **Concept2 PM:** Open Rowing Monitor also implements part of the Concept2 PM Bluetooth Smart Communication Interface Definition. This is still work in progress and only implements the most common parts of the spec, so it will not work with all applications that support C2 rowing machines. It currently works with all the samples from [The Erg Arcade](https://ergarcade.com), i.e. you can [row in the clouds](https://ergarcade.github.io/mrdoob-clouds/). This also works very well with [EXR](https://www.exrgame.com).
 
+### Export of Training Sessions
+
+Open Rowing Monitor can create Training Center XML files (TCX). You can upload these files to training platforms like [Strava](https://www.strava.com), [Garmin Connect](https://connect.garmin.com) or [Trainingpeaks](https://trainingpeaks.com) to track your training sessions.
+
+Currently this is a manual step. The easiest way to do so is to place the configurable `data` directory onto a network share and then just grab the files from there.
+
+Open Rowing Monitor can also store the raw measurements of the flywheel into CSV files. These files are great to start your own exploration of your rowing style and also to learn about the specifics of your rowing machine (some Excel files that can help with this are included in the `docs` folder).
+
 ## Installation
 
 You will need a Raspberry Pi Zero W, Raspberry Pi 3 or a Raspberry Pi 4 with a fresh installation of Raspberry Pi OS 10 (Lite) for this. Connect to the device with SSH and initiate the following command to set up all required dependencies and to install Open Rowing Monitor as an automatically starting system service:

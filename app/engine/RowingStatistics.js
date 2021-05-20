@@ -28,9 +28,10 @@ function createRowingStatistics () {
   let durationTotal = 0
   let strokesTotal = 0
   let caloriesTotal = 0.0
-  let heartrate = 0
+  let heartrate
   let heartrateBatteryLevel = 0
   let lastStrokeDuration = 0.0
+  let lastStrokeDistance = 0.0
   let lastStrokeState = 'RECOVERY'
   let lastMetrics = {}
 
@@ -63,6 +64,7 @@ function createRowingStatistics () {
     distanceTotal += stroke.distance
     strokesTotal++
     lastStrokeDuration = stroke.duration
+    lastStrokeDistance = stroke.distance
     lastStrokeState = stroke.strokeState
 
     emitter.emit('strokeFinished', getMetrics())
@@ -73,6 +75,7 @@ function createRowingStatistics () {
   function handlePause (duration) {
     caloriesAveragerMinute.pushValue(0, duration)
     caloriesAveragerHour.pushValue(0, duration)
+    emitter.emit('rowingPaused')
   }
 
   // initiated when the stroke state changes
@@ -101,17 +104,18 @@ function createRowingStatistics () {
       durationTotal,
       durationTotalFormatted: secondsToTimeString(durationTotal),
       strokesTotal,
-      distanceTotal: Math.round(distanceTotal), // meters
-      caloriesTotal: Math.round(caloriesTotal), // kcal
-      caloriesPerMinute: Math.round(caloriesAveragerMinute.average()),
-      caloriesPerHour: Math.round(caloriesAveragerHour.average()),
-      strokeTime: lastStrokeDuration.toFixed(2), // seconds
-      power: Math.round(powerAverager.weightedAverage()), // watts
+      distanceTotal: distanceTotal, // meters
+      caloriesTotal: caloriesTotal, // kcal
+      caloriesPerMinute: caloriesAveragerMinute.average(),
+      caloriesPerHour: caloriesAveragerHour.average(),
+      strokeTime: lastStrokeDuration, // seconds
+      distance: lastStrokeDistance, // meters
+      power: powerAverager.weightedAverage(), // watts
       split: splitTime, // seconds/500m
       splitFormatted: secondsToTimeString(splitTime),
-      powerRatio: powerRatioAverager.weightedAverage().toFixed(2),
-      strokesPerMinute: strokeAverager.weightedAverage() !== 0 ? (60.0 / strokeAverager.weightedAverage()).toFixed(1) : 0,
-      speed: (speedAverager.weightedAverage() * 3.6).toFixed(2), // km/h
+      powerRatio: powerRatioAverager.weightedAverage(),
+      strokesPerMinute: strokeAverager.weightedAverage() !== 0 ? (60.0 / strokeAverager.weightedAverage()) : 0,
+      speed: (speedAverager.weightedAverage() * 3.6), // km/h
       strokeState: lastStrokeState,
       heartrate,
       heartrateBatteryLevel
@@ -150,6 +154,7 @@ function createRowingStatistics () {
     speedAverager.reset()
     powerRatioAverager.reset()
     lastStrokeState = 'RECOVERY'
+    emitter.emit('rowingPaused')
   }
 
   function startDurationTimer () {

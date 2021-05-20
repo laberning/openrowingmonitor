@@ -48,6 +48,16 @@ export default {
   // - Garmin mini ANT+ (ID 0x1009)
   heartrateMonitorANT: false,
 
+  // The directory in which to store user specific content
+  // currently this directory holds the recorded training sessions
+  dataDirectory: 'data',
+
+  // Stores the training sessions as TCX files
+  createTcxFiles: true,
+
+  // Stores the raw sensor data in CSV files
+  recordRawData: false,
+
   // Defines the name that is used to announce the FTMS Rower via Bluetooth Low Energy (BLE)
   // Some rowing training applications expect that the rowing device is announced with a certain name
   ftmsRowerPeripheralName: 'OpenRowingMonitor',

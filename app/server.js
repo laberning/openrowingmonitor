@@ -18,6 +18,7 @@ import { createPeripheralManager } from './ble/PeripheralManager.js'
 import { createAntManager } from './ant/AntManager.js'
 // eslint-disable-next-line no-unused-vars
 import { replayRowingSession } from './tools/RowingRecorder.js'
+import { createWorkoutRecorder } from './engine/WorkoutRecorder.js'
 
 // set the log levels
 log.setLevel(config.loglevel.default)
@@ -36,8 +37,7 @@ peripheralManager.on('control', (event) => {
     event.res = true
   } else if (event?.req?.name === 'reset') {
     log.debug('reset requested')
-    rowingStatistics.reset()
-    peripheralManager.notifyStatus({ name: 'reset' })
+    resetWorkout()
     event.res = true
   // todo: we could use these controls once we implement a concept of a rowing session
   } else if (event?.req?.name === 'stop') {
@@ -60,41 +60,39 @@ peripheralManager.on('control', (event) => {
   }
 })
 
+function resetWorkout () {
+  rowingStatistics.reset()
+  peripheralManager.notifyStatus({ name: 'reset' })
+  workoutRecorder.reset()
+}
+
 const gpioTimerService = fork('./app/gpio/GpioTimerService.js')
-gpioTimerService.on('message', (dataPoint) => {
+gpioTimerService.on('message', handleRotationImpulse)
+
+function handleRotationImpulse (dataPoint) {
+  if (config.recordRawData) {
+    workoutRecorder.recordRotationImpulse(dataPoint)
+  }
   rowingEngine.handleRotationImpulse(dataPoint)
   // fs.appendFile('recordings/WRX700_2magnets.csv', `${dataPoint}\n`, (err) => { if (err) log.error(err) })
-})
+}
 
 const rowingEngine = createRowingEngine(config.rowerSettings)
 const rowingStatistics = createRowingStatistics()
 rowingEngine.notify(rowingStatistics)
+const workoutRecorder = createWorkoutRecorder()
 
 rowingStatistics.on('strokeFinished', (metrics) => {
-  log.info(`stroke: ${metrics.strokesTotal}, dur: ${metrics.strokeTime}s, power: ${metrics.power}w` +
-  `, split: ${metrics.splitFormatted}, ratio: ${metrics.powerRatio}, dist: ${metrics.distanceTotal}m` +
-  `, cal: ${metrics.caloriesTotal}kcal, SPM: ${metrics.strokesPerMinute}, speed: ${metrics.speed}km/h` +
-  `, cal/hour: ${metrics.caloriesPerHour}kcal, cal/minute: ${metrics.caloriesPerMinute}kcal`)
-  // Quick hack to generate tcx-trackpoints to get the basic concepts of TCX-export working
-  /*
-  const d = new Date()
-  const timestamp = d.toISOString()
-  fs.appendFile('exports/currentlog.tcx',
-  `<Trackpoint>\n <Time>${timestamp}</Time>\n` +
-  `<DistanceMeters>${metrics.distanceTotal}</DistanceMeters>\n` +
-  '<HeartRateBpm>\n' +
-  `  <Value>${metrics.heartrate}</Value>\n` +
-  '</HeartRateBpm>\n' +
-  `<Cadence>${Math.round(metrics.strokesPerMinute)}</Cadence>\n` +
-  '<SensorState>Present</SensorState>\n' +
-  '<Extensions>\n  <ns3:TPX>\n' +
-  `<ns3:Watts>${metrics.power}</ns3:Watts>\n` +
-  `<ns3:Speed>${(metrics.speed / 3.6).toFixed(2)}</ns3:Speed>\n` +
-  '</ns3:TPX>\n </Extensions>\n</Trackpoint>\n',
-  (err) => { if (err) log.error(err) })
-  */
+  log.info(`stroke: ${metrics.strokesTotal}, dur: ${metrics.strokeTime.toFixed(2)}s, power: ${Math.round(metrics.power)}w` +
+  `, split: ${metrics.splitFormatted}, ratio: ${metrics.powerRatio.toFixed(2)}, dist: ${metrics.distanceTotal.toFixed(1)}m` +
+  `, cal: ${metrics.caloriesTotal.toFixed(1)}kcal, SPM: ${metrics.strokesPerMinute.toFixed(1)}, speed: ${metrics.speed.toFixed(2)}km/h` +
+  `, cal/hour: ${metrics.caloriesPerHour.toFixed(1)}kcal, cal/minute: ${metrics.caloriesPerMinute.toFixed(1)}kcal`)
   webServer.notifyClients(metrics)
   peripheralManager.notifyMetrics('strokeFinished', metrics)
+  // currently recording is only used if we want to create tcx files
+  if (config.createTcxFiles) {
+    workoutRecorder.recordStroke(metrics)
+  }
 })
 
 rowingStatistics.on('strokeStateChanged', (metrics) => {
@@ -104,6 +102,10 @@ rowingStatistics.on('strokeStateChanged', (metrics) => {
 rowingStatistics.on('metricsUpdate', (metrics) => {
   webServer.notifyClients(metrics)
   peripheralManager.notifyMetrics('metricsUpdate', metrics)
+})
+
+rowingStatistics.on('rowingPaused', () => {
+  workoutRecorder.handlePause()
 })
 
 if (config.heartrateMonitorBLE) {
@@ -123,8 +125,7 @@ if (config.heartrateMonitorANT) {
 const webServer = createWebServer()
 webServer.on('messageReceived', (message) => {
   if (message.command === 'reset') {
-    rowingStatistics.reset()
-    peripheralManager.notifyStatus({ name: 'reset' })
+    resetWorkout()
   } else if (message.command === 'switchPeripheralMode') {
     peripheralManager.switchPeripheralMode()
   } else {
@@ -137,9 +138,9 @@ webServer.on('clientConnected', () => {
 })
 
 /*
-replayRowingSession(rowingEngine.handleRotationImpulse, {
+replayRowingSession(handleRotationImpulse, {
   filename: 'recordings/WRX700_2magnets.csv',
-  realtime: true,
-  loop: true
+  realtime: false,
+  loop: false
 })
 */

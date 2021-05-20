@@ -19,10 +19,12 @@ export function createApp () {
         return 'FTMS Rower'
       }
     },
-    distanceTotal:
-    (value) => value >= 10000
+    distanceTotal: (value) => value >= 10000
       ? { value: (value / 1000).toFixed(1), unit: 'km' }
-      : { value, unit: 'm' }
+      : { value: Math.round(value), unit: 'm' },
+    caloriesTotal: (value) => Math.round(value),
+    power: (value) => Math.round(value),
+    strokesPerMinute: (value) => Math.round(value)
   }
   const standalone = (window.location.hash === '#:standalone:')
 
