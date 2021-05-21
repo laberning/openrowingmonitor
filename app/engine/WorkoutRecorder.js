@@ -21,19 +21,28 @@ function createWorkoutRecorder () {
     if (startTime === undefined) {
       startTime = new Date()
     }
-    rotationImpulses.push(impulse)
+    // impulse recordings a currently only used to create raw data files, so we can skip it
+    // if raw data file creation is disabled
+    if (config.recordRawData) {
+      rotationImpulses.push(impulse)
+    }
   }
 
   function recordStroke (stroke) {
     if (startTime === undefined) {
       startTime = new Date()
     }
-    strokes.push(stroke)
+    // stroke recordings a currently only used to create tcx files, so we can skip it
+    // if tcx file creation is disabled
+    if (config.createTcxFiles) {
+      strokes.push(stroke)
+    }
   }
 
   async function createTcxFile () {
+    const stringifiedStartTime = startTime.toISOString().replace(/T/, '_').replace(/:/g, '-').replace(/\..+/, '')
     const directory = `${config.dataDirectory}/recordings/${startTime.getFullYear()}/${(startTime.getMonth() + 1).toString().padStart(2, '0')}`
-    const filename = `${directory}/${startTime.toISOString()}_rowing.tcx`
+    const filename = `${directory}/${stringifiedStartTime}_rowing.tcx`
     log.info(`saving session as tcx file ${filename}...`)
 
     try {
@@ -53,8 +62,9 @@ function createWorkoutRecorder () {
   }
 
   async function createRawDataFile () {
+    const stringifiedStartTime = startTime.toISOString().replace(/T/, '_').replace(/:/g, '-').replace(/\..+/, '')
     const directory = `${config.dataDirectory}/recordings/${startTime.getFullYear()}/${(startTime.getMonth() + 1).toString().padStart(2, '0')}`
-    const filename = `${directory}/${startTime.toISOString()}_raw.csv`
+    const filename = `${directory}/${stringifiedStartTime}_raw.csv`
     log.info(`saving session as raw data file ${filename}...`)
 
     try {
@@ -87,7 +97,7 @@ function createWorkoutRecorder () {
                 DistanceMeters: lastStroke.distanceTotal.toFixed(1),
                 // tcx uses meters per second as unit for speed
                 MaximumSpeed: (workout.strokes.map((stroke) => stroke.speed).reduce((acc, speed) => Math.max(acc, speed)) / 3.6).toFixed(2),
-                Calories: lastStroke.caloriesTotal.toFixed(1),
+                Calories: Math.round(lastStroke.caloriesTotal),
                 /* todo: calculate heart rate metrics...
                 AverageHeartRateBpm: { Value: 76 },
                 MaximumHeartRateBpm: { Value: 76 },
@@ -105,7 +115,7 @@ function createWorkoutRecorder () {
                       const trackpoint = {
                         Time: trackPointTime.toISOString(),
                         DistanceMeters: stroke.distanceTotal.toFixed(2),
-                        Cadence: stroke.strokesPerMinute.toFixed(1),
+                        Cadence: Math.round(stroke.strokesPerMinute),
                         Extensions: {
                           'ns2:TPX': {
                             // tcx uses meters per second as unit for speed

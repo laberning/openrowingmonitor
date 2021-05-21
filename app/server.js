@@ -70,9 +70,7 @@ const gpioTimerService = fork('./app/gpio/GpioTimerService.js')
 gpioTimerService.on('message', handleRotationImpulse)
 
 function handleRotationImpulse (dataPoint) {
-  if (config.recordRawData) {
-    workoutRecorder.recordRotationImpulse(dataPoint)
-  }
+  workoutRecorder.recordRotationImpulse(dataPoint)
   rowingEngine.handleRotationImpulse(dataPoint)
   // fs.appendFile('recordings/WRX700_2magnets.csv', `${dataPoint}\n`, (err) => { if (err) log.error(err) })
 }
@@ -89,10 +87,7 @@ rowingStatistics.on('strokeFinished', (metrics) => {
   `, cal/hour: ${metrics.caloriesPerHour.toFixed(1)}kcal, cal/minute: ${metrics.caloriesPerMinute.toFixed(1)}kcal`)
   webServer.notifyClients(metrics)
   peripheralManager.notifyMetrics('strokeFinished', metrics)
-  // currently recording is only used if we want to create tcx files
-  if (config.createTcxFiles) {
-    workoutRecorder.recordStroke(metrics)
-  }
+  workoutRecorder.recordStroke(metrics)
 })
 
 rowingStatistics.on('strokeStateChanged', (metrics) => {
