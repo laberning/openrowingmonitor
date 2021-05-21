@@ -8,6 +8,8 @@ This is the very minimalistic Backlog for further development of this project.
 * validate FTMS with more training applications and harden implementation (i.e. Holofit and Coxswain)
 * record a longer rowing session and analyze two encountered problems: 1) rarely the stroke rate doubles for a short duration (might be a problem with stroke detection when measurements are imprecise), 2) in one occasion the measured power jumped to a very high value after a break (40000 watts)
 * add an option to select the damper setting in the Web UI
+* extract the start and update script into a bin folder and symbolic link them for convenience
+* add an option to only consider every nth impulse (combine them)
 
 ## Later
 

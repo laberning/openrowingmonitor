@@ -53,7 +53,7 @@ function createCentralManager () {
   const emitter = new EventEmitter()
   let batteryLevel
 
-  noble.on('stateChange', function (state) {
+  noble.on('stateChange', (state) => {
     if (state === 'poweredOn') {
       // search for heart rate service
       noble.startScanning(['180d'], false)
