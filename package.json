@@ -28,7 +28,6 @@
     "@abandonware/noble": "^1.9.2-13",
     "ant-plus": "^0.1.24",
     "finalhandler": "^1.1.2",
-    "http": "0.0.1-security",
     "loglevel": "^1.7.1",
     "nosleep.js": "^0.12.0",
     "onoff": "^6.0.3",
