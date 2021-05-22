@@ -4,11 +4,9 @@ This is the very minimalistic Backlog for further development of this project.
 
 ## Soon
 
-* add an option to the installation script to directly attach a touchscreen to the Raspberry Pi and automatically show WebUI on this in kiosk mode
 * validate FTMS with more training applications and harden implementation (i.e. Holofit and Coxswain)
 * record a longer rowing session and analyze two encountered problems: 1) rarely the stroke rate doubles for a short duration (might be a problem with stroke detection when measurements are imprecise), 2) in one occasion the measured power jumped to a very high value after a break (40000 watts)
 * add an option to select the damper setting in the Web UI
-* extract the start and update script into a bin folder and symbolic link them for convenience
 * add an option to only consider every nth impulse (combine them)
 
 ## Later
@@ -19,6 +17,7 @@ This is the very minimalistic Backlog for further development of this project.
 * improve the physics model for water rowers
 * make Web UI a proper Web Application (tooling and SPA framework)
 * record the workout and show a visual graph of metrics
+* show a splash screen while booting the device
 
 ## Ideas
 
