@@ -12,7 +12,7 @@ I suspect it works well with DIY rowing machines like the [Openergo](https://ope
 
 ## Features
 
-Currently the feature set is pretty basic, I'll add more features in the future, check the [Development Roadmap](docs/backlog.md) if you are curious.
+The following items describe most of the current features, more functionality will be added in the future, check the [Development Roadmap](docs/backlog.md) if you are curious.
 
 ### Rowing Metrics
 
@@ -28,7 +28,9 @@ Open Rowing Monitor implements a physics model to simulate the typical metrics o
 
 ### Web Interface
 
-The web interface visualizes the rowing metrics on any device that can run a browser (i.e. a smartphone that you attach to your rowing machine while training). It uses web sockets to show the rowing status in Realtime. Besides that it does not do much (yet).
+The web interface visualizes the rowing metrics on any device that can run a web browser (i.e. a smartphone that you attach to your rowing machine while training). It uses web sockets to show the rowing status in realtime. It can also be used to reset the training metrics and to select the BLE Rower.
+
+If you connect a screen to the Raspberry Pi, then this interface can also be directly shown on the device. The installation script can set up a web browser in kiosk mode that runs on the Raspberry Pi.
 
 <!-- markdownlint-disable-next-line no-inline-html -->
 <img src="docs/img/openrowingmonitor_frontend.png" width="700"><br clear="left">

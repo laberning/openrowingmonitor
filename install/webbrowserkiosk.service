@@ -1,13 +1,13 @@
 [Unit]
-Description=Open Rowing Monitor
+Description=X11 Web Browser Kiosk
 After=multi-user.target
 
 [Service]
 Type=simple
-User=root
+User=pi
 Restart=on-failure
 WorkingDirectory=/opt/openrowingmonitor
-ExecStart=npm start
+ExecStart=xinit /opt/openrowingmonitor/install/webbrowserkiosk.sh -- -nocursor
 
 [Install]
 WantedBy=multi-user.target

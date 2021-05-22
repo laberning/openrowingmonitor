@@ -36,12 +36,12 @@ Connect to the device with SSH and initiate the following command to set up all 
 Open Rowing Monitor does not provide proper releases (yet), but you can update to the latest development version with this command:
 
 ```zsh
-sudo /opt/openrowingmonitor/install/update.sh
+updateopenrowingmonitor.sh
 ```
 
 ### Running Open Rowing Monitor without root permissions
 
-The default installation will run Open Rowing Monitor with root permissions. If you want you can also run it as user by modifying the following system services:
+The default installation will run Open Rowing Monitor with root permissions. You can also run it as normal user by modifying the following system services:
 
 #### To use BLE and open the Web-Server on port 80
 
