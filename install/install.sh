@@ -87,8 +87,24 @@ fi
 
 # todo: once we know what hardware we support we can check for that via /sys/firmware/devicetree/base/model
 
+HOSTNAME=$(hostname)
+TARGET_HOSTNAME="rowingmonitor"
+if [[ $HOSTNAME != $TARGET_HOSTNAME ]]; then
+  if ask "Do you want to change the device name from '$HOSTNAME' to '$TARGET_HOSTNAME'?" Y; then
+    sudo hostname -b $TARGET_HOSTNAME
+    sudo sed -i "s/$HOSTNAME/$TARGET_HOSTNAME/" /etc/hosts 2> /dev/null
+    sudo hostnamectl set-hostname $TARGET_HOSTNAME
+    sudo systemctl restart avahi-daemon
+  fi
+fi
+
+INIT_SHARE=false
+if ask "Do you want to create a samba network share to simplify access to trainings and configuration?" Y; then
+  INIT_SHARE=true
+fi
+
 INIT_GUI=false
-if ask "Do you also want to run the Graphical User Interface on this device (requires attached screen, optional)?" N; then
+if ask "Do you also want to run the Graphical User Interface on this device (requires attached screen)?" N; then
   INIT_GUI=true
 fi
 
@@ -165,9 +181,24 @@ sudo systemctl daemon-reload
 sudo systemctl enable openrowingmonitor
 sudo systemctl restart openrowingmonitor
 
+if $INIT_SHARE; then
+  print
+  print "Creating network share..."
+  # set the installer selections via debconf-set-selections, otherwise installing samba will open
+  # the wizard to manually set those settings
+  echo "samba-common samba-common/workgroup string WORKGROUP" | sudo debconf-set-selections
+  echo "samba-common samba-common/dhcp boolean true" | sudo debconf-set-selections
+  echo "samba-common samba-common/do_debconf boolean true" | sudo debconf-set-selections
+  sudo apt-get -y install samba samba-common-bin smbclient cifs-utils
+  sudo cp -f install/smb.conf /etc/samba/smb.conf
+  sudo systemctl restart smbd
+  print
+  print "Network share created"
+fi
+
 if $INIT_GUI; then
   print
-  print "Installing Graphical User Interface"
+  print "Installing Graphical User Interface..."
   sudo apt-get -y install --no-install-recommends xserver-xorg xserver-xorg-legacy x11-xserver-utils xinit openbox chromium-browser
   sudo sed -i 's/allowed_users=console/allowed_users=anybody/' /etc/X11/Xwrapper.config
   sudo cp install/webbrowserkiosk.service /lib/systemd/system/
@@ -190,4 +221,4 @@ print
 print "Installation of Open Rowing Monitor finished."
 print "Open Rowing Monitor should now be up and running."
 print
-print "You should now adjust the configuration in $INSTALL_DIR/config/config.js"
+print "You should now adjust the configuration in $INSTALL_DIR/config/config.js either via ssh or via the network share"
