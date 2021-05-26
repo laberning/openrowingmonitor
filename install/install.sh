@@ -175,6 +175,10 @@ if ! [[ -f "config/config.js" ]]; then
 fi
 
 print
+print "Setting up GPIO 17 as input and enable the pull-up resistor..."
+echo -e "\n# configure GPIO 17 as input and enable the pull-up resistor for Open Rowing Monitor\ngpio=17=pu,ip" | sudo tee -a /boot/config.txt > /dev/null
+
+print
 print "Setting up Open Rowing Monitor as autostarting system service..."
 sudo cp install/openrowingmonitor.service /lib/systemd/system/
 sudo systemctl daemon-reload
@@ -220,5 +224,6 @@ sudo systemctl status openrowingmonitor
 print
 print "Installation of Open Rowing Monitor finished."
 print "Open Rowing Monitor should now be up and running."
+print "You can now adjust the configuration in $INSTALL_DIR/config/config.js either via ssh or via the network share"
 print
-print "You should now adjust the configuration in $INSTALL_DIR/config/config.js either via ssh or via the network share"
+print "Please reboot the device for all features and settings to take effect."
