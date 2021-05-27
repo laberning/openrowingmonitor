@@ -9,7 +9,7 @@ import loglevel from 'loglevel'
 import rowerProfiles from '../../config/rowerProfiles.js'
 import { createRowingEngine } from './RowingEngine.js'
 import { replayRowingSession } from '../tools/RowingRecorder.js'
-import { deepMerge } from '../tools/ConfigManager.js'
+import { deepMerge } from '../tools/Helper.js'
 
 const log = loglevel.getLogger('RowingEngine.test')
 log.setLevel('warn')
