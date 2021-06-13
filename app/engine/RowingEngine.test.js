@@ -74,7 +74,7 @@ test('sample data for RX800 should produce plausible results with rower profile'
   await replayRowingSession(rowingEngine.handleRotationImpulse, { filename: 'recordings/RX800.csv' })
   assert.is(workoutEvaluator.getNumOfStrokes(), 10, 'number of strokes does not meet expectation')
   assertPowerRange(workoutEvaluator, 160, 270)
-  assertDistanceRange(workoutEvaluator, 78, 92)
+  assertDistanceRange(workoutEvaluator, 70, 80)
 })
 
 function assertPowerRange (evaluator, minPower, maxPower) {
