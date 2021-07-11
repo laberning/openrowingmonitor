@@ -71,14 +71,20 @@ function createMovingFlankDetector (rowerSettings) {
   function isAccelerating () {
     let i = rowerSettings.flankLength
     let numberOfErrors = 0
-    while (i > 0) {
+    while (i > 1) {
       if (cleanDataPoints[i] >= cleanDataPoints[i - 1]) {
-        // Oldest interval (dataPoints[i]) is longer than the younger one (datapoint[i-1], as the distance is fixed, we are accelerating
+        // Oldest interval (dataPoints[i]) is eaqual or longer than the younger one (datapoint[i-1], as the distance is fixed, we are not decelerating
       } else {
         numberOfErrors = numberOfErrors + 1
       }
       i = i - 1
     }
+    if (cleanDataPoints[1] > cleanDataPoints[0]) {
+      // We handle the last measurement more specifically: at least the youngest measurement must be really accelerating
+      // This prevents when the currentDt "flatlines" (i.e. error correction kicks in when you quit rowing) a ghost-stroke is detected, causing havoc in the GUI
+      } else {
+        numberOfErrors = numberOfErrors + 1
+      }
     if (numberOfErrors > rowerSettings.numberOfErrorsAllowed) {
       return false
     } else {
