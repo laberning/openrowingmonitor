@@ -82,9 +82,9 @@ function createMovingFlankDetector (rowerSettings) {
     if (cleanDataPoints[1] > cleanDataPoints[0]) {
       // We handle the last measurement more specifically: at least the youngest measurement must be really accelerating
       // This prevents when the currentDt "flatlines" (i.e. error correction kicks in when you quit rowing) a ghost-stroke is detected, causing havoc in the GUI
-      } else {
-        numberOfErrors = numberOfErrors + 1
-      }
+    } else {
+      numberOfErrors = numberOfErrors + 1
+    }
     if (numberOfErrors > rowerSettings.numberOfErrorsAllowed) {
       return false
     } else {
