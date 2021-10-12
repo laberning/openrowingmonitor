@@ -51,14 +51,14 @@ function createRowingEngine (rowerSettings) {
   let currentTorque = 0.0
   let previousAngularVelocity = 0.0
   let currentAngularVelocity = 0.0
-  
-    // called if the sensor detected an impulse, currentDt is an interval in seconds
+
+  // called if the sensor detected an impulse, currentDt is an interval in seconds
   function handleRotationImpulse (currentDt) {
     // First we check if the rower is allowed to move
     if (movementAllowed !== true) {
       // The rower isn't allowed to move
       return
-      }
+    }
 
     // impulses that take longer than maxCycleTimeBeforePause seconds are considered a pause
     if (currentDt > rowerSettings.maxCycleTimeBeforePause) {
@@ -71,7 +71,7 @@ function createRowingEngine (rowerSettings) {
 
     // STEP 2: detect where we are in the rowing phase (drive or recovery)
     flankDetector.pushValue(currentDt)
-    
+
     // Here we implement the finite state machine that goes between "Drive" and "Recovery" phases,
     // It will allow a phase-change provinding sufficient time has passed and there is a credible flank
     if (cyclePhase === 'Drive') {
@@ -107,13 +107,13 @@ function createRowingEngine (rowerSettings) {
           updateRecoveryPhase(currentDt)
         }
       } else {
-       // No force on the flywheel, let's continue the drive phase
-       updateRecoveryPhase(currentDt)
+        // No force on the flywheel, let's continue the drive phase
+        updateRecoveryPhase(currentDt)
       }
     }
   }
 
-    function startDrivePhase (currentDt) {
+  function startDrivePhase (currentDt) {
     // First, we conclude the recovery phase
     log.debug('*** recovery phase completed')
     if (rowerSettings.minimumRecoveryTime <= recoveryPhaseLength && rowerSettings.minimumDriveTime <= drivePhaseLength) {
@@ -125,9 +125,9 @@ function createRowingEngine (rowerSettings) {
     recoveryPhaseAngularDisplacement = (totalNumberOfImpulses - recoveryPhaseStartAngularDisplacement) * angularDisplacementPerImpulse
 
     // Calculation of the drag-factor
-    if ( flankDetector.impulseLengthAtBeginFlank() > 0) {
+    if (flankDetector.impulseLengthAtBeginFlank() > 0) {
       recoveryEndAngularVelocity = angularDisplacementPerImpulse / flankDetector.impulseLengthAtBeginFlank()
-      if (recoveryPhaseLength >= rowerSettings.minimumRecoveryTime  && recoveryStartAngularVelocity > 0 && recoveryEndAngularVelocity > 0) {
+      if (recoveryPhaseLength >= rowerSettings.minimumRecoveryTime && recoveryStartAngularVelocity > 0 && recoveryEndAngularVelocity > 0) {
         // Prevent division by zero and keep useless data out of our calculations
         currentDragFactor = -1 * rowerSettings.flywheelInertia * ((1 / recoveryStartAngularVelocity) - (1 / recoveryEndAngularVelocity)) / recoveryPhaseLength
         if (rowerSettings.autoAdjustDampingConstant) {
@@ -164,7 +164,7 @@ function createRowingEngine (rowerSettings) {
     } else {
       log.error(`Time: ${totalTime.toFixed(4)} sec, impuls ${totalNumberOfImpulses}: cycle length was not credible, cycleLenght = ${cycleLenght} sec`)
     }
-  
+
     // Next, we start the Drive Phase
     log.debug(`*** DRIVE phase started at time: ${totalTime.toFixed(4)} sec, impuls number ${totalNumberOfImpulses}`)
     strokeNumber++
