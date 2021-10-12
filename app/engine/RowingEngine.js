@@ -85,7 +85,7 @@ function createRowingEngine (rowerSettings) {
           cyclePhase = 'Recovery'
         } else {
           // We seem to have lost power to the flywheel, but it is too early according to the settings. We stay in the Drive Phase
-          log.debug(`Time: ${totalTime.toFixed(4)} sec, impuls ${totalNumberOfImpulses}: flank suggests no power (${flankDetector.accelerationAtBeginOfFlank().toFixed(1)} rad/s2), but waiting for drivePhaseLength (${drivePhaseLength.toF$
+          log.debug(`Time: ${totalTime.toFixed(4)} sec, impuls ${totalNumberOfImpulses}: flank suggests no power (${flankDetector.accelerationAtBeginOfFlank().toFixed(1)} rad/s2), but waiting for for recoveryPhaseLength (${recoveryPhaseLength.toFixed(4)} sec) to exceed minimumRecoveryTime (${rowerSettings.minimumRecoveryTime} sec)`)
           updateDrivePhase(currentDt)
         }
       } else {
