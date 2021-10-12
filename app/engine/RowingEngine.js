@@ -155,9 +155,9 @@ function createRowingEngine (rowerSettings) {
     if (currentDt > 0) {
       previousAngularVelocity = currentAngularVelocity
       currentAngularVelocity = angularDisplacementPerImpulse / currentDt
-      currentTorque = rowerSettings.flywheelInertia * ((currentAngularVelocity - previousAngularVelocity) / currentDt ) + dragFactor * Math.pow(currentAngularVelocity, 2)
+      currentTorque = rowerSettings.flywheelInertia * ((currentAngularVelocity - previousAngularVelocity) / currentDt) + dragFactor * Math.pow(currentAngularVelocity, 2)
     }
-    if (cycleLenght >= minimumCycleLenght ) {
+    if (cycleLenght >= minimumCycleLenght) {
       // There is no division by zero and the data data is credible
       linearCycleVelocity = Math.pow((dragFactor / rowerSettings.magicConstant), 1.0 / 3.0) * ((recoveryPhaseAngularDisplacement + drivePhaseAngularDisplacement) / cycleLenght)
       averagedCyclePower = dragFactor * Math.pow((recoveryPhaseAngularDisplacement + drivePhaseAngularDisplacement) / cycleLenght, 3.0)
@@ -192,12 +192,12 @@ function createRowingEngine (rowerSettings) {
 
   function updateDrivePhase (currentDt) {
     // Update the key metrics on each impulse
-    drivePhaseAngularDisplacement = ((totalNumberOfImpulses-flankDetector.noImpulsesToBeginFlank()) - drivePhaseStartAngularDisplacement) * angularDisplacementPerImpulse
+    drivePhaseAngularDisplacement = ((totalNumberOfImpulses - flankDetector.noImpulsesToBeginFlank()) - drivePhaseStartAngularDisplacement) * angularDisplacementPerImpulse
     driveLinearDistance = Math.pow((dragFactor / rowerSettings.magicConstant), 1.0 / 3.0) * drivePhaseAngularDisplacement
     if (currentDt > 0) {
       previousAngularVelocity = currentAngularVelocity
       currentAngularVelocity = angularDisplacementPerImpulse / currentDt
-      currentTorque = rowerSettings.flywheelInertia * ((currentAngularVelocity - previousAngularVelocity) / currentDt ) + dragFactor * Math.pow(currentAngularVelocity, 2)
+      currentTorque = rowerSettings.flywheelInertia * ((currentAngularVelocity - previousAngularVelocity) / currentDt) + dragFactor * Math.pow(currentAngularVelocity, 2)
     }
     if (workoutHandler) {
       workoutHandler.updateKeyMetrics({
@@ -217,17 +217,17 @@ function createRowingEngine (rowerSettings) {
     } else {
       log.debug(`Cycleleght wasn't credible: recoveryPhaseLength ${recoveryPhaseLength.toFixed(4)} sec, drivePhaseLength = ${drivePhaseLength.toFixed(4)} s`)
     }
-    drivePhaseAngularDisplacement = ((totalNumberOfImpulses-flankDetector.noImpulsesToBeginFlank()) - drivePhaseStartAngularDisplacement) * angularDisplacementPerImpulse
+    drivePhaseAngularDisplacement = ((totalNumberOfImpulses - flankDetector.noImpulsesToBeginFlank()) - drivePhaseStartAngularDisplacement) * angularDisplacementPerImpulse
     // driveEndAngularVelocity = angularDisplacementPerImpulse / flankDetector.impulseLengthAtBeginFlank()
     driveLinearDistance = Math.pow((dragFactor / rowerSettings.magicConstant), 1.0 / 3.0) * drivePhaseAngularDisplacement
     totalLinearDistance += driveLinearDistance
     if (currentDt > 0) {
       previousAngularVelocity = currentAngularVelocity
       currentAngularVelocity = angularDisplacementPerImpulse / currentDt
-      currentTorque = rowerSettings.flywheelInertia * ((currentAngularVelocity - previousAngularVelocity) / currentDt ) + dragFactor * Math.pow(currentAngularVelocity, 2)
+      currentTorque = rowerSettings.flywheelInertia * ((currentAngularVelocity - previousAngularVelocity) / currentDt) + dragFactor * Math.pow(currentAngularVelocity, 2)
     }
     // We display the AVERAGE speed in the display, NOT the topspeed of the stroke
-    if (drivePhaseLength > rowerSettings.minimumDriveTime && cycleLenght > minimumCycleLenght ) {
+    if (drivePhaseLength > rowerSettings.minimumDriveTime && cycleLenght > minimumCycleLenght) {
       // let's prevent division's by zero and make sure data is credible
       linearCycleVelocity = Math.pow((dragFactor / rowerSettings.magicConstant), 1.0 / 3.0) * ((drivePhaseAngularDisplacement + recoveryPhaseAngularDisplacement) / cycleLenght)
       // drivePhaseEnergyProduced = rowerSettings.flywheelInertia * ((driveEndAngularVelocity - driveStartAngularVelocity) / drivePhaseLength) * drivePhaseAngularDisplacement + dragFactor * Math.pow(driveEndAngularVelocity, 2) * drivePh$
@@ -264,12 +264,12 @@ function createRowingEngine (rowerSettings) {
 
   function updateRecoveryPhase (currentDt) {
     // Update the key metrics on each impulse
-    recoveryPhaseAngularDisplacement = ((totalNumberOfImpulses-flankDetector.noImpulsesToBeginFlank()) - recoveryPhaseStartAngularDisplacement) * angularDisplacementPerImpulse
+    recoveryPhaseAngularDisplacement = ((totalNumberOfImpulses - flankDetector.noImpulsesToBeginFlank()) - recoveryPhaseStartAngularDisplacement) * angularDisplacementPerImpulse
     recoveryLinearDistance = Math.pow((dragFactor / rowerSettings.magicConstant), 1.0 / 3.0) * recoveryPhaseAngularDisplacement
     if (currentDt > 0) {
       previousAngularVelocity = currentAngularVelocity
       currentAngularVelocity = angularDisplacementPerImpulse / currentDt
-      currentTorque = rowerSettings.flywheelInertia * ((currentAngularVelocity - previousAngularVelocity) / currentDt ) + dragFactor * Math.pow(currentAngularVelocity, 2)
+      currentTorque = rowerSettings.flywheelInertia * ((currentAngularVelocity - previousAngularVelocity) / currentDt) + dragFactor * Math.pow(currentAngularVelocity, 2)
     }
     if (workoutHandler) {
       workoutHandler.updateKeyMetrics({
@@ -297,10 +297,10 @@ function createRowingEngine (rowerSettings) {
     drivePhaseStartAngularDisplacement = 0.0
     drivePhaseLength = 0.0
     drivePhaseAngularDisplacement = rowerSettings.numOfImpulsesPerRevolution
-    //driveStartAngularVelocity = 0
-    //driveEndAngularVelocity = angularDisplacementPerImpulse / rowerSettings.minimumTimeBetweenImpulses
+    // driveStartAngularVelocity = 0
+    // driveEndAngularVelocity = angularDisplacementPerImpulse / rowerSettings.minimumTimeBetweenImpulses
     driveLinearDistance = 0.0
-    //drivePhaseEnergyProduced = 0.0
+    // drivePhaseEnergyProduced = 0.0
     recoveryPhaseStartTime = 0.0
     recoveryPhaseStartAngularDisplacement = 0.0
     recoveryPhaseAngularDisplacement = rowerSettings.numOfImpulsesPerRevolution
