@@ -38,7 +38,7 @@ export default class AdditionalStatus2 extends bleno.Characteristic {
     if (this._updateValueCallback || this._multiplexedCharacteristic.centralSubscribed()) {
       const bufferBuilder = new BufferBuilder()
       // elapsedTime: UInt24LE in 0.01 sec
-      bufferBuilder.writeUInt24LE(data.durationTotal * 100)
+      bufferBuilder.writeUInt24LE(Math.round(data.durationTotal * 100))
       // intervalCount: UInt8
       bufferBuilder.writeUInt8(0)
       if (this._updateValueCallback) {
@@ -48,7 +48,7 @@ export default class AdditionalStatus2 extends bleno.Characteristic {
         bufferBuilder.writeUInt16LE(data.power)
       }
       // totalCalories: UInt16LE in cal
-      bufferBuilder.writeUInt16LE(data.caloriesTotal)
+      bufferBuilder.writeUInt16LE(Math.round(data.caloriesTotal))
       // splitAveragePace: UInt16LE in 0.01 sec/500m
       bufferBuilder.writeUInt16LE(0 * 100)
       // splitAveragePower UInt16LE in watts
