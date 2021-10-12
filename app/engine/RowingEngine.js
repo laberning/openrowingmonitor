@@ -73,7 +73,7 @@ function createRowingEngine (rowerSettings) {
     // STEP 2: detect where we are in the rowing phase (drive or recovery)
     flankDetector.pushValue(currentDt)
     
-        // Here we implement the finite state machine that goes between "Drive" and "Recovery" phases,
+    // Here we implement the finite state machine that goes between "Drive" and "Recovery" phases,
     // It will allow a phase-change provinding sufficient time has passed and there is a credible flank
     if (cyclePhase === 'Drive') {
       // We currently are in the "Drive" phase, lets determine what the next phase is
