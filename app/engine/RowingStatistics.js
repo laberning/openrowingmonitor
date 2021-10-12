@@ -12,21 +12,20 @@ import { createWeightedAverager } from './WeightedAverager.js'
 import loglevel from 'loglevel'
 const log = loglevel.getLogger('RowingEngine')
 
-function createRowingStatistics  (config) {
+function createRowingStatistics (config) {
   const numOfDataPointsForAveraging = config.numOfPhasesForAveragingScreenData
   const screenUpdateInterval = config.screenUpdateInterval
   const minimumStrokeTime = config.rowerSettings.minimumRecoveryTime + config.rowerSettings.minimumDriveTime
   const maximumStrokeTime = config.rowerSettings.maxCycleTimeBeforePause
   const timeBetweenStrokesBeforePause = maximumStrokeTime * 1000
   const emitter = new EventEmitter()
-  const strokeAverager = createMovingAverager(numOfDataPointsForAveraging, (minimumStrokeTime + maximumStrokeTime) / 2 )
+  const strokeAverager = createMovingAverager(numOfDataPointsForAveraging, (minimumStrokeTime + maximumStrokeTime) / 2)
   const powerAverager = createWeightedAverager(numOfDataPointsForAveraging)
   const speedAverager = createWeightedAverager(numOfDataPointsForAveraging)
   const powerRatioAverager = createWeightedAverager(numOfDataPointsForAveraging)
   const caloriesAveragerMinute = createMovingIntervalAverager(60)
   const caloriesAveragerHour = createMovingIntervalAverager(60 * 60)
   let trainingRunning = false
-  let durationTimer
   let rowingPausedTimer
   let heartrateResetTimer
   let distanceTotal = 0.0
@@ -36,7 +35,6 @@ function createRowingStatistics  (config) {
   let heartrate
   let heartrateBatteryLevel = 0
   let instantanousTorque = 0.0
-  let lastStrokeDuration = 0.0
   let lastStrokeDistance = 0.0
   let lastStrokeSpeed = 0.0
   let lastStrokeState = 'RECOVERY'
@@ -55,7 +53,7 @@ function createRowingStatistics  (config) {
   // send metrics to the BT-clients periodically, to update the client and prevent a time-out on the connection
   setInterval(emitBTMetrics, 1000)
   function emitBTMetrics () {
-  emitter.emit('bluetoothMetricsUpdate', getMetrics())
+    emitter.emit('bluetoothMetricsUpdate', getMetrics())
   }
 
   function handleStrokeEnd (stroke) {
@@ -70,13 +68,12 @@ function createRowingStatistics  (config) {
     durationTotal = stroke.timeSinceStart
     powerAverager.pushValue(stroke.power)
     speedAverager.pushValue(stroke.speed)
-    if ( stroke.duration < timeBetweenStrokesBeforePause && stroke.duration > minimumStrokeTime ) {
+    if (stroke.duration < timeBetweenStrokesBeforePause && stroke.duration > minimumStrokeTime) {
       // stroke duration has to be credible to be accepted
       powerRatioAverager.pushValue(stroke.durationDrivePhase / stroke.duration)
       strokeAverager.pushValue(stroke.duration)
       caloriesAveragerMinute.pushValue(calories, stroke.duration)
       caloriesAveragerHour.pushValue(calories, stroke.duration)
-      lastStrokeDuration = stroke.duration
     } else {
       log.debug(`*** Stroke duration of ${stroke.duration} sec is considered unreliable, skipped update stroke statistics`)
     }
@@ -105,11 +102,10 @@ function createRowingStatistics  (config) {
     durationTotal = stroke.timeSinceStart
     powerAverager.pushValue(stroke.power)
     speedAverager.pushValue(stroke.speed)
-    if ( stroke.duration < timeBetweenStrokesBeforePause && stroke.duration > minimumStrokeTime ) {
+    if (stroke.duration < timeBetweenStrokesBeforePause && stroke.duration > minimumStrokeTime) {
       // stroke duration has to be credible to be accepted
       powerRatioAverager.pushValue(stroke.durationDrivePhase / stroke.duration)
       strokeAverager.pushValue(stroke.duration)
-      lastStrokeDuration = stroke.duration
     } else {
       log.debug(`*** Stroke duration of ${stroke.duration} sec is considered unreliable, skipped update stroke statistics`)
     }
