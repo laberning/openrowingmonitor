@@ -94,8 +94,8 @@ function createRowingStatistics (config) {
     caloriesAveragerHour.pushValue(0, duration)
     emitter.emit('rowingPaused')
   }
-  
-    // initiated when the stroke state changes
+
+  // initiated when the stroke state changes
   function handleRecoveryEnd (stroke) {
     // todo: wee need a better mechanism to communicate strokeState updates
     // this is an initial hacky attempt to see if we can use it for the C2-pm5 protocol
