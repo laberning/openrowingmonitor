@@ -94,18 +94,15 @@ rowingStatistics.on('strokeFinished', (metrics) => {
 rowingStatistics.on('recoveryFinished', (metrics) => { // @@ COPY ME TO GOOD FILE !!
   webServer.notifyClients(metrics)
   peripheralManager.notifyMetrics('strokeStateChanged', metrics)
-  checkEndCondition(metrics)
 })
 
 rowingStatistics.on('metricsUpdate', (metrics) => { // @@ COPY ME TO GOOD FILE !!
   webServer.notifyClients(metrics)
-  checkEndCondition(metrics)
 })
 
 rowingStatistics.on('bluetoothMetricsUpdate', (metrics) => { // @@ COPY ME TO GOOD FILE !!
   webServer.notifyClients(metrics)
   peripheralManager.notifyMetrics('metricsUpdate', metrics)
-  checkEndCondition(metrics)
 })
 
 rowingStatistics.on('rowingPaused', () => {
