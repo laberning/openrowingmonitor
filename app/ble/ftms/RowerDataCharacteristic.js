@@ -74,13 +74,13 @@ export default class RowerDataCharacteristic extends bleno.Characteristic {
       bufferBuilder.writeUInt16LE(Math.round(data.power))
       // Energy in kcal
       // Total energy in kcal
-      bufferBuilder.writeUInt16LE(data.caloriesTotal)
+      bufferBuilder.writeUInt16LE(Math.round(data.caloriesTotal))
       // Energy per hour
       // The Energy per Hour field represents the average expended energy of a user during a
       // period of one hour.
-      bufferBuilder.writeUInt16LE(data.caloriesPerHour)
+      bufferBuilder.writeUInt16LE(Math.round(data.caloriesPerHour))
       // Energy per minute
-      bufferBuilder.writeUInt8(data.caloriesPerMinute)
+      bufferBuilder.writeUInt8(Math.round(data.caloriesPerMinute))
       // Heart Rate: Beats per minute with a resolution of 1
       bufferBuilder.writeUInt8(Math.round(data.heartrate))
       // Elapsed Time: Seconds with a resolution of 1
