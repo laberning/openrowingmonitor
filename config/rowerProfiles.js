@@ -36,6 +36,10 @@ export default {
     flankLength: 2,
     numberOfErrorsAllowed: 0,
 
+    // Natural deceleration of the flywheel when it is considered that it is unpowered.
+    // This must be a NEGATIVE number. When set to zero or positive, sroke detection will use the more robust acceleration-based stroke detection algorithm
+    naturalDeceleration: 0,
+
     // Error reducing settings for the rowing phase detection (in seconds)
     maxCycleTimeBeforePause: 3.0,  // maximum time between impulses before the rowing engine considers it a pause
     minimumDriveTime: 0.300,       // minumum time of the drive phase
@@ -49,13 +53,13 @@ export default {
     // For a new Concept2 the Drag Factor ranges between 0.000090 (Damper setting 1)  and 0.000220 (Damper setting 10)
     // Open Rowing Monitor can also automatically adjust this value based on the measured damping. To do so, set the setting
     // autoAdjustDampingConstant to true (see below).
-    dragFactor: 0.000150,
+    dragFactor: 1500,
 
     // The moment of inertia of the flywheel kg*m^2
     // A way to measure it is outlined here: https://dvernooy.github.io/projects/ergware/, "Flywheel moment of inertia"
     // You could also roughly estimate it by just doing some strokes and the comparing the calculated power values for
     // plausibility. Note that the power also depends on the drag factor (see above).
-    flywheelInertia: 0.2036,
+    flywheelInertia: 0.5,
 
     // Set this to true, if you want to automatically update the drag factor based on the measured
     // values in the stroke recovery phase. If your rower produces stable damping values, then this could be a good
@@ -76,81 +80,95 @@ export default {
   // Sportstech WRX700
   WRX700: {
     numOfImpulsesPerRevolution: 2,
+    naturalDeceleration: -5.0,
     flywheelInertia: 0.65,
-    dragFactor: 0.000150
+    dragFactor: 15000
   },
 
   // DKN R-320 Air Rower
   DKNR320: {
     numOfImpulsesPerRevolution: 1,
     flywheelInertia: 0.41,
-    dragFactor: 0.000150
+    dragFactor: 4000
   },
 
   // NordicTrack RX800 Air Rower
   RX800: {
-    gpioHighPriority: true,
     numOfImpulsesPerRevolution: 4,
-
     /* Damper setting 10
     minimumTimeBetweenImpulses: 0.018,
     maximumTimeBetweenImpulses: 0.0338,
-    maximumDownwardChange: 0.69,
-    maximumUpwardChange: 1.3,
-    flankLength: 3,
-    numberOfErrorsAllowed: 0,
-    minimumDriveTime: 0.300,
-    minimumRecoveryTime: 0.750,
-    omegaDotDivOmegaSquare: 0.00543660639574872,
-    jMoment: 0.174, // still under investigation
-    magicConstant: 3.75 // still under investigation
+    smoothing: 3,
+    maximumDownwardChange: 0.88,
+    maximumUpwardChange: 1.11,
+    flankLength: 9,
+    numberOfErrorsAllowed: 2,
+    naturalDeceleration: -11.5, // perfect runs
+    minimumDriveTime: 0.40,
+    minimumRecoveryTime: 0.90,
+    flywheelInertia: 0.146,
+    dragFactor: 560
     */
 
     /* Damper setting 8
     minimumTimeBetweenImpulses: 0.017,
     maximumTimeBetweenImpulses: 0.034,
+    smoothing: 3,
     maximumDownwardChange: 0.8,
     maximumUpwardChange: 1.15,
-    minimumDriveTime: 0.300,
-    minimumRecoveryTime: 0.750,
-    omegaDotDivOmegaSquare: 0.005305471,
-    jMoment: 0.155, // still under investigation
-    magicConstant: 4 // still under investigation
+    flankLength: 9,
+    numberOfErrorsAllowed: 2,
+    naturalDeceleration: -10.25, // perfect runs
+    minimumDriveTime: 0.30,
+    minimumRecoveryTime: 0.90,
+    flywheelInertia: 0.131,
+    dragFactor: 440
     */
 
-    /* Damper setting 6
-    minimumTimeBetweenImpulses: 0.017,
-    maximumTimeBetweenImpulses: 0.034,
-    maximumDownwardChange: 0.85,
-    maximumUpwardChange: 1.15,
-    minimumDriveTime: 0.300,
-    minimumRecoveryTime: 0.750,
-    omegaDotDivOmegaSquare: 0.0047,
-    jMoment: 0.135, // still under investigation
-    magicConstant: 4.25 // still under investigation
-    */
+    // Damper setting 6
+    minimumTimeBetweenImpulses: 0.00925,
+    maximumTimeBetweenImpulses: 0.038,
+    smoothing: 3,
+    maximumDownwardChange: 0.86,
+    maximumUpwardChange: 1.13,
+    flankLength: 9,
+    numberOfErrorsAllowed: 2,
+    // naturalDeceleration: -8.5, // perfect runs IIII
+    naturalDeceleration: -8.6, // perfect runs IIIXI
+    minimumDriveTime: 0.28,
+    minimumRecoveryTime: 0.90,
+    flywheelInertia: 0.131,
+    dragFactor: 310
+    //
 
     /* Damper setting 4
-    minimumTimeBetweenImpulses: 0.019,
-    maximumTimeBetweenImpulses: 0.032,
-    maximumDownwardChange: 0.70,
-    maximumUpwardChange: 1.30,
-    minimumDriveTime: 0.300,
-    minimumRecoveryTime: 0.750,
-    omegaDotDivOmegaSquare: 0.00355272,
-    jMoment: 0.125, // still under investigation
-    magicConstant: 4.4 // still under investigation
+    minimumTimeBetweenImpulses: 0.00925,
+    maximumTimeBetweenImpulses: 0.0335,
+    smoothing: 3,
+    maximumDownwardChange: 0.890,
+    maximumUpwardChange: 1.07,
+    flankLength: 10,
+    numberOfErrorsAllowed: 2,
+    naturalDeceleration: -5.5, // perfect runs I
+    minimumDriveTime: 0.24,
+    minimumRecoveryTime: 0.90,
+    flywheelInertia: 0.140,
+    dragFactor: 255
     */
 
-    // Damper setting 2
-    minimumTimeBetweenImpulses: 0.014,
-    maximumTimeBetweenImpulses: 0.040,
+    /* Damper setting 2
+    minimumTimeBetweenImpulses: 0.00925,
+    maximumTimeBetweenImpulses: 0.030,
     smoothing: 4,
     maximumDownwardChange: 0.962,
     maximumUpwardChange: 1.07,
-    flankLength: 4,
-    flywheelInertia: 0.2036,
-    dragFactor: 0.0001318306
-    //
-  }
+    flankLength: 11,
+    numberOfErrorsAllowed: 2,
+    naturalDeceleration: -2.45, // perfect runs
+    minimumDriveTime: 0.28,
+    minimumRecoveryTime: 0.90,
+    flywheelInertia: 0.155,
+    dragFactor: 155,
+    magicConstant: 2.8
+    */
 }
