@@ -11,7 +11,6 @@
   Also Dave Vernooy has some good explanations here: https://dvernooy.github.io/projects/ergware
 */
 import loglevel from 'loglevel'
-import fs from 'fs'  // REMOVE ME!!!!
 import { createMovingAverager } from './MovingAverager.js'
 import { createMovingFlankDetector } from './MovingFlankDetector.js'
 
