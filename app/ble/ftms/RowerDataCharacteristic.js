@@ -62,16 +62,16 @@ export default class RowerDataCharacteristic extends bleno.Characteristic {
       // see https://www.bluetooth.com/specifications/specs/gatt-specification-supplement-3/
       // for some of the data types
       // Stroke Rate in stroke/minute, value is multiplied by 2 to have a .5 precision
-      bufferBuilder.writeUInt8(data.strokesPerMinute * 2)
+      bufferBuilder.writeUInt8(Math.round(data.strokesPerMinute * 2))
       // Stroke Count
       bufferBuilder.writeUInt16LE(data.strokesTotal)
       // Total Distance in meters
-      bufferBuilder.writeUInt24LE(data.distanceTotal)
+      bufferBuilder.writeUInt24LE(Math.round(data.distanceTotal))
       // Instantaneous Pace in seconds/500m
       // if split is infinite (i.e. while pausing), use the highest possible number
-      bufferBuilder.writeUInt16LE(data.split !== Infinity ? data.split : 0xFFFF)
+      bufferBuilder.writeUInt16LE(data.split !== Infinity ? Math.round(data.split) : 0xFFFF)
       // Instantaneous Power in watts
-      bufferBuilder.writeUInt16LE(data.power)
+      bufferBuilder.writeUInt16LE(Math.round(data.power))
       // Energy in kcal
       // Total energy in kcal
       bufferBuilder.writeUInt16LE(data.caloriesTotal)
@@ -82,9 +82,9 @@ export default class RowerDataCharacteristic extends bleno.Characteristic {
       // Energy per minute
       bufferBuilder.writeUInt8(data.caloriesPerMinute)
       // Heart Rate: Beats per minute with a resolution of 1
-      bufferBuilder.writeUInt8(data.heartrate)
+      bufferBuilder.writeUInt8(Math.round(data.heartrate))
       // Elapsed Time: Seconds with a resolution of 1
-      bufferBuilder.writeUInt16LE(data.durationTotal)
+      bufferBuilder.writeUInt16LE(Math.round(data.durationTotal))
 
       const buffer = bufferBuilder.getBuffer()
       if (buffer.length > this._subscriberMaxValueSize) {
