@@ -17,12 +17,13 @@ log.setLevel('warn')
 const createWorkoutEvaluator = function () {
   const strokes = []
 
-  function handleStroke (stroke) {
+  function handleStrokeEnd (stroke) {
     strokes.push(stroke)
     log.info(`stroke: ${strokes.length}, power: ${Math.round(stroke.power)}w, duration: ${stroke.duration.toFixed(2)}s, ` +
     ` drivePhase: ${stroke.durationDrivePhase.toFixed(2)}s, distance: ${stroke.distance.toFixed(2)}m`)
   }
-  function handleStrokeStateChanged () {}
+  function updateKeyMetrics () {}
+  function handleRecoveryEnd () {}
   function handlePause () {}
   function getNumOfStrokes () {
     return strokes.length
@@ -34,11 +35,12 @@ const createWorkoutEvaluator = function () {
     return strokes.map((stroke) => stroke.power).reduce((acc, power) => Math.max(acc, power))
   }
   function getDistance () {
-    return strokes.reduce((acc, stroke) => acc + stroke.distance, 0)
+    return strokes.map((stroke) => stroke.distance).reduce((acc, distance) => Math.max(acc, distance))
   }
   return {
-    handleStroke,
-    handleStrokeStateChanged,
+    handleStrokeEnd,
+    handleRecoveryEnd,
+    updateKeyMetrics,
     handlePause,
     getNumOfStrokes,
     getMaxStrokePower,
@@ -73,7 +75,7 @@ test('sample data for RX800 should produce plausible results with rower profile'
   rowingEngine.notify(workoutEvaluator)
   await replayRowingSession(rowingEngine.handleRotationImpulse, { filename: 'recordings/RX800.csv' })
   assert.is(workoutEvaluator.getNumOfStrokes(), 10, 'number of strokes does not meet expectation')
-  assertPowerRange(workoutEvaluator, 160, 270)
+  assertPowerRange(workoutEvaluator, 80, 200)
   assertDistanceRange(workoutEvaluator, 70, 80)
 })
 
