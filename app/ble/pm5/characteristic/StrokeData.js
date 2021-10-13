@@ -39,9 +39,9 @@ export default class StrokeData extends bleno.Characteristic {
     if (this._updateValueCallback || this._multiplexedCharacteristic.centralSubscribed()) {
       const bufferBuilder = new BufferBuilder()
       // elapsedTime: UInt24LE in 0.01 sec
-      bufferBuilder.writeUInt24LE(data.durationTotal * 100)
+      bufferBuilder.writeUInt24LE(Math.round(data.durationTotal * 100))
       // distance: UInt24LE in 0.1 m
-      bufferBuilder.writeUInt24LE(data.distanceTotal * 10)
+      bufferBuilder.writeUInt24LE(Math.round(data.distanceTotal * 10))
       // driveLength: UInt8 in 0.01 m
       bufferBuilder.writeUInt8(0 * 100)
       // driveTime: UInt8 in 0.01 s
