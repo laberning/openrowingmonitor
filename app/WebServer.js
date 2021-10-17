@@ -5,7 +5,7 @@
   Creates the WebServer which serves the static assets and communicates with the clients
   via WebSockets
 */
-import WebSocket from 'ws'
+import { WebSocket, WebSocketServer } from 'ws'
 import finalhandler from 'finalhandler'
 import http from 'http'
 import serveStatic from 'serve-static'
@@ -26,7 +26,7 @@ function createWebServer () {
     log.info(`webserver running on port ${port}`)
   })
 
-  const wss = new WebSocket.Server({ server })
+  const wss = new WebSocketServer({ server })
 
   wss.on('connection', function connection (ws) {
     log.debug('websocket client connected')
