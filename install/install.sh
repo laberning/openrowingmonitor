@@ -122,7 +122,7 @@ then
   print "You are running a system with ARM v6 architecture. Official support for Node.js has been discontinued"
   print "for ARM v6. Installing experimental unofficial build of Node.js..."
 
-  NODEJS_VERSION=v14.17.0
+  NODEJS_VERSION=v14.18.1
   sudo rm -rf /opt/nodejs
   sudo mkdir -p /opt/nodejs
   sudo curl https://unofficial-builds.nodejs.org/download/release/$NODEJS_VERSION/node-$NODEJS_VERSION-linux-armv6l.tar.gz | sudo tar -xz --strip 1 -C /opt/nodejs/
