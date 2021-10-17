@@ -9,7 +9,7 @@
     "type": "image/png"
     }
   ],
-  "background_color": "0059B3",
+  "background_color": "#0059B3",
   "display": "fullscreen",
   "orientation": "any",
   "start_url": "/#:standalone:"
