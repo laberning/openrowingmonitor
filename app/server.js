@@ -61,6 +61,7 @@ peripheralManager.on('control', (event) => {
 })
 
 function resetWorkout () {
+  rowingEngine.reset()
   rowingStatistics.reset()
   peripheralManager.notifyStatus({ name: 'reset' })
   workoutRecorder.reset()
@@ -76,7 +77,7 @@ function handleRotationImpulse (dataPoint) {
 }
 
 const rowingEngine = createRowingEngine(config.rowerSettings)
-const rowingStatistics = createRowingStatistics()
+const rowingStatistics = createRowingStatistics(config)
 rowingEngine.notify(rowingStatistics)
 const workoutRecorder = createWorkoutRecorder()
 
@@ -90,11 +91,12 @@ rowingStatistics.on('strokeFinished', (metrics) => {
   workoutRecorder.recordStroke(metrics)
 })
 
-rowingStatistics.on('strokeStateChanged', (metrics) => {
+rowingStatistics.on('recoveryFinished', (metrics) => { // @@ COPY ME TO GOOD FILE !!
+  webServer.notifyClients(metrics)
   peripheralManager.notifyMetrics('strokeStateChanged', metrics)
 })
 
-rowingStatistics.on('metricsUpdate', (metrics) => {
+rowingStatistics.on('metricsUpdate', (metrics) => { // @@ COPY ME TO GOOD FILE !!
   webServer.notifyClients(metrics)
   peripheralManager.notifyMetrics('metricsUpdate', metrics)
 })
