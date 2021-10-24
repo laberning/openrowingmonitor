@@ -163,10 +163,8 @@ function createMovingFlankDetector (rowerSettings) {
 
   return {
     pushValue,
-    // isFlywheelUnpowered,
-    // isFlywheelPowered,
-    isDecelerating,
-    isAccelerating,
+    isFlywheelUnpowered,
+    isFlywheelPowered,
     timeToBeginOfFlank,
     noImpulsesToBeginFlank,
     impulseLengthAtBeginFlank,
