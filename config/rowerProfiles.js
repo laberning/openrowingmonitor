@@ -171,4 +171,5 @@ export default {
     dragFactor: 155,
     magicConstant: 2.8
     */
+    }
 }
