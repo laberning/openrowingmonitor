@@ -50,12 +50,6 @@ function createRowingStatistics (config) {
     }
   }
 
-  // send metrics to the BT-clients periodically, to update the client and prevent a time-out on the connection
-  setInterval(emitBTMetrics, 1000)
-  function emitBTMetrics () {
-    emitter.emit('bluetoothMetricsUpdate', getMetrics())
-  }
-
   function handleStrokeEnd (stroke) {
     if (!trainingRunning) startTraining()
 
