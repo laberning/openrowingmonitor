@@ -67,8 +67,7 @@ function createMovingFlankDetector (rowerSettings) {
     }
   }
 
-  function isDecelerating () {
-  // function isFlywheelUnpowered () {
+  function isFlywheelUnpowered () {
     let numberOfErrors = 0
     if (rowerSettings.naturalDeceleration < 0) {
       // A valid natural deceleration of the flywheel has been provided, this has to be maintained for a flanklength to count as an indication for an unpowered flywheel
@@ -99,8 +98,7 @@ function createMovingFlankDetector (rowerSettings) {
     }
   }
 
-  function isAccelerating () {
-  // function isFlywheelPowered () {
+  function isFlywheelPowered () {
     let numberOfErrors = 0
     if (rowerSettings.naturalDeceleration < 0) {
       // A valid natural deceleration of the flywheel has been provided, this has to be consistently be encountered for a flanklength to count as an indication of a powered flywheel
