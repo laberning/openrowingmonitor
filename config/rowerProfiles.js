@@ -22,7 +22,6 @@ export default {
     // will be replaced by a default value.
     minimumTimeBetweenImpulses: 0.014,
     maximumTimeBetweenImpulses: 0.5,
-    smoothing: 1,
     // Percentage change between successive intervals before measurements are considered invalid
     // smoothing determines the length of the running average for certain volatile measurements, 1 effectively turns it off
     maximumDownwardChange: 0.25, // effectively the maximum acceleration
@@ -41,9 +40,9 @@ export default {
     naturalDeceleration: 0,
 
     // Error reducing settings for the rowing phase detection (in seconds)
-    maxCycleTimeBeforePause: 3.0,  // maximum time between impulses before the rowing engine considers it a pause
-    minimumDriveTime: 0.300,       // minumum time of the drive phase
-    minimumRecoveryTime: 1.200,    // minimumtime of the recovery phase
+    maxCycleTimeBeforePause: 3.0, // maximum time between impulses before the rowing engine considers it a pause
+    minimumDriveTime: 0.300, // minumum time of the drive phase
+    minimumRecoveryTime: 1.200, // minimumtime of the recovery phase
 
     // Needed to determine the drag factor of the rowing machine. This value can be measured in the recovery phase
     // of the stroke.
@@ -73,8 +72,7 @@ export default {
     // to their expectations. So for your rower, you have to find a credible distance for your effort.
     // Also note that the rowed distance also depends on jMoment, so please calibrate that before changing this constant.
     // PLEASE NOTE: Increasing this number decreases your rowed meters
-    magicConstant: 2.8,
-
+    magicConstant: 2.8
   },
 
   // Sportstech WRX700
@@ -171,5 +169,5 @@ export default {
     dragFactor: 155,
     magicConstant: 2.8
     */
-    }
+  }
 }
