@@ -49,7 +49,8 @@ export default {
     // To display it for your rowing machine, set the logging level of the RowingEngine to 'info'. Then start rowing and
     // you will see the measured values in the log.
     // Just as a frame of reference: the Concept2 can display this factor from the menu, where it is multiplied with 1.000.000
-    // For a new Concept2 the Drag Factor ranges between 0.000090 (Damper setting 1)  and 0.000220 (Damper setting 10)
+    // For a new Concept2 the Drag Factor ranges between 80 (Damper setting 1)  and 220 (Damper setting 10). Other rowers are
+    // in the range of 150 to 450 (NordicTrack). The logging, when set to debug, will report the calculated drag factor.
     // Open Rowing Monitor can also automatically adjust this value based on the measured damping. To do so, set the setting
     // autoAdjustDampingConstant to true (see below).
     dragFactor: 1500,
