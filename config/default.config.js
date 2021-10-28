@@ -66,6 +66,24 @@ export default {
   // Most bike training applications are fine with any device name
   ftmsBikePeripheralName: 'OpenRowingBike',
 
+  // The interval for updating all your screens (i.e. the monitor, but also bluetooth devices) in ms.
+  // Advised is to update at least once per second, to make sure the timer moves nice and smoothly.
+  // Around 100 ms results in a very smooth experience that the distance display also updates smoothly
+  // Please note that using a 100ms or less will result in more work for your rapberry pi
+  screenUpdateInterval: 1000,
+  
+  // The number of stroke phases (i.e. Drive or Recovery) used to smoothen the data displayed on your
+  // screens (i.e. the monitor, but also bluetooth devices, etc.). A nice smooth experience is found at 6
+  // phases, a much more volatile (but more accurate and responsive) is found around 3. The minimum is 1,
+  // but for recreational rowers that might feel much too restless to be useful
+  numOfPhasesForAveragingScreenData: 6,
+  
+  // The time between strokes before the rower considers it a pause. Default value is set to 6. It is not
+  // recommended to go below this value, as not recognizing a stroke could result in a pause (as a typical
+  // stroke is between 2 to 3 seconds for recreational rowers). Increase it when you have issues with your
+  // stroke detection and the rower is pausing unexpectedly
+  maxCycleTimeBeforePause: 6,
+  
   // The rower specific settings. Either choose a profile from config/rowerProfiles.js or
   // define the settings individually. If you find good settings for a new rowing device
   // please send them to us (together with a raw recording of 10 strokes) so we can add
