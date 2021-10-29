@@ -5,10 +5,10 @@
 
 An open source rowing monitor for rowing exercise machines. It upgrades a rowing machine into a real smart trainer that can be used with training applications and games.
 
-Open Rowing Monitor is a Node.js application that runs on a Raspberry Pi and measures the rotation of the rower's flywheel to calculate rowing specific metrics, such as power, split time, speed, stroke rate, distance and calories.
+Open Rowing Monitor is a Node.js application that runs on a Raspberry Pi and measures the rotation of the rower's flywheel (or similar) to calculate rowing specific metrics, such as power, split time, speed, stroke rate, distance and calories.
 
-I currently develop and test it with a Sportstech WRX700 waterrower. But it should run fine with any rowing machine that uses an air or water resistance mechanism as long as you can add something to measure the speed of the flywheel.
-I suspect it works well with DIY rowing machines like the [Openergo](https://openergo.webs.com) too.
+We currently develop and test it with a Sportstech WRX700 waterrower and a NordicTrack RX-800 hybrid magetic/airrower. But it should run fine with any rowing machine that uses an air or water resistance mechanism as long as you can add something to measure the speed of the flywheel.
+We suspect it works well with DIY rowing machines like the [Openergo](https://openergo.webs.com) too.
 
 ## Features
 
