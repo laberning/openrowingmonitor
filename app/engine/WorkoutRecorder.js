@@ -167,8 +167,8 @@ function createWorkoutRecorder () {
     fs.writeFile(workout.filename, tcxXml, (err) => { if (err) log.error(err) })
   }
 
-  function reset () {
-    createRecordings()
+  async function reset () {
+    await createRecordings()
     strokes = []
     rotationImpulses = []
     startTime = undefined
@@ -178,7 +178,7 @@ function createWorkoutRecorder () {
     createRecordings()
   }
 
-  function createRecordings () {
+  async function createRecordings () {
     if (!config.recordRawData && !config.createTcxFiles) {
       return
     }
@@ -193,10 +193,10 @@ function createWorkoutRecorder () {
     }
 
     if (config.recordRawData) {
-      createRawDataFile()
+      await createRawDataFile()
     }
     if (config.createTcxFiles) {
-      createTcxFile()
+      await createTcxFile()
     }
   }
 

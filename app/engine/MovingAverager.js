@@ -8,8 +8,8 @@
   They are arranged that dataPoints[0] is the youngest, and dataPoints[flankLength] the youngest
 */
 function createMovingAverager (length, initValue) {
-  const dataPoints = new Array(length)
-  dataPoints.fill(initValue)
+  let dataPoints
+  reset()
 
   function pushValue (dataPoint) {
     // add the new dataPoint to the array, we have to move datapoints starting at the oldst ones
@@ -39,10 +39,16 @@ function createMovingAverager (length, initValue) {
     return arrayAverage
   }
 
+  function reset () {
+    dataPoints = new Array(length)
+    dataPoints.fill(initValue)
+  }
+
   return {
     pushValue,
     replaceLastPushedValue,
-    getMovingAverage
+    getMovingAverage,
+    reset
   }
 }
 

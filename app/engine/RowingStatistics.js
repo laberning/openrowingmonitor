@@ -133,6 +133,12 @@ function createRowingStatistics (config) {
 
   function getMetrics () {
     const splitTime = speedAverager.weightedAverage() !== 0 && lastStrokeSpeed > 0 ? (500.0 / speedAverager.weightedAverage()) : Infinity
+    // todo: setting strokeTime to Infinity does cause serious problems when creating the workout recording
+    // (adding Infinity to a timestamp does not work) changed it to be (minimumStrokeTime + maximumStrokeTime)/2
+    // I'm still not sure that altering the time by smoothing it is a good idea as this causes a drift between what is reported by
+    // the sum of strokeTime and durationTotal
+    const strokeTime = strokeAverager.getMovingAverage() > minimumStrokeTime && strokeAverager.getMovingAverage() < maximumStrokeTime && lastStrokeSpeed > 0 ? strokeAverager.getMovingAverage() : (minimumStrokeTime + maximumStrokeTime) / 2 // seconds
+
     return {
       durationTotal,
       durationTotalFormatted: secondsToTimeString(durationTotal),
@@ -141,14 +147,14 @@ function createRowingStatistics (config) {
       caloriesTotal: caloriesTotal, // kcal
       caloriesPerMinute: caloriesAveragerMinute.average() > 0 ? caloriesAveragerMinute.average() : 0,
       caloriesPerHour: caloriesAveragerHour.average() > 0 ? caloriesAveragerHour.average() : 0,
-      strokeTime: strokeAverager.getMovingAverage() > minimumStrokeTime && strokeAverager.getMovingAverage() < maximumStrokeTime && lastStrokeSpeed > 0 ? strokeAverager.getMovingAverage() : Infinity, // seconds
+      strokeTime,
       distance: lastStrokeDistance > 0 && lastStrokeSpeed > 0 ? lastStrokeDistance : 0, // meters
       power: powerAverager.weightedAverage() > 0 && lastStrokeSpeed > 0 ? powerAverager.weightedAverage() : 0, // watts
       split: splitTime, // seconds/500m
       splitFormatted: secondsToTimeString(splitTime),
       powerRatio: powerRatioAverager.weightedAverage() > 0 && lastStrokeSpeed > 0 ? powerRatioAverager.weightedAverage() : 0,
       instantanousTorque: instantanousTorque,
-      strokesPerMinute: strokeAverager.getMovingAverage() > minimumStrokeTime && lastStrokeSpeed > 0 ? (60.0 / strokeAverager.getMovingAverage()) : minimumStrokeTime,
+      strokesPerMinute: 60.0 / strokeTime,
       speed: speedAverager.weightedAverage() > 0 && lastStrokeSpeed > 0 ? (speedAverager.weightedAverage() * 3.6) : 0, // km/h
       strokeState: lastStrokeState,
       heartrate,

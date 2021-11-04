@@ -61,10 +61,10 @@ peripheralManager.on('control', (event) => {
 })
 
 function resetWorkout () {
+  workoutRecorder.reset()
   rowingEngine.reset()
   rowingStatistics.reset()
   peripheralManager.notifyStatus({ name: 'reset' })
-  workoutRecorder.reset()
 }
 
 const gpioTimerService = fork('./app/gpio/GpioTimerService.js')
