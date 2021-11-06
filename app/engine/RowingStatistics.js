@@ -34,6 +34,7 @@ function createRowingStatistics (config) {
   let caloriesTotal = 0.0
   let heartrate
   let heartrateBatteryLevel = 0
+  let lastStrokeDuration = 0.0
   let instantanousTorque = 0.0
   let lastStrokeDistance = 0.0
   let lastStrokeSpeed = 0.0
@@ -73,6 +74,7 @@ function createRowingStatistics (config) {
     }
 
     caloriesTotal += calories
+    lastStrokeDuration = stroke.duration
     distanceTotal = stroke.distance
     lastStrokeDistance = stroke.strokeDistance
     lastStrokeState = stroke.strokeState
@@ -133,11 +135,10 @@ function createRowingStatistics (config) {
 
   function getMetrics () {
     const splitTime = speedAverager.weightedAverage() !== 0 && lastStrokeSpeed > 0 ? (500.0 / speedAverager.weightedAverage()) : Infinity
-    // todo: setting strokeTime to Infinity does cause serious problems when creating the workout recording
-    // (adding Infinity to a timestamp does not work) changed it to be (minimumStrokeTime + maximumStrokeTime)/2
-    // I'm still not sure that altering the time by smoothing it is a good idea as this causes a drift between what is reported by
-    // the sum of strokeTime and durationTotal
-    const strokeTime = strokeAverager.getMovingAverage() > minimumStrokeTime && strokeAverager.getMovingAverage() < maximumStrokeTime && lastStrokeSpeed > 0 ? strokeAverager.getMovingAverage() : (minimumStrokeTime + maximumStrokeTime) / 2 // seconds
+    // todo: due to sanitization we currently do not use a consistent time throughout the engine
+    // We will rework this section to use both absolute and sanitized time in the appropriate places.
+    // We will also polish up the events for the recovery and drive phase, so we get clean complete strokes from the first stroke onwards.
+    const averagedStrokeTime = strokeAverager.getMovingAverage() > minimumStrokeTime && strokeAverager.getMovingAverage() < maximumStrokeTime && lastStrokeSpeed > 0 ? strokeAverager.getMovingAverage() : (minimumStrokeTime + maximumStrokeTime) / 2 // seconds
 
     return {
       durationTotal,
@@ -147,14 +148,14 @@ function createRowingStatistics (config) {
       caloriesTotal: caloriesTotal, // kcal
       caloriesPerMinute: caloriesAveragerMinute.average() > 0 ? caloriesAveragerMinute.average() : 0,
       caloriesPerHour: caloriesAveragerHour.average() > 0 ? caloriesAveragerHour.average() : 0,
-      strokeTime,
+      strokeTime: lastStrokeDuration, // seconds
       distance: lastStrokeDistance > 0 && lastStrokeSpeed > 0 ? lastStrokeDistance : 0, // meters
       power: powerAverager.weightedAverage() > 0 && lastStrokeSpeed > 0 ? powerAverager.weightedAverage() : 0, // watts
       split: splitTime, // seconds/500m
       splitFormatted: secondsToTimeString(splitTime),
       powerRatio: powerRatioAverager.weightedAverage() > 0 && lastStrokeSpeed > 0 ? powerRatioAverager.weightedAverage() : 0,
       instantanousTorque: instantanousTorque,
-      strokesPerMinute: 60.0 / strokeTime,
+      strokesPerMinute: 60.0 / averagedStrokeTime,
       speed: speedAverager.weightedAverage() > 0 && lastStrokeSpeed > 0 ? (speedAverager.weightedAverage() * 3.6) : 0, // km/h
       strokeState: lastStrokeState,
       heartrate,
