@@ -19,37 +19,38 @@ export default {
     // NOISE FILTER SETTINGS
     // Filter Settings to reduce noise in the measured data
     // Minimum and maximum duration between impulses in seconds during active rowing. Measurements outside of this range
-    // will be replaced by a default value.
+    // are replaced by a default value.
     minimumTimeBetweenImpulses: 0.014,
     maximumTimeBetweenImpulses: 0.5,
     // Percentage change between successive intervals before measurements are considered invalid
-    // smoothing determines the length of the running average for certain volatile measurements, 1 effectively turns it off
     maximumDownwardChange: 0.25, // effectively the maximum acceleration
     maximumUpwardChange: 1.75, // effectively the maximum decceleration
+    // Smoothing determines the length of the running average for certain volatile measurements, 1 effectively turns it off
     smoothing: 1,
 
     // STROKE DETECTION SETTINGS
-    // Flank length determines the minimum number of consecutive increasing/decreasing measuments are needed befor the stroke detection
+    // Flank length determines the minimum number of consecutive increasing/decreasing measuments that are needed before the stroke detection
     // considers a drive phase change
-    // numberOfEroorsAllowed allows for a more noisy approach, but shouldn't be needed
+    // numberOfErrorsAllowed allows for a more noisy approach, but shouldn't be needed
     flankLength: 2,
     numberOfErrorsAllowed: 0,
 
     // Natural deceleration of the flywheel when it is considered that it is unpowered.
-    // This must be a NEGATIVE number. When set to zero or positive, sroke detection will use the more robust acceleration-based stroke detection algorithm
+    // This must be a NEGATIVE number. When set to zero or positive, stroke detection will use the more robust acceleration-based
+    // stroke detection algorithm
     naturalDeceleration: 0,
 
     // Error reducing settings for the rowing phase detection (in seconds)
     maxCycleTimeBeforePause: 3.0, // maximum time between impulses before the rowing engine considers it a pause
-    minimumDriveTime: 0.300, // minumum time of the drive phase
-    minimumRecoveryTime: 1.200, // minimumtime of the recovery phase
+    minimumDriveTime: 0.300, // minimum time of the drive phase
+    minimumRecoveryTime: 1.200, // minimum time of the recovery phase
 
     // Needed to determine the drag factor of the rowing machine. This value can be measured in the recovery phase
     // of the stroke.
     // To display it for your rowing machine, set the logging level of the RowingEngine to 'info'. Then start rowing and
     // you will see the measured values in the log.
     // Just as a frame of reference: the Concept2 can display this factor from the menu, where it is multiplied with 1.000.000
-    // For a new Concept2 the Drag Factor ranges between 80 (Damper setting 1)  and 220 (Damper setting 10). Other rowers are
+    // For a new Concept2 the Drag Factor ranges between 80 (Damper setting 1) and 220 (Damper setting 10). Other rowers are
     // in the range of 150 to 450 (NordicTrack). The logging, when set to debug, will report the calculated drag factor.
     // Open Rowing Monitor can also automatically adjust this value based on the measured damping. To do so, set the setting
     // autoAdjustDampingConstant to true (see below).
@@ -65,7 +66,7 @@ export default {
     // values in the stroke recovery phase. If your rower produces stable damping values, then this could be a good
     // option to dynamically adjust your measurements to the damper setting of your rower.
     // When your machine's power and speed readings are too volatile it is wise to turn it off
-    autoAdjustDampingConstant: true,
+    autoAdjustDampingConstant: false,
 
     // A constant that is commonly used to convert flywheel revolutions to a rowed distance
     // see here: http://eodg.atm.ox.ac.uk/user/dudhia/rowing/physics/ergometer.html#section9
@@ -80,8 +81,8 @@ export default {
   WRX700: {
     numOfImpulsesPerRevolution: 2,
     naturalDeceleration: -5.0,
-    flywheelInertia: 0.65,
-    dragFactor: 15000
+    flywheelInertia: 0.5,
+    dragFactor: 22000
   },
 
   // DKN R-320 Air Rower

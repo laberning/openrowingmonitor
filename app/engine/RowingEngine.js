@@ -135,12 +135,14 @@ function createRowingEngine (rowerSettings) {
             // If the calculated dragfactor is close to that we expect
             movingDragAverage.pushValue(currentDragFactor)
             dragFactor = movingDragAverage.getMovingAverage()
-            log.debug(`*** Calculated drag factor: ${currentDragFactor * 1000000}`)
+            log.info(`*** Calculated drag factor: ${(currentDragFactor * 1000000).toFixed(2)}`)
           } else {
             // The calculated drag factor is outside the credible ranges
-            log.debug(`Calculated drag factor: ${currentDragFactor * 1000000}, which is too far off the currently used dragfactor of ${movingDragAverage.getMovingAverage() * 1000000}`)
+            log.info(`Calculated drag factor: ${(currentDragFactor * 1000000).toFixed(2)}, which is too far off the currently used dragfactor of ${movingDragAverage.getMovingAverage() * 1000000}`)
             log.debug(`Time: ${totalTime.toFixed(4)} sec, impuls ${totalNumberOfImpulses}: recoveryStartAngularVelocity = ${recoveryStartAngularVelocity.toFixed(2)} rad/sec, recoveryEndAngularVelocity = ${recoveryEndAngularVelocity.toFixed(2)} rad/sec, recoveryPhaseLength = ${recoveryPhaseLength.toFixed(4)} sec`)
           }
+        } else {
+          log.info(`*** Calculated drag factor: ${(currentDragFactor * 1000000).toFixed(2)}`)
         }
       } else {
         log.error(`Time: ${totalTime.toFixed(4)} sec, impuls ${totalNumberOfImpulses}: division by 0 prevented, recoveryPhaseLength = ${recoveryPhaseLength} sec, recoveryStartAngularVelocity = ${recoveryStartAngularVelocity} rad/sec, recoveryEndAngularVelocity = ${recoveryEndAngularVelocity} rad/sec`)
