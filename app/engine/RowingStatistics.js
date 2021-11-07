@@ -16,10 +16,10 @@ function createRowingStatistics (config) {
   const numOfDataPointsForAveraging = config.numOfPhasesForAveragingScreenData
   const screenUpdateInterval = config.screenUpdateInterval
   const minimumStrokeTime = config.rowerSettings.minimumRecoveryTime + config.rowerSettings.minimumDriveTime
-  const maximumStrokeTime = config.rowerSettings.maxCycleTimeBeforePause
+  const maximumStrokeTime = config.maximumStrokeTime
   const timeBetweenStrokesBeforePause = maximumStrokeTime * 1000
   const emitter = new EventEmitter()
-  const strokeAverager = createMovingAverager(numOfDataPointsForAveraging, (minimumStrokeTime + maximumStrokeTime) / 2)
+  const strokeAverager = createMovingAverager(numOfDataPointsForAveraging, 0)
   const powerAverager = createWeightedAverager(numOfDataPointsForAveraging)
   const speedAverager = createWeightedAverager(numOfDataPointsForAveraging)
   const powerRatioAverager = createWeightedAverager(numOfDataPointsForAveraging)
@@ -155,7 +155,7 @@ function createRowingStatistics (config) {
       splitFormatted: secondsToTimeString(splitTime),
       powerRatio: powerRatioAverager.weightedAverage() > 0 && lastStrokeSpeed > 0 ? powerRatioAverager.weightedAverage() : 0,
       instantanousTorque: instantanousTorque,
-      strokesPerMinute: 60.0 / averagedStrokeTime,
+      strokesPerMinute: averagedStrokeTime !== 0 ? (60.0 / averagedStrokeTime) : 0,
       speed: speedAverager.weightedAverage() > 0 && lastStrokeSpeed > 0 ? (speedAverager.weightedAverage() * 3.6) : 0, // km/h
       strokeState: lastStrokeState,
       heartrate,

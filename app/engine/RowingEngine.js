@@ -60,8 +60,8 @@ function createRowingEngine (rowerSettings) {
       return
     }
 
-    // impulses that take longer than maxCycleTimeBeforePause seconds are considered a pause
-    if (currentDt > rowerSettings.maxCycleTimeBeforePause) {
+    // impulses that take longer than maximumImpulseTimeBeforePause seconds are considered a pause
+    if (currentDt > rowerSettings.maximumImpulseTimeBeforePause) {
       workoutHandler.handlePause(currentDt)
       return
     }
@@ -120,7 +120,7 @@ function createRowingEngine (rowerSettings) {
       // We have a credible cycletime
       cycleLenght = recoveryPhaseLength + drivePhaseLength
     } else {
-      log.debug(`Cyclelenght isn't credible: recoveryPhaseLength ${recoveryPhaseLength.toFixed(4)} sec, drivePhaseLength = ${drivePhaseLength.toFixed(4)} s, maxCycleTimeBeforePause ${rowerSettings.maxCycleTimeBeforePause} s`)
+      log.debug(`Cyclelenght isn't credible: recoveryPhaseLength ${recoveryPhaseLength.toFixed(4)} sec, drivePhaseLength = ${drivePhaseLength.toFixed(4)} s, maximumImpulseTimeBeforePause ${rowerSettings.maximumImpulseTimeBeforePause} s`)
     }
     recoveryPhaseAngularDisplacement = (totalNumberOfImpulses - recoveryPhaseStartAngularDisplacement) * angularDisplacementPerImpulse
 

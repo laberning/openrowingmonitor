@@ -41,7 +41,7 @@ export default {
     naturalDeceleration: 0,
 
     // Error reducing settings for the rowing phase detection (in seconds)
-    maxCycleTimeBeforePause: 3.0, // maximum time between impulses before the rowing engine considers it a pause
+    maximumImpulseTimeBeforePause: 3.0, // maximum time between impulses before the rowing engine considers it a pause
     minimumDriveTime: 0.300, // minimum time of the drive phase
     minimumRecoveryTime: 1.200, // minimum time of the recovery phase
 

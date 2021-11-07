@@ -78,11 +78,11 @@ export default {
   // but for recreational rowers that might feel much too restless to be useful
   numOfPhasesForAveragingScreenData: 6,
 
-  // The time between strokes before the rower considers it a pause. Default value is set to 6. It is not
-  // recommended to go below this value, as not recognizing a stroke could result in a pause (as a typical
-  // stroke is between 2 to 3 seconds for recreational rowers). Increase it when you have issues with your
-  // stroke detection and the rower is pausing unexpectedly
-  maxCycleTimeBeforePause: 6,
+  // The time between strokes in seconds before the rower considers it a pause. Default value is set to 6.
+  // It is not recommended to go below this value, as not recognizing a stroke could result in a pause
+  // (as a typical stroke is between 2 to 3 seconds for recreational rowers). Increase it when you have
+  // issues with your stroke detection and the rower is pausing unexpectedly
+  maximumStrokeTime: 6,
 
   // The rower specific settings. Either choose a profile from config/rowerProfiles.js or
   // define the settings individually. If you find good settings for a new rowing device
