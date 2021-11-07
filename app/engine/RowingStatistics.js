@@ -34,7 +34,7 @@ function createRowingStatistics (config) {
   let heartrate
   let heartrateBatteryLevel = 0
   let lastStrokeDuration = 0.0
-  let instantanousTorque = 0.0
+  let instantaneousTorque = 0.0
   let lastStrokeDistance = 0.0
   let lastStrokeSpeed = 0.0
   let lastStrokeState = 'RECOVERY'
@@ -78,7 +78,7 @@ function createRowingStatistics (config) {
     lastStrokeDistance = stroke.strokeDistance
     lastStrokeState = stroke.strokeState
     lastStrokeSpeed = stroke.speed
-    instantanousTorque = stroke.instantanousTorque
+    instantaneousTorque = stroke.instantaneousTorque
     emitter.emit('strokeFinished', getMetrics())
   }
 
@@ -109,7 +109,7 @@ function createRowingStatistics (config) {
     lastStrokeDistance = stroke.strokeDistance
     lastStrokeState = stroke.strokeState
     lastStrokeSpeed = stroke.speed
-    instantanousTorque = stroke.instantanousTorque
+    instantaneousTorque = stroke.instantaneousTorque
     emitter.emit('recoveryFinished', getMetrics())
   }
 
@@ -117,7 +117,7 @@ function createRowingStatistics (config) {
   function updateKeyMetrics (stroke) {
     durationTotal = stroke.timeSinceStart
     distanceTotal = stroke.distance
-    instantanousTorque = stroke.instantanousTorque
+    instantaneousTorque = stroke.instantaneousTorque
   }
 
   // initiated when new heart rate value is received from heart rate sensor
@@ -152,7 +152,7 @@ function createRowingStatistics (config) {
       split: splitTime, // seconds/500m
       splitFormatted: secondsToTimeString(splitTime),
       powerRatio: powerRatioAverager.weightedAverage() > 0 && lastStrokeSpeed > 0 ? powerRatioAverager.weightedAverage() : 0,
-      instantanousTorque: instantanousTorque,
+      instantaneousTorque: instantaneousTorque,
       strokesPerMinute: averagedStrokeTime !== 0 ? (60.0 / averagedStrokeTime) : 0,
       speed: speedAverager.weightedAverage() > 0 && lastStrokeSpeed > 0 ? (speedAverager.weightedAverage() * 3.6) : 0, // km/h
       strokeState: lastStrokeState,

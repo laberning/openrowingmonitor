@@ -55,7 +55,7 @@ export default {
     // For a new Concept2 the Drag Factor ranges between 80 (Damper setting 1) and 220 (Damper setting 10). Other rowers are
     // in the range of 150 to 450 (NordicTrack).
     // Open Rowing Monitor can also automatically adjust this value based on the measured damping. To do so, set the setting
-    // autoAdjustDampingConstant to true (see below).
+    // autoAdjustDragFactor to true (see below).
     dragFactor: 1500,
 
     // The moment of inertia of the flywheel kg*m^2
@@ -68,13 +68,13 @@ export default {
     // values in the stroke recovery phase. If your rower produces stable damping values, then this could be a good
     // option to dynamically adjust your measurements to the damper setting of your rower.
     // When your machine's power and speed readings are too volatile it is wise to turn it off
-    autoAdjustDampingConstant: false,
+    autoAdjustDragFactor: false,
 
     // A constant that is commonly used to convert flywheel revolutions to a rowed distance
     // see here: http://eodg.atm.ox.ac.uk/user/dudhia/rowing/physics/ergometer.html#section9
     // Concept2 seems to use 2.8, which they admit is an arbitrary number which came close
     // to their expectations. So for your rower, you have to find a credible distance for your effort.
-    // Also note that the rowed distance also depends on jMoment, so please calibrate that before changing this constant.
+    // Also note that the rowed distance also depends on flywheelInertia, so please calibrate that before changing this constant.
     // PLEASE NOTE: Increasing this number decreases your rowed meters
     magicConstant: 2.8
   },

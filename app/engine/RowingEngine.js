@@ -130,7 +130,7 @@ function createRowingEngine (rowerSettings) {
       if (recoveryPhaseLength >= rowerSettings.minimumRecoveryTime && recoveryStartAngularVelocity > 0 && recoveryEndAngularVelocity > 0) {
         // Prevent division by zero and keep useless data out of our calculations
         currentDragFactor = -1 * rowerSettings.flywheelInertia * ((1 / recoveryStartAngularVelocity) - (1 / recoveryEndAngularVelocity)) / recoveryPhaseLength
-        if (rowerSettings.autoAdjustDampingConstant) {
+        if (rowerSettings.autoAdjustDragFactor) {
           if (currentDragFactor > (movingDragAverage.getMovingAverage() * 0.75) && currentDragFactor < (movingDragAverage.getMovingAverage() * 1.40)) {
             // If the calculated dragfactor is close to that we expect
             movingDragAverage.pushValue(currentDragFactor)
@@ -186,7 +186,7 @@ function createRowingEngine (rowerSettings) {
         speed: linearCycleVelocity,
         distance: totalLinearDistance,
         numberOfStrokes: strokeNumber,
-        instantanousTorque: currentTorque,
+        instantaneousTorque: currentTorque,
         strokeState: 'DRIVING'
       })
     }
@@ -205,7 +205,7 @@ function createRowingEngine (rowerSettings) {
       workoutHandler.updateKeyMetrics({
         timeSinceStart: totalTime,
         distance: totalLinearDistance + driveLinearDistance,
-        instantanousTorque: currentTorque
+        instantaneousTorque: currentTorque
       })
     }
   }
@@ -258,7 +258,7 @@ function createRowingEngine (rowerSettings) {
         durationDrivePhase: drivePhaseLength,
         speed: linearCycleVelocity,
         distance: totalLinearDistance,
-        instantanousTorque: currentTorque,
+        instantaneousTorque: currentTorque,
         strokeState: 'RECOVERY'
       })
     }
@@ -277,7 +277,7 @@ function createRowingEngine (rowerSettings) {
       workoutHandler.updateKeyMetrics({
         timeSinceStart: totalTime,
         distance: totalLinearDistance + recoveryLinearDistance,
-        instantanousTorque: currentTorque
+        instantaneousTorque: currentTorque
       })
     }
   }

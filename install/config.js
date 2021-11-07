@@ -26,14 +26,13 @@ export default {
     // example: set custom rower settings:
     rowerSettings: {
       numOfImpulsesPerRevolution: 1,
-      omegaDotDivOmegaSquare: 0.03,
-      jMoment: 0.3,
-      liquidFlywheel: false
+      dragFactor: 0.03,
+      flywheelInertia: 0.3
     }
 
     // example: set a rower profile, but overwrite some settings:
     rowerSettings: Object.assign(rowerProfiles.DKNR320, {
-      autoAdjustDampingConstant: true
+      autoAdjustDragFactor: true
     })
   */
 }

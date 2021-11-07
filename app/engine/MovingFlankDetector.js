@@ -4,7 +4,7 @@
 
   This keeps an array, which we can test for an upgoing or downgoing flank
 
-  Please note: The array contains flankLenght + 1 measured currentDt's, thus flankLenght number of flanks between them
+  Please note: The array contains flankLength + 1 measured currentDt's, thus flankLength number of flanks between them
   They are arranged that dataPoints[0] is the youngest, and dataPoints[flankLength] the oldest
 */
 import loglevel from 'loglevel'
