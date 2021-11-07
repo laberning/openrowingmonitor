@@ -38,13 +38,13 @@ export default class AdditionalStrokeData extends bleno.Characteristic {
     if (this._updateValueCallback || this._multiplexedCharacteristic.centralSubscribed()) {
       const bufferBuilder = new BufferBuilder()
       // elapsedTime: UInt24LE in 0.01 sec
-      bufferBuilder.writeUInt24LE(data.durationTotal * 100)
+      bufferBuilder.writeUInt24LE(Math.round(data.durationTotal * 100))
       // strokePower: UInt16LE in watts
-      bufferBuilder.writeUInt16LE(data.power)
+      bufferBuilder.writeUInt16LE(Math.round(data.power))
       // strokeCalories: UInt16LE in cal
       bufferBuilder.writeUInt16LE(0)
       // strokeCount: UInt16LE
-      bufferBuilder.writeUInt16LE(data.strokesTotal)
+      bufferBuilder.writeUInt16LE(Math.round(data.strokesTotal))
       // projectedWorkTime: UInt24LE in 1 sec
       bufferBuilder.writeUInt24LE(0)
       // projectedWorkDistance: UInt24LE in 1 m

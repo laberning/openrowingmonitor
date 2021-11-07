@@ -38,9 +38,9 @@ export default class GeneralStatus extends bleno.Characteristic {
     if (this._updateValueCallback || this._multiplexedCharacteristic.centralSubscribed()) {
       const bufferBuilder = new BufferBuilder()
       // elapsedTime: UInt24LE in 0.01 sec
-      bufferBuilder.writeUInt24LE(data.durationTotal * 100)
+      bufferBuilder.writeUInt24LE(Math.round(data.durationTotal * 100))
       // distance: UInt24LE in 0.1 m
-      bufferBuilder.writeUInt24LE(data.distanceTotal * 10)
+      bufferBuilder.writeUInt24LE(Math.round(data.distanceTotal * 10))
       // workoutType: UInt8 will always use 0 (WORKOUTTYPE_JUSTROW_NOSPLITS)
       bufferBuilder.writeUInt8(0)
       // intervalType: UInt8 will always use 255 (NONE)
@@ -52,7 +52,7 @@ export default class GeneralStatus extends bleno.Characteristic {
       // strokeState: UInt8 2 DRIVING, 4 RECOVERY
       bufferBuilder.writeUInt8(data.strokeState === 'DRIVING' ? 2 : 4)
       // totalWorkDistance: UInt24LE in 1 m
-      bufferBuilder.writeUInt24LE(data.distanceTotal)
+      bufferBuilder.writeUInt24LE(Math.round(data.distanceTotal))
       // workoutDuration: UInt24LE in 0.01 sec (if type TIME)
       bufferBuilder.writeUInt24LE(0 * 100)
       // workoutDurationType: UInt8 0 TIME, 1 CALORIES, 2 DISTANCE, 3 WATTS

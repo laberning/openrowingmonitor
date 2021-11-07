@@ -17,12 +17,13 @@ log.setLevel('warn')
 const createWorkoutEvaluator = function () {
   const strokes = []
 
-  function handleStroke (stroke) {
+  function handleStrokeEnd (stroke) {
     strokes.push(stroke)
     log.info(`stroke: ${strokes.length}, power: ${Math.round(stroke.power)}w, duration: ${stroke.duration.toFixed(2)}s, ` +
     ` drivePhase: ${stroke.durationDrivePhase.toFixed(2)}s, distance: ${stroke.distance.toFixed(2)}m`)
   }
-  function handleStrokeStateChanged () {}
+  function updateKeyMetrics () {}
+  function handleRecoveryEnd () {}
   function handlePause () {}
   function getNumOfStrokes () {
     return strokes.length
@@ -33,17 +34,23 @@ const createWorkoutEvaluator = function () {
   function getMinStrokePower () {
     return strokes.map((stroke) => stroke.power).reduce((acc, power) => Math.max(acc, power))
   }
-  function getDistance () {
-    return strokes.reduce((acc, stroke) => acc + stroke.distance, 0)
+  function getDistanceSum () {
+    return strokes.map((stroke) => stroke.strokeDistance).reduce((acc, strokeDistance) => acc + strokeDistance)
   }
+  function getDistanceTotal () {
+    return strokes[strokes.length - 1].distance
+  }
+
   return {
-    handleStroke,
-    handleStrokeStateChanged,
+    handleStrokeEnd,
+    handleRecoveryEnd,
+    updateKeyMetrics,
     handlePause,
     getNumOfStrokes,
     getMaxStrokePower,
     getMinStrokePower,
-    getDistance
+    getDistanceSum,
+    getDistanceTotal
   }
 }
 
@@ -54,7 +61,8 @@ test('sample data for WRX700 should produce plausible results with rower profile
   await replayRowingSession(rowingEngine.handleRotationImpulse, { filename: 'recordings/WRX700_2magnets.csv' })
   assert.is(workoutEvaluator.getNumOfStrokes(), 16, 'number of strokes does not meet expectation')
   assertPowerRange(workoutEvaluator, 50, 220)
-  assertDistanceRange(workoutEvaluator, 140, 144)
+  assertDistanceRange(workoutEvaluator, 158, 162)
+  assertStrokeDistanceSumMatchesTotal(workoutEvaluator)
 })
 
 test('sample data for DKNR320 should produce plausible results with rower profile', async () => {
@@ -65,6 +73,7 @@ test('sample data for DKNR320 should produce plausible results with rower profil
   assert.is(workoutEvaluator.getNumOfStrokes(), 10, 'number of strokes does not meet expectation')
   assertPowerRange(workoutEvaluator, 75, 200)
   assertDistanceRange(workoutEvaluator, 64, 67)
+  assertStrokeDistanceSumMatchesTotal(workoutEvaluator)
 })
 
 test('sample data for RX800 should produce plausible results with rower profile', async () => {
@@ -73,8 +82,9 @@ test('sample data for RX800 should produce plausible results with rower profile'
   rowingEngine.notify(workoutEvaluator)
   await replayRowingSession(rowingEngine.handleRotationImpulse, { filename: 'recordings/RX800.csv' })
   assert.is(workoutEvaluator.getNumOfStrokes(), 10, 'number of strokes does not meet expectation')
-  assertPowerRange(workoutEvaluator, 160, 270)
-  assertDistanceRange(workoutEvaluator, 78, 92)
+  assertPowerRange(workoutEvaluator, 80, 200)
+  assertDistanceRange(workoutEvaluator, 70, 80)
+  assertStrokeDistanceSumMatchesTotal(workoutEvaluator)
 })
 
 function assertPowerRange (evaluator, minPower, maxPower) {
@@ -83,6 +93,11 @@ function assertPowerRange (evaluator, minPower, maxPower) {
 }
 
 function assertDistanceRange (evaluator, minDistance, maxDistance) {
-  assert.ok(evaluator.getDistance() >= minDistance && evaluator.getDistance() <= maxDistance, `distance should be between ${minDistance}m and ${maxDistance}m, but is ${evaluator.getDistance().toFixed(2)}m`)
+  assert.ok(evaluator.getDistanceSum() >= minDistance && evaluator.getDistanceSum() <= maxDistance, `distance should be between ${minDistance}m and ${maxDistance}m, but is ${evaluator.getDistanceSum().toFixed(2)}m`)
 }
+
+function assertStrokeDistanceSumMatchesTotal (evaluator) {
+  assert.ok(evaluator.getDistanceSum().toFixed(2) === evaluator.getDistanceTotal().toFixed(2), `sum of distance of all strokes is ${evaluator.getDistanceSum().toFixed(2)}m, but total in last stroke is ${evaluator.getDistanceTotal().toFixed(2)}m`)
+}
+
 test.run()

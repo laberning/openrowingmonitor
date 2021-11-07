@@ -8,11 +8,15 @@ import { EventEmitter } from 'events'
 import { createMovingIntervalAverager } from './MovingIntervalAverager.js'
 import { createWeightedAverager } from './WeightedAverager.js'
 
-// The number of strokes that are considered when averaging the calculated metrics
-// Higher values create more stable metrics but make them less responsive
-const numOfDataPointsForAveraging = 3
+import loglevel from 'loglevel'
+const log = loglevel.getLogger('RowingEngine')
 
-function createRowingStatistics () {
+function createRowingStatistics (config) {
+  const numOfDataPointsForAveraging = config.numOfPhasesForAveragingScreenData
+  const screenUpdateInterval = config.screenUpdateInterval
+  const minimumStrokeTime = config.rowerSettings.minimumRecoveryTime + config.rowerSettings.minimumDriveTime
+  const maximumStrokeTime = config.maximumStrokeTime
+  const timeBetweenStrokesBeforePause = maximumStrokeTime * 1000
   const emitter = new EventEmitter()
   const strokeAverager = createWeightedAverager(numOfDataPointsForAveraging)
   const powerAverager = createWeightedAverager(numOfDataPointsForAveraging)
@@ -21,7 +25,6 @@ function createRowingStatistics () {
   const caloriesAveragerMinute = createMovingIntervalAverager(60)
   const caloriesAveragerHour = createMovingIntervalAverager(60 * 60)
   let trainingRunning = false
-  let durationTimer
   let rowingPausedTimer
   let heartrateResetTimer
   let distanceTotal = 0.0
@@ -31,12 +34,14 @@ function createRowingStatistics () {
   let heartrate
   let heartrateBatteryLevel = 0
   let lastStrokeDuration = 0.0
+  let instantanousTorque = 0.0
   let lastStrokeDistance = 0.0
+  let lastStrokeSpeed = 0.0
   let lastStrokeState = 'RECOVERY'
   let lastMetrics = {}
 
   // send metrics to the clients periodically, if the data has changed
-  setInterval(emitMetrics, 1000)
+  setInterval(emitMetrics, screenUpdateInterval)
   function emitMetrics () {
     const currentMetrics = getMetrics()
     if (Object.entries(currentMetrics).toString() !== Object.entries(lastMetrics).toString()) {
@@ -45,28 +50,35 @@ function createRowingStatistics () {
     }
   }
 
-  function handleStroke (stroke) {
+  function handleStrokeEnd (stroke) {
     if (!trainingRunning) startTraining()
 
-    // if we do not get a stroke for 6 seconds we treat this as a rowing pause
+    // if we do not get a stroke for timeBetweenStrokesBeforePause miliseconds we treat this as a rowing pause
     if (rowingPausedTimer)clearInterval(rowingPausedTimer)
-    rowingPausedTimer = setTimeout(() => pauseRowing(), 6000)
+    rowingPausedTimer = setTimeout(() => pauseRowing(), timeBetweenStrokesBeforePause)
 
     // based on: http://eodg.atm.ox.ac.uk/user/dudhia/rowing/physics/ergometer.html#section11
     const calories = (4 * powerAverager.weightedAverage() + 350) * (stroke.duration) / 4200
+    durationTotal = stroke.timeSinceStart
     powerAverager.pushValue(stroke.power)
-    speedAverager.pushValue(stroke.distance / stroke.duration)
-    powerRatioAverager.pushValue(stroke.durationDrivePhase / stroke.duration)
-    strokeAverager.pushValue(stroke.duration)
-    caloriesAveragerMinute.pushValue(calories, stroke.duration)
-    caloriesAveragerHour.pushValue(calories, stroke.duration)
-    caloriesTotal += calories
-    distanceTotal += stroke.distance
-    strokesTotal++
-    lastStrokeDuration = stroke.duration
-    lastStrokeDistance = stroke.distance
-    lastStrokeState = stroke.strokeState
+    speedAverager.pushValue(stroke.speed)
+    if (stroke.duration < timeBetweenStrokesBeforePause && stroke.duration > minimumStrokeTime) {
+      // stroke duration has to be credible to be accepted
+      powerRatioAverager.pushValue(stroke.durationDrivePhase / stroke.duration)
+      strokeAverager.pushValue(stroke.duration)
+      caloriesAveragerMinute.pushValue(calories, stroke.duration)
+      caloriesAveragerHour.pushValue(calories, stroke.duration)
+    } else {
+      log.debug(`*** Stroke duration of ${stroke.duration} sec is considered unreliable, skipped update stroke statistics`)
+    }
 
+    caloriesTotal += calories
+    lastStrokeDuration = stroke.duration
+    distanceTotal = stroke.distance
+    lastStrokeDistance = stroke.strokeDistance
+    lastStrokeState = stroke.strokeState
+    lastStrokeSpeed = stroke.speed
+    instantanousTorque = stroke.instantanousTorque
     emitter.emit('strokeFinished', getMetrics())
   }
 
@@ -79,11 +91,33 @@ function createRowingStatistics () {
   }
 
   // initiated when the stroke state changes
-  function handleStrokeStateChanged (state) {
+  function handleRecoveryEnd (stroke) {
     // todo: wee need a better mechanism to communicate strokeState updates
     // this is an initial hacky attempt to see if we can use it for the C2-pm5 protocol
-    lastStrokeState = state.strokeState
-    emitter.emit('strokeStateChanged', getMetrics())
+    durationTotal = stroke.timeSinceStart
+    powerAverager.pushValue(stroke.power)
+    speedAverager.pushValue(stroke.speed)
+    if (stroke.duration < timeBetweenStrokesBeforePause && stroke.duration > minimumStrokeTime) {
+      // stroke duration has to be credible to be accepted
+      powerRatioAverager.pushValue(stroke.durationDrivePhase / stroke.duration)
+      strokeAverager.pushValue(stroke.duration)
+    } else {
+      log.debug(`*** Stroke duration of ${stroke.duration} sec is considered unreliable, skipped update stroke statistics`)
+    }
+    distanceTotal = stroke.distance
+    strokesTotal = stroke.numberOfStrokes
+    lastStrokeDistance = stroke.strokeDistance
+    lastStrokeState = stroke.strokeState
+    lastStrokeSpeed = stroke.speed
+    instantanousTorque = stroke.instantanousTorque
+    emitter.emit('recoveryFinished', getMetrics())
+  }
+
+  // initiated when updating key statistics
+  function updateKeyMetrics (stroke) {
+    durationTotal = stroke.timeSinceStart
+    distanceTotal = stroke.distance
+    instantanousTorque = stroke.instantanousTorque
   }
 
   // initiated when new heart rate value is received from heart rate sensor
@@ -93,29 +127,34 @@ function createRowingStatistics () {
     heartrateResetTimer = setTimeout(() => {
       heartrate = 0
       heartrateBatteryLevel = 0
-    }, 2000)
+    }, 6000)
     heartrate = value.heartrate
     heartrateBatteryLevel = value.batteryLevel
   }
 
   function getMetrics () {
-    const splitTime = speedAverager.weightedAverage() !== 0 ? (500.0 / speedAverager.weightedAverage()) : Infinity
+    const splitTime = speedAverager.weightedAverage() !== 0 && lastStrokeSpeed > 0 ? (500.0 / speedAverager.weightedAverage()) : Infinity
+    // todo: due to sanitization we currently do not use a consistent time throughout the engine
+    // We will rework this section to use both absolute and sanitized time in the appropriate places.
+    // We will also polish up the events for the recovery and drive phase, so we get clean complete strokes from the first stroke onwards.
+    const averagedStrokeTime = strokeAverager.weightedAverage() > minimumStrokeTime && strokeAverager.weightedAverage() < maximumStrokeTime && lastStrokeSpeed > 0 ? strokeAverager.weightedAverage() : 0 // seconds
     return {
       durationTotal,
       durationTotalFormatted: secondsToTimeString(durationTotal),
       strokesTotal,
-      distanceTotal: distanceTotal, // meters
+      distanceTotal: distanceTotal > 0 ? distanceTotal : 0, // meters
       caloriesTotal: caloriesTotal, // kcal
-      caloriesPerMinute: caloriesAveragerMinute.average(),
-      caloriesPerHour: caloriesAveragerHour.average(),
+      caloriesPerMinute: caloriesAveragerMinute.average() > 0 ? caloriesAveragerMinute.average() : 0,
+      caloriesPerHour: caloriesAveragerHour.average() > 0 ? caloriesAveragerHour.average() : 0,
       strokeTime: lastStrokeDuration, // seconds
-      distance: lastStrokeDistance, // meters
-      power: powerAverager.weightedAverage(), // watts
+      distance: lastStrokeDistance > 0 && lastStrokeSpeed > 0 ? lastStrokeDistance : 0, // meters
+      power: powerAverager.weightedAverage() > 0 && lastStrokeSpeed > 0 ? powerAverager.weightedAverage() : 0, // watts
       split: splitTime, // seconds/500m
       splitFormatted: secondsToTimeString(splitTime),
-      powerRatio: powerRatioAverager.weightedAverage(),
-      strokesPerMinute: strokeAverager.weightedAverage() !== 0 ? (60.0 / strokeAverager.weightedAverage()) : 0,
-      speed: (speedAverager.weightedAverage() * 3.6), // km/h
+      powerRatio: powerRatioAverager.weightedAverage() > 0 && lastStrokeSpeed > 0 ? powerRatioAverager.weightedAverage() : 0,
+      instantanousTorque: instantanousTorque,
+      strokesPerMinute: averagedStrokeTime !== 0 ? (60.0 / averagedStrokeTime) : 0,
+      speed: speedAverager.weightedAverage() > 0 && lastStrokeSpeed > 0 ? (speedAverager.weightedAverage() * 3.6) : 0, // km/h
       strokeState: lastStrokeState,
       heartrate,
       heartrateBatteryLevel
@@ -124,12 +163,10 @@ function createRowingStatistics () {
 
   function startTraining () {
     trainingRunning = true
-    startDurationTimer()
   }
 
   function stopTraining () {
     trainingRunning = false
-    stopDurationTimer()
     if (rowingPausedTimer)clearInterval(rowingPausedTimer)
   }
 
@@ -157,17 +194,6 @@ function createRowingStatistics () {
     emitter.emit('rowingPaused')
   }
 
-  function startDurationTimer () {
-    durationTimer = setInterval(() => {
-      durationTotal++
-    }, 1000)
-  }
-
-  function stopDurationTimer () {
-    clearInterval(durationTimer)
-    durationTimer = undefined
-  }
-
   // converts a timeStamp in seconds to a human readable hh:mm:ss format
   function secondsToTimeString (secondsTimeStamp) {
     if (secondsTimeStamp === Infinity) return '∞'
@@ -180,10 +206,11 @@ function createRowingStatistics () {
   }
 
   return Object.assign(emitter, {
-    handleStroke,
+    handleStrokeEnd,
     handlePause,
     handleHeartrateMeasurement,
-    handleStrokeStateChanged,
+    handleRecoveryEnd,
+    updateKeyMetrics,
     reset: resetTraining
   })
 }
