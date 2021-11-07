@@ -82,7 +82,7 @@ export default {
   // It is not recommended to go below this value, as not recognizing a stroke could result in a pause
   // (as a typical stroke is between 2 to 3 seconds for recreational rowers). Increase it when you have
   // issues with your stroke detection and the rower is pausing unexpectedly
-  maximumStrokeTime: 12,
+  maximumStrokeTime: 10,
 
   // The rower specific settings. Either choose a profile from config/rowerProfiles.js or
   // define the settings individually. If you find good settings for a new rowing device

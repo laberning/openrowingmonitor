@@ -35,9 +35,11 @@ export default {
     flankLength: 2,
     numberOfErrorsAllowed: 0,
 
-    // Natural deceleration of the flywheel when it is considered that it is unpowered.
-    // This must be a NEGATIVE number. When set to zero or positive, stroke detection will use the more robust acceleration-based
-    // stroke detection algorithm
+    // Natural deceleration is used to distinguish between a powered and unpowered flywheel.
+    // This must be a NEGATIVE number and indicates the level of deceleration required to interpret it as a free spinning
+    // flywheel. The best way to find the correct value for your rowing machine is a try and error approach.
+    // You can also set this to zero (or positive), to use the more robust, but not so precise acceleration-based stroke
+    // detection algorithm.
     naturalDeceleration: 0,
 
     // Error reducing settings for the rowing phase detection (in seconds)
@@ -51,7 +53,7 @@ export default {
     // you will see the measured values in the log.
     // Just as a frame of reference: the Concept2 can display this factor from the menu, where it is multiplied with 1.000.000
     // For a new Concept2 the Drag Factor ranges between 80 (Damper setting 1) and 220 (Damper setting 10). Other rowers are
-    // in the range of 150 to 450 (NordicTrack). The logging, when set to debug, will report the calculated drag factor.
+    // in the range of 150 to 450 (NordicTrack).
     // Open Rowing Monitor can also automatically adjust this value based on the measured damping. To do so, set the setting
     // autoAdjustDampingConstant to true (see below).
     dragFactor: 1500,
@@ -81,7 +83,7 @@ export default {
   WRX700: {
     numOfImpulsesPerRevolution: 2,
     naturalDeceleration: -5.0,
-    flywheelInertia: 0.5,
+    flywheelInertia: 0.45,
     dragFactor: 22000
   },
 

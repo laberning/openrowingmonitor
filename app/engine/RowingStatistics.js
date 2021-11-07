@@ -6,7 +6,6 @@
 */
 import { EventEmitter } from 'events'
 import { createMovingIntervalAverager } from './MovingIntervalAverager.js'
-import { createMovingAverager } from './MovingAverager.js'
 import { createWeightedAverager } from './WeightedAverager.js'
 
 import loglevel from 'loglevel'
@@ -19,7 +18,7 @@ function createRowingStatistics (config) {
   const maximumStrokeTime = config.maximumStrokeTime
   const timeBetweenStrokesBeforePause = maximumStrokeTime * 1000
   const emitter = new EventEmitter()
-  const strokeAverager = createMovingAverager(numOfDataPointsForAveraging, 0)
+  const strokeAverager = createWeightedAverager(numOfDataPointsForAveraging)
   const powerAverager = createWeightedAverager(numOfDataPointsForAveraging)
   const speedAverager = createWeightedAverager(numOfDataPointsForAveraging)
   const powerRatioAverager = createWeightedAverager(numOfDataPointsForAveraging)
@@ -138,7 +137,7 @@ function createRowingStatistics (config) {
     // todo: due to sanitization we currently do not use a consistent time throughout the engine
     // We will rework this section to use both absolute and sanitized time in the appropriate places.
     // We will also polish up the events for the recovery and drive phase, so we get clean complete strokes from the first stroke onwards.
-    const averagedStrokeTime = strokeAverager.getMovingAverage() > minimumStrokeTime && strokeAverager.getMovingAverage() < maximumStrokeTime && lastStrokeSpeed > 0 ? strokeAverager.getMovingAverage() : 0 // seconds
+    const averagedStrokeTime = strokeAverager.weightedAverage() > minimumStrokeTime && strokeAverager.weightedAverage() < maximumStrokeTime && lastStrokeSpeed > 0 ? strokeAverager.weightedAverage() : 0 // seconds
     return {
       durationTotal,
       durationTotalFormatted: secondsToTimeString(durationTotal),
