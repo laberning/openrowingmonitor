@@ -2,7 +2,7 @@
 /*
   Open Rowing Monitor, https://github.com/laberning/openrowingmonitor
 
-  This averager calculates the average forcast for a moving inteval of a continuous flow
+  This Averager calculates the average forecast for a moving interval of a continuous flow
   of data points for a certain (time) interval
 */
 function createMovingIntervalAverager (movingDuration) {

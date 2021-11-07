@@ -73,7 +73,7 @@ export default {
     // A constant that is commonly used to convert flywheel revolutions to a rowed distance
     // see here: http://eodg.atm.ox.ac.uk/user/dudhia/rowing/physics/ergometer.html#section9
     // Concept2 seems to use 2.8, which they admit is an arbitrary number which came close
-    // to their expectations. So for your rower, you have to find a credible distance for your effort.
+    // to their expectations. So for your rower, you have to find a plausible distance for your effort.
     // Also note that the rowed distance also depends on flywheelInertia, so please calibrate that before changing this constant.
     // PLEASE NOTE: Increasing this number decreases your rowed meters
     magicConstant: 2.8

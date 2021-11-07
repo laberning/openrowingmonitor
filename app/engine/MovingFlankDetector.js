@@ -2,7 +2,7 @@
 /*
   Open Rowing Monitor, https://github.com/laberning/openrowingmonitor
 
-  This keeps an array, which we can test for an upgoing or downgoing flank
+  A Detector used to test for up-going and down-going flanks
 
   Please note: The array contains flankLength + 1 measured currentDt's, thus flankLength number of flanks between them
   They are arranged that dataPoints[0] is the youngest, and dataPoints[flankLength] the oldest
@@ -24,10 +24,10 @@ function createMovingFlankDetector (rowerSettings) {
   const movingAverage = createMovingAverager(rowerSettings.smoothing, rowerSettings.maximumTimeBetweenImpulses)
 
   function pushValue (dataPoint) {
-    // add the new dataPoint to the array, we have to move datapoints starting at the oldst ones
+    // add the new dataPoint to the array, we have to move data points starting at the oldest ones
     let i = rowerSettings.flankLength
     while (i > 0) {
-      // older datapoints are moved toward the higher numbers
+      // older data points are moved toward the higher numbers
       dirtyDataPoints[i] = dirtyDataPoints[i - 1]
       cleanDataPoints[i] = cleanDataPoints[i - 1]
       angularVelocity[i] = angularVelocity[i - 1]
@@ -70,12 +70,14 @@ function createMovingFlankDetector (rowerSettings) {
   function isFlywheelUnpowered () {
     let numberOfErrors = 0
     if (rowerSettings.naturalDeceleration < 0) {
-      // A valid natural deceleration of the flywheel has been provided, this has to be maintained for a flanklength to count as an indication for an unpowered flywheel
-      // Please note that angularAcceleration[] contains flank-information already, so we need to check from rowerSettings.flankLength -1 until 0 flanks
+      // A valid natural deceleration of the flywheel has been provided, this has to be maintained for a flank length
+      // to count as an indication for an unpowered flywheel
+      // Please note that angularAcceleration[] contains flank-information already, so we need to check from
+      // rowerSettings.flankLength -1 until 0 flanks
       let i = rowerSettings.flankLength - 1
       while (i >= 0) {
         if (angularAcceleration[i] > rowerSettings.naturalDeceleration) {
-          // There seems to be some power present, so we detecten an error
+          // There seems to be some power present, so we detected an error
           numberOfErrors = numberOfErrors + 1
         }
         i = i - 1
@@ -85,7 +87,8 @@ function createMovingFlankDetector (rowerSettings) {
       let i = rowerSettings.flankLength
       while (i > 0) {
         if (cleanDataPoints[i] >= cleanDataPoints[i - 1]) {
-          // Oldest interval (dataPoints[i]) is larger than the younger one (datapoint[i-1], as the distance is fixed, we are accelerating
+          // Oldest interval (dataPoints[i]) is larger than the younger one (datapoint[i-1], as the distance is
+          // fixed, we are accelerating
           numberOfErrors = numberOfErrors + 1
         }
         i = i - 1
@@ -101,8 +104,10 @@ function createMovingFlankDetector (rowerSettings) {
   function isFlywheelPowered () {
     let numberOfErrors = 0
     if (rowerSettings.naturalDeceleration < 0) {
-      // A valid natural deceleration of the flywheel has been provided, this has to be consistently be encountered for a flanklength to count as an indication of a powered flywheel
-      // Please note that angularAcceleration[] contains flank-information already, so we need to check from rowerSettings.flankLength -1 until 0 flanks
+      // A valid natural deceleration of the flywheel has been provided, this has to be consistently encountered
+      // for a flank length to count as an indication of a powered flywheel
+      // Please note that angularAcceleration[] contains flank-information already, so we need to check from
+      // rowerSettings.flankLength -1 until 0 flanks
       let i = rowerSettings.flankLength - 1
       while (i >= 0) {
         if (angularAcceleration[i] < rowerSettings.naturalDeceleration) {
@@ -116,7 +121,8 @@ function createMovingFlankDetector (rowerSettings) {
       let i = rowerSettings.flankLength
       while (i > 1) {
         if (cleanDataPoints[i] < cleanDataPoints[i - 1]) {
-          // Oldest interval (dataPoints[i]) is shorter than the younger one (datapoint[i-1], as the distance is fixed, we discovered a deceleration
+          // Oldest interval (dataPoints[i]) is shorter than the younger one (datapoint[i-1], as the distance is fixed, we
+          // discovered a deceleration
           numberOfErrors = numberOfErrors + 1
         }
         i = i - 1
@@ -135,7 +141,7 @@ function createMovingFlankDetector (rowerSettings) {
   }
 
   function timeToBeginOfFlank () {
-    // You expect the curve to bend between dirtyDataPoints[rowerSettings.flankLength] and dirtyDataPoints[rowerSettings.flankLength+1],
+    // We expect the curve to bend between dirtyDataPoints[rowerSettings.flankLength] and dirtyDataPoints[rowerSettings.flankLength+1],
     // as acceleration FOLLOWS the start of the pulling the handle, we assume it must have started before that
     let i = rowerSettings.flankLength
     let total = 0.0
@@ -151,9 +157,10 @@ function createMovingFlankDetector (rowerSettings) {
   }
 
   function impulseLengthAtBeginFlank () {
-    // As this is fed into the speed calculation where small changes have big effects, and we typically use it when the curve is in a plateau,
-    // we return the cleaned data and not the dirty data
-    // Regardless of the way to determine the acceleration, cleanDataPoints[rowerSettings.flankLength] is always the impuls at the beginning of the flank being investigated
+    // As this is fed into the speed calculation where small changes have big effects, and we typically use it when
+    // the curve is in a plateau, we return the cleaned data and not the dirty data
+    // Regardless of the way to determine the acceleration, cleanDataPoints[rowerSettings.flankLength] is always the
+    // impulse at the beginning of the flank being investigated
     return cleanDataPoints[rowerSettings.flankLength]
   }
 

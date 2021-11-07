@@ -2,20 +2,20 @@
 /*
   Open Rowing Monitor, https://github.com/laberning/openrowingmonitor
 
-  This keeps an array, which we can ask for an moving average
+  This Averager can calculate the moving average of a continuous flow of data points
 
   Please note: The array contains flankLength + 1 measured currentDt's, thus flankLength number of flanks between them
-  They are arranged that dataPoints[0] is the youngest, and dataPoints[flankLength] the youngest
+  They are arranged that dataPoints[0] is the youngest, and dataPoints[flankLength] the oldest
 */
 function createMovingAverager (length, initValue) {
   let dataPoints
   reset()
 
   function pushValue (dataPoint) {
-    // add the new dataPoint to the array, we have to move datapoints starting at the oldst ones
+    // add the new dataPoint to the array, we have to move data points starting at the oldest ones
     let i = length - 1
     while (i > 0) {
-      // older datapoints are moved toward the higher numbers
+      // older data points are moved towards the higher numbers
       dataPoints[i] = dataPoints[i - 1]
       i = i - 1
     }
@@ -31,7 +31,7 @@ function createMovingAverager (length, initValue) {
     let i = length - 1
     let arrayTotal = 0.0
     while (i >= 0) {
-      // summarise the value of the moving average
+      // summarize the value of the moving average
       arrayTotal = arrayTotal + dataPoints[i]
       i = i - 1
     }

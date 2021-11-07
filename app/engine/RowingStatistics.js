@@ -53,7 +53,7 @@ function createRowingStatistics (config) {
   function handleStrokeEnd (stroke) {
     if (!trainingRunning) startTraining()
 
-    // if we do not get a stroke for timeBetweenStrokesBeforePause miliseconds we treat this as a rowing pause
+    // if we do not get a stroke for timeBetweenStrokesBeforePause milliseconds we treat this as a rowing pause
     if (rowingPausedTimer)clearInterval(rowingPausedTimer)
     rowingPausedTimer = setTimeout(() => pauseRowing(), timeBetweenStrokesBeforePause)
 
@@ -63,7 +63,7 @@ function createRowingStatistics (config) {
     powerAverager.pushValue(stroke.power)
     speedAverager.pushValue(stroke.speed)
     if (stroke.duration < timeBetweenStrokesBeforePause && stroke.duration > minimumStrokeTime) {
-      // stroke duration has to be credible to be accepted
+      // stroke duration has to be plausible to be accepted
       powerRatioAverager.pushValue(stroke.durationDrivePhase / stroke.duration)
       strokeAverager.pushValue(stroke.duration)
       caloriesAveragerMinute.pushValue(calories, stroke.duration)
@@ -92,13 +92,13 @@ function createRowingStatistics (config) {
 
   // initiated when the stroke state changes
   function handleRecoveryEnd (stroke) {
-    // todo: wee need a better mechanism to communicate strokeState updates
+    // todo: we need a better mechanism to communicate strokeState updates
     // this is an initial hacky attempt to see if we can use it for the C2-pm5 protocol
     durationTotal = stroke.timeSinceStart
     powerAverager.pushValue(stroke.power)
     speedAverager.pushValue(stroke.speed)
     if (stroke.duration < timeBetweenStrokesBeforePause && stroke.duration > minimumStrokeTime) {
-      // stroke duration has to be credible to be accepted
+      // stroke duration has to be plausible to be accepted
       powerRatioAverager.pushValue(stroke.durationDrivePhase / stroke.duration)
       strokeAverager.pushValue(stroke.duration)
     } else {
@@ -120,9 +120,9 @@ function createRowingStatistics (config) {
     instantaneousTorque = stroke.instantaneousTorque
   }
 
-  // initiated when new heart rate value is received from heart rate sensor
+  // initiated when a new heart rate value is received from heart rate sensor
   function handleHeartrateMeasurement (value) {
-    // set the heart rate to zero, if we did not receive a value for some time
+    // set the heart rate to zero if we did not receive a value for some time
     if (heartrateResetTimer)clearInterval(heartrateResetTimer)
     heartrateResetTimer = setTimeout(() => {
       heartrate = 0
@@ -194,7 +194,7 @@ function createRowingStatistics (config) {
     emitter.emit('rowingPaused')
   }
 
-  // converts a timeStamp in seconds to a human readable hh:mm:ss format
+  // converts a timestamp in seconds to a human readable hh:mm:ss format
   function secondsToTimeString (secondsTimeStamp) {
     if (secondsTimeStamp === Infinity) return '∞'
     const hours = Math.floor(secondsTimeStamp / 60 / 60)

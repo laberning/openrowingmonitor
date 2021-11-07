@@ -2,7 +2,7 @@
 /*
   Open Rowing Monitor, https://github.com/laberning/openrowingmonitor
 
-  The Averager calculates the weighted average of a continuous flow of data points
+  This Averager can calculate the weighted average of a continuous flow of data points
 */
 function createWeightedAverager (maxNumOfDataPoints) {
   let dataPoints = []
