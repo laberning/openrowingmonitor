@@ -7,7 +7,7 @@ An open source rowing monitor for rowing exercise machines. It upgrades a rowing
 
 Open Rowing Monitor is a Node.js application that runs on a Raspberry Pi and measures the rotation of the rower's flywheel (or similar) to calculate rowing specific metrics, such as power, split time, speed, stroke rate, distance and calories.
 
-We currently develop and test it with a Sportstech WRX700 waterrower and a NordicTrack RX-800 hybrid magetic/airrower. But it should run fine with any rowing machine that uses an air or water resistance mechanism as long as you can add something to measure the speed of the flywheel.
+We currently develop and test it with a Sportstech WRX700 water-rower and a NordicTrack RX-800 hybrid magnetic / air-rower. But it should run fine with any rowing machine that uses some kind of damping mechanism, as long as you can add something to measure the speed of the flywheel.
 We suspect it works well with DIY rowing machines like the [Openergo](https://openergo.webs.com) too.
 
 ## Features
@@ -57,7 +57,7 @@ Open Rowing Monitor can also store the raw measurements of the flywheel into CSV
 
 ## Installation
 
-You will need a Raspberry Pi Zero W, Raspberry Pi 3 or a Raspberry Pi 4 with a fresh installation of Raspberry Pi OS 10 (Lite) for this. Connect to the device with SSH and initiate the following command to set up all required dependencies and to install Open Rowing Monitor as an automatically starting system service:
+You will need a Raspberry Pi Zero W, Raspberry Pi Zero 2 W, Raspberry Pi 3 or a Raspberry Pi 4 with a fresh installation of Raspberry Pi OS 10 (Lite) for this. Connect to the device with SSH and initiate the following command to set up all required dependencies and to install Open Rowing Monitor as an automatically starting system service:
 
 ```zsh
 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/laberning/openrowingmonitor/HEAD/install/install.sh)"
@@ -77,6 +77,6 @@ This project is already in a very usable stage, but some things are still a bit 
 
 Feel free to leave a message in the [GitHub Discussions](https://github.com/laberning/openrowingmonitor/discussions) if you have any questions or ideas related to this project.
 
-I plan to add more features, here is the [Development Roadmap](docs/backlog.md).
+We plan to add more features, here is the [Development Roadmap](docs/backlog.md).
 
 This project uses some great work by others, see the [Attribution here](docs/attribution.md).
