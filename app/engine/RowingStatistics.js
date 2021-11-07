@@ -138,8 +138,7 @@ function createRowingStatistics (config) {
     // todo: due to sanitization we currently do not use a consistent time throughout the engine
     // We will rework this section to use both absolute and sanitized time in the appropriate places.
     // We will also polish up the events for the recovery and drive phase, so we get clean complete strokes from the first stroke onwards.
-    const averagedStrokeTime = strokeAverager.getMovingAverage() > minimumStrokeTime && strokeAverager.getMovingAverage() < maximumStrokeTime && lastStrokeSpeed > 0 ? strokeAverager.getMovingAverage() : (minimumStrokeTime + maximumStrokeTime) / 2 // seconds
-
+    const averagedStrokeTime = strokeAverager.getMovingAverage() > minimumStrokeTime && strokeAverager.getMovingAverage() < maximumStrokeTime && lastStrokeSpeed > 0 ? strokeAverager.getMovingAverage() : 0 // seconds
     return {
       durationTotal,
       durationTotalFormatted: secondsToTimeString(durationTotal),
