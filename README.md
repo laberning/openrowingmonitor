@@ -77,6 +77,8 @@ This project is already in a very usable stage, but some things are still a bit 
 
 Feel free to leave a message in the [GitHub Discussions](https://github.com/laberning/openrowingmonitor/discussions) if you have any questions or ideas related to this project.
 
+Check the advanced information on the [Physics behind Open Rowing Monitor](docs/physics_openrowingmonitor.md).
+
 We plan to add more features, here is the [Development Roadmap](docs/backlog.md).
 
 This project uses some great work by others, see the [Attribution here](docs/attribution.md).
