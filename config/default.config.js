@@ -16,7 +16,7 @@ import rowerProfiles from './rowerProfiles.js'
 export default {
   // Available log levels: trace, debug, info, warn, error, silent
   loglevel: {
-    // The default loglevel
+    // The default log level
     default: 'info',
     // The log level of of the rowing engine (stroke detection and physics model)
     RowingEngine: 'warn'

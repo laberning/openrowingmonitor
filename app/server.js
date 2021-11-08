@@ -8,8 +8,6 @@
 */
 import { fork } from 'child_process'
 import log from 'loglevel'
-// eslint-disable-next-line no-unused-vars
-import fs from 'fs'
 import config from './tools/ConfigManager.js'
 import { createRowingEngine } from './engine/RowingEngine.js'
 import { createRowingStatistics } from './engine/RowingStatistics.js'
@@ -73,7 +71,6 @@ gpioTimerService.on('message', handleRotationImpulse)
 function handleRotationImpulse (dataPoint) {
   workoutRecorder.recordRotationImpulse(dataPoint)
   rowingEngine.handleRotationImpulse(dataPoint)
-  // fs.appendFile('recordings/WRX700_2magnets.csv', `${dataPoint}\n`, (err) => { if (err) log.error(err) })
 }
 
 const rowingEngine = createRowingEngine(config.rowerSettings)
@@ -91,12 +88,12 @@ rowingStatistics.on('strokeFinished', (metrics) => {
   workoutRecorder.recordStroke(metrics)
 })
 
-rowingStatistics.on('recoveryFinished', (metrics) => { // @@ COPY ME TO GOOD FILE !!
+rowingStatistics.on('recoveryFinished', (metrics) => {
   webServer.notifyClients(metrics)
   peripheralManager.notifyMetrics('strokeStateChanged', metrics)
 })
 
-rowingStatistics.on('metricsUpdate', (metrics) => { // @@ COPY ME TO GOOD FILE !!
+rowingStatistics.on('metricsUpdate', (metrics) => {
   webServer.notifyClients(metrics)
   peripheralManager.notifyMetrics('metricsUpdate', metrics)
 })
