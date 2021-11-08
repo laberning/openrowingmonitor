@@ -6,9 +6,10 @@
   of data points for a certain (time) interval
 */
 function createMovingIntervalAverager (movingDuration) {
-  let dataPoints = []
-  let duration = 0.0
-  let sum = 0.0
+  let dataPoints
+  let duration
+  let sum
+  reset()
 
   function pushValue (dataValue, dataDuration) {
     // add the new dataPoint to the front of the array

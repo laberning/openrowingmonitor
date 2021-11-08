@@ -11,7 +11,7 @@
   Also Dave Vernooy has some good explanations here: https://dvernooy.github.io/projects/ergware
 */
 import loglevel from 'loglevel'
-import { createMovingAverager } from './MovingAverager.js'
+import { createMovingAverager } from './averager/MovingAverager.js'
 import { createMovingFlankDetector } from './MovingFlankDetector.js'
 
 const log = loglevel.getLogger('RowingEngine')

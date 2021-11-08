@@ -8,7 +8,7 @@
   They are arranged that dataPoints[0] is the youngest, and dataPoints[flankLength] the oldest
 */
 import loglevel from 'loglevel'
-import { createMovingAverager } from './MovingAverager.js'
+import { createMovingAverager } from './averager/MovingAverager.js'
 const log = loglevel.getLogger('RowingEngine')
 
 function createMovingFlankDetector (rowerSettings) {

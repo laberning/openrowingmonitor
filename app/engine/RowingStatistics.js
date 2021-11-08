@@ -5,8 +5,8 @@
   This Module calculates the training specific metrics.
 */
 import { EventEmitter } from 'events'
-import { createMovingIntervalAverager } from './MovingIntervalAverager.js'
-import { createWeightedAverager } from './WeightedAverager.js'
+import { createMovingIntervalAverager } from './averager/MovingIntervalAverager.js'
+import { createWeightedAverager } from './averager/WeightedAverager.js'
 
 import loglevel from 'loglevel'
 const log = loglevel.getLogger('RowingEngine')
