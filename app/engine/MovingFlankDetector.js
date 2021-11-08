@@ -47,14 +47,14 @@ function createMovingFlankDetector (rowerSettings) {
     // lets test if pushing this value would fit the curve we are looking for
     movingAverage.pushValue(dataPoint)
 
-    if (movingAverage.getMovingAverage() < (rowerSettings.maximumDownwardChange * cleanDataPoints[1]) || movingAverage.getMovingAverage() > (rowerSettings.maximumUpwardChange * cleanDataPoints[1])) {
+    if (movingAverage.getAverage() < (rowerSettings.maximumDownwardChange * cleanDataPoints[1]) || movingAverage.getAverage() > (rowerSettings.maximumUpwardChange * cleanDataPoints[1])) {
       // impulses are outside plausible ranges, so we assume it is close to the previous one
-      log.debug(`noise filter corrected currentDt, ${dataPoint} was too much of an accelleration/decelleration with respect to ${movingAverage.getMovingAverage()}, changed to previous value, ${cleanDataPoints[1]}`)
+      log.debug(`noise filter corrected currentDt, ${dataPoint} was too much of an accelleration/decelleration with respect to ${movingAverage.getAverage()}, changed to previous value, ${cleanDataPoints[1]}`)
       movingAverage.replaceLastPushedValue(cleanDataPoints[1])
     }
 
     // determine the moving average, to reduce noise
-    cleanDataPoints[0] = movingAverage.getMovingAverage()
+    cleanDataPoints[0] = movingAverage.getAverage()
 
     // determine the derived data
     if (cleanDataPoints[0] > 0) {

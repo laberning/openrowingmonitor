@@ -28,7 +28,7 @@ function createMovingAverager (length, initValue) {
     dataPoints[0] = dataPoint
   }
 
-  function getMovingAverage () {
+  function getAverage () {
     let i = length - 1
     let arrayTotal = 0.0
     while (i >= 0) {
@@ -48,7 +48,7 @@ function createMovingAverager (length, initValue) {
   return {
     pushValue,
     replaceLastPushedValue,
-    getMovingAverage,
+    getAverage,
     reset
   }
 }

@@ -58,7 +58,7 @@ function createRowingStatistics (config) {
     rowingPausedTimer = setTimeout(() => pauseRowing(), timeBetweenStrokesBeforePause)
 
     // based on: http://eodg.atm.ox.ac.uk/user/dudhia/rowing/physics/ergometer.html#section11
-    const calories = (4 * powerAverager.weightedAverage() + 350) * (stroke.duration) / 4200
+    const calories = (4 * powerAverager.getAverage() + 350) * (stroke.duration) / 4200
     durationTotal = stroke.timeSinceStart
     powerAverager.pushValue(stroke.power)
     speedAverager.pushValue(stroke.speed)
@@ -133,28 +133,28 @@ function createRowingStatistics (config) {
   }
 
   function getMetrics () {
-    const splitTime = speedAverager.weightedAverage() !== 0 && lastStrokeSpeed > 0 ? (500.0 / speedAverager.weightedAverage()) : Infinity
+    const splitTime = speedAverager.getAverage() !== 0 && lastStrokeSpeed > 0 ? (500.0 / speedAverager.getAverage()) : Infinity
     // todo: due to sanitization we currently do not use a consistent time throughout the engine
     // We will rework this section to use both absolute and sanitized time in the appropriate places.
     // We will also polish up the events for the recovery and drive phase, so we get clean complete strokes from the first stroke onwards.
-    const averagedStrokeTime = strokeAverager.weightedAverage() > minimumStrokeTime && strokeAverager.weightedAverage() < maximumStrokeTime && lastStrokeSpeed > 0 ? strokeAverager.weightedAverage() : 0 // seconds
+    const averagedStrokeTime = strokeAverager.getAverage() > minimumStrokeTime && strokeAverager.getAverage() < maximumStrokeTime && lastStrokeSpeed > 0 ? strokeAverager.getAverage() : 0 // seconds
     return {
       durationTotal,
       durationTotalFormatted: secondsToTimeString(durationTotal),
       strokesTotal,
       distanceTotal: distanceTotal > 0 ? distanceTotal : 0, // meters
       caloriesTotal: caloriesTotal, // kcal
-      caloriesPerMinute: caloriesAveragerMinute.average() > 0 ? caloriesAveragerMinute.average() : 0,
-      caloriesPerHour: caloriesAveragerHour.average() > 0 ? caloriesAveragerHour.average() : 0,
+      caloriesPerMinute: caloriesAveragerMinute.getAverage() > 0 ? caloriesAveragerMinute.getAverage() : 0,
+      caloriesPerHour: caloriesAveragerHour.getAverage() > 0 ? caloriesAveragerHour.getAverage() : 0,
       strokeTime: lastStrokeDuration, // seconds
       distance: lastStrokeDistance > 0 && lastStrokeSpeed > 0 ? lastStrokeDistance : 0, // meters
-      power: powerAverager.weightedAverage() > 0 && lastStrokeSpeed > 0 ? powerAverager.weightedAverage() : 0, // watts
+      power: powerAverager.getAverage() > 0 && lastStrokeSpeed > 0 ? powerAverager.getAverage() : 0, // watts
       split: splitTime, // seconds/500m
       splitFormatted: secondsToTimeString(splitTime),
-      powerRatio: powerRatioAverager.weightedAverage() > 0 && lastStrokeSpeed > 0 ? powerRatioAverager.weightedAverage() : 0,
+      powerRatio: powerRatioAverager.getAverage() > 0 && lastStrokeSpeed > 0 ? powerRatioAverager.getAverage() : 0,
       instantaneousTorque: instantaneousTorque,
       strokesPerMinute: averagedStrokeTime !== 0 ? (60.0 / averagedStrokeTime) : 0,
-      speed: speedAverager.weightedAverage() > 0 && lastStrokeSpeed > 0 ? (speedAverager.weightedAverage() * 3.6) : 0, // km/h
+      speed: speedAverager.getAverage() > 0 && lastStrokeSpeed > 0 ? (speedAverager.getAverage() * 3.6) : 0, // km/h
       strokeState: lastStrokeState,
       heartrate,
       heartrateBatteryLevel

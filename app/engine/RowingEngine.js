@@ -41,7 +41,7 @@ function createRowingEngine (rowerSettings) {
   let recoveryLinearDistance = 0.0
   let currentDragFactor = rowerSettings.dragFactor / 1000000
   const movingDragAverage = createMovingAverager(5, currentDragFactor)
-  let dragFactor = movingDragAverage.getMovingAverage()
+  let dragFactor = movingDragAverage.getAverage()
   const minimumCycleLength = rowerSettings.minimumDriveTime + rowerSettings.minimumRecoveryTime
   let cycleLength = minimumCycleLength
   let linearCycleVelocity = 0.0
@@ -126,14 +126,14 @@ function createRowingEngine (rowerSettings) {
         // Prevent division by zero and keep useless data out of our calculations
         currentDragFactor = -1 * rowerSettings.flywheelInertia * ((1 / recoveryStartAngularVelocity) - (1 / recoveryEndAngularVelocity)) / recoveryPhaseLength
         if (rowerSettings.autoAdjustDragFactor) {
-          if (currentDragFactor > (movingDragAverage.getMovingAverage() * 0.75) && currentDragFactor < (movingDragAverage.getMovingAverage() * 1.40)) {
+          if (currentDragFactor > (movingDragAverage.getAverage() * 0.75) && currentDragFactor < (movingDragAverage.getAverage() * 1.40)) {
             // If the calculated drag factor is close to what we expect
             movingDragAverage.pushValue(currentDragFactor)
-            dragFactor = movingDragAverage.getMovingAverage()
+            dragFactor = movingDragAverage.getAverage()
             log.info(`*** Calculated drag factor: ${(currentDragFactor * 1000000).toFixed(2)}`)
           } else {
             // The calculated drag factor is outside the plausible range
-            log.info(`Calculated drag factor: ${(currentDragFactor * 1000000).toFixed(2)}, which is too far off the currently used dragfactor of ${movingDragAverage.getMovingAverage() * 1000000}`)
+            log.info(`Calculated drag factor: ${(currentDragFactor * 1000000).toFixed(2)}, which is too far off the currently used dragfactor of ${movingDragAverage.getAverage() * 1000000}`)
             log.debug(`Time: ${totalTime.toFixed(4)} sec, impuls ${totalNumberOfImpulses}: recoveryStartAngularVelocity = ${recoveryStartAngularVelocity.toFixed(2)} rad/sec, recoveryEndAngularVelocity = ${recoveryEndAngularVelocity.toFixed(2)} rad/sec, recoveryPhaseLength = ${recoveryPhaseLength.toFixed(4)} sec`)
           }
         } else {
@@ -299,7 +299,7 @@ function createRowingEngine (rowerSettings) {
     recoveryLinearDistance = 0.0
     currentDragFactor = rowerSettings.dragFactor / 1000000
     movingDragAverage.reset()
-    dragFactor = movingDragAverage.getMovingAverage()
+    dragFactor = movingDragAverage.getAverage()
     cycleLength = 0.0
     linearCycleVelocity = 0.0
     totalLinearDistance = 0.0

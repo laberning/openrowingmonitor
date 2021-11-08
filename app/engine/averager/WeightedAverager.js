@@ -8,7 +8,7 @@ function createWeightedAverager (maxNumOfDataPoints) {
   let dataPoints = []
 
   function pushValue (dataPoint) {
-    // add the new dataPoint to the front of the array
+    // add the new data point to the front of the array
     dataPoints.unshift(dataPoint)
     // ensure that the array does not get longer than maxNumOfDataPoints
     if (dataPoints.length > maxNumOfDataPoints) {
@@ -16,7 +16,7 @@ function createWeightedAverager (maxNumOfDataPoints) {
     }
   }
 
-  function weightedAverage () {
+  function getAverage () {
     const numOfDataPoints = dataPoints.length
     if (numOfDataPoints > 0) {
       const sum = dataPoints
@@ -35,7 +35,7 @@ function createWeightedAverager (maxNumOfDataPoints) {
 
   return {
     pushValue,
-    weightedAverage,
+    getAverage,
     reset
   }
 }

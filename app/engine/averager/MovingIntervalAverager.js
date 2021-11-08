@@ -12,7 +12,7 @@ function createMovingIntervalAverager (movingDuration) {
   reset()
 
   function pushValue (dataValue, dataDuration) {
-    // add the new dataPoint to the front of the array
+    // add the new data point to the front of the array
     dataPoints.unshift({ value: dataValue, duration: dataDuration })
     duration += dataDuration
     sum += dataValue
@@ -23,7 +23,7 @@ function createMovingIntervalAverager (movingDuration) {
     }
   }
 
-  function average () {
+  function getAverage () {
     if (duration > 0) {
       return sum / duration * movingDuration
     } else {
@@ -39,7 +39,7 @@ function createMovingIntervalAverager (movingDuration) {
 
   return {
     pushValue,
-    average,
+    getAverage,
     reset
   }
 }
