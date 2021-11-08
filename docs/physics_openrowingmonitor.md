@@ -12,7 +12,8 @@ In this model, we try to:
 ## Phases, properties and concepts in the rowing cycle
 
 <img src="img/physics/indoorrower.png" width="700">
-<!--  -->
+
+<!-- markdownlint-disable-next-line no-emphasis-as-header -->
 *A basic view of an indoor rower*
 
 A rowing machine effectively has two fundamental movements: a **linear** (the rower moving up and down, or a boat moving forward) and a **rotational** where the energy that the rower inputs in the system is absorbed through a flywheel (either a solid one, or a liquid one).
