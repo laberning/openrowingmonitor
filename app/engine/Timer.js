@@ -2,7 +2,7 @@
 /*
   Open Rowing Monitor, https://github.com/laberning/openrowingmonitor
 
-  Stopwatch used to measure multiple time intevals
+  Stopwatch used to measure multiple time intervals
 */
 function createTimer () {
   const timerMap = new Map()
