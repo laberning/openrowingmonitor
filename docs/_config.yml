@@ -17,8 +17,8 @@ title: Open Rowing Monitor
 email:
 description: >- # this means to ignore newlines until "baseurl:"
   An open source rowing monitor for rowing exercise machines.
-baseurl: "" # the subpath of your site, e.g. /blog
-url: "" # the base hostname & protocol for your site, e.g. http://example.com
+# baseurl: "" # the subpath of your site, e.g. /blog
+# url: "" # the base hostname & protocol for your site, e.g. http://example.com
 twitter_username: laberning
 github_username:  laberning
 
