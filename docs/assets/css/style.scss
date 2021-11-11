@@ -42,12 +42,12 @@ ul.navbar {
   margin: 0 auto;
   padding: 0;
   overflow: hidden;
-  background-color: #00091c;
+  background-color: #00091c91;
 
   li{
     float: left;
 
-    &.menuright{
+    &.menu-right{
       float: right;
     }
 
@@ -55,21 +55,21 @@ ul.navbar {
       display: block;
       color: white;
       text-align: center;
-      padding: 14px 16px;
+      padding: 12px 16px;
       text-decoration: none;
-    }
 
-    a:hover {
-      background-color: #365080;
+      &:hover {
+        background-color: #0bb3879e;
+      }
     }
 
     &.active {
-      background-color: #365080;
+      background-color: #0BB387; // #1b4168
     }
   }
 }
 
-.rowerimage {
+.rower-image {
   height: 150px;
 }
 
@@ -78,7 +78,7 @@ ul.navbar {
     font-size: 1.7rem;
   }
   ul.navbar li {
-    float: none
+    float: none !important;
   }
   .rowerimage {
     height: 100px;
