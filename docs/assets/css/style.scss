@@ -88,3 +88,9 @@ ul.navbar {
     height: 100px;
   }
 }
+
+@media print {
+  header, footer {
+    display: none;
+  }
+}

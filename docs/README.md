@@ -3,7 +3,7 @@
 <!-- markdownlint-disable-next-line no-inline-html -->
 <img width="200" height="200" align="left" src="./img/openrowingmonitor_icon.png" class="dropcap">
 
-An open source rowing monitor for rowing exercise machines. It upgrades a rowing machine into a real smart trainer that can be used with training applications and games.
+A free performance monitor for rowing machines. It upgrades a rowing machine into a smart trainer that can be used with training applications and games.
 
 Open Rowing Monitor is a Node.js application that runs on a Raspberry Pi and measures the rotation of the rower's flywheel (or similar) to calculate rowing specific metrics, such as power, split time, speed, stroke rate, distance and calories.
 
