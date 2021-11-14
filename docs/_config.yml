@@ -17,8 +17,18 @@ title: Open Rowing Monitor
 #description: A free performance monitor for rowing machines
 # baseurl: "" # the subpath of your site, e.g. /blog
 # url: "" # the base hostname & protocol for your site, e.g. http://example.com
-twitter_username: laberning
-github_username:  laberning
+
+twitter:
+  username: laberning
+  google_site_verification: kp2LqEz4JhvucGcmjdvFJXF0rpXA-asxk2uTTtQDTKA
+author: Lars Berning
+social:
+  name: Lars Berning
+  links:
+    - https://twitter.com/laberning
+    - http://www.linkedin.com/in/larsberning
+    - https://github.com/laberning
+github_username: laberning
 
 # Build settings
 markdown: kramdown
@@ -35,15 +45,3 @@ navigation:
     url: /physics_openrowingmonitor.html
   - title: Backlog
     url: /backlog.html
-
-# Exclude from processing.
-# The following items will not be processed, by default. Create a custom list
-# to override the default setting.
-# exclude:
-#   - Gemfile
-#   - Gemfile.lock
-#   - node_modules
-#   - vendor/bundle/
-#   - vendor/cache/
-#   - vendor/gems/
-#   - vendor/ruby/
