@@ -29,6 +29,11 @@ social:
     - http://www.linkedin.com/in/larsberning
     - https://github.com/laberning
 github_username: laberning
+defaults:
+  - scope:
+      path: ""
+    values:
+      image: /img/icon.png
 
 # Build settings
 markdown: kramdown
