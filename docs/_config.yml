@@ -14,12 +14,28 @@
 # You can create any custom variable you would like, and they will be accessible
 # in the templates via {{ site.myvariable }}.
 title: Open Rowing Monitor
-description: >- # this means to ignore newlines until "baseurl:"
-  A free performance monitor for rowing machines
+#description: A free performance monitor for rowing machines
 # baseurl: "" # the subpath of your site, e.g. /blog
 # url: "" # the base hostname & protocol for your site, e.g. http://example.com
-twitter_username: laberning
-github_username:  laberning
+
+author: Lars Berning
+twitter:
+  username: laberning
+  card: summary
+social:
+  name: Lars Berning
+  links:
+    - https://twitter.com/laberning
+    - http://www.linkedin.com/in/larsberning
+    - https://github.com/laberning
+defaults:
+  - scope:
+      path: ""
+    values:
+      image: /img/icon.png
+
+github_username: laberning
+google_site_verification: kp2LqEz4JhvucGcmjdvFJXF0rpXA-asxk2uTTtQDTKA
 
 # Build settings
 markdown: kramdown
@@ -36,15 +52,3 @@ navigation:
     url: /physics_openrowingmonitor.html
   - title: Backlog
     url: /backlog.html
-
-# Exclude from processing.
-# The following items will not be processed, by default. Create a custom list
-# to override the default setting.
-# exclude:
-#   - Gemfile
-#   - Gemfile.lock
-#   - node_modules
-#   - vendor/bundle/
-#   - vendor/cache/
-#   - vendor/gems/
-#   - vendor/ruby/
