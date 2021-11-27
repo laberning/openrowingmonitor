@@ -26,15 +26,18 @@ export function createApp () {
     power: (value) => Math.round(value),
     strokesPerMinute: (value) => Math.round(value)
   }
-  const standalone = (window.location.hash === '#:standalone:')
-
+  // const standalone = (window.location.hash === '#:standalone:')
+  let metricsCallback
+  const metrics = {
+  }
+  /*
   if (standalone) {
     document.getElementById('close-button').style.display = 'inline-block'
     document.getElementById('fullscreen-button').style.display = 'none'
   } else {
     document.getElementById('fullscreen-button').style.display = 'inline-block'
     document.getElementById('close-button').style.display = 'none'
-  }
+  } */
 
   let socket
 
@@ -67,23 +70,6 @@ export function createApp () {
       try {
         const data = JSON.parse(event.data)
 
-        // show heart rate, if present
-        if (data.heartrate !== undefined) {
-          if (data.heartrate !== 0) {
-            document.getElementById('heartrate-container').style.display = 'inline-block'
-            document.getElementById('strokes-total-container').style.display = 'none'
-            if (data.heartrateBatteryLevel !== undefined) {
-              document.getElementById('heartrate-battery-container').style.display = 'inline-block'
-              setHeartrateMonitorBatteryLevel(data.heartrateBatteryLevel)
-            } else {
-              document.getElementById('heartrate-battery-container').style.display = 'none'
-            }
-          } else {
-            document.getElementById('strokes-total-container').style.display = 'inline-block'
-            document.getElementById('heartrate-container').style.display = 'none'
-          }
-        }
-
         let activeFields = fields
         // if we are in reset state only update heart rate and peripheral mode
         if (data.strokesTotal === 0) {
@@ -94,12 +80,20 @@ export function createApp () {
           if (activeFields.includes(key)) {
             const valueFormatted = fieldFormatter[key] ? fieldFormatter[key](value) : value
             if (valueFormatted.value !== undefined && valueFormatted.unit !== undefined) {
-              if (document.getElementById(key)) document.getElementById(key).innerHTML = valueFormatted.value
-              if (document.getElementById(`${key}Unit`)) document.getElementById(`${key}Unit`).innerHTML = valueFormatted.unit
+              metrics[key] = {
+                value: valueFormatted.value,
+                unit: valueFormatted.unit
+              }
             } else {
-              if (document.getElementById(key)) document.getElementById(key).innerHTML = valueFormatted
+              metrics[key] = {
+                value: valueFormatted
+              }
             }
           }
+        }
+
+        if (metricsCallback) {
+          metricsCallback(metrics)
         }
       } catch (err) {
         console.log(err)
@@ -125,23 +119,11 @@ export function createApp () {
 
   function resetFields () {
     for (const key of fields.filter((elem) => elem !== 'peripheralMode')) {
-      if (document.getElementById(key)) document.getElementById(key).innerHTML = '--'
-    }
-  }
-
-  function toggleFullscreen () {
-    const fullscreenElement = document.getElementById('dashboard')
-    if (!document.fullscreenElement) {
-      fullscreenElement.requestFullscreen({ navigationUI: 'hide' })
-    } else {
-      if (document.exitFullscreen) {
-        document.exitFullscreen()
+      if (metrics[key])metrics[key].value = '--'
+      if (metricsCallback) {
+        metricsCallback(metrics)
       }
     }
-  }
-
-  function close () {
-    window.close()
   }
 
   function reset () {
@@ -153,17 +135,14 @@ export function createApp () {
     if (socket)socket.send(JSON.stringify({ command: 'switchPeripheralMode' }))
   }
 
-  function setHeartrateMonitorBatteryLevel (batteryLevel) {
-    if (document.getElementById('battery-level') !== null) {
-      // 416 is the max width value of the battery bar in the SVG graphic
-      document.getElementById('battery-level').setAttribute('width', `${batteryLevel * 416 / 100}px`)
-    }
+  function setMetricsCallback (callback) {
+    metricsCallback = callback
   }
 
   return {
-    toggleFullscreen,
     reset,
-    close,
-    switchPeripheralMode
+    switchPeripheralMode,
+    metrics,
+    setMetricsCallback
   }
 }

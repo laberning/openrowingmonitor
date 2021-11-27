@@ -1,0 +1,21 @@
+{
+  "env": {
+      "browser": true,
+      "node": false,
+      "es2021": true
+  },
+  "extends": [
+      "standard",
+      "plugin:wc/recommended",
+      "plugin:lit/recommended"
+  ],
+  "parser": "@babel/eslint-parser",
+  "parserOptions": {
+      "ecmaVersion": 12,
+      "sourceType": "module"
+  },
+  "ignorePatterns": ["**/*.min.js"],
+  "rules": {
+      "camelcase": 0
+  }
+}

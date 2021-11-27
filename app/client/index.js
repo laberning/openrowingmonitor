@@ -2,8 +2,7 @@
 /*
   Open Rowing Monitor, https://github.com/laberning/openrowingmonitor
 
-  Init file for the web frontend
+  Initialization file for the web application
 */
-import { createApp } from './app.js'
 
-window.app = createApp()
+import './components/App'
