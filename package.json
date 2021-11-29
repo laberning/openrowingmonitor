@@ -18,8 +18,8 @@
     "start": "node app/server.js",
     "dev": "npm-run-all --parallel start dev:frontend",
     "dev:frontend": "snowpack dev",
-    "build": "snowpack build",
-    "build:watch": "snowpack build --watch",
+    "build": "rollup -c",
+    "build:watch": "rollup -cw",
     "test": "uvu"
   },
   "simple-git-hooks": {
@@ -42,7 +42,11 @@
     "@babel/eslint-parser": "^7.16.3",
     "@babel/plugin-proposal-decorators": "^7.16.4",
     "@babel/preset-env": "^7.16.4",
+    "@rollup/plugin-babel": "^5.3.0",
+    "@rollup/plugin-commonjs": "^21.0.1",
+    "@rollup/plugin-node-resolve": "^13.0.6",
     "@snowpack/plugin-babel": "^2.1.7",
+    "@web/rollup-plugin-html": "^1.10.1",
     "eslint": "^7.32.0",
     "eslint-config-standard": "^16.0.3",
     "eslint-plugin-import": "^2.25.3",
@@ -53,6 +57,10 @@
     "http2-proxy": "^5.0.53",
     "markdownlint-cli": "^0.30.0",
     "npm-run-all": "^4.1.5",
+    "rollup": "^2.60.1",
+    "rollup-plugin-minify-html-literals": "^1.2.6",
+    "rollup-plugin-summary": "^1.3.0",
+    "rollup-plugin-terser": "^7.0.2",
     "simple-git-hooks": "^2.7.0",
     "snowpack": "^3.8.8",
     "uvu": "^0.5.2"

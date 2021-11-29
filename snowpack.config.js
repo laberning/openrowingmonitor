@@ -9,6 +9,7 @@ export default {
     './app/client': { url: '/' }
   },
   plugins: ['@snowpack/plugin-babel'],
+  mode: 'development',
   packageOptions: {
     rollup: {
       plugins: [
@@ -27,6 +28,13 @@ export default {
   },
   buildOptions: {
     out: 'build'
+  },
+  optimize: {
+    bundle: true,
+    treeshake: true,
+    minify: false,
+    target: 'es2020',
+    sourcemap: false
   },
   // add a proxy for websocket requests for the dev setting
   routes: [
