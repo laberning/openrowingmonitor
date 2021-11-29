@@ -118,8 +118,8 @@ export function createApp () {
   }
 
   function resetFields () {
-    for (const key of fields.filter((elem) => elem !== 'peripheralMode')) {
-      if (metrics[key])metrics[key].value = '--'
+    for (const key of fields.filter((elem) => elem !== 'peripheralMode' && elem !== 'heartrate')) {
+      metrics[key] = { value: '--' }
       if (metricsCallback) {
         metricsCallback(metrics)
       }
@@ -137,6 +137,9 @@ export function createApp () {
 
   function setMetricsCallback (callback) {
     metricsCallback = callback
+    if (metricsCallback) {
+      metricsCallback(metrics)
+    }
   }
 
   return {

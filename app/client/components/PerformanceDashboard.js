@@ -34,7 +34,7 @@ export class PerformanceDashboard extends AppElement {
         : html`<dashboard-metric .icon=${icon_paddle} unit="total" .value=${this.metrics?.strokesTotal?.value}></dashboard-metric>`}
       <dashboard-metric .icon=${icon_fire} unit="kcal" .value=${this.metrics?.caloriesTotal?.value}></dashboard-metric>
       <dashboard-metric .icon=${icon_clock} .value=${this.metrics?.durationTotalFormatted?.value}></dashboard-metric>
-      <dashboard-actions .peripheralMode=${this.metrics?.peripheralMode.value}></dashboard-actions>
+      <dashboard-actions .peripheralMode=${this.metrics?.peripheralMode?.value}></dashboard-actions>
     `
   }
 }

@@ -4,7 +4,6 @@ import resolve from '@rollup/plugin-node-resolve'
 import commonjs from '@rollup/plugin-commonjs'
 import { babel } from '@rollup/plugin-babel'
 import { terser } from 'rollup-plugin-terser'
-import minifyHTML from 'rollup-plugin-minify-html-literals'
 import summary from 'rollup-plugin-summary'
 
 // Configure an instance of @web/rollup-plugin-html
@@ -28,8 +27,6 @@ export default {
     commonjs(),
     // resolve bare module specifiers to relative paths
     resolve(),
-    // minify HTML template literals
-    minifyHTML(),
     // minify JS
     terser({
       ecma: 2020,
