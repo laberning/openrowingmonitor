@@ -48,42 +48,91 @@ ask() {
   done
 }
 
+# updates the software to the most recent git commit from origin
+update_branch() {
+  print "Stopping Open Rowing Monitor..."
+  sudo systemctl stop openrowingmonitor
+
+  print "Fetching new version of Open Rowing Monitor from branch \"$CURRENT_BRANCH\"..."
+  sudo git fetch --force origin
+  sudo git fetch --force --tags origin
+  sudo git reset --hard origin/$CURRENT_BRANCH
+
+  print "Updating Runtime dependencies..."
+  sudo npm install
+  sudo npm run build
+
+  print "Starting Open Rowing Monitor..."
+  sudo systemctl start openrowingmonitor
+
+  print
+  print "Update complete, Open Rowing Monitor now has the following exciting new features:"
+  git log --reverse --pretty=format:"- %s" $LOCAL_VERSION..HEAD
+}
+
+# allows switching to another git feature branch by passing the -b parameter
+switch_branch() {
+  print "Stopping Open Rowing Monitor..."
+  sudo systemctl stop openrowingmonitor
+
+  print "Switching Open Rowing Monitor to branch \"$CURRENT_BRANCH\"..."
+  sudo git fetch --force origin
+  sudo git fetch --force --tags origin
+  sudo git branch -D $CURRENT_BRANCH 2> /dev/null || true
+  sudo git checkout -b $CURRENT_BRANCH origin/$CURRENT_BRANCH
+
+  print "Updating Runtime dependencies..."
+  sudo rm -rf node_modules
+  sudo npm install
+  sudo npm run build
+
+  print "Starting Open Rowing Monitor..."
+  sudo systemctl start openrowingmonitor
+
+  print
+  print "Switch to branch \"$CURRENT_BRANCH\" complete, Open Rowing Monitor now has the following exciting new features:"
+  git log --reverse --pretty=format:"- %s" $LOCAL_VERSION..HEAD
+}
+
 CURRENT_DIR=$(pwd)
 SCRIPT_DIR="$( cd "$(dirname "${BASH_SOURCE[0]}")" &> /dev/null && pwd )"
 INSTALL_DIR="$(dirname "$SCRIPT_DIR")"
 GIT_REMOTE="https://github.com/laberning/openrowingmonitor.git"
+CURRENT_BRANCH=$(git rev-parse --abbrev-ref HEAD)
+LOCAL_VERSION=$(git rev-parse HEAD)
 
 print "Update script for Open Rowing Monitor"
 print
-print "Checking for new version..."
 
 cd $INSTALL_DIR
 
-LOCAL_VERSION=$(git rev-parse HEAD)
-REMOTE_VERSION=$(git ls-remote $GIT_REMOTE HEAD | awk '{print $1;}')
+if getopts "b:" arg; then
+  if [ $CURRENT_BRANCH = $OPTARG ]; then
+    cancel "No need to switch to branch \"$OPTARG\", it is already the active branch"
+  fi
 
-if [ "$LOCAL_VERSION" = "$REMOTE_VERSION" ]; then
-    print "You are using the latest version of Open Rowing Monitor."
+  echo "Checking for the existence of branch \"$OPTARG\"..."
+  if [ $(git ls-remote --heads $GIT_REMOTE 2>/dev/null|awk -F 'refs/heads/' '{print $2}'|grep -x "$OPTARG"|wc -l) = 0 ]; then
+    cancel "Branch \"$OPTARG\" does not exist in the repository, can not switch"
+  fi
+
+  if ask "Do you want to switch from branch \"$CURRENT_BRANCH\" to branch \"$OPTARG\"?" Y; then
+    print "Switching to branch \"$OPTARG\"..."
+    CURRENT_BRANCH=$OPTARG
+    switch_branch
+  else
+    cancel "Stopping update - please run without -b parameter to do a regular update"
+  fi
 else
-  if ask "A new version of Open Rowing Monitor is available. Do you want to update?" Y; then
-    print "Stopping Open Rowing Monitor..."
-    sudo systemctl stop openrowingmonitor
+  print "Checking for new version..."
+  REMOTE_VERSION=$(git ls-remote $GIT_REMOTE refs/heads/$CURRENT_BRANCH | awk '{print $1;}')
 
-    print "Fetching new version of Open Rowing Monitor..."
-    sudo git fetch --force origin
-    sudo git fetch --force --tags origin
-    sudo git reset --hard origin/main
-
-    print "Updating Runtime dependencies..."
-    sudo npm install
-    sudo npm run build
-
-    print "Starting Open Rowing Monitor..."
-    sudo systemctl start openrowingmonitor
-
-    print
-    print "Update complete, Open Rowing Monitor now has the following exciting new features:"
-    git log --reverse --pretty=format:"- %s" $LOCAL_VERSION..HEAD
+  if [ "$LOCAL_VERSION" = "$REMOTE_VERSION" ]; then
+      print "You are using the latest version of Open Rowing Monitor from branch \"$CURRENT_BRANCH\"."
+  else
+    if ask "A new version of Open Rowing Monitor is available from branch \"$CURRENT_BRANCH\". Do you want to update?" Y; then
+      update_branch
+    fi
   fi
 fi
 
