@@ -221,7 +221,7 @@ function createRowingEngine (rowerSettings) {
     // We display the AVERAGE speed in the display, NOT the top speed of the stroke
     linearCycleVelocity = calculateLinearVelocity()
     averagedCyclePower = calculateCyclePower()
-    
+
     // Next, we start the "Recovery" Phase
     log.debug(`*** RECOVERY phase started at time: ${totalTime.toFixed(4)} sec, impuls number ${totalNumberOfImpulses}`)
     recoveryPhaseStartTime = totalTime - flankDetector.timeToBeginOfFlank()
@@ -269,9 +269,9 @@ function createRowingEngine (rowerSettings) {
   function calculateLinearVelocity () {
     // Here we calculate the AVERAGE speed for the displays, NOT the topspeed of the stroke
     let tempLinearVelocity = linearCycleVelocity
-    if (drivePhaseLength > rowerSettings.minimumDriveTime && cycleLenght > minimumCycleLenght) {
+    if (drivePhaseLength > rowerSettings.minimumDriveTime && cycleLength > minimumCycleLength) {
       // There is no division by zero and the data data is plausible
-      tempLinearCycleVelocity = Math.pow((dragFactor / rowerSettings.magicConstant), 1.0 / 3.0) * ((recoveryPhaseAngularDisplacement + drivePhaseAngularDisplacement) / cycleLength)
+      tempLinearVelocity = Math.pow((dragFactor / rowerSettings.magicConstant), 1.0 / 3.0) * ((recoveryPhaseAngularDisplacement + drivePhaseAngularDisplacement) / cycleLength)
     } else {
       log.error(`Time: ${totalTime.toFixed(4)} sec, impuls ${totalNumberOfImpulses}: cycle length was not plausible, CycleLength = ${cycleLength} sec`)
     }
@@ -281,7 +281,7 @@ function createRowingEngine (rowerSettings) {
   function calculateCyclePower () {
     // Here we calculate the AVERAGE power for the displays, NOT the top power of the stroke
     let cyclePower = averagedCyclePower
-    if (drivePhaseLength > rowerSettings.minimumDriveTime && cycleLenght > minimumCycleLenght) {
+    if (drivePhaseLength > rowerSettings.minimumDriveTime && cycleLength > minimumCycleLength) {
       // There is no division by zero and the data data is plausible
       cyclePower = dragFactor * Math.pow((recoveryPhaseAngularDisplacement + drivePhaseAngularDisplacement) / cycleLength, 3.0)
     } else {
