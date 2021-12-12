@@ -3,7 +3,9 @@
 This guide roughly explains how to set up the hardware.
 
 ## Requirements
+
 The WRX700 set-up is known to work on the following set-up:
+
 * A Raspberry Pi that supports Bluetooth Low Energy. Probably this also runs on other devices.
   * Raspberry Pi Zero W or WH
   * Raspberry Pi 3 Model A+, B or B+
