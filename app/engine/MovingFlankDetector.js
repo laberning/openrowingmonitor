@@ -22,7 +22,9 @@ function createMovingFlankDetector (rowerSettings) {
   const angularAcceleration = new Array(rowerSettings.flankLength + 1)
   angularAcceleration.fill(0)
   const movingAverage = createMovingAverager(rowerSettings.smoothing, rowerSettings.maximumTimeBetweenImpulses)
-
+  let numberOfSequentialCorrections = 0
+  const maxNumberOfSequentialCorrections = (rowerSettings.smoothing >= 2 ? rowerSettings.smoothing : 2)
+  
   function pushValue (dataPoint) {
     // add the new dataPoint to the array, we have to move data points starting at the oldest ones
     let i = rowerSettings.flankLength
@@ -47,10 +49,19 @@ function createMovingFlankDetector (rowerSettings) {
     // lets test if pushing this value would fit the curve we are looking for
     movingAverage.pushValue(dataPoint)
 
-    if (movingAverage.getAverage() < (rowerSettings.maximumDownwardChange * cleanDataPoints[1]) || movingAverage.getAverage() > (rowerSettings.maximumUpwardChange * cleanDataPoints[1])) {
-      // impulses are outside plausible ranges, so we assume it is close to the previous one
-      log.debug(`noise filter corrected currentDt, ${dataPoint} was too much of an accelleration/decelleration with respect to ${movingAverage.getAverage()}, changed to previous value, ${cleanDataPoints[1]}`)
-      movingAverage.replaceLastPushedValue(cleanDataPoints[1])
+    if (movingAverage.getAverage() > (rowerSettings.maximumDownwardChange * cleanDataPoints[1]) && movingAverage.getAverage() < (rowerSettings.maximumUpwardChange * cleanDataPoints[1])) {
+      numberOfSequentialCorrections = 0
+    } else {
+      // impulses are outside plausible ranges
+      if (numberOfSequentialCorrections <= maxnumberOfSequentialCorrections) {
+        // We haven't made too many corrections, so we assume it is close to the previous one
+        log.debug(`noise filter corrected currentDt, ${dataPoint} was too much of an accelleration/decelleration with respect to ${movingAverage.getAverage()}, changed to previous value, ${cleanDataPoints[1]}`)
+        movingAverage.replaceLastPushedValue(cleanDataPoints[1])
+      } else {
+        // We made too may corrections (typically, one currentDt is too long, the next is to short or vice versa), let's allow the algorithm to pick it up otherwise we might get stuck
+        log.debug(`noise filter wanted to corrected currentDt (${dataPoint} sec), but it had already made ${numberOfSequentialCorrections} corrections, filter temporarily disabled`)
+      }
+      numberOfSequentialCorrections = numberOfSequentialCorrections + 1
     }
 
     // determine the moving average, to reduce noise
