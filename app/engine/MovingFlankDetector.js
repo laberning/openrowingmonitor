@@ -24,7 +24,7 @@ function createMovingFlankDetector (rowerSettings) {
   const movingAverage = createMovingAverager(rowerSettings.smoothing, rowerSettings.maximumTimeBetweenImpulses)
   let numberOfSequentialCorrections = 0
   const maxNumberOfSequentialCorrections = (rowerSettings.smoothing >= 2 ? rowerSettings.smoothing : 2)
-  
+
   function pushValue (dataPoint) {
     // add the new dataPoint to the array, we have to move data points starting at the oldest ones
     let i = rowerSettings.flankLength
@@ -53,7 +53,7 @@ function createMovingFlankDetector (rowerSettings) {
       numberOfSequentialCorrections = 0
     } else {
       // impulses are outside plausible ranges
-      if (numberOfSequentialCorrections <= maxnumberOfSequentialCorrections) {
+      if (numberOfSequentialCorrections <= maxNumberOfSequentialCorrections) {
         // We haven't made too many corrections, so we assume it is close to the previous one
         log.debug(`noise filter corrected currentDt, ${dataPoint} was too much of an accelleration/decelleration with respect to ${movingAverage.getAverage()}, changed to previous value, ${cleanDataPoints[1]}`)
         movingAverage.replaceLastPushedValue(cleanDataPoints[1])
