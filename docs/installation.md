@@ -82,6 +82,7 @@ How to connect this to your rowing machine is specific to your device. You need 
 *Connecting the reed sensor*
 
 For specific hardware-setup, please look at:
+
 * [Sportstech WRX700](https://github.com/laberning/openrowingmonitor/blob/Autumn_Cleanup/docs/Physically_Installing_The_WRX700.md)
 
 If your machine isn't listed and does not have something like this or if the sensor is not accessible, you can still build something similar quite easily. Some ideas on what to use:
