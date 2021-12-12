@@ -76,12 +76,15 @@ The internal pull-up can be enabled as described [here](https://www.raspberrypi.
 gpio=17=pu,ip
 ```
 
-How to connect this to your rowing machine is specific to your device. You need some kind of mechanism to convert the rotation of the flywheel into impulses. The WRX700 has a reed sensor for this built-in so hooking it up is as simple as connecting the cables. This sensor had one magnet on the wheel, which gives one impulse per rotation. I simply plugged a second magnet to the opposite side of the wheel to double the resolution for more precision.
+How to connect this to your rowing machine is specific to your device. You need some kind of mechanism to convert the rotation of the flywheel into impulses. Some rowers have a reed sensor for this built-in so hooking it up is as simple as connecting the cables. Such sensor has one or more magnet on the wheel, which give impulses per rotation. If this is the case, you can simply plug in a second magnet to the opposite side of the wheel to double the resolution for more precision.
 
 ![Connecting the reed sensor](img/raspberrypi_reedsensor_wiring.jpg)
 *Connecting the reed sensor*
 
-If your machine does not have something like this or if the sensor is not accessible, you can still build something similar quite easily. Some ideas on what to use:
+For specific hardware-setup, please look at:
+* [Sportstech WRX700](https://github.com/laberning/openrowingmonitor/blob/Autumn_Cleanup/docs/Physically_Installing_The_WRX700.md)
+
+If your machine isn't listed and does not have something like this or if the sensor is not accessible, you can still build something similar quite easily. Some ideas on what to use:
 
 * Reed sensor (i.e. of an old bike tachometer)
 * PAS sensor (i.e. from an E-bike)
