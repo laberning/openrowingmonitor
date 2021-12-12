@@ -1,4 +1,5 @@
 # The physics behind Open Rowing Monitor
+
 <!-- markdownlint-disable no-inline-html -->
 In this document we explain the physics behind the OpenRowing Monitor, to allow for independent review and software maintenance. This work wouldn't have been possible without some solid physics, described by some people with real knowledge of the subject matter. Please note that any errors in our implementation probably is on us, not them. When appropriate, we link to these sources. When possible, we also link to the source code.
 
@@ -68,9 +69,11 @@ As the rowing cycle always follows this fixed schema, Open Rowing Monitor models
 *Finite state machine of rowing cycle*
 
 ### Basic stroke detection
+
 Given that the *Angular Displacement* between impulses is fixed, we can deduct some things simply from looking at the subsequent *time between impulses*, *currentDt*. When the *currentDt* shortens, *Angular Velocity* is increasing, and thus the flywheel is accelerating (i.e. we are in the drive phase of the rowing cycle). When times between subsequent impulses become longer, the *Angular Velocity* is decreasing and thus the flywheel is decelerating (i.e. we are the recovery phase of the rowing cycle). This is the robust implementation of a stroke (implemented in [MovingFlankDetector's implementation of isFlywheelPowered and isFlywheelUnpowered for naturalDeceleration = 0](https://github.com/laberning/openrowingmonitor/blob/main/app/engine/MovingFlankDetector.js)), which is similar to the implementation used by industry leaders like Concept2. Concept2 are generally considered the golden standard when it comes to metrics, and they state (see [this Concept2 FAQ](https://www.concept2.com/service/software/ergdata/faqs): 'Drive time is measured by the amount of time the flywheel is accelerating. Note: It is possible that the athlete may pull on the handle and not accelerate the flywheel due to no energy being put into it and therefore no effective effort. This portion of the handle pull is not measured.')
 
 ### Advanced stroke detection
+
 Looking at the average curve of an actual rowing machine (this example is based on averaging 300 strokes), we see the following:
 
 ![Average curves of a rowing machine](img/physics/currentdtandacceleration.png)
@@ -235,7 +238,8 @@ Effectively, Open Rowing Monitor can use two different methods of stroke detecti
 Our practical experiments show that assuming the recovery-phase started too early doesn't affect measurements per se. In theory, the calculation of speed and power do not depend directly on phase detection, they do depend on the total number of impulses and the drag factor. It is in fact the automatic update of the drag factor that is dependent on the correct detection of the stroke. The drag factor can be pinned down if needed by setting *autoAdjustDragFactor* to "false". If set to true, it might affect measurements of both distance and power, where we will discuss the knock-on effects.
 
 ### Effects on the automatically calculated drag factor
-The most important measurement that is affected by stroke detection errors is the calculation of the drag factor. 
+
+The most important measurement that is affected by stroke detection errors is the calculation of the drag factor.
 
 Our robust implementation of the drag factor is:
 
