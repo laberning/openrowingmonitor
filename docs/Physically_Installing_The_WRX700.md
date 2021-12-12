@@ -31,10 +31,4 @@ How to connect this to your rowing machine is specific to your device. You need 
 ![Connecting the reed sensor](img/raspberrypi_reedsensor_wiring.jpg)
 *Connecting the reed sensor*
 
-If your machine does not have something like this or if the sensor is not accessible, you can still build something similar quite easily. Some ideas on what to use:
-
-* Reed sensor (i.e. of an old bike tachometer)
-* PAS sensor (i.e. from an E-bike)
-* Optical chopper wheel
-
 You should now adjust the rower specific parameters in `config/config.js` to suit your rowing machine. Have a look at [config/default.config.js](../config/default.config.js) to see what config parameters are available.
