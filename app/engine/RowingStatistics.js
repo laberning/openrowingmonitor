@@ -24,7 +24,7 @@ function createRowingStatistics (config) {
   const powerRatioAverager = createWeightedAverager(numOfDataPointsForAveraging)
   const caloriesAveragerMinute = createMovingIntervalAverager(60)
   const caloriesAveragerHour = createMovingIntervalAverager(60 * 60)
-  let trainingRunning = false
+  let sessionStatus = 'waitingForStart'
   let rowingPausedTimer
   let heartrateResetTimer
   let distanceTotal = 0.0
@@ -51,8 +51,6 @@ function createRowingStatistics (config) {
   }
 
   function handleStrokeEnd (stroke) {
-    if (!trainingRunning) startTraining()
-
     // if we do not get a stroke for timeBetweenStrokesBeforePause milliseconds we treat this as a rowing pause
     if (rowingPausedTimer)clearInterval(rowingPausedTimer)
     rowingPausedTimer = setTimeout(() => pauseRowing(), timeBetweenStrokesBeforePause)
@@ -85,6 +83,7 @@ function createRowingStatistics (config) {
   // initiated by the rowing engine in case an impulse was not considered
   // because it was too large
   function handlePause (duration) {
+    sessionStatus = 'paused'
     caloriesAveragerMinute.pushValue(0, duration)
     caloriesAveragerHour.pushValue(0, duration)
     emitter.emit('rowingPaused')
@@ -94,6 +93,7 @@ function createRowingStatistics (config) {
   function handleRecoveryEnd (stroke) {
     // todo: we need a better mechanism to communicate strokeState updates
     // this is an initial hacky attempt to see if we can use it for the C2-pm5 protocol
+    if (sessionStatus !== 'rowing') startTraining()
     durationTotal = stroke.timeSinceStart
     powerAverager.pushValue(stroke.power)
     speedAverager.pushValue(stroke.speed)
@@ -137,8 +137,9 @@ function createRowingStatistics (config) {
     // todo: due to sanitization we currently do not use a consistent time throughout the engine
     // We will rework this section to use both absolute and sanitized time in the appropriate places.
     // We will also polish up the events for the recovery and drive phase, so we get clean complete strokes from the first stroke onwards.
-    const averagedStrokeTime = strokeAverager.getAverage() > minimumStrokeTime && strokeAverager.getAverage() < maximumStrokeTime && lastStrokeSpeed > 0 ? strokeAverager.getAverage() : 0 // seconds
+    const averagedStrokeTime = strokeAverager.getAverage() > minimumStrokeTime && strokeAverager.getAverage() < maximumStrokeTime && lastStrokeSpeed > 0  && sessionStatus === 'rowing' ? strokeAverager.getAverage() : 0 // seconds
     return {
+      sessionStatus,
       durationTotal,
       durationTotalFormatted: secondsToTimeString(durationTotal),
       strokesTotal,
@@ -147,14 +148,14 @@ function createRowingStatistics (config) {
       caloriesPerMinute: caloriesAveragerMinute.getAverage() > 0 ? caloriesAveragerMinute.getAverage() : 0,
       caloriesPerHour: caloriesAveragerHour.getAverage() > 0 ? caloriesAveragerHour.getAverage() : 0,
       strokeTime: lastStrokeDuration, // seconds
-      distance: lastStrokeDistance > 0 && lastStrokeSpeed > 0 ? lastStrokeDistance : 0, // meters
-      power: powerAverager.getAverage() > 0 && lastStrokeSpeed > 0 ? powerAverager.getAverage() : 0, // watts
+      distance: lastStrokeDistance > 0 && lastStrokeSpeed > 0  && sessionStatus === 'rowing' ? lastStrokeDistance : 0, // meters
+      power: powerAverager.getAverage() > 0 && lastStrokeSpeed > 0 && sessionStatus === 'rowing' ? powerAverager.getAverage() : 0, // watts
       split: splitTime, // seconds/500m
       splitFormatted: secondsToTimeString(splitTime),
-      powerRatio: powerRatioAverager.getAverage() > 0 && lastStrokeSpeed > 0 ? powerRatioAverager.getAverage() : 0,
+      powerRatio: powerRatioAverager.getAverage() > 0 && lastStrokeSpeed > 0 && sessionStatus === 'rowing' ? powerRatioAverager.getAverage() : 0,
       instantaneousTorque: instantaneousTorque,
-      strokesPerMinute: averagedStrokeTime !== 0 ? (60.0 / averagedStrokeTime) : 0,
-      speed: speedAverager.getAverage() > 0 && lastStrokeSpeed > 0 ? (speedAverager.getAverage() * 3.6) : 0, // km/h
+      strokesPerMinute: averagedStrokeTime !== 0 && sessionStatus === 'rowing' ? (60.0 / averagedStrokeTime) : 0,
+      speed: speedAverager.getAverage() > 0 && lastStrokeSpeed > 0 && sessionStatus === 'rowing' ? (speedAverager.getAverage() * 3.6) : 0, // km/h
       strokeState: lastStrokeState,
       heartrate,
       heartrateBatteryLevel
@@ -162,11 +163,11 @@ function createRowingStatistics (config) {
   }
 
   function startTraining () {
-    trainingRunning = true
+    sessionStatus = 'rowing'
   }
 
   function stopTraining () {
-    trainingRunning = false
+    sessionStatus = 'stopped'
     if (rowingPausedTimer)clearInterval(rowingPausedTimer)
   }
 
@@ -182,6 +183,7 @@ function createRowingStatistics (config) {
     powerAverager.reset()
     speedAverager.reset()
     powerRatioAverager.reset()
+    sessionStatus = 'waitingForStart'
   }
 
   // clear the metrics in case the user pauses rowing
@@ -191,6 +193,7 @@ function createRowingStatistics (config) {
     speedAverager.reset()
     powerRatioAverager.reset()
     lastStrokeState = 'RECOVERY'
+    sessionStatus = 'paused'
     emitter.emit('rowingPaused')
   }
 
