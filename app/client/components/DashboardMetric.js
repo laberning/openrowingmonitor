@@ -34,9 +34,9 @@ export class DashboardMetric extends AppElement {
         <span class="metric-value">${this.value}</span>
         <span class="metric-unit">${this.unit}</span>
       </div>
-      ${this.batteryLevel
-        ? html`<div id="heartrate-battery-container">${this.batteryIcon}</div>`
-        : ''}
+      ${this.batteryLevel &&
+        html`<div id="heartrate-battery-container">${this.batteryIcon}</div>`
+      }
      `
   }
 
