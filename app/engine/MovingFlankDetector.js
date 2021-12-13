@@ -58,7 +58,7 @@ function createMovingFlankDetector (rowerSettings) {
         log.debug(`noise filter corrected currentDt, ${dataPoint} was too much of an accelleration/decelleration with respect to ${movingAverage.getAverage()}, changed to previous value, ${cleanDataPoints[1]}`)
         movingAverage.replaceLastPushedValue(cleanDataPoints[1])
       } else {
-        // We made too may corrections (typically, one currentDt is too long, the next is to short or vice versa), let's allow the algorithm to pick it up otherwise we might get stuck
+        // We made too many corrections (typically, one currentDt is too long, the next is to short or vice versa), let's allow the algorithm to pick it up otherwise we might get stuck
         log.debug(`noise filter wanted to corrected currentDt (${dataPoint} sec), but it had already made ${numberOfSequentialCorrections} corrections, filter temporarily disabled`)
       }
       numberOfSequentialCorrections = numberOfSequentialCorrections + 1

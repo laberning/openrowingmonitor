@@ -1,18 +1,6 @@
-# Physical installation of Open Rowing Monitor on a Sportstech WRX700
+# Hardware set up of Open Rowing Monitor on a Sportstech WRX700
 
 This guide roughly explains how to set up the hardware.
-
-## Requirements
-
-The WRX700 set-up is known to work on the following set-up:
-
-* A Raspberry Pi that supports Bluetooth Low Energy. Probably this also runs on other devices.
-  * Raspberry Pi Zero W or WH
-  * Raspberry Pi 3 Model A+, B or B+
-  * Raspberry Pi 4 Model B
-* A 4GB SD Card
-* A WRX700 rowing machine (obviously). The WRX700 has a build in reed sensor that you can directly connect to the GPIO pins of the Raspberry Pi
-* Some Dupont cables to connect the GPIO pins to the sensor
 
 After the software installation, basically all that's left to do is hook up your sensor to the GPIO pins of the Raspberry Pi and configure the rowing machine specific parameters of the software.
 
