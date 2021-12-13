@@ -21,4 +21,7 @@ How to connect this to your rowing machine is specific to your device. You need 
 ![Connecting the reed sensor](img/raspberrypi_reedsensor_wiring.jpg)
 *Connecting the reed sensor*
 
-You should now adjust the rower specific parameters in `config/config.js` to suit your rowing machine. Have a look at [config/default.config.js](../config/default.config.js) to see what config parameters are available.
+## Rower Settings
+
+You should now adjust the rower specific parameters in `config/config.js` to suit your rowing machine. Have a look at `config/default.config.js` to see what config parameters are available.
+Also check the [Guide for rower specific settings](rower_settings.md).

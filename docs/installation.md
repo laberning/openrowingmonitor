@@ -94,5 +94,5 @@ If your machine isn't listed and does not have something like this or if the sen
 
 ## Rower Settings
 
-You should now adjust the rower specific parameters in `config/config.js` to suit your rowing machine. Have a look at [config/default.config.js](../config/default.config.js) to see what config parameters are available.
+You should now adjust the rower specific parameters in `config/config.js` to suit your rowing machine. Have a look at `config/default.config.js` to see what config parameters are available.
 Also check the [Guide for rower specific settings](rower_settings.md).
