@@ -137,7 +137,7 @@ function createRowingStatistics (config) {
     // todo: due to sanitization we currently do not use a consistent time throughout the engine
     // We will rework this section to use both absolute and sanitized time in the appropriate places.
     // We will also polish up the events for the recovery and drive phase, so we get clean complete strokes from the first stroke onwards.
-    const averagedStrokeTime = strokeAverager.getAverage() > minimumStrokeTime && strokeAverager.getAverage() < maximumStrokeTime && lastStrokeSpeed > 0  && sessionStatus === 'rowing' ? strokeAverager.getAverage() : 0 // seconds
+    const averagedStrokeTime = strokeAverager.getAverage() > minimumStrokeTime && strokeAverager.getAverage() < maximumStrokeTime && lastStrokeSpeed > 0 && sessionStatus === 'rowing' ? strokeAverager.getAverage() : 0 // seconds
     return {
       sessionStatus,
       durationTotal,
@@ -148,7 +148,7 @@ function createRowingStatistics (config) {
       caloriesPerMinute: caloriesAveragerMinute.getAverage() > 0 ? caloriesAveragerMinute.getAverage() : 0,
       caloriesPerHour: caloriesAveragerHour.getAverage() > 0 ? caloriesAveragerHour.getAverage() : 0,
       strokeTime: lastStrokeDuration, // seconds
-      distance: lastStrokeDistance > 0 && lastStrokeSpeed > 0  && sessionStatus === 'rowing' ? lastStrokeDistance : 0, // meters
+      distance: lastStrokeDistance > 0 && lastStrokeSpeed > 0 && sessionStatus === 'rowing' ? lastStrokeDistance : 0, // meters
       power: powerAverager.getAverage() > 0 && lastStrokeSpeed > 0 && sessionStatus === 'rowing' ? powerAverager.getAverage() : 0, // watts
       split: splitTime, // seconds/500m
       splitFormatted: secondsToTimeString(splitTime),
