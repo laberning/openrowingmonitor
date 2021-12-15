@@ -6,7 +6,6 @@ This is the very minimalistic Backlog for further development of this project.
 
 * validate FTMS with more training applications and harden implementation (i.e. Holofit and Coxswain)
 * add an option to select the damper setting in the Web UI
-* clean up of documentation
 * add some more test cases to the rowing engine
 
 ## Later

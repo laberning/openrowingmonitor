@@ -54,6 +54,7 @@ GIT_REMOTE="https://github.com/laberning/openrowingmonitor.git"
 
 print "This script will set up Open Rowing Monitor on one of the following devices"
 print "  Raspberry Pi Zero W or WH"
+print "  Raspberry Pi Zero 2 W or WH"
 print "  Raspberry Pi 3 Model A+, B or B+"
 print "  Raspberry Pi 4 Model B"
 print
@@ -72,9 +73,9 @@ if [[ $OSID != "raspbian" ]]; then
 fi
 
 VERSION=$(grep -oP '(?<=^VERSION=).+' /etc/os-release | tr -d '"')
-if [[ $VERSION != "10 (buster)" ]]; then
+if [[ $VERSION != "10 (buster)" ]] && [[ $VERSION != "11 (bullseye)" ]]; then
   print
-  print "Warning: So far this install script has only been tested with Raspberry Pi OS 10 (buster)."
+  print "Warning: So far this install script has only been tested with Raspberry Pi OS 10 (buster) and OS 11 (bullseye)."
   if ! ask "You are running Raspberry Pi OS $VERSION, are you sure that you want to continue?" N; then
     exit 1
   fi
@@ -99,7 +100,7 @@ if [[ $HOSTNAME != $TARGET_HOSTNAME ]]; then
 fi
 
 INIT_SHARE=false
-if ask "Do you want to create a samba network share to simplify access to trainings and configuration?" Y; then
+if ask "Do you want to create a samba network share to simplify access to training data and configuration?" Y; then
   INIT_SHARE=true
 fi
 
@@ -122,7 +123,8 @@ then
   print "You are running a system with ARM v6 architecture. Official support for Node.js has been discontinued"
   print "for ARM v6. Installing experimental unofficial build of Node.js..."
 
-  NODEJS_VERSION=v16.11.1
+  # we stick to node 14 as there are problem with WebAssembly on node 16 on the armv6l architecture
+  NODEJS_VERSION=v14.18.2
   sudo rm -rf /opt/nodejs
   sudo mkdir -p /opt/nodejs
   sudo curl https://unofficial-builds.nodejs.org/download/release/$NODEJS_VERSION/node-$NODEJS_VERSION-linux-armv6l.tar.gz | sudo tar -xz --strip 1 -C /opt/nodejs/
