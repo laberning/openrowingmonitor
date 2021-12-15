@@ -97,11 +97,11 @@ There are several key metrics that underpin the performance measurement of a row
 
 * The **Angular Velocity** of the flywheel in Radians/second: in essence the number of (partial) rotations of the flywheel per second. As the *Angular Displacement* is fixed for a specific rowing machine, the *Angular Velocity* is (*angular displacement between impulses*) / (time between impulses);
 
-* The **Angular Acceleration** of the flywheel in Radians/second^2: the acceleration/deceleration of the flywheel;
+* The **Angular Acceleration** of the flywheel (in Radians/second^2): the acceleration/deceleration of the flywheel;
 
-* The *estimated* **Linear Distance** of the boat in Meters: the distance the boat is expected to travel;
+* The *estimated* **Linear Distance** of the boat (in Meters): the distance the boat is expected to travel;
 
-* _estimated_ **Linear Velocity** of the boat in Meters/Second: the speed at which the boat is expected to travel.
+* _estimated_ **Linear Velocity** of the boat (in Meters/Second): the speed at which the boat is expected to travel.
 
 ## Measurements during the recovery phase
 
