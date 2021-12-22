@@ -116,7 +116,7 @@ Although not the first phase in a cycle, it is an important phase as it deducts 
 
 In the recovery phase, the only force exerted on the flywheel is the (air/water/magnetic)resistance. Thus we can calculate the Drag factor of the Flywheel based on the entire phase.
 
-As [[1]](#1) describes in formula 7.2:
+As [[1]](#1) describes in formula 7.2, which is also experimentally verified by Nomath on a Concept 2 [[5]](#5):
 
 > <img src="https://render.githubusercontent.com/render/math?math=k=Id(1/\omega)/dt">
 
@@ -280,3 +280,5 @@ Again, this is a systematic (overestimation) of the power, which will be systema
 <a id="3">[3]</a> Dave Vernooy, "Open Source Ergometer ErgWare" <https://dvernooy.github.io/projects/ergware/>
 
 <a id="4">[4]</a> <https://github.com/dvernooy/ErgWare/blob/master/v0.5/main/main.ino>
+
+<a id="5">[5]</a> Fan blade Physics and a Peek inside C2's Black Box, Nomath <https://www.c2forum.com/viewtopic.php?f=7&t=194719>
