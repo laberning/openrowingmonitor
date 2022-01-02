@@ -59,7 +59,7 @@ update_branch() {
   sudo git reset --hard origin/$CURRENT_BRANCH
 
   print "Updating Runtime dependencies..."
-  sudo npm install
+  sudo npm ci
   sudo npm run build
 
   print "Starting Open Rowing Monitor..."
