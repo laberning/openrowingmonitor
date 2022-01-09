@@ -137,7 +137,7 @@ function createRowingEngine (rowerSettings) {
             // The calculated drag factor is outside the plausible range
             log.info(`Calculated drag factor: ${(currentDragFactor * 1000000).toFixed(2)}, which is too far off the currently used dragfactor of ${movingDragAverage.getAverage() * 1000000}`)
             log.debug(`Time: ${totalTime.toFixed(4)} sec, impuls ${totalNumberOfImpulses}: recoveryStartAngularVelocity = ${recoveryStartAngularVelocity.toFixed(2)} rad/sec, recoveryEndAngularVelocity = ${recoveryEndAngularVelocity.toFixed(2)} rad/sec, recoveryPhaseLength = ${recoveryPhaseLength.toFixed(4)} sec`)
-            if (currentDragFactor < (movingDragAverage.getAverage() * dragFactorMaxDownwardChange) {
+            if (currentDragFactor < (movingDragAverage.getAverage() * dragFactorMaxDownwardChange)) {
               // The current calculated dragfactor makes an abrupt downward change, let's follow the direction, but limit it to the maximum allowed change
               movingDragAverage.pushValue(movingDragAverage.getAverage() * dragFactorMaxDownwardChange)
             } else {
