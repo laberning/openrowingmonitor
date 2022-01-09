@@ -46,9 +46,9 @@ export default class GeneralStatus extends bleno.Characteristic {
       // intervalType: UInt8 will always use 255 (NONE)
       bufferBuilder.writeUInt8(255)
       // workoutState: UInt8 0 WAITTOBEGIN, 1 WORKOUTROW, 10 WORKOUTEND
-      bufferBuilder.writeUInt8(data.sessionStatus === 'rowing' ? 1 : (data.sessionStatus === 'waitingForStart' ? 0 : 10))
+      bufferBuilder.writeUInt8(data.sessionState === 'rowing' ? 1 : (data.sessionState === 'waitingForStart' ? 0 : 10))
       // rowingState: UInt8 0 INACTIVE, 1 ACTIVE
-      bufferBuilder.writeUInt8(data.sessionStatus === 'rowing' ? 1 : 0)
+      bufferBuilder.writeUInt8(data.sessionState === 'rowing' ? 1 : 0)
       // strokeState: UInt8 2 DRIVING, 4 RECOVERY
       bufferBuilder.writeUInt8(data.strokeState === 'DRIVING' ? 2 : 4)
       // totalWorkDistance: UInt24LE in 1 m
