@@ -154,13 +154,8 @@ function createRowingEngine (rowerSettings) {
       currentAngularVelocity = angularDisplacementPerImpulse / currentDt
       currentTorque = rowerSettings.flywheelInertia * ((currentAngularVelocity - previousAngularVelocity) / currentDt) + dragFactor * Math.pow(currentAngularVelocity, 2)
     }
-    if (cycleLength >= minimumCycleLength) {
-      // There is no division by zero and the data data is plausible
-      linearCycleVelocity = Math.pow((dragFactor / rowerSettings.magicConstant), 1.0 / 3.0) * ((recoveryPhaseAngularDisplacement + drivePhaseAngularDisplacement) / cycleLength)
-      averagedCyclePower = dragFactor * Math.pow((recoveryPhaseAngularDisplacement + drivePhaseAngularDisplacement) / cycleLength, 3.0)
-    } else {
-      log.error(`Time: ${totalTime.toFixed(4)} sec, impuls ${totalNumberOfImpulses}: cycle length was not plausible, CycleLength = ${cycleLength} sec`)
-    }
+    linearCycleVelocity = calculateLinearVelocity()
+    averagedCyclePower = calculateCyclePower()
 
     // Next, we start the "Drive" Phase
     log.debug(`*** DRIVE phase started at time: ${totalTime.toFixed(4)} sec, impuls number ${totalNumberOfImpulses}`)
@@ -194,7 +189,7 @@ function createRowingEngine (rowerSettings) {
     if (currentDt > 0) {
       previousAngularVelocity = currentAngularVelocity
       currentAngularVelocity = angularDisplacementPerImpulse / currentDt
-      currentTorque = rowerSettings.flywheelInertia * ((currentAngularVelocity - previousAngularVelocity) / currentDt) + dragFactor * Math.pow(currentAngularVelocity, 2)
+      currentTorque = calculateTorque(currentDt)
     }
     if (workoutHandler) {
       workoutHandler.updateKeyMetrics({
@@ -221,17 +216,11 @@ function createRowingEngine (rowerSettings) {
     if (currentDt > 0) {
       previousAngularVelocity = currentAngularVelocity
       currentAngularVelocity = angularDisplacementPerImpulse / currentDt
-      currentTorque = rowerSettings.flywheelInertia * ((currentAngularVelocity - previousAngularVelocity) / currentDt) + dragFactor * Math.pow(currentAngularVelocity, 2)
+      currentTorque = calculateTorque(currentDt)
     }
     // We display the AVERAGE speed in the display, NOT the top speed of the stroke
-    if (drivePhaseLength > rowerSettings.minimumDriveTime && cycleLength > minimumCycleLength) {
-      // let's prevent division's by zero and make sure data is plausible
-      linearCycleVelocity = Math.pow((dragFactor / rowerSettings.magicConstant), 1.0 / 3.0) * ((drivePhaseAngularDisplacement + recoveryPhaseAngularDisplacement) / cycleLength)
-      // drivePhaseEnergyProduced = rowerSettings.flywheelInertia * ((driveEndAngularVelocity - driveStartAngularVelocity) / drivePhaseLength) * drivePhaseAngularDisplacement + dragFactor * Math.pow(driveEndAngularVelocity, 2) * drivePh$
-      averagedCyclePower = dragFactor * Math.pow((recoveryPhaseAngularDisplacement + drivePhaseAngularDisplacement) / cycleLength, 3.0)
-    } else {
-      log.error(`Time: ${totalTime.toFixed(4)} sec, impuls ${totalNumberOfImpulses}: cycle length was not plausible, drivePhaseLength = ${drivePhaseLength.toFixed(4)} sec, cycleLength = ${cycleLength.toFixed(4)} sec`)
-    }
+    linearCycleVelocity = calculateLinearVelocity()
+    averagedCyclePower = calculateCyclePower()
 
     // Next, we start the "Recovery" Phase
     log.debug(`*** RECOVERY phase started at time: ${totalTime.toFixed(4)} sec, impuls number ${totalNumberOfImpulses}`)
@@ -266,7 +255,7 @@ function createRowingEngine (rowerSettings) {
     if (currentDt > 0) {
       previousAngularVelocity = currentAngularVelocity
       currentAngularVelocity = angularDisplacementPerImpulse / currentDt
-      currentTorque = rowerSettings.flywheelInertia * ((currentAngularVelocity - previousAngularVelocity) / currentDt) + dragFactor * Math.pow(currentAngularVelocity, 2)
+      currentTorque = calculateTorque(currentDt)
     }
     if (workoutHandler) {
       workoutHandler.updateKeyMetrics({
@@ -275,6 +264,40 @@ function createRowingEngine (rowerSettings) {
         instantaneousTorque: currentTorque
       })
     }
+  }
+
+  function calculateLinearVelocity () {
+    // Here we calculate the AVERAGE speed for the displays, NOT the topspeed of the stroke
+    let tempLinearVelocity = linearCycleVelocity
+    if (drivePhaseLength > rowerSettings.minimumDriveTime && cycleLength > minimumCycleLength) {
+      // There is no division by zero and the data data is plausible
+      tempLinearVelocity = Math.pow((dragFactor / rowerSettings.magicConstant), 1.0 / 3.0) * ((recoveryPhaseAngularDisplacement + drivePhaseAngularDisplacement) / cycleLength)
+    } else {
+      log.error(`Time: ${totalTime.toFixed(4)} sec, impuls ${totalNumberOfImpulses}: cycle length was not plausible, CycleLength = ${cycleLength} sec`)
+    }
+    return tempLinearVelocity
+  }
+
+  function calculateCyclePower () {
+    // Here we calculate the AVERAGE power for the displays, NOT the top power of the stroke
+    let cyclePower = averagedCyclePower
+    if (drivePhaseLength > rowerSettings.minimumDriveTime && cycleLength > minimumCycleLength) {
+      // There is no division by zero and the data data is plausible
+      cyclePower = dragFactor * Math.pow((recoveryPhaseAngularDisplacement + drivePhaseAngularDisplacement) / cycleLength, 3.0)
+    } else {
+      log.error(`Time: ${totalTime.toFixed(4)} sec, impuls ${totalNumberOfImpulses}: cycle length was not plausible, CycleLength = ${cycleLength} sec`)
+    }
+    return cyclePower
+  }
+
+  function calculateTorque (currentDt) {
+    let torque = currentTorque
+    if (currentDt > 0) {
+      previousAngularVelocity = currentAngularVelocity
+      currentAngularVelocity = angularDisplacementPerImpulse / currentDt
+      torque = rowerSettings.flywheelInertia * ((currentAngularVelocity - previousAngularVelocity) / currentDt) + dragFactor * Math.pow(currentAngularVelocity, 2)
+    }
+    return torque
   }
 
   function reset () {

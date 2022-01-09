@@ -1,7 +1,7 @@
 # Open Rowing Monitor
 
 <!-- markdownlint-disable-next-line no-inline-html -->
-<img width="200" height="200" align="left" src="./img/openrowingmonitor_icon.png" class="dropcap">
+<img width="200" height="200" align="left" src="img/openrowingmonitor_icon.png" class="dropcap">
 
 A free and open source performance monitor for rowing machines. It upgrades a rowing machine into a smart trainer that can be used with training applications and games.
 
@@ -12,7 +12,7 @@ We suspect it works well with DIY rowing machines like the [Openergo](https://op
 
 ## Features
 
-The following items describe most of the current features, more functionality will be added in the future, check the [Development Roadmap](./backlog.md) if you are curious.
+The following items describe most of the current features, more functionality will be added in the future, check the [Development Roadmap](backlog.md) if you are curious.
 
 ### Rowing Metrics
 
@@ -33,7 +33,7 @@ The web interface visualizes the rowing metrics on any device that can run a web
 If you connect a screen to the Raspberry Pi, then this interface can also be directly shown on the device. The installation script can set up a web browser in kiosk mode that runs on the Raspberry Pi.
 
 <!-- markdownlint-disable-next-line no-inline-html -->
-<img src="./img/openrowingmonitor_frontend.png" width="700"><br clear="left">
+<img src="img/openrowingmonitor_frontend.png" width="700"><br clear="left">
 
 ### Bluetooth Low Energy (BLE)
 
@@ -63,7 +63,7 @@ You will need a Raspberry Pi Zero W, Raspberry Pi Zero 2 W, Raspberry Pi 3 or a 
 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/laberning/openrowingmonitor/HEAD/install/install.sh)"
 ```
 
-Also have a look at the [Detailed Installation Instructions](./installation.md) for more information on the software installation and for instructions on how to connect the rowing machine.
+Also have a look at the [Detailed Installation Instructions](installation.md) for more information on the software installation and for instructions on how to connect the rowing machine.
 
 ## How it all started
 
@@ -77,8 +77,8 @@ This project is already in a very usable stage, but some things are still a bit 
 
 Feel free to leave a message in the [GitHub Discussions](https://github.com/laberning/openrowingmonitor/discussions) if you have any questions or ideas related to this project.
 
-Check the advanced information on the [Physics behind Open Rowing Monitor](./physics_openrowingmonitor.md).
+Check the advanced information on the [Physics behind Open Rowing Monitor](physics_openrowingmonitor.md).
 
-We plan to add more features, here is the [Development Roadmap](./backlog.md).
+We plan to add more features, here is the [Development Roadmap](backlog.md).
 
-This project uses some great work by others, see the [Attribution here](./attribution.md).
+This project uses some great work by others, see the [Attribution here](attribution.md).
