@@ -31,7 +31,7 @@ function createRowingStatistics (config) {
   let durationTotal = 0
   let strokesTotal = 0
   let caloriesTotal = 0.0
-  let heartrate = 0.0
+  let heartrate = 0
   let heartrateBatteryLevel = 0
   let lastStrokeDuration = 0.0
   let instantaneousTorque = 0.0
