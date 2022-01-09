@@ -144,8 +144,8 @@ function createRowingEngine (rowerSettings) {
               // The current calculated dragfactor makes an abrupt upward change, let's follow the direction, but limit it to the maximum allowed change
               movingDragAverage.pushValue(movingDragAverage.getAverage() * dragFactorMaxUpwardChange)
             }
-          dragFactor = movingDragAverage.getAverage()
-          log.debug(`*** Applied drag factor: ${dragFactor * 1000000}`)
+            dragFactor = movingDragAverage.getAverage()
+            log.debug(`*** Applied drag factor: ${dragFactor * 1000000}`)
           }
         } else {
           log.info(`*** Calculated drag factor: ${(currentDragFactor * 1000000).toFixed(2)}`)
