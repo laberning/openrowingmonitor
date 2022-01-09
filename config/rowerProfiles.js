@@ -58,17 +58,29 @@ export default {
     // autoAdjustDragFactor to true (see below).
     dragFactor: 1500,
 
-    // The moment of inertia of the flywheel kg*m^2
-    // A way to measure it is outlined here: https://dvernooy.github.io/projects/ergware/, "Flywheel moment of inertia"
-    // You could also roughly estimate it by just doing some strokes and the comparing the calculated power values for
-    // plausibility. Note that the power also depends on the drag factor (see above).
-    flywheelInertia: 0.5,
-
     // Set this to true, if you want to automatically update the drag factor based on the measured
     // values in the stroke recovery phase. If your rower produces stable damping values, then this could be a good
     // option to dynamically adjust your measurements to the damper setting of your rower.
     // When your machine's power and speed readings are too volatile it is wise to turn it off
     autoAdjustDragFactor: false,
+    
+    // The moment of inertia of the flywheel kg*m^2, which is ONLY relevant when autoAdjustDragFactor is set to true or when you
+    // use Force Curves. Otherwise this value isn't relevant to your rower
+    // A way to measure it is outlined here: https://dvernooy.github.io/projects/ergware/, "Flywheel moment of inertia"
+    // You could also roughly estimate it by just doing some strokes and the comparing the calculated power values for
+    // plausibility. Note that the power also depends on the drag factor (see above).
+    flywheelInertia: 0.5,
+    
+    // If autoAdjustDragFactor is set to true, it will calculate the drag each recovery phase and update it accordingly to calculate speed,
+    // distance, etc.. As this calculation that is prone to noise in the measuremnts, it is wise to apply smoothing to prevent this noise
+    // from throwing off your key metrics. The default value is a running average of the drag factor of 5 strokes
+    dampingConstantSmoothing: 5,
+    
+    // Another setting for when autoAdjustDragFactor is set to true: the maximum allowed change from the current value. Spikes usually imply
+    // measurement errors, so this setting determines the maximum change with respect to the current dragfactor. Please note that this filter
+    // will prevent large changes, but will still move the dragfactor upward/downward to prevent it from being stuck. The value is in maximum
+    // allowed change. The default value of 0.10 implies that the maximum upward/downward change is an increase of the drag with 10%.
+    dampingConstantMaxChange: 0.10,
 
     // A constant that is commonly used to convert flywheel revolutions to a rowed distance
     // see here: http://eodg.atm.ox.ac.uk/user/dudhia/rowing/physics/ergometer.html#section9
