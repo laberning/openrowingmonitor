@@ -6,6 +6,7 @@
 */
 
 import { AppElement, html, css } from './AppElement'
+import { APP_STATE } from '../store/appState'
 import { customElement, property } from 'lit/decorators.js'
 import './DashboardMetric'
 import './DashboardActions'
@@ -21,6 +22,9 @@ export class PerformanceDashboard extends AppElement {
   @property({ type: Object })
   metrics
 
+  @property({ type: Object })
+  appState = APP_STATE
+
   render () {
     return html`
       <dashboard-metric .icon=${icon_route} .unit=${this.metrics?.distanceTotal?.unit} .value=${this.metrics?.distanceTotal?.value}></dashboard-metric>
@@ -34,7 +38,7 @@ export class PerformanceDashboard extends AppElement {
         : html`<dashboard-metric .icon=${icon_paddle} unit="total" .value=${this.metrics?.strokesTotal?.value}></dashboard-metric>`}
       <dashboard-metric .icon=${icon_fire} unit="kcal" .value=${this.metrics?.caloriesTotal?.value}></dashboard-metric>
       <dashboard-metric .icon=${icon_clock} .value=${this.metrics?.durationTotalFormatted?.value}></dashboard-metric>
-      <dashboard-actions .peripheralMode=${this.metrics?.peripheralMode?.value}></dashboard-actions>
+      <dashboard-actions .appState=${this.appState} .peripheralMode=${this.metrics?.peripheralMode?.value}></dashboard-actions>
     `
   }
 }

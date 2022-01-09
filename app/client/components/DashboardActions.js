@@ -28,10 +28,11 @@ export class DashboardActions extends AppElement {
         <div id="windowed-icon">${icon_compress}</div>
       </button>
       <button @click=${this.close} id="close-button">${icon_poweroff}</button>
-      <button @lick=${this.switchPeripheralMode}>${icon_bluetooth}</button>
-      <div class="metric-unit">${this.peripheralMode}</div>
+      <button @click=${this.switchPeripheralMode}>${icon_bluetooth}</button>
+      <div class="metric-unit">${this.appState.peripheralMode}</div>
      `
   }
+  //      <div class="metric-unit">${this.peripheralMode}</div>
 
   toggleFullscreen () {
     const fullscreenElement = document.getElementsByTagName('web-app')[0]
@@ -54,6 +55,9 @@ export class DashboardActions extends AppElement {
   }
 
   switchPeripheralMode () {
-    window.app.switchPeripheralMode()
+    // window.app.switchPeripheralMode()
+    // todo: this is just a test property to see if the concept works...
+    this.appState.peripheralMode = 'PM5'
+    this.updateState()
   }
 }

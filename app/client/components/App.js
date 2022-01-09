@@ -6,8 +6,9 @@
 */
 
 import { AppElement, html, css } from './AppElement'
-import { customElement } from 'lit/decorators.js'
-import { createApp } from '../lib/network.js'
+import { APP_STATE } from '../store/appState'
+import { customElement, state } from 'lit/decorators.js'
+import { createApp } from '../lib/network'
 import './PerformanceDashboard'
 
 @customElement('web-app')
@@ -17,11 +18,22 @@ export class App extends AppElement {
      `
   }
 
+  @state()
+  globalAppState = APP_STATE
+
   constructor () {
     super()
-    this.app = createApp()
+    this.app = createApp(this.globalAppState)
     window.app = this.app
     this.app.setMetricsCallback(metrics => this.metricsUpdated(metrics))
+
+    // this is how we implement changes to the global state:
+    // once any child component sends this CustomEvent we update the global state according
+    // to the changes that were passed to us
+    this.addEventListener('app-state-changed', (event) => {
+      const newState = event.detail
+      this.globalAppState = newState
+    })
   }
 
   static properties = {
@@ -30,7 +42,10 @@ export class App extends AppElement {
 
   render () {
     return html`
-      <performance-dashboard .metrics=${this.metrics}></performance-dashboard>
+      <performance-dashboard
+        .appState=${this.globalAppState}
+        .metrics=${this.metrics}
+      ></performance-dashboard>
     `
   }
 
