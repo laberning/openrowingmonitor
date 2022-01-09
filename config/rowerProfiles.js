@@ -63,19 +63,19 @@ export default {
     // option to dynamically adjust your measurements to the damper setting of your rower.
     // When your machine's power and speed readings are too volatile it is wise to turn it off
     autoAdjustDragFactor: false,
-    
+
     // The moment of inertia of the flywheel kg*m^2, which is ONLY relevant when autoAdjustDragFactor is set to true or when you
     // use Force Curves. Otherwise this value isn't relevant to your rower
     // A way to measure it is outlined here: https://dvernooy.github.io/projects/ergware/, "Flywheel moment of inertia"
     // You could also roughly estimate it by just doing some strokes and the comparing the calculated power values for
     // plausibility. Note that the power also depends on the drag factor (see above).
     flywheelInertia: 0.5,
-    
+
     // If autoAdjustDragFactor is set to true, it will calculate the drag each recovery phase and update it accordingly to calculate speed,
     // distance, etc.. As this calculation that is prone to noise in the measuremnts, it is wise to apply smoothing to prevent this noise
     // from throwing off your key metrics. The default value is a running average of the drag factor of 5 strokes
     dampingConstantSmoothing: 5,
-    
+
     // Another setting for when autoAdjustDragFactor is set to true: the maximum allowed change from the current value. Spikes usually imply
     // measurement errors, so this setting determines the maximum change with respect to the current dragfactor. Please note that this filter
     // will prevent large changes, but will still move the dragfactor upward/downward to prevent it from being stuck. The value is in maximum
