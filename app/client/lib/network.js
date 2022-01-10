@@ -109,7 +109,6 @@ export function createApp () {
     // that would pop up different warnings in the browser (and also prevents fullscreen via
     // a home screen icon so it can show these warnings). Okay, enough ranting :-)
     // In this case we use the good old hacky way of keeping the screen on via a hidden video.
-    // eslint-disable-next-line no-undef
     const noSleep = new NoSleep()
     document.addEventListener('click', function enableNoSleep () {
       document.removeEventListener('click', enableNoSleep, false)
