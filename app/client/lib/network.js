@@ -125,13 +125,15 @@ export function createApp () {
     }
   }
 
-  function reset () {
-    resetFields()
-    if (socket)socket.send(JSON.stringify({ command: 'reset' }))
-  }
-
-  function switchPeripheralMode () {
-    if (socket)socket.send(JSON.stringify({ command: 'switchPeripheralMode' }))
+  function handleAction (action) {
+    if (action.command === 'switchPeripheralMode') {
+      if (socket)socket.send(JSON.stringify({ command: 'switchPeripheralMode' }))
+    } else if (action.command === 'reset') {
+      resetFields()
+      if (socket)socket.send(JSON.stringify({ command: 'reset' }))
+    } else {
+      console.error('no handler defined for action', action)
+    }
   }
 
   function setMetricsCallback (callback) {
@@ -142,8 +144,7 @@ export function createApp () {
   }
 
   return {
-    reset,
-    switchPeripheralMode,
+    handleAction,
     metrics,
     setMetricsCallback
   }

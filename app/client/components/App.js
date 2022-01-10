@@ -30,9 +30,13 @@ export class App extends AppElement {
     // this is how we implement changes to the global state:
     // once any child component sends this CustomEvent we update the global state according
     // to the changes that were passed to us
-    this.addEventListener('app-state-changed', (event) => {
+    this.addEventListener('appStateChanged', (event) => {
       const newState = event.detail
       this.globalAppState = newState
+    })
+
+    this.addEventListener('triggerAction', (event) => {
+      this.app.handleAction(event.detail)
     })
   }
 

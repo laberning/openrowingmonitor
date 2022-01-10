@@ -49,15 +49,14 @@ export class DashboardActions extends AppElement {
     window.close()
   }
 
-  // todo: should use events instead of communicating via a global app object
   reset () {
-    window.app.reset()
+    this.sendEvent('triggerAction', { command: 'reset' })
   }
 
   switchPeripheralMode () {
-    // window.app.switchPeripheralMode()
     // todo: this is just a test property to see if the concept works...
-    this.appState.peripheralMode = 'PM5'
-    this.updateState()
+    // this.appState.peripheralMode = 'PM5'
+    // this.updateState()
+    this.sendEvent('triggerAction', { command: 'switchPeripheralMode' })
   }
 }
