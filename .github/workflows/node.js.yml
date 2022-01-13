@@ -33,7 +33,7 @@ jobs:
         run: |
           sudo apt -qq update
           sudo apt install -y bluetooth bluez libbluetooth-dev libudev-dev
-        run: npm ci
+          npm ci
 
       - name: Build application
         run: npm run build --if-present
