@@ -19,7 +19,7 @@ export class AppElement extends LitElement {
   // ..and state changes are send back to the root component of the app by dispatching
   // a CustomEvent
   updateState () {
-    this.sendEvent('appStateChanged', { ...this.appState })
+    this.sendEvent('appStateChanged', this.appState)
   }
 
   // a helper to dispatch events to the parent components

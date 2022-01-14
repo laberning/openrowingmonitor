@@ -6,7 +6,7 @@
 */
 
 import { AppElement, html, css } from './AppElement'
-import { customElement, property } from 'lit/decorators.js'
+import { customElement } from 'lit/decorators.js'
 import { icon_undo, icon_expand, icon_compress, icon_poweroff, icon_bluetooth } from '../lib/icons'
 
 @customElement('dashboard-actions')
@@ -16,23 +16,37 @@ export class DashboardActions extends AppElement {
     `
   }
 
-  @property({ type: String })
-  peripheralMode = ''
-
   render () {
     return html`
       <button @click=${this.reset}>${icon_undo}</button>
-      <!-- todo: hide in standalone mode -->
-      <button @click=${this.toggleFullscreen}>
-        <div id="fullscreen-icon">${icon_expand}</div>
-        <div id="windowed-icon">${icon_compress}</div>
-      </button>
-      <button @click=${this.close} id="close-button">${icon_poweroff}</button>
+      ${this.renderOptionalButtons()}
       <button @click=${this.switchPeripheralMode}>${icon_bluetooth}</button>
-      <div class="metric-unit">${this.appState.peripheralMode}</div>
+      <div class="metric-unit">${this.appState?.metrics?.peripheralMode?.value}</div>
      `
   }
-  //      <div class="metric-unit">${this.peripheralMode}</div>
+
+  renderOptionalButtons () {
+    const buttons = []
+    // changing to fullscreen mode only makes sence when the app is openend in a regular
+    // webbrowser (kiosk and standalone mode are always in fullscreen view)
+    if (this.appState.appMode === '') {
+      buttons.push(html`
+      <button @click=${this.toggleFullscreen}>
+          <div id="fullscreen-icon">${icon_expand}</div>
+          <div id="windowed-icon">${icon_compress}</div>
+      </button>
+    `)
+    }
+    // a shutdown button only makes sence when the app is openend as app on a mobile
+    // device. at some point we might also think of using this to power down the raspi
+    // when we are running in kiosk mode
+    if (this.appState.appMode === 'STANDALONE') {
+      buttons.push(html`
+        <button @click=${this.close} id="close-button">${icon_poweroff}</button>
+      `)
+    }
+    return buttons
+  }
 
   toggleFullscreen () {
     const fullscreenElement = document.getElementsByTagName('web-app')[0]
@@ -54,9 +68,6 @@ export class DashboardActions extends AppElement {
   }
 
   switchPeripheralMode () {
-    // todo: this is just a test property to see if the concept works...
-    // this.appState.peripheralMode = 'PM5'
-    // this.updateState()
     this.sendEvent('triggerAction', { command: 'switchPeripheralMode' })
   }
 }

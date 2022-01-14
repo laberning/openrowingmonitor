@@ -6,6 +6,10 @@
 */
 
 export const APP_STATE = {
-  // todo: this is just a test property to see if the concept works...
-  peripheralMode: 'FTMSROWER'
+  // currently can be STANDALONE (Mobile Home Screen App), KIOSK (Raspberry Pi deployment) or '' (default)
+  appMode: '',
+  // todo: this is currently embedded into the metrics object, but should probably be extracted
+  peripheralMode: 'FTMSROWER',
+  // contains all the rowing metrics that are delivered from the backend
+  metrics: {}
 }
