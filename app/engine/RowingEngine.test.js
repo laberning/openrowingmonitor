@@ -17,7 +17,7 @@ log.setLevel('warn')
 const createWorkoutEvaluator = function () {
   const strokes = []
 
-  function handleStrokeEnd (stroke) {
+  function handleDriveEnd (stroke) {
     strokes.push(stroke)
     log.info(`stroke: ${strokes.length}, power: ${Math.round(stroke.power)}w, duration: ${stroke.duration.toFixed(2)}s, ` +
     ` drivePhase: ${stroke.durationDrivePhase.toFixed(2)}s, distance: ${stroke.distance.toFixed(2)}m`)
@@ -42,7 +42,7 @@ const createWorkoutEvaluator = function () {
   }
 
   return {
-    handleStrokeEnd,
+    handleDriveEnd,
     handleRecoveryEnd,
     updateKeyMetrics,
     handlePause,
