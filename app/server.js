@@ -78,19 +78,21 @@ const rowingStatistics = createRowingStatistics(config)
 rowingEngine.notify(rowingStatistics)
 const workoutRecorder = createWorkoutRecorder()
 
-rowingStatistics.on('strokeFinished', (metrics) => {
+rowingStatistics.on('driveFinished', (metrics) => {
+  webServer.notifyClients(metrics)
+  peripheralManager.notifyMetrics('strokeStateChanged', metrics)
+})
+
+rowingStatistics.on('recoveryFinished', (metrics) => {
   log.info(`stroke: ${metrics.strokesTotal}, dur: ${metrics.strokeTime.toFixed(2)}s, power: ${Math.round(metrics.power)}w` +
   `, split: ${metrics.splitFormatted}, ratio: ${metrics.powerRatio.toFixed(2)}, dist: ${metrics.distanceTotal.toFixed(1)}m` +
   `, cal: ${metrics.caloriesTotal.toFixed(1)}kcal, SPM: ${metrics.strokesPerMinute.toFixed(1)}, speed: ${metrics.speed.toFixed(2)}km/h` +
   `, cal/hour: ${metrics.caloriesPerHour.toFixed(1)}kcal, cal/minute: ${metrics.caloriesPerMinute.toFixed(1)}kcal`)
   webServer.notifyClients(metrics)
   peripheralManager.notifyMetrics('strokeFinished', metrics)
-  workoutRecorder.recordStroke(metrics)
-})
-
-rowingStatistics.on('recoveryFinished', (metrics) => {
-  webServer.notifyClients(metrics)
-  peripheralManager.notifyMetrics('strokeStateChanged', metrics)
+  if (metrics.sessionStatus === 'rowing' && metrics.strokesTotal > 0) {
+    workoutRecorder.recordStroke(metrics)
+  }
 })
 
 rowingStatistics.on('metricsUpdate', (metrics) => {
