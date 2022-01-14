@@ -19,23 +19,23 @@ const log = loglevel.getLogger('RowingEngine')
 function createRowingEngine (rowerSettings) {
   let workoutHandler
   const flankDetector = createMovingFlankDetector(rowerSettings)
-  let cyclePhase = 'Drive'
+  let cyclePhase = 'Recovery'
   let totalTime = 0.0
   let totalNumberOfImpulses = 0.0
   let strokeNumber = 0.0
   const angularDisplacementPerImpulse = (2.0 * Math.PI) / rowerSettings.numOfImpulsesPerRevolution
   let drivePhaseStartTime = 0.0
   let drivePhaseStartAngularDisplacement = 0.0
-  let drivePhaseLength = rowerSettings.minimumDriveTime
+  let drivePhaseLength = 2.0 * rowerSettings.minimumDriveTime
   let drivePhaseAngularDisplacement = rowerSettings.numOfImpulsesPerRevolution
   // let driveStartAngularVelocity = 0
   // let driveEndAngularVelocity = angularDisplacementPerImpulse / rowerSettings.minimumTimeBetweenImpulses
   let driveLinearDistance = 0.0
   // let drivePhaseEnergyProduced = 0.0
-  let recoveryPhaseStartTime = 0.0
-  let recoveryPhaseStartAngularDisplacement = 0.0
+  let recoveryPhaseStartTime = -2 * rowerSettings.minimumRecoveryTime // Make sure that the first CurrentDt will trigger a detected stroke by faking a recovery phase that is long enough
+  let recoveryPhaseStartAngularDisplacement = -1.0 * rowerSettings.numOfImpulsesPerRevolution
   let recoveryPhaseAngularDisplacement = rowerSettings.numOfImpulsesPerRevolution
-  let recoveryPhaseLength = rowerSettings.minimumRecoveryTime
+  let recoveryPhaseLength = 2.0 * rowerSettings.minimumRecoveryTime
   let recoveryStartAngularVelocity = angularDisplacementPerImpulse / rowerSettings.minimumTimeBetweenImpulses
   let recoveryEndAngularVelocity = angularDisplacementPerImpulse / rowerSettings.maximumTimeBetweenImpulses
   let recoveryLinearDistance = 0.0
@@ -233,7 +233,7 @@ function createRowingEngine (rowerSettings) {
 
     // Update the metrics
     if (workoutHandler) {
-      workoutHandler.handleStrokeEnd({
+      workoutHandler.handleDriveEnd({
         timeSinceStart: totalTime,
         power: averagedCyclePower,
         duration: cycleLength,
@@ -296,32 +296,35 @@ function createRowingEngine (rowerSettings) {
   }
 
   function reset () {
-    cyclePhase = 'Drive'
+    cyclePhase = 'Recovery'
     totalTime = 0.0
     totalNumberOfImpulses = 0.0
     strokeNumber = 0.0
     drivePhaseStartTime = 0.0
     drivePhaseStartAngularDisplacement = 0.0
-    drivePhaseLength = 0.0
+    drivePhaseLength = 2.0 * rowerSettings.minimumDriveTime
     drivePhaseAngularDisplacement = rowerSettings.numOfImpulsesPerRevolution
     // driveStartAngularVelocity = 0
     // driveEndAngularVelocity = angularDisplacementPerImpulse / rowerSettings.minimumTimeBetweenImpulses
     driveLinearDistance = 0.0
     // drivePhaseEnergyProduced = 0.0
-    recoveryPhaseStartTime = 0.0
-    recoveryPhaseStartAngularDisplacement = 0.0
+    recoveryPhaseStartTime = -2 * rowerSettings.minimumRecoveryTime // Make sure that the first CurrentDt will trigger a detected stroke by faking a recovery phase that is long enough
+    recoveryPhaseStartAngularDisplacement = -1.0 * rowerSettings.numOfImpulsesPerRevolution
     recoveryPhaseAngularDisplacement = rowerSettings.numOfImpulsesPerRevolution
-    recoveryPhaseLength = rowerSettings.minimumRecoveryTime
+    recoveryPhaseLength = 2.0 * rowerSettings.minimumRecoveryTime
     recoveryStartAngularVelocity = angularDisplacementPerImpulse / rowerSettings.minimumTimeBetweenImpulses
     recoveryEndAngularVelocity = angularDisplacementPerImpulse / rowerSettings.maximumTimeBetweenImpulses
     recoveryLinearDistance = 0.0
     currentDragFactor = rowerSettings.dragFactor / 1000000
     movingDragAverage.reset()
     dragFactor = movingDragAverage.getAverage()
-    cycleLength = 0.0
+    cycleLength = minimumCycleLenght
     linearCycleVelocity = 0.0
     totalLinearDistance = 0.0
     averagedCyclePower = 0.0
+    currentTorque = 0.0
+    previousAngularVelocity = 0.0
+    currentAngularVelocity = 0.0
   }
 
   function notify (receiver) {
