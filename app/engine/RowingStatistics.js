@@ -50,8 +50,8 @@ function createRowingStatistics (config) {
     }
   }
 
-  function handleStrokeEnd (stroke) {
-    // if we do not get a stroke for timeBetweenStrokesBeforePause milliseconds we treat this as a rowing pause
+  function handleDriveEnd (stroke) {
+    // if we do not get a drive for timeBetweenStrokesBeforePause milliseconds we treat this as a rowing pause
     if (rowingPausedTimer)clearInterval(rowingPausedTimer)
     rowingPausedTimer = setTimeout(() => pauseRowing(), timeBetweenStrokesBeforePause)
 
