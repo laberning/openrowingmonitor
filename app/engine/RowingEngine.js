@@ -318,7 +318,7 @@ function createRowingEngine (rowerSettings) {
     currentDragFactor = rowerSettings.dragFactor / 1000000
     movingDragAverage.reset()
     dragFactor = movingDragAverage.getAverage()
-    cycleLength = minimumCycleLenght
+    cycleLength = minimumCycleLength
     linearCycleVelocity = 0.0
     totalLinearDistance = 0.0
     averagedCyclePower = 0.0
