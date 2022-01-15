@@ -21,7 +21,7 @@ export class DashboardActions extends AppElement {
       <button @click=${this.reset}>${icon_undo}</button>
       ${this.renderOptionalButtons()}
       <button @click=${this.switchPeripheralMode}>${icon_bluetooth}</button>
-      <div class="metric-unit">${this.appState?.metrics?.peripheralMode?.value}</div>
+      <div class="metric-unit">${this.peripheralMode()}</div>
      `
   }
 
@@ -29,7 +29,7 @@ export class DashboardActions extends AppElement {
     const buttons = []
     // changing to fullscreen mode only makes sence when the app is openend in a regular
     // webbrowser (kiosk and standalone mode are always in fullscreen view)
-    if (this.appState.appMode === '') {
+    if (this.appState.appMode === 'BROWSER') {
       buttons.push(html`
       <button @click=${this.toggleFullscreen}>
           <div id="fullscreen-icon">${icon_expand}</div>
@@ -46,6 +46,17 @@ export class DashboardActions extends AppElement {
       `)
     }
     return buttons
+  }
+
+  peripheralMode () {
+    const value = this.appState?.peripheralMode
+    if (value === 'PM5') {
+      return 'C2 PM5'
+    } else if (value === 'FTMSBIKE') {
+      return 'FTMS Bike'
+    } else {
+      return 'FTMS Rower'
+    }
   }
 
   toggleFullscreen () {

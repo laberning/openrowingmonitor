@@ -7,32 +7,13 @@
 
 import NoSleep from 'nosleep.js'
 
-export function createApp (app) {
-  const fields = ['strokesTotal', 'distanceTotal', 'caloriesTotal', 'power', 'heartrate',
-    'splitFormatted', 'strokesPerMinute', 'durationTotalFormatted', 'peripheralMode']
-  // todo: formatting should happen in the related components (i.e.) PerformanceDashboard
-  const fieldFormatter = {
-    peripheralMode: (value) => {
-      if (value === 'PM5') {
-        return 'C2 PM5'
-      } else if (value === 'FTMSBIKE') {
-        return 'FTMS Bike'
-      } else {
-        return 'FTMS Rower'
-      }
-    },
-    distanceTotal: (value) => value >= 10000
-      ? { value: (value / 1000).toFixed(1), unit: 'km' }
-      : { value: Math.round(value), unit: 'm' },
-    caloriesTotal: (value) => Math.round(value),
-    power: (value) => Math.round(value),
-    strokesPerMinute: (value) => Math.round(value)
-  }
-  const mode = window.location.hash
-  const appMode = mode === '#:standalone:' ? 'STANDALONE' : mode === '#:kiosk:' ? 'KIOSK' : ''
-  app.updateState({ ...app.getState(), appMode })
+const rowingMetricsFields = ['strokesTotal', 'distanceTotal', 'caloriesTotal', 'power', 'heartrate',
+  'heartrateBatteryLevel', 'splitFormatted', 'strokesPerMinute', 'durationTotalFormatted']
 
-  const metrics = {}
+export function createApp (app) {
+  const mode = window.location.hash
+  const appMode = mode === '#:standalone:' ? 'STANDALONE' : mode === '#:kiosk:' ? 'KIOSK' : 'BROWSER'
+  app.updateState({ ...app.getState(), appMode })
 
   let socket
 
@@ -61,34 +42,29 @@ export function createApp (app) {
       }, 1000)
     })
 
+    // todo: we have to use different types of messages to make processing easier
     socket.addEventListener('message', (event) => {
       try {
         const data = JSON.parse(event.data)
 
-        let activeFields = fields
-        // if we are in reset state only update heart rate and peripheral mode
+        let activeFields = rowingMetricsFields
+        // if we are in reset state only update heart rate
         if (data.strokesTotal === 0) {
-          activeFields = ['heartrate', 'peripheralMode']
+          activeFields = ['heartrate']
         }
 
-        // todo: formatting should happen in the related components (i.e.) PerformanceDashboard
-        for (const [key, value] of Object.entries(data)) {
-          if (activeFields.includes(key)) {
-            const valueFormatted = fieldFormatter[key] ? fieldFormatter[key](value) : value
-            if (valueFormatted.value !== undefined && valueFormatted.unit !== undefined) {
-              metrics[key] = {
-                value: valueFormatted.value,
-                unit: valueFormatted.unit
-              }
-            } else {
-              metrics[key] = {
-                value: valueFormatted
-              }
-            }
-          }
-        }
+        const filteredData = Object.keys(data)
+          .filter(key => activeFields.includes(key))
+          .reduce((obj, key) => {
+            obj[key] = data[key]
+            return obj
+          }, {})
 
-        app.updateState({ ...app.getState(), metrics })
+        let updatedState = { ...app.getState(), metrics: filteredData }
+        if (data.peripheralMode) {
+          updatedState = { ...app.getState(), peripheralMode: data.peripheralMode }
+        }
+        app.updateState(updatedState)
       } catch (err) {
         console.log(err)
       }
@@ -111,10 +87,15 @@ export function createApp (app) {
   }
 
   function resetFields () {
-    for (const key of fields.filter((elem) => elem !== 'peripheralMode' && elem !== 'heartrate')) {
-      metrics[key] = { value: '--' }
-    }
-    app.updateState({ ...app.getState(), metrics })
+    const appState = app.getState()
+    // drop all metrics except heartrate
+    appState.metrics = Object.keys(appState.metrics)
+      .filter(key => key === 'heartrate' || key === 'heartrateBatteryLevel')
+      .reduce((obj, key) => {
+        obj[key] = appState.metrics[key]
+        return obj
+      }, {})
+    app.updateState(appState)
   }
 
   function handleAction (action) {

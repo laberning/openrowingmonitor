@@ -47,12 +47,13 @@ export class App extends LitElement {
   // i.e. do something like this.appState = { ..this.appState, ...newState }
   updateState = (newState) => {
     this.appState = { ...newState }
-    // console.table(this.appState.metrics)
   }
 
-  // return a copy of the state to other components to minimize risk of side effects
+  // return a deep copy of the state to other components to minimize risk of side effects
   getState = () => {
-    return { ...this.appState }
+    // todo: could use structuredClone once the browser support is wider
+    // https://developer.mozilla.org/en-US/docs/Web/API/structuredClone
+    return JSON.parse(JSON.stringify(this.appState))
   }
 
   // once we have multiple views, then we would rather reference some kind of router here

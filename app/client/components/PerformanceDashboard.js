@@ -26,7 +26,7 @@ export class PerformanceDashboard extends AppElement {
   appState = APP_STATE
 
   render () {
-    const metrics = this.appState.metrics
+    const metrics = this.calculateFormattedMetrics(this.appState.metrics)
     return html`
       <dashboard-metric .icon=${icon_route} .unit=${metrics?.distanceTotal?.unit} .value=${metrics?.distanceTotal?.value}></dashboard-metric>
       <dashboard-metric .icon=${icon_stopwatch} unit="/500m" .value=${metrics?.splitFormatted?.value}></dashboard-metric>
@@ -41,5 +41,32 @@ export class PerformanceDashboard extends AppElement {
       <dashboard-metric .icon=${icon_clock} .value=${metrics?.durationTotalFormatted?.value}></dashboard-metric>
       <dashboard-actions .appState=${this.appState}></dashboard-actions>
     `
+  }
+
+  calculateFormattedMetrics (metrics) {
+    const fieldFormatter = {
+      distanceTotal: (value) => value >= 10000
+        ? { value: (value / 1000).toFixed(1), unit: 'km' }
+        : { value: Math.round(value), unit: 'm' },
+      caloriesTotal: (value) => Math.round(value),
+      power: (value) => Math.round(value),
+      strokesPerMinute: (value) => Math.round(value)
+    }
+
+    const formattedMetrics = {}
+    for (const [key, value] of Object.entries(metrics)) {
+      const valueFormatted = fieldFormatter[key] ? fieldFormatter[key](value) : value
+      if (valueFormatted.value !== undefined && valueFormatted.unit !== undefined) {
+        formattedMetrics[key] = {
+          value: valueFormatted.value,
+          unit: valueFormatted.unit
+        }
+      } else {
+        formattedMetrics[key] = {
+          value: valueFormatted
+        }
+      }
+    }
+    return formattedMetrics
   }
 }
