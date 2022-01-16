@@ -1,6 +1,6 @@
 {
   "name": "openrowingmonitor",
-  "version": "0.8.0",
+  "version": "0.8.1",
   "description": "A rowing monitor for rowing exercise machines",
   "main": "app/server.js",
   "author": "Lars Berning",
@@ -16,7 +16,8 @@
   "scripts": {
     "lint": "eslint ./app ./config && markdownlint '**/*.md' --ignore node_modules",
     "start": "node app/server.js",
-    "dev": "npm-run-all --parallel start dev:frontend",
+    "dev": "npm-run-all --parallel dev:backend dev:frontend",
+    "dev:backend": "nodemon app/server.js",
     "dev:frontend": "snowpack dev",
     "build": "rollup -c",
     "build:watch": "rollup -cw",
@@ -59,6 +60,7 @@
     "eslint-plugin-wc": "1.3.2",
     "http2-proxy": "5.0.53",
     "markdownlint-cli": "0.30.0",
+    "nodemon": "^2.0.15",
     "npm-run-all": "4.1.5",
     "rollup": "2.63.0",
     "rollup-plugin-summary": "1.3.0",
