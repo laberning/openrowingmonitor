@@ -28,7 +28,7 @@ export class PerformanceDashboard extends AppElement {
   render () {
     const metrics = this.calculateFormattedMetrics(this.appState.metrics)
     return html`
-      <dashboard-metric .icon=${icon_route} .unit=${metrics?.distanceTotal?.unit} .value=${metrics?.distanceTotal?.value}></dashboard-metric>
+      <dashboard-metric .icon=${icon_route} .unit=${metrics?.distanceTotal?.unit || 'm'} .value=${metrics?.distanceTotal?.value}></dashboard-metric>
       <dashboard-metric .icon=${icon_stopwatch} unit="/500m" .value=${metrics?.splitFormatted?.value}></dashboard-metric>
       <dashboard-metric .icon=${icon_bolt} unit="watt" .value=${metrics?.power?.value}></dashboard-metric>
       <dashboard-metric .icon=${icon_paddle} unit="/min" .value=${metrics?.strokesPerMinute?.value}></dashboard-metric>

@@ -6,6 +6,7 @@
 */
 
 import NoSleep from 'nosleep.js'
+import { filterObjectByKeys } from './helper'
 
 const rowingMetricsFields = ['strokesTotal', 'distanceTotal', 'caloriesTotal', 'power', 'heartrate',
   'heartrateBatteryLevel', 'splitFormatted', 'strokesPerMinute', 'durationTotalFormatted']
@@ -42,7 +43,7 @@ export function createApp (app) {
       }, 1000)
     })
 
-    // todo: we have to use different types of messages to make processing easier
+    // todo: we should use different types of messages to make processing easier
     socket.addEventListener('message', (event) => {
       try {
         const data = JSON.parse(event.data)
@@ -50,15 +51,10 @@ export function createApp (app) {
         let activeFields = rowingMetricsFields
         // if we are in reset state only update heart rate
         if (data.strokesTotal === 0) {
-          activeFields = ['heartrate']
+          activeFields = ['heartrate', 'heartrateBatteryLevel']
         }
 
-        const filteredData = Object.keys(data)
-          .filter(key => activeFields.includes(key))
-          .reduce((obj, key) => {
-            obj[key] = data[key]
-            return obj
-          }, {})
+        const filteredData = filterObjectByKeys(data, activeFields)
 
         let updatedState = { ...app.getState(), metrics: filteredData }
         if (data.peripheralMode) {
@@ -89,12 +85,7 @@ export function createApp (app) {
   function resetFields () {
     const appState = app.getState()
     // drop all metrics except heartrate
-    appState.metrics = Object.keys(appState.metrics)
-      .filter(key => key === 'heartrate' || key === 'heartrateBatteryLevel')
-      .reduce((obj, key) => {
-        obj[key] = appState.metrics[key]
-        return obj
-      }, {})
+    appState.metrics = filterObjectByKeys(appState.metrics, ['heartrate', 'heartrateBatteryLevel'])
     app.updateState(appState)
   }
 

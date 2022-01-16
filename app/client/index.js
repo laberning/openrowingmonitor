@@ -36,7 +36,6 @@ export class App extends LitElement {
     })
 
     // notify the app about the triggered action
-    // todo: lets see if this solution sticks...
     this.addEventListener('triggerAction', (event) => {
       this.app.handleAction(event.detail)
     })
@@ -51,7 +50,7 @@ export class App extends LitElement {
 
   // return a deep copy of the state to other components to minimize risk of side effects
   getState = () => {
-    // todo: could use structuredClone once the browser support is wider
+    // could use structuredClone once the browser support is wider
     // https://developer.mozilla.org/en-US/docs/Web/API/structuredClone
     return JSON.parse(JSON.stringify(this.appState))
   }
