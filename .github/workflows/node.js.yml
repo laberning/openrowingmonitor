@@ -4,29 +4,43 @@
 name: Node.js CI
 
 on:
-  - push
-  - pull_request
+  push:
+    branches:
+      - '**'
+  pull_request:
+    branches:
+      - main
+    types:
+      - opened
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
 
     strategy:
       matrix:
-        node-version: [14.x, 16.x, 17.x]
+        node-version: [14.x, 16.x]
 
     steps:
-      - uses: actions/checkout@v2
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
       - name: Use Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v2
         with:
           node-version: ${{ matrix.node-version }}
-      - name: Install system dependencies
+
+      - name: Install dependencies
         run: |
           sudo apt -qq update
           sudo apt install -y bluetooth bluez libbluetooth-dev libudev-dev
-      - run: npm ci
-      - run: npm run build --if-present
-      - run: npm run lint
-      - run: npm test
+          npm ci
+
+      - name: Build application
+        run: npm run build --if-present
+
+      - name: Static code analysis
+        run: npm run lint
+
+      - name: Run test suite
+        run: npm test

@@ -20,9 +20,9 @@ This guide roughly explains how to set up the rowing software and hardware.
 ### Initialization of the Raspberry Pi
 
 * Install **Raspberry Pi OS Lite** on the SD Card i.e. with the [Raspberry Pi Imager](https://www.raspberrypi.org/software)
+* Configure the network connection and enable SSH, if you use the Raspberry Pi Imager, you can automatically do this while writing the SD Card, just press `Ctrl-Shift-X`(see [here](https://www.raspberrypi.org/blog/raspberry-pi-imager-update-to-v1-6/) for a description), otherwise follow the instructions below
 * Connect the device to your network ([headless](https://www.raspberrypi.org/documentation/configuration/wireless/headless.md) or via [command line](https://www.raspberrypi.org/documentation/configuration/wireless/wireless-cli.md))
 * Enable [SSH](https://www.raspberrypi.org/documentation/remote-access/ssh/README.md)
-* Starting with Raspberry Pi Imager 1.6 it is now possible to directly set the network and ssh configuration when writing the SD Card, just press `Ctrl-Shift-X`(see [here](https://www.raspberrypi.org/blog/raspberry-pi-imager-update-to-v1-6/) for a description)
 
 ### Installation of the Open Rowing Monitor
 
@@ -77,7 +77,7 @@ The internal pull-up can be enabled as described [here](https://www.raspberrypi.
 gpio=17=pu,ip
 ```
 
-How to connect this to your rowing machine is specific to your device. You need some kind of mechanism to convert the rotation of the flywheel into impulses. Some rowers have a reed sensor for this built-in so hooking it up is as simple as connecting the cables. Such sensor has one or more magnet on the wheel, which give impulses per rotation. If this is the case, you can simply plug in a second magnet to the opposite side of the wheel to double the resolution for more precision.
+How to connect this to your rowing machine is specific to your device. You need some kind of mechanism to convert the rotation of the flywheel into impulses. Some rowers have a reed sensor for this built-in, so hooking it up is as simple as connecting the cables. Such a sensor has one or more magnets on the wheel and each one gives an impulse when it passes the sensor.
 
 ![Connecting the reed sensor](img/raspberrypi_reedsensor_wiring.jpg)
 *Connecting the reed sensor*
