@@ -5,12 +5,12 @@
   Component that renders the dashboard
 */
 
-import { AppElement, html, css } from './AppElement'
-import { APP_STATE } from '../store/appState'
+import { AppElement, html, css } from './AppElement.js'
+import { APP_STATE } from '../store/appState.js'
 import { customElement, property } from 'lit/decorators.js'
-import './DashboardMetric'
-import './DashboardActions'
-import { icon_route, icon_stopwatch, icon_bolt, icon_paddle, icon_heartbeat, icon_fire, icon_clock } from '../lib/icons'
+import './DashboardMetric.js'
+import './DashboardActions.js'
+import { icon_route, icon_stopwatch, icon_bolt, icon_paddle, icon_heartbeat, icon_fire, icon_clock } from '../lib/icons.js'
 
 @customElement('performance-dashboard')
 export class PerformanceDashboard extends AppElement {

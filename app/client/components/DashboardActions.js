@@ -5,9 +5,9 @@
   Component that renders the action buttons of the dashboard
 */
 
-import { AppElement, html, css } from './AppElement'
+import { AppElement, html, css } from './AppElement.js'
 import { customElement } from 'lit/decorators.js'
-import { icon_undo, icon_expand, icon_compress, icon_poweroff, icon_bluetooth } from '../lib/icons'
+import { icon_undo, icon_expand, icon_compress, icon_poweroff, icon_bluetooth } from '../lib/icons.js'
 
 @customElement('dashboard-actions')
 export class DashboardActions extends AppElement {

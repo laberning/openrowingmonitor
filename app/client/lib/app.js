@@ -6,7 +6,7 @@
 */
 
 import NoSleep from 'nosleep.js'
-import { filterObjectByKeys } from './helper'
+import { filterObjectByKeys } from './helper.js'
 
 const rowingMetricsFields = ['strokesTotal', 'distanceTotal', 'caloriesTotal', 'power', 'heartrate',
   'heartrateBatteryLevel', 'splitFormatted', 'strokesPerMinute', 'durationTotalFormatted']

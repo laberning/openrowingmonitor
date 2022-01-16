@@ -7,7 +7,7 @@
 
 import { LitElement } from 'lit'
 import { property } from 'lit/decorators.js'
-import { APP_STATE } from '../store/appState'
+import { APP_STATE } from '../store/appState.js'
 export * from 'lit'
 
 export class AppElement extends LitElement {

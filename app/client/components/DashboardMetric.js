@@ -5,7 +5,7 @@
   Component that renders a metric of the dashboard
 */
 
-import { AppElement, html, svg, css } from './AppElement'
+import { AppElement, html, svg, css } from './AppElement.js'
 import { customElement, property } from 'lit/decorators.js'
 
 @customElement('dashboard-metric')

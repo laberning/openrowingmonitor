@@ -7,9 +7,9 @@
 
 import { LitElement, html } from 'lit'
 import { customElement, state } from 'lit/decorators.js'
-import { APP_STATE } from './store/appState'
+import { APP_STATE } from './store/appState.js'
 import { createApp } from './lib/app.js'
-import './components/PerformanceDashboard'
+import './components/PerformanceDashboard.js'
 
 @customElement('web-app')
 export class App extends LitElement {
