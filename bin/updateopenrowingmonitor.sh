@@ -98,13 +98,14 @@ CURRENT_DIR=$(pwd)
 SCRIPT_DIR="$( cd "$(dirname "${BASH_SOURCE[0]}")" &> /dev/null && pwd )"
 INSTALL_DIR="$(dirname "$SCRIPT_DIR")"
 GIT_REMOTE="https://github.com/laberning/openrowingmonitor.git"
+
+cd $INSTALL_DIR
+
 CURRENT_BRANCH=$(git rev-parse --abbrev-ref HEAD)
 LOCAL_VERSION=$(git rev-parse HEAD)
 
 print "Update script for Open Rowing Monitor"
 print
-
-cd $INSTALL_DIR
 
 if getopts "b:" arg; then
   if [ $CURRENT_BRANCH = $OPTARG ]; then
