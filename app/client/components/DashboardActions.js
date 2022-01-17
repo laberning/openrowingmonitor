@@ -28,8 +28,9 @@ export class DashboardActions extends AppElement {
   renderOptionalButtons () {
     const buttons = []
     // changing to fullscreen mode only makes sence when the app is openend in a regular
-    // webbrowser (kiosk and standalone mode are always in fullscreen view)
-    if (this.appState.appMode === 'BROWSER') {
+    // webbrowser (kiosk and standalone mode are always in fullscreen view) and the browser
+    // supports this feature
+    if (this.appState.appMode === 'BROWSER' && document.documentElement.requestFullscreen) {
       buttons.push(html`
       <button @click=${this.toggleFullscreen}>
           <div id="fullscreen-icon">${icon_expand}</div>
