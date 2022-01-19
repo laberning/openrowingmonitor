@@ -1,5 +1,9 @@
 # Open Rowing Monitor
 
+[![Node.js CI](https://github.com/laberning/openrowingmonitor/actions/workflows/node.js.yml/badge.svg)](https://github.com/laberning/openrowingmonitor/actions/workflows/node.js.yml)
+[![CodeQL](https://github.com/laberning/openrowingmonitor/actions/workflows/codeql-analysis.yml/badge.svg)](https://github.com/laberning/openrowingmonitor/actions/workflows/codeql-analysis.yml)
+[![pages-build-deployment](https://github.com/laberning/openrowingmonitor/actions/workflows/pages/pages-build-deployment/badge.svg)](https://github.com/laberning/openrowingmonitor/actions/workflows/pages/pages-build-deployment)
+
 <!-- markdownlint-disable-next-line no-inline-html -->
 <img width="200" height="200" align="left" src="img/openrowingmonitor_icon.png" class="dropcap">
 
@@ -57,7 +61,7 @@ Open Rowing Monitor can also store the raw measurements of the flywheel into CSV
 
 ## Installation
 
-You will need a Raspberry Pi Zero W, Raspberry Pi Zero 2 W, Raspberry Pi 3 or a Raspberry Pi 4 with a fresh installation of Raspberry Pi OS 10 (Lite) for this. Connect to the device with SSH and initiate the following command to set up all required dependencies and to install Open Rowing Monitor as an automatically starting system service:
+You will need a Raspberry Pi Zero W, Raspberry Pi Zero 2 W, Raspberry Pi 3 or a Raspberry Pi 4 with a fresh installation of Raspberry Pi OS Lite for this. Connect to the device with SSH and initiate the following command to install Open Rowing Monitor as an automatically starting system service:
 
 ```zsh
 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/laberning/openrowingmonitor/HEAD/install/install.sh)"
@@ -67,7 +71,7 @@ Also have a look at the [Detailed Installation Instructions](installation.md) fo
 
 ## How it all started
 
-I originally started this project, because my rowing machine (Sportstech WRX700) has a very simple computer and I wanted to build something with a clean and simple interface that calculates more realistic metrics. Also, this was a good reason to learn a bit more about Bluetooth and all its specifics.
+I originally started this project, because my rowing machine (Sportstech WRX700) has a very simple computer and I wanted to build something with a clean interface that calculates more realistic metrics. Also, this was a good reason to learn a bit more about Bluetooth and all its specifics.
 
 The original proof of concept version started as a sketch on an Arduino, but when I started adding things like a web frontend and BLE I moved it to the much more powerful Raspberry Pi. Maybe using a Raspberry Pi for this small IoT-project is a bit of an overkill, but it has the capacity for further features such as syncing training data or rowing games. And it has USB-Ports that I can use to charge my phone while rowing :-)
 

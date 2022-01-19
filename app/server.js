@@ -26,7 +26,7 @@ for (const [loggerName, logLevel] of Object.entries(config.loglevel)) {
   }
 }
 
-log.info(`==== Open Rowing Monitor ${process.env.npm_package_version} ====\n`)
+log.info(`==== Open Rowing Monitor ${process.env.npm_package_version || ''} ====\n`)
 
 const peripheralManager = createPeripheralManager()
 
