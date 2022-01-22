@@ -153,7 +153,7 @@ fi
 cd $INSTALL_DIR
 
 # get project code from repository
-sudo git init -q
+sudo git init -q -b main
 sudo git config remote.origin.url $GIT_REMOTE
 sudo git config remote.origin.fetch +refs/heads/*:refs/remotes/origin/*
 # prevent altering line endings
