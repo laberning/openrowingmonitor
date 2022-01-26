@@ -58,7 +58,7 @@ print "  Raspberry Pi Zero 2 W or WH"
 print "  Raspberry Pi 3 Model A+, B or B+"
 print "  Raspberry Pi 4 Model B"
 print
-print "You should only run this script on a SD Card that contains Raspberry Pi OS 10 (Lite)"
+print "You should only run this script on a SD Card that contains Raspberry Pi OS (Lite)"
 print "and does not contain any important data."
 
 if [[ -f "/etc/os-release" ]]; then
