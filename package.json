@@ -39,8 +39,15 @@
     "ws": "8.4.2",
     "xml2js": "0.4.23"
   },
+  "//fix1Comment": "version 0.5.3-8 currently does not work with bleno",
   "optionalDependencies": {
     "@abandonware/bluetooth-hci-socket": "0.5.3-7"
+  },
+  "//fix2Comment": "a hacky fix to not install the optional dependency xpc-connect which has a security issue",
+  "overrides": {
+    "@abandonware/bleno": {
+      "xpc-connect@": "npm:debug"
+    }
   },
   "devDependencies": {
     "@babel/eslint-parser": "7.16.5",
