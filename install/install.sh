@@ -58,7 +58,7 @@ print "  Raspberry Pi Zero 2 W or WH"
 print "  Raspberry Pi 3 Model A+, B or B+"
 print "  Raspberry Pi 4 Model B"
 print
-print "You should only run this script on a SD Card that contains Raspberry Pi OS 10 (Lite)"
+print "You should only run this script on a SD Card that contains Raspberry Pi OS (Lite)"
 print "and does not contain any important data."
 
 if [[ -f "/etc/os-release" ]]; then
@@ -124,7 +124,7 @@ then
   print "for ARM v6. Installing experimental unofficial build of Node.js..."
 
   # we stick to node 14 as there are problem with WebAssembly on node 16 on the armv6l architecture
-  NODEJS_VERSION=v14.18.2
+  NODEJS_VERSION=v14.18.3
   sudo rm -rf /opt/nodejs
   sudo mkdir -p /opt/nodejs
   sudo curl https://unofficial-builds.nodejs.org/download/release/$NODEJS_VERSION/node-$NODEJS_VERSION-linux-armv6l.tar.gz | sudo tar -xz --strip 1 -C /opt/nodejs/
@@ -154,6 +154,8 @@ cd $INSTALL_DIR
 
 # get project code from repository
 sudo git init -q
+# older versions of git would use 'master' instead of 'main' for the default branch
+sudo git checkout -q -b main
 sudo git config remote.origin.url $GIT_REMOTE
 sudo git config remote.origin.fetch +refs/heads/*:refs/remotes/origin/*
 # prevent altering line endings
@@ -206,7 +208,8 @@ if $INIT_GUI; then
   print
   print "Installing Graphical User Interface..."
   sudo apt-get -y install --no-install-recommends xserver-xorg xserver-xorg-legacy x11-xserver-utils xinit openbox chromium-browser
-  sudo sed -i 's/allowed_users=console/allowed_users=anybody/' /etc/X11/Xwrapper.config
+  sudo gpasswd -a pi tty
+  sudo sed -i 's/allowed_users=console/allowed_users=anybody\nneeds_root_rights=yes/' /etc/X11/Xwrapper.config
   sudo cp install/webbrowserkiosk.service /lib/systemd/system/
   sudo systemctl daemon-reload
   sudo systemctl enable webbrowserkiosk
