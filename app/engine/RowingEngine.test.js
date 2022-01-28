@@ -17,7 +17,7 @@ log.setLevel('warn')
 const createWorkoutEvaluator = function () {
   const strokes = []
 
-  function handleStrokeEnd (stroke) {
+  function handleDriveEnd (stroke) {
     strokes.push(stroke)
     log.info(`stroke: ${strokes.length}, power: ${Math.round(stroke.power)}w, duration: ${stroke.duration.toFixed(2)}s, ` +
     ` drivePhase: ${stroke.durationDrivePhase.toFixed(2)}s, distance: ${stroke.distance.toFixed(2)}m`)
@@ -42,7 +42,7 @@ const createWorkoutEvaluator = function () {
   }
 
   return {
-    handleStrokeEnd,
+    handleDriveEnd,
     handleRecoveryEnd,
     updateKeyMetrics,
     handlePause,
@@ -61,7 +61,7 @@ test('sample data for WRX700 should produce plausible results with rower profile
   await replayRowingSession(rowingEngine.handleRotationImpulse, { filename: 'recordings/WRX700_2magnets.csv' })
   assert.is(workoutEvaluator.getNumOfStrokes(), 16, 'number of strokes does not meet expectation')
   assertPowerRange(workoutEvaluator, 50, 220)
-  assertDistanceRange(workoutEvaluator, 158, 162)
+  assertDistanceRange(workoutEvaluator, 159, 163)
   assertStrokeDistanceSumMatchesTotal(workoutEvaluator)
 })
 
@@ -72,7 +72,7 @@ test('sample data for DKNR320 should produce plausible results with rower profil
   await replayRowingSession(rowingEngine.handleRotationImpulse, { filename: 'recordings/DKNR320.csv' })
   assert.is(workoutEvaluator.getNumOfStrokes(), 10, 'number of strokes does not meet expectation')
   assertPowerRange(workoutEvaluator, 75, 200)
-  assertDistanceRange(workoutEvaluator, 64, 67)
+  assertDistanceRange(workoutEvaluator, 65, 68)
   assertStrokeDistanceSumMatchesTotal(workoutEvaluator)
 })
 

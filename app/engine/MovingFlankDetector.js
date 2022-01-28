@@ -20,7 +20,7 @@ function createMovingFlankDetector (rowerSettings) {
   const angularVelocity = new Array(rowerSettings.flankLength + 1)
   angularVelocity.fill(angularDisplacementPerImpulse / rowerSettings.minimumTimeBetweenImpulses)
   const angularAcceleration = new Array(rowerSettings.flankLength + 1)
-  angularAcceleration.fill(0)
+  angularAcceleration.fill(0.1)
   const movingAverage = createMovingAverager(rowerSettings.smoothing, rowerSettings.maximumTimeBetweenImpulses)
   let numberOfSequentialCorrections = 0
   const maxNumberOfSequentialCorrections = (rowerSettings.smoothing >= 2 ? rowerSettings.smoothing : 2)

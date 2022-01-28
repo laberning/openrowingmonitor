@@ -50,8 +50,8 @@ function createRowingStatistics (config) {
     }
   }
 
-  function handleStrokeEnd (stroke) {
-    // if we do not get a stroke for timeBetweenStrokesBeforePause milliseconds we treat this as a rowing pause
+  function handleDriveEnd (stroke) {
+    // if we do not get a drive for timeBetweenStrokesBeforePause milliseconds we treat this as a rowing pause
     if (rowingPausedTimer)clearInterval(rowingPausedTimer)
     rowingPausedTimer = setTimeout(() => pauseRowing(), timeBetweenStrokesBeforePause)
 
@@ -77,7 +77,7 @@ function createRowingStatistics (config) {
     lastStrokeState = stroke.strokeState
     lastStrokeSpeed = stroke.speed
     instantaneousTorque = stroke.instantaneousTorque
-    emitter.emit('strokeFinished', getMetrics())
+    emitter.emit('driveFinished', getMetrics())
   }
 
   // initiated by the rowing engine in case an impulse was not considered
@@ -209,7 +209,7 @@ function createRowingStatistics (config) {
   }
 
   return Object.assign(emitter, {
-    handleStrokeEnd,
+    handleDriveEnd,
     handlePause,
     handleHeartrateMeasurement,
     handleRecoveryEnd,
