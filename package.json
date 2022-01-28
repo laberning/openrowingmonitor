@@ -31,12 +31,12 @@
     "@abandonware/noble": "1.9.2-15",
     "ant-plus": "0.1.24",
     "finalhandler": "1.1.2",
-    "lit": "2.1.1",
+    "lit": "2.1.2",
     "loglevel": "1.8.0",
     "nosleep.js": "0.12.0",
     "onoff": "6.0.3",
     "serve-static": "1.14.2",
-    "ws": "8.4.0",
+    "ws": "8.4.2",
     "xml2js": "0.4.23"
   },
   "optionalDependencies": {
@@ -45,7 +45,7 @@
   "devDependencies": {
     "@babel/eslint-parser": "7.16.5",
     "@babel/plugin-proposal-decorators": "7.16.7",
-    "@babel/preset-env": "7.16.7",
+    "@babel/preset-env": "7.16.11",
     "@rollup/plugin-babel": "5.3.0",
     "@rollup/plugin-commonjs": "21.0.1",
     "@rollup/plugin-node-resolve": "13.1.3",
@@ -62,7 +62,7 @@
     "markdownlint-cli": "0.30.0",
     "nodemon": "2.0.15",
     "npm-run-all": "4.1.5",
-    "rollup": "2.63.0",
+    "rollup": "2.66.1",
     "rollup-plugin-summary": "1.3.0",
     "rollup-plugin-terser": "7.0.2",
     "simple-git-hooks": "2.7.0",

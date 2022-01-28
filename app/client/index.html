@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -7,16 +8,45 @@
   <meta name="author" content="Lars Berning">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
   <meta name="apple-mobile-web-app-status-bar-style" content="black" />
-	<meta name="apple-mobile-web-app-capable" content="yes">
-	<meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
   <link rel="manifest" href="manifest.json" crossorigin="use-credentials">
-  <link rel="stylesheet" href="style.css">
   <link rel="icon" sizes="192x192" href="icon.png">
   <title>Open Rowing Monitor</title>
+
+  <style>
+    /* defines the theme of Open Rowing Monitor, edit this if you want other colors.. */
+    html {
+      --theme-background-color: #00091c;
+      --theme-widget-color: #002b57;
+      --theme-button-color: #365080;
+      --theme-font-family: Verdana, "Lucida Sans Unicode", sans-serif;
+      --theme-font-color: #f5f5f5;
+      --theme-warning-color: #ff0000;
+    }
+
+    body {
+      background-color: var(--theme-background-color);
+      color: var(--theme-font-color);
+      margin: 0;
+      font-size: calc(16px + (60 - 16) * ((100vw - 300px) / (1920 - 300)));
+      font-family: var(--theme-font-family);
+      user-select: none;
+      overscroll-behavior: contain;
+    }
+
+    @media (orientation: portrait) {
+      body {
+        font-size: calc(16px + (60 - 16) * ((100vh - 300px) / (1920 - 300)));
+      }
+    }
+  </style>
 </head>
+
 <body>
   <noscript>You need to enable JavaScript to run this app.</noscript>
   <web-app></web-app>
   <script type="module" src="index.js"></script>
 </body>
+
 </html>

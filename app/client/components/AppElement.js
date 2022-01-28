@@ -32,10 +32,4 @@ export class AppElement extends LitElement {
       })
     )
   }
-
-  // currently we do not use shadow root since there is still a global style file
-  // but maybe one day we dissolve it into the components and use shadow dom instead
-  createRenderRoot () {
-    return this
-  }
 }
