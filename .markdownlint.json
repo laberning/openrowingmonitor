@@ -1,5 +1,5 @@
 {
   "default": true,
   "MD013": false,
-  "MD049": false
+  "MD049": { "style": "asterisk" }
 }
