@@ -13,7 +13,10 @@
   "engines": {
     "node": ">=14"
   },
-  "files": ["*", "!/**/*.test.js"],
+  "files": [
+    "*",
+    "!/**/*.test.js"
+  ],
   "scripts": {
     "lint": "eslint ./app ./config && markdownlint '**/*.md' --ignore node_modules",
     "start": "node app/server.js",
@@ -63,6 +66,7 @@
     "eslint-config-standard": "17.0.0-0",
     "eslint-plugin-import": "2.25.4",
     "eslint-plugin-lit": "1.6.1",
+    "eslint-plugin-n": "14.0.0",
     "eslint-plugin-node": "11.1.0",
     "eslint-plugin-promise": "6.0.0",
     "eslint-plugin-wc": "1.3.2",
