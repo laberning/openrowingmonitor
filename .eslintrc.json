@@ -14,7 +14,7 @@
         "ecmaVersion": 13,
         "sourceType": "module"
     },
-    "ignorePatterns": ["**/*.min.js"],
+    "ignorePatterns": ["**/*.min.js", "**/tools/ConfigManager.js"],
     "rules": {
         "camelcase": 0
     }
