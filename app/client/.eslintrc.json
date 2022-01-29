@@ -6,7 +6,6 @@
   },
   "extends": [
       "standard",
-      "plugin:import/recommended",
       "plugin:wc/recommended",
       "plugin:lit/recommended"
   ],

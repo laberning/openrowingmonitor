@@ -5,10 +5,7 @@
         "es2021": true
     },
     "extends": [
-        "standard",
-        "plugin:import/recommended",
-        "plugin:node/recommended",
-        "plugin:promise/recommended"
+        "standard"
     ],
     "parserOptions": {
         "ecmaVersion": 13,
