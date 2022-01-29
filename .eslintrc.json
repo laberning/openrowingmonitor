@@ -5,13 +5,16 @@
         "es2021": true
     },
     "extends": [
-        "standard"
+        "standard",
+        "plugin:import/recommended",
+        "plugin:node/recommended",
+        "plugin:promise/recommended"
     ],
     "parserOptions": {
-        "ecmaVersion": 12,
+        "ecmaVersion": 13,
         "sourceType": "module"
     },
-    "ignorePatterns": ["**/*.min.js", "**/tools/ConfigManager.js"],
+    "ignorePatterns": ["**/*.min.js"],
     "rules": {
         "camelcase": 0
     }

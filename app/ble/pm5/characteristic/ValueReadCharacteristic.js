@@ -11,7 +11,7 @@ import log from 'loglevel'
 export default class ValueReadCharacteristic extends bleno.Characteristic {
   constructor (uuid, value, description) {
     super({
-      uuid: uuid,
+      uuid,
       properties: ['read', 'notify'],
       value: null
     })

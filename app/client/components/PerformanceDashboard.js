@@ -45,10 +45,10 @@ export class PerformanceDashboard extends AppElement {
   `
 
   @property({ type: Object })
-  metrics
+    metrics
 
   @property({ type: Object })
-  appState = APP_STATE
+    appState = APP_STATE
 
   render () {
     const metrics = this.calculateFormattedMetrics(this.appState.metrics)

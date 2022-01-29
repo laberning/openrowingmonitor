@@ -14,10 +14,10 @@ import './components/PerformanceDashboard.js'
 @customElement('web-app')
 export class App extends LitElement {
   @state()
-  appState = APP_STATE
+    appState = APP_STATE
 
   @state()
-  metrics
+    metrics
 
   constructor () {
     super()

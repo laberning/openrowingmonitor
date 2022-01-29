@@ -14,7 +14,7 @@ export class AppElement extends LitElement {
   // this is how we implement a global state: a global state object is passed via properties
   // to child components
   @property({ type: Object })
-  appState = APP_STATE
+    appState = APP_STATE
 
   // ..and state changes are send back to the root component of the app by dispatching
   // a CustomEvent

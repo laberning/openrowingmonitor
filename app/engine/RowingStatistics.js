@@ -144,7 +144,7 @@ function createRowingStatistics (config) {
       durationTotalFormatted: secondsToTimeString(durationTotal),
       strokesTotal,
       distanceTotal: distanceTotal > 0 ? distanceTotal : 0, // meters
-      caloriesTotal: caloriesTotal, // kcal
+      caloriesTotal, // kcal
       caloriesPerMinute: caloriesAveragerMinute.getAverage() > 0 ? caloriesAveragerMinute.getAverage() : 0,
       caloriesPerHour: caloriesAveragerHour.getAverage() > 0 ? caloriesAveragerHour.getAverage() : 0,
       strokeTime: lastStrokeDuration, // seconds
@@ -153,7 +153,7 @@ function createRowingStatistics (config) {
       split: splitTime, // seconds/500m
       splitFormatted: secondsToTimeString(splitTime),
       powerRatio: powerRatioAverager.getAverage() > 0 && lastStrokeSpeed > 0 && sessionState === 'rowing' ? powerRatioAverager.getAverage() : 0,
-      instantaneousTorque: instantaneousTorque,
+      instantaneousTorque,
       strokesPerMinute: averagedStrokeTime !== 0 && sessionState === 'rowing' ? (60.0 / averagedStrokeTime) : 0,
       speed: speedAverager.getAverage() > 0 && lastStrokeSpeed > 0 && sessionState === 'rowing' ? (speedAverager.getAverage() * 3.6) : 0, // km/h
       strokeState: lastStrokeState,

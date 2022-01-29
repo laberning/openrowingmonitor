@@ -6,12 +6,13 @@
   },
   "extends": [
       "standard",
+      "plugin:import/recommended",
       "plugin:wc/recommended",
       "plugin:lit/recommended"
   ],
   "parser": "@babel/eslint-parser",
   "parserOptions": {
-      "ecmaVersion": 12,
+      "ecmaVersion": 13,
       "sourceType": "module"
   },
   "ignorePatterns": ["**/*.min.js"],
