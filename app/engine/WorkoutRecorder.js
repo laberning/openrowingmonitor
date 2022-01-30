@@ -32,7 +32,7 @@ function createWorkoutRecorder () {
     if (startTime === undefined) {
       startTime = new Date()
     }
-    // stroke recordings a currently only used to create tcx files, so we can skip it
+    // stroke recordings are currently only used to create tcx files, so we can skip it
     // if tcx file creation is disabled
     if (config.createTcxFiles) {
       strokes.push(stroke)
@@ -186,6 +186,7 @@ function createWorkoutRecorder () {
     const minimumRecordingTimeInSeconds = 10
     const rotationImpulseTimeTotal = rotationImpulses.reduce((acc, impulse) => acc + impulse, 0)
     const strokeTimeTotal = strokes.reduce((acc, stroke) => acc + stroke.strokeTime, 0)
+    console.log(`strokeTimeTotal: ${strokeTimeTotal} rotationImpulseTimeTotal: ${rotationImpulseTimeTotal} `)
     if (rotationImpulseTimeTotal < minimumRecordingTimeInSeconds || strokeTimeTotal < minimumRecordingTimeInSeconds) {
       log.debug(`recording time is less than ${minimumRecordingTimeInSeconds}s, skipping creation of recording files...`)
       return

@@ -78,7 +78,7 @@ export default {
   // but for recreational rowers that might feel much too restless to be useful
   numOfPhasesForAveragingScreenData: 6,
 
-  // The time between strokes in seconds before the rower considers it a pause. Default value is set to 6.
+  // The time between strokes in seconds before the rower considers it a pause. Default value is set to 10.
   // It is not recommended to go below this value, as not recognizing a stroke could result in a pause
   // (as a typical stroke is between 2 to 3 seconds for recreational rowers). Increase it when you have
   // issues with your stroke detection and the rower is pausing unexpectedly

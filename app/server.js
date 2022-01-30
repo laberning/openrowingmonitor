@@ -90,7 +90,7 @@ rowingStatistics.on('recoveryFinished', (metrics) => {
   `, cal/hour: ${metrics.caloriesPerHour.toFixed(1)}kcal, cal/minute: ${metrics.caloriesPerMinute.toFixed(1)}kcal`)
   webServer.notifyClients(metrics)
   peripheralManager.notifyMetrics('strokeFinished', metrics)
-  if (metrics.sessionStatus === 'rowing' && metrics.strokesTotal > 0) {
+  if (metrics.sessionState === 'rowing') {
     workoutRecorder.recordStroke(metrics)
   }
 })
@@ -136,7 +136,7 @@ webServer.on('clientConnected', () => {
 /*
 replayRowingSession(handleRotationImpulse, {
   filename: 'recordings/WRX700_2magnets.csv',
-  realtime: false,
-  loop: false
+  realtime: true,
+  loop: true
 })
 */
