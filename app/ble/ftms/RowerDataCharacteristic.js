@@ -68,8 +68,11 @@ export default class RowerDataCharacteristic extends bleno.Characteristic {
       // Total Distance in meters
       bufferBuilder.writeUInt24LE(Math.round(data.distanceTotal))
       // Instantaneous Pace in seconds/500m
-      // if split is infinite (i.e. while pausing), use the highest possible number
-      bufferBuilder.writeUInt16LE(data.split !== Infinity ? Math.round(data.split) : 0xFFFF)
+      // if split is infinite (i.e. while pausing), should use the highest possible number (0xFFFF)
+      // todo: eventhough mathematically correct, setting 0xFFFF (65535s) causes some ugly spikes
+      // in some applications which could shift the axis (i.e. workout diagrams in MyHomeFit)
+      // so instead for now we use 0 here
+      bufferBuilder.writeUInt16LE(data.split !== Infinity ? Math.round(data.split) : 0)
       // Instantaneous Power in watts
       bufferBuilder.writeUInt16LE(Math.round(data.power))
       // Energy in kcal
