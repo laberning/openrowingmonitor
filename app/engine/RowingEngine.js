@@ -34,8 +34,8 @@ function createRowingEngine (rowerSettings) {
   let drivePhaseAngularDisplacement
   let driveLinearDistance
   let recoveryPhaseStartTime
-  let recoveryPhaseStartAngularDisplacement
   let recoveryPhaseAngularDisplacement
+  let recoveryPhaseStartAngularDisplacement
   let recoveryPhaseLength
   let recoveryStartAngularVelocity
   let recoveryEndAngularVelocity
@@ -293,6 +293,9 @@ function createRowingEngine (rowerSettings) {
   }
 
   function reset () {
+    // to init displacements with plausible defaults we assume, that one rowing cycle transforms to nine meters of distance...
+    const defaultDisplacementForRowingCycle = 8.0 / Math.pow(((rowerSettings.dragFactor / 1000000) / rowerSettings.magicConstant), 1.0 / 3.0)
+
     movingDragAverage.reset()
     cyclePhase = 'Recovery'
     totalTime = 0.0
@@ -301,11 +304,15 @@ function createRowingEngine (rowerSettings) {
     drivePhaseStartTime = 0.0
     drivePhaseStartAngularDisplacement = 0.0
     drivePhaseLength = 2.0 * rowerSettings.minimumDriveTime
-    drivePhaseAngularDisplacement = rowerSettings.numOfImpulsesPerRevolution
+    // split defaultDisplacementForRowingCycle to aprox 1/3 for the drive phase
+    drivePhaseAngularDisplacement = (1.0 / 3.0) * defaultDisplacementForRowingCycle
     driveLinearDistance = 0.0
-    recoveryPhaseStartTime = -2 * rowerSettings.minimumRecoveryTime // Make sure that the first CurrentDt will trigger a detected stroke by faking a recovery phase that is long enough
-    recoveryPhaseStartAngularDisplacement = -1.0 * rowerSettings.numOfImpulsesPerRevolution
-    recoveryPhaseAngularDisplacement = rowerSettings.numOfImpulsesPerRevolution
+    // Make sure that the first CurrentDt will trigger a detected stroke by faking a recovery phase that is long enough
+    recoveryPhaseStartTime = -2 * rowerSettings.minimumRecoveryTime
+    // and split defaultDisplacementForRowingCycle to aprox 2/3 for the recovery phase
+    recoveryPhaseAngularDisplacement = (2.0 / 3.0) * defaultDisplacementForRowingCycle
+    // set this to the number of impulses required to generate the angular displacement as assumed above
+    recoveryPhaseStartAngularDisplacement = Math.round(-1.0 * (2.0 / 3.0) * defaultDisplacementForRowingCycle / angularDisplacementPerImpulse)
     recoveryPhaseLength = 2.0 * rowerSettings.minimumRecoveryTime
     recoveryStartAngularVelocity = angularDisplacementPerImpulse / rowerSettings.minimumTimeBetweenImpulses
     recoveryEndAngularVelocity = angularDisplacementPerImpulse / rowerSettings.maximumTimeBetweenImpulses

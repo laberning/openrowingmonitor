@@ -61,7 +61,7 @@ test('sample data for WRX700 should produce plausible results with rower profile
   await replayRowingSession(rowingEngine.handleRotationImpulse, { filename: 'recordings/WRX700_2magnets.csv' })
   assert.is(workoutEvaluator.getNumOfStrokes(), 16, 'number of strokes does not meet expectation')
   assertPowerRange(workoutEvaluator, 50, 220)
-  assertDistanceRange(workoutEvaluator, 159, 163)
+  assertDistanceRange(workoutEvaluator, 165, 168)
   assertStrokeDistanceSumMatchesTotal(workoutEvaluator)
 })
 
@@ -72,7 +72,7 @@ test('sample data for DKNR320 should produce plausible results with rower profil
   await replayRowingSession(rowingEngine.handleRotationImpulse, { filename: 'recordings/DKNR320.csv' })
   assert.is(workoutEvaluator.getNumOfStrokes(), 10, 'number of strokes does not meet expectation')
   assertPowerRange(workoutEvaluator, 75, 200)
-  assertDistanceRange(workoutEvaluator, 65, 68)
+  assertDistanceRange(workoutEvaluator, 71, 73)
   assertStrokeDistanceSumMatchesTotal(workoutEvaluator)
 })
 
