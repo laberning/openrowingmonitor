@@ -10,7 +10,6 @@ import { deepMerge } from './Helper.js'
 async function getConfig () {
   let customConfig
   try {
-    // eslint-disable-next-line node/no-unsupported-features/es-syntax
     customConfig = await import('../../config/config.js')
   } catch (exception) {}
 
