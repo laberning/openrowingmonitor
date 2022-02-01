@@ -56,7 +56,16 @@ export default {
   createTcxFiles: true,
 
   // Stores the raw sensor data in CSV files
-  recordRawData: false,
+  createRawDataFiles: false,
+
+  // Apply gzip compression to the recorded tcx training sessions file (tcx.gz)
+  // This will drastically reduce the file size of the files (only around 4% of the original file)
+  // Some training tools can directly work with gzipped tcx file, however for most training websites
+  // you will have to unzip the files before uploading
+  gzipTcxFiles: false,
+
+  // Apply gzip compression to the ras sensor data recording files (csv.gz)
+  gzipRawDataFiles: true,
 
   // Defines the name that is used to announce the FTMS Rower via Bluetooth Low Energy (BLE)
   // Some rowing training applications expect that the rowing device is announced with a certain name

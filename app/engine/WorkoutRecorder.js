@@ -7,10 +7,12 @@
   Todo: split this into multiple modules
 */
 import log from 'loglevel'
-import fs from 'fs'
-import { mkdir } from 'fs/promises'
+import zlib from 'zlib'
+import { mkdir, writeFile } from 'fs/promises'
 import xml2js from 'xml2js'
 import config from '../tools/ConfigManager.js'
+import { promisify } from 'util'
+const gzip = promisify(zlib.gzip)
 
 function createWorkoutRecorder () {
   let strokes = []
@@ -23,7 +25,7 @@ function createWorkoutRecorder () {
     }
     // impulse recordings a currently only used to create raw data files, so we can skip it
     // if raw data file creation is disabled
-    if (config.recordRawData) {
+    if (config.createRawDataFiles) {
       rotationImpulses.push(impulse)
     }
   }
@@ -42,7 +44,7 @@ function createWorkoutRecorder () {
   async function createTcxFile () {
     const stringifiedStartTime = startTime.toISOString().replace(/T/, '_').replace(/:/g, '-').replace(/\..+/, '')
     const directory = `${config.dataDirectory}/recordings/${startTime.getFullYear()}/${(startTime.getMonth() + 1).toString().padStart(2, '0')}`
-    const filename = `${directory}/${stringifiedStartTime}_rowing.tcx`
+    const filename = `${directory}/${stringifiedStartTime}_rowing.tcx${config.gzipTcxFiles ? '.gz' : ''}`
     log.info(`saving session as tcx file ${filename}...`)
 
     try {
@@ -53,7 +55,7 @@ function createWorkoutRecorder () {
       }
     }
 
-    buildAndSaveTcxFile({
+    await buildAndSaveTcxFile({
       id: startTime.toISOString(),
       filename,
       startTime,
@@ -64,7 +66,7 @@ function createWorkoutRecorder () {
   async function createRawDataFile () {
     const stringifiedStartTime = startTime.toISOString().replace(/T/, '_').replace(/:/g, '-').replace(/\..+/, '')
     const directory = `${config.dataDirectory}/recordings/${startTime.getFullYear()}/${(startTime.getMonth() + 1).toString().padStart(2, '0')}`
-    const filename = `${directory}/${stringifiedStartTime}_raw.csv`
+    const filename = `${directory}/${stringifiedStartTime}_raw.csv${config.gzipRawDataFiles ? '.gz' : ''}`
     log.info(`saving session as raw data file ${filename}...`)
 
     try {
@@ -74,11 +76,10 @@ function createWorkoutRecorder () {
         log.error(`can not create directory ${directory}`, error)
       }
     }
-
-    fs.writeFile(filename, rotationImpulses.join('\n'), (err) => { if (err) log.error(err) })
+    await createFile(rotationImpulses.join('\n'), filename, config.gzipRawDataFiles)
   }
 
-  function buildAndSaveTcxFile (workout) {
+  async function buildAndSaveTcxFile (workout) {
     let versionArray = process.env.npm_package_version.split('.')
     if (versionArray.length < 3) versionArray = [0, 0, 0]
     const lastStroke = workout.strokes[strokes.length - 1]
@@ -163,8 +164,7 @@ function createWorkoutRecorder () {
     }
 
     const builder = new xml2js.Builder()
-    const tcxXml = builder.buildObject(tcxObject)
-    fs.writeFile(workout.filename, tcxXml, (err) => { if (err) log.error(err) })
+    await createFile(builder.buildObject(tcxObject), workout.filename, config.gzipTcxFiles)
   }
 
   async function reset () {
@@ -174,29 +174,41 @@ function createWorkoutRecorder () {
     startTime = undefined
   }
 
+  async function createFile (content, filename, compress = false) {
+    if (compress) {
+      const gzipContent = await gzip(content)
+      await writeFile(filename, gzipContent, (err) => { if (err) log.error(err) })
+    } else {
+      await writeFile(filename, content, (err) => { if (err) log.error(err) })
+    }
+  }
+
   function handlePause () {
     createRecordings()
   }
 
   async function createRecordings () {
-    if (!config.recordRawData && !config.createTcxFiles) {
+    if (!config.createRawDataFiles && !config.createTcxFiles) {
       return
     }
 
     const minimumRecordingTimeInSeconds = 10
     const rotationImpulseTimeTotal = rotationImpulses.reduce((acc, impulse) => acc + impulse, 0)
     const strokeTimeTotal = strokes.reduce((acc, stroke) => acc + stroke.strokeTime, 0)
-    if (rotationImpulseTimeTotal < minimumRecordingTimeInSeconds || strokeTimeTotal < minimumRecordingTimeInSeconds) {
+    if (Math.max(rotationImpulseTimeTotal, strokeTimeTotal) < minimumRecordingTimeInSeconds) {
       log.debug(`recording time is less than ${minimumRecordingTimeInSeconds}s, skipping creation of recording files...`)
       return
     }
 
-    if (config.recordRawData) {
-      await createRawDataFile()
+    const parallelCalls = []
+
+    if (config.createRawDataFiles) {
+      parallelCalls.push(createRawDataFile())
     }
     if (config.createTcxFiles) {
-      await createTcxFile()
+      parallelCalls.push(createTcxFile())
     }
+    await Promise.all(parallelCalls)
   }
 
   return {
