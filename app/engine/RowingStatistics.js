@@ -13,7 +13,7 @@ const log = loglevel.getLogger('RowingEngine')
 
 function createRowingStatistics (config) {
   const numOfDataPointsForAveraging = config.numOfPhasesForAveragingScreenData
-  const screenUpdateInterval = config.screenUpdateInterval
+  const webUpdateInterval = config.webUpdateInterval
   const minimumStrokeTime = config.rowerSettings.minimumRecoveryTime + config.rowerSettings.minimumDriveTime
   const maximumStrokeTime = config.maximumStrokeTime
   const timeBetweenStrokesBeforePause = maximumStrokeTime * 1000
@@ -38,16 +38,24 @@ function createRowingStatistics (config) {
   let lastStrokeDistance = 0.0
   let lastStrokeSpeed = 0.0
   let lastStrokeState = 'RECOVERY'
-  let lastMetrics = {}
+  let lastWebMetrics = {}
 
-  // send metrics to the clients periodically, if the data has changed
-  setInterval(emitMetrics, screenUpdateInterval)
-  function emitMetrics () {
-    const currentMetrics = getMetrics()
-    if (Object.entries(currentMetrics).toString() !== Object.entries(lastMetrics).toString()) {
-      emitter.emit('metricsUpdate', currentMetrics)
-      lastMetrics = currentMetrics
+  // send metrics to the web clients periodically (but only if the data has changed)
+  setInterval(emitWebMetrics, webUpdateInterval)
+  function emitWebMetrics () {
+    const currentWebMetrics = getMetrics()
+    if (Object.entries(currentWebMetrics).toString() !== Object.entries(lastWebMetrics).toString()) {
+      emitter.emit('webMetricsUpdate', currentWebMetrics)
+      lastWebMetrics = currentWebMetrics
     }
+  }
+
+  // notify bluetooth peripherall each second (even if data did not change)
+  // todo: the FTMS protocol also supports that peripherals deliver a preferred update interval
+  // we could respect this and set the update rate accordingly
+  setInterval(emitPeripheralMetrics, 1000)
+  function emitPeripheralMetrics () {
+    emitter.emit('peripheralMetricsUpdate', getMetrics())
   }
 
   function handleDriveEnd (stroke) {

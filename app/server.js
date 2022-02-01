@@ -95,8 +95,11 @@ rowingStatistics.on('recoveryFinished', (metrics) => {
   }
 })
 
-rowingStatistics.on('metricsUpdate', (metrics) => {
+rowingStatistics.on('webMetricsUpdate', (metrics) => {
   webServer.notifyClients(metrics)
+})
+
+rowingStatistics.on('peripheralMetricsUpdate', (metrics) => {
   peripheralManager.notifyMetrics('metricsUpdate', metrics)
 })
 

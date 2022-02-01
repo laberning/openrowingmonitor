@@ -66,11 +66,11 @@ export default {
   // Most bike training applications are fine with any device name
   ftmsBikePeripheralName: 'OpenRowingBike',
 
-  // The interval for updating all your screens (i.e. the monitor, but also bluetooth devices) in ms.
+  // The interval for updating all web clients (i.e. the monitor) in ms.
   // Advised is to update at least once per second, to make sure the timer moves nice and smoothly.
-  // Around 100 ms results in a very smooth experience that the distance display also updates smoothly
-  // Please note that using a 100ms or less will result in more work for your Raspberry Pi
-  screenUpdateInterval: 1000,
+  // Around 100 ms results in a very smooth update experience
+  // Please note that a smaller value will use more network and cpu ressources
+  webUpdateInterval: 1000,
 
   // The number of stroke phases (i.e. Drive or Recovery) used to smoothen the data displayed on your
   // screens (i.e. the monitor, but also bluetooth devices, etc.). A nice smooth experience is found at 6
