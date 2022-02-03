@@ -28,6 +28,14 @@ for (const [loggerName, logLevel] of Object.entries(config.loglevel)) {
 
 log.info(`==== Open Rowing Monitor ${process.env.npm_package_version || ''} ====\n`)
 
+let movementAllowed = true
+
+// Session object to store the session targets. Ideally, this object is set from the GUI, now it is a static defined parameter
+const session = { // a hook for setting session parameters that the rower has to obey
+  targetDistance: 0,
+  targetTime: 0
+  }
+
 const peripheralManager = createPeripheralManager()
 
 peripheralManager.on('control', (event) => {
@@ -40,14 +48,17 @@ peripheralManager.on('control', (event) => {
   // todo: we could use these controls once we implement a concept of a rowing session
   } else if (event?.req?.name === 'stop') {
     log.debug('stop requested')
+    stopWorkout()
     peripheralManager.notifyStatus({ name: 'stoppedOrPausedByUser' })
     event.res = true
   } else if (event?.req?.name === 'pause') {
     log.debug('pause requested')
     peripheralManager.notifyStatus({ name: 'stoppedOrPausedByUser' })
+    pauseWorkout()
     event.res = true
   } else if (event?.req?.name === 'startOrResume') {
     log.debug('startOrResume requested')
+    movementAllowed = true
     peripheralManager.notifyStatus({ name: 'startedOrResumedByUser' })
     event.res = true
   } else if (event?.req?.name === 'peripheralMode') {
@@ -58,10 +69,21 @@ peripheralManager.on('control', (event) => {
   }
 })
 
+function pauseWorkout () {
+  movementAllowed = false
+  workoutRecorder.handlePause()
+}
+
+function stopWorkout () {
+  movementAllowed = false
+  rowingStatistics.reset()
+}
+
 function resetWorkout () {
   workoutRecorder.reset()
   rowingEngine.reset()
   rowingStatistics.reset()
+  movementAllowed = true
   peripheralManager.notifyStatus({ name: 'reset' })
 }
 
@@ -69,8 +91,21 @@ const gpioTimerService = fork('./app/gpio/GpioTimerService.js')
 gpioTimerService.on('message', handleRotationImpulse)
 
 function handleRotationImpulse (dataPoint) {
-  workoutRecorder.recordRotationImpulse(dataPoint)
-  rowingEngine.handleRotationImpulse(dataPoint)
+  if (movementAllowed !== true) {
+    // This prevents the time and distance to continue while the user has stopped rowing as a free spinning flywheel could go on for minutes
+    workoutRecorder.recordRotationImpulse(dataPoint)
+    rowingEngine.handleRotationImpulse(dataPoint)
+  }
+}
+
+function checkEndCondition (metrics) {
+  if (((session.targetDistance > 0 && metrics.distanceTotal >= session.targetDistance) || (session.targetTime > 0 && metrics.durationTotal >= session.targetTime)) && metrics.sessionState === 'rowing') {
+    // This isn't the most optimal solution, ideally workoutRecorder.recordStroke(metrics) would be part of the stopWorkout() routine, but there metrics is out of function scope
+    stopWorkout()
+    workoutRecorder.recordStroke(metrics)
+    webServer.notifyClients(metrics)
+    peripheralManager.notifyMetrics('metricsUpdate', metrics)
+  }
 }
 
 const rowingEngine = createRowingEngine(config.rowerSettings)
@@ -81,6 +116,7 @@ const workoutRecorder = createWorkoutRecorder()
 rowingStatistics.on('driveFinished', (metrics) => {
   webServer.notifyClients(metrics)
   peripheralManager.notifyMetrics('strokeStateChanged', metrics)
+  checkEndCondition(metrics)
 })
 
 rowingStatistics.on('recoveryFinished', (metrics) => {
@@ -90,6 +126,7 @@ rowingStatistics.on('recoveryFinished', (metrics) => {
   `, cal/hour: ${metrics.caloriesPerHour.toFixed(1)}kcal, cal/minute: ${metrics.caloriesPerMinute.toFixed(1)}kcal`)
   webServer.notifyClients(metrics)
   peripheralManager.notifyMetrics('strokeFinished', metrics)
+  checkEndCondition(metrics)
   if (metrics.sessionState === 'rowing') {
     workoutRecorder.recordStroke(metrics)
   }
@@ -97,6 +134,7 @@ rowingStatistics.on('recoveryFinished', (metrics) => {
 
 rowingStatistics.on('webMetricsUpdate', (metrics) => {
   webServer.notifyClients(metrics)
+  checkEndCondition(metrics)
 })
 
 rowingStatistics.on('peripheralMetricsUpdate', (metrics) => {
@@ -104,7 +142,7 @@ rowingStatistics.on('peripheralMetricsUpdate', (metrics) => {
 })
 
 rowingStatistics.on('rowingPaused', () => {
-  workoutRecorder.handlePause()
+  pauseWorkout()
 })
 
 if (config.heartrateMonitorBLE) {
