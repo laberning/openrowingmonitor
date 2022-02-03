@@ -11,7 +11,7 @@ import { createWeightedAverager } from './averager/WeightedAverager.js'
 import loglevel from 'loglevel'
 const log = loglevel.getLogger('RowingEngine')
 
-function createRowingStatistics (config) {
+function createRowingStatistics (config, session) {
   const numOfDataPointsForAveraging = config.numOfPhasesForAveragingScreenData
   const webUpdateInterval = config.webUpdateInterval
   const minimumStrokeTime = config.rowerSettings.minimumRecoveryTime + config.rowerSettings.minimumDriveTime
@@ -85,7 +85,12 @@ function createRowingStatistics (config) {
     lastStrokeState = stroke.strokeState
     lastStrokeSpeed = stroke.speed
     instantaneousTorque = stroke.instantaneousTorque
-    emitter.emit('driveFinished', getMetrics())
+    if (areWeThereYet()) {
+      sessionState = 'stopped'
+      emitter.emit('sessionTargetReached', getMetrics())
+    } else {
+      emitter.emit('driveFinished', getMetrics())
+    }
   }
 
   // initiated by the rowing engine in case an impulse was not considered
@@ -118,7 +123,12 @@ function createRowingStatistics (config) {
     lastStrokeState = stroke.strokeState
     lastStrokeSpeed = stroke.speed
     instantaneousTorque = stroke.instantaneousTorque
-    emitter.emit('recoveryFinished', getMetrics())
+    if (areWeThereYet()) {
+      sessionState = 'stopped'
+      emitter.emit('sessionTargetReached', getMetrics())
+    } else {
+      emitter.emit('recoveryFinished', getMetrics())
+    }
   }
 
   // initiated when updating key statistics
@@ -126,6 +136,10 @@ function createRowingStatistics (config) {
     durationTotal = stroke.timeSinceStart
     distanceTotal = stroke.distance
     instantaneousTorque = stroke.instantaneousTorque
+    if (areWeThereYet()) {
+      sessionState = 'stopped'
+      emitter.emit('sessionTargetReached', getMetrics())
+    }
   }
 
   // initiated when a new heart rate value is received from heart rate sensor
@@ -167,6 +181,14 @@ function createRowingStatistics (config) {
       strokeState: lastStrokeState,
       heartrate,
       heartrateBatteryLevel
+    }
+  }
+
+  function areWeThereYet () {
+    if (((session.targetDistance > 0 && distanceTotal >= session.targetDistance) || (session.targetTime > 0 && durationTotal >= session.targetTime)) && sessionState === 'rowing') {
+      return true
+    } else {
+      return false
     }
   }
 
