@@ -34,7 +34,7 @@ let movementAllowed = true
 const session = { // a hook for setting session parameters that the rower has to obey
   targetDistance: 0,
   targetTime: 0
-  }
+}
 
 const peripheralManager = createPeripheralManager()
 
