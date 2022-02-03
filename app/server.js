@@ -99,7 +99,7 @@ function handleRotationImpulse (dataPoint) {
 }
 
 const rowingEngine = createRowingEngine(config.rowerSettings)
-const rowingStatistics = createRowingStatistics(config)
+const rowingStatistics = createRowingStatistics(config, session)
 rowingEngine.notify(rowingStatistics)
 const workoutRecorder = createWorkoutRecorder()
 
@@ -129,7 +129,6 @@ rowingStatistics.on('sessionTargetReached', (metrics) => {
   webServer.notifyClients(metrics)
   peripheralManager.notifyMetrics('metricsUpdate', metrics)
 })
-
 
 rowingStatistics.on('peripheralMetricsUpdate', (metrics) => {
   peripheralManager.notifyMetrics('metricsUpdate', metrics)
