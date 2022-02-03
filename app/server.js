@@ -98,16 +98,6 @@ function handleRotationImpulse (dataPoint) {
   }
 }
 
-function checkEndCondition (metrics) {
-  if (((session.targetDistance > 0 && metrics.distanceTotal >= session.targetDistance) || (session.targetTime > 0 && metrics.durationTotal >= session.targetTime)) && metrics.sessionState === 'rowing') {
-    // This isn't the most optimal solution, ideally workoutRecorder.recordStroke(metrics) would be part of the stopWorkout() routine, but there metrics is out of function scope
-    stopWorkout()
-    workoutRecorder.recordStroke(metrics)
-    webServer.notifyClients(metrics)
-    peripheralManager.notifyMetrics('metricsUpdate', metrics)
-  }
-}
-
 const rowingEngine = createRowingEngine(config.rowerSettings)
 const rowingStatistics = createRowingStatistics(config)
 rowingEngine.notify(rowingStatistics)
@@ -116,7 +106,6 @@ const workoutRecorder = createWorkoutRecorder()
 rowingStatistics.on('driveFinished', (metrics) => {
   webServer.notifyClients(metrics)
   peripheralManager.notifyMetrics('strokeStateChanged', metrics)
-  checkEndCondition(metrics)
 })
 
 rowingStatistics.on('recoveryFinished', (metrics) => {
@@ -126,16 +115,21 @@ rowingStatistics.on('recoveryFinished', (metrics) => {
   `, cal/hour: ${metrics.caloriesPerHour.toFixed(1)}kcal, cal/minute: ${metrics.caloriesPerMinute.toFixed(1)}kcal`)
   webServer.notifyClients(metrics)
   peripheralManager.notifyMetrics('strokeFinished', metrics)
-  checkEndCondition(metrics)
-  if (metrics.sessionState === 'rowing') {
-    workoutRecorder.recordStroke(metrics)
-  }
+  workoutRecorder.recordStroke(metrics)
 })
 
 rowingStatistics.on('webMetricsUpdate', (metrics) => {
   webServer.notifyClients(metrics)
-  checkEndCondition(metrics)
 })
+
+rowingStatistics.on('sessionTargetReached', (metrics) => {
+  // This isn't the most optimal solution, ideally workoutRecorder.recordStroke(metrics) would be part of the stopWorkout() routine, but there metrics is out of function scope
+  stopWorkout()
+  workoutRecorder.recordStroke(metrics)
+  webServer.notifyClients(metrics)
+  peripheralManager.notifyMetrics('metricsUpdate', metrics)
+})
+
 
 rowingStatistics.on('peripheralMetricsUpdate', (metrics) => {
   peripheralManager.notifyMetrics('metricsUpdate', metrics)
