@@ -58,7 +58,7 @@ peripheralManager.on('control', (event) => {
     event.res = true
   } else if (event?.req?.name === 'startOrResume') {
     log.debug('startOrResume requested')
-    movementAllowed = true
+    resumeWorkout()
     peripheralManager.notifyStatus({ name: 'startedOrResumedByUser' })
     event.res = true
   } else if (event?.req?.name === 'peripheralMode') {
@@ -72,6 +72,10 @@ peripheralManager.on('control', (event) => {
 function pauseWorkout () {
   movementAllowed = false
   workoutRecorder.handlePause()
+}
+
+function resumeWorkout () {
+  movementAllowed = true
 }
 
 function stopWorkout () {
