@@ -7,7 +7,7 @@
 
 import { AppElement, html, css } from './AppElement.js'
 import { customElement } from 'lit/decorators.js'
-import { icon_undo, icon_expand, icon_compress, icon_poweroff, icon_bluetooth } from '../lib/icons.js'
+import { icon_undo, icon_expand, icon_compress, icon_poweroff, icon_bluetooth, icon_upload } from '../lib/icons.js'
 
 @customElement('dashboard-actions')
 export class DashboardActions extends AppElement {
@@ -17,13 +17,18 @@ export class DashboardActions extends AppElement {
       background-color: var(--theme-button-color);
       border: 0;
       color: var(--theme-font-color);
-      padding: 0.5em 0.9em 0.3em 0.9em;
       margin: 0.2em 0;
       font-size: 60%;
-      text-align: center;
       text-decoration: none;
-      display: inline-block;
+      display: inline-flex;
       width: 3.5em;
+      height: 2.5em;
+      justify-content: center;
+      align-items: center;
+    }
+
+    #fullscreen-icon {
+        display: inline-flex;
     }
 
     #windowed-icon {
@@ -31,7 +36,7 @@ export class DashboardActions extends AppElement {
     }
 
     .icon {
-      height: 1.8em;
+      height: 1.7em;
     }
 
     .peripheral-mode {
@@ -43,7 +48,7 @@ export class DashboardActions extends AppElement {
         display: none;
       }
       #windowed-icon {
-        display: inline;
+        display: inline-flex;
       }
     }
   `
@@ -52,6 +57,7 @@ export class DashboardActions extends AppElement {
     return html`
       <button @click=${this.reset}>${icon_undo}</button>
       ${this.renderOptionalButtons()}
+      <button @click=${this.uploadTraining}>${icon_upload}</button>
       <button @click=${this.switchPeripheralMode}>${icon_bluetooth}</button>
       <div class="peripheral-mode">${this.peripheralMode()}</div>
     `
@@ -113,5 +119,9 @@ export class DashboardActions extends AppElement {
 
   switchPeripheralMode () {
     this.sendEvent('triggerAction', { command: 'switchPeripheralMode' })
+  }
+
+  uploadTraining () {
+    this.sendEvent('triggerAction', { command: 'uploadTraining' })
   }
 }

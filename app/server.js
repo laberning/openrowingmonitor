@@ -17,6 +17,7 @@ import { createAntManager } from './ant/AntManager.js'
 // eslint-disable-next-line no-unused-vars
 import { replayRowingSession } from './tools/RowingRecorder.js'
 import { createWorkoutRecorder } from './engine/WorkoutRecorder.js'
+import { createWorkoutUploader } from './engine/WorkoutUploader.js'
 
 // set the log levels
 log.setLevel(config.loglevel.default)
@@ -77,6 +78,7 @@ const rowingEngine = createRowingEngine(config.rowerSettings)
 const rowingStatistics = createRowingStatistics(config)
 rowingEngine.notify(rowingStatistics)
 const workoutRecorder = createWorkoutRecorder()
+const workoutUploader = createWorkoutUploader(workoutRecorder)
 
 rowingStatistics.on('driveFinished', (metrics) => {
   webServer.notifyClients(metrics)
@@ -123,12 +125,22 @@ if (config.heartrateMonitorANT) {
 
 const webServer = createWebServer()
 webServer.on('messageReceived', (message) => {
-  if (message.command === 'reset') {
-    resetWorkout()
-  } else if (message.command === 'switchPeripheralMode') {
-    peripheralManager.switchPeripheralMode()
-  } else {
-    log.warn('invalid command received:', message)
+  switch (message.command) {
+    case 'switchPeripheralMode': {
+      peripheralManager.switchPeripheralMode()
+      break
+    }
+    case 'reset': {
+      resetWorkout()
+      break
+    }
+    case 'uploadTraining': {
+      workoutUploader.upload()
+      break
+    }
+    default: {
+      log.warn('invalid command received:', message)
+    }
   }
 })
 

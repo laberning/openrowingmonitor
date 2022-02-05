@@ -90,13 +90,23 @@ export function createApp (app) {
   }
 
   function handleAction (action) {
-    if (action.command === 'switchPeripheralMode') {
-      if (socket)socket.send(JSON.stringify({ command: 'switchPeripheralMode' }))
-    } else if (action.command === 'reset') {
-      resetFields()
-      if (socket)socket.send(JSON.stringify({ command: 'reset' }))
-    } else {
-      console.error('no handler defined for action', action)
+    switch (action.command) {
+      case 'switchPeripheralMode': {
+        if (socket)socket.send(JSON.stringify({ command: 'switchPeripheralMode' }))
+        break
+      }
+      case 'reset': {
+        resetFields()
+        if (socket)socket.send(JSON.stringify({ command: 'reset' }))
+        break
+      }
+      case 'uploadTraining': {
+        if (socket)socket.send(JSON.stringify({ command: 'uploadTraining' }))
+        break
+      }
+      default: {
+        console.error('no handler defined for action', action)
+      }
     }
   }
 

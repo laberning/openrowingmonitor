@@ -99,5 +99,15 @@ export default {
   // the device to the profiles.
   // !! Only change this setting in the config/config.js file, and leave this on DEFAULT as that
   // is the fallback for the default profile settings
-  rowerSettings: rowerProfiles.DEFAULT
+  rowerSettings: rowerProfiles.DEFAULT,
+
+  // Configures the connection to Strava (to directly upload workouts to Strava)
+  // Note that these values are not your Strava credentials
+  // Instead you have to create a Strava API Application as described here:
+  // https://developers.strava.com/docs/getting-started/#account and use the corresponding values
+  // The "Client ID" of your Strava API Application
+  stravaClientId: '',
+
+  // The "Client Secret" of your Strava API Application
+  stravaClientSecret: ''
 }

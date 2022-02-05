@@ -78,4 +78,5 @@ node_modules
 tmp/
 build/
 config/config.js
+config/stravatoken
 data/

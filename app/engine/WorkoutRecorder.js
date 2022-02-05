@@ -8,7 +8,7 @@
 */
 import log from 'loglevel'
 import zlib from 'zlib'
-import { mkdir, writeFile } from 'fs/promises'
+import fs from 'fs/promises'
 import xml2js from 'xml2js'
 import config from '../tools/ConfigManager.js'
 import { promisify } from 'util'
@@ -34,33 +34,7 @@ function createWorkoutRecorder () {
     if (startTime === undefined) {
       startTime = new Date()
     }
-    // stroke recordings are currently only used to create tcx files, so we can skip it
-    // if tcx file creation is disabled
-    if (config.createTcxFiles) {
-      strokes.push(stroke)
-    }
-  }
-
-  async function createTcxFile () {
-    const stringifiedStartTime = startTime.toISOString().replace(/T/, '_').replace(/:/g, '-').replace(/\..+/, '')
-    const directory = `${config.dataDirectory}/recordings/${startTime.getFullYear()}/${(startTime.getMonth() + 1).toString().padStart(2, '0')}`
-    const filename = `${directory}/${stringifiedStartTime}_rowing.tcx${config.gzipTcxFiles ? '.gz' : ''}`
-    log.info(`saving session as tcx file ${filename}...`)
-
-    try {
-      await mkdir(directory, { recursive: true })
-    } catch (error) {
-      if (error.code !== 'EEXIST') {
-        log.error(`can not create directory ${directory}`, error)
-      }
-    }
-
-    await buildAndSaveTcxFile({
-      id: startTime.toISOString(),
-      filename,
-      startTime,
-      strokes
-    })
+    strokes.push(stroke)
   }
 
   async function createRawDataFile () {
@@ -70,7 +44,7 @@ function createWorkoutRecorder () {
     log.info(`saving session as raw data file ${filename}...`)
 
     try {
-      await mkdir(directory, { recursive: true })
+      await fs.mkdir(directory, { recursive: true })
     } catch (error) {
       if (error.code !== 'EEXIST') {
         log.error(`can not create directory ${directory}`, error)
@@ -79,7 +53,40 @@ function createWorkoutRecorder () {
     await createFile(rotationImpulses.join('\n'), filename, config.gzipRawDataFiles)
   }
 
-  async function buildAndSaveTcxFile (workout) {
+  async function createTcxFile () {
+    const tcxRecord = await activeWorkoutToTcx()
+    const directory = `${config.dataDirectory}/recordings/${startTime.getFullYear()}/${(startTime.getMonth() + 1).toString().padStart(2, '0')}`
+    const filename = `${directory}/${tcxRecord.filename}${config.gzipTcxFiles ? '.gz' : ''}`
+    log.info(`saving session as tcx file ${filename}...`)
+
+    try {
+      await fs.mkdir(directory, { recursive: true })
+    } catch (error) {
+      if (error.code !== 'EEXIST') {
+        log.error(`can not create directory ${directory}`, error)
+      }
+    }
+
+    await createFile(tcxRecord.tcx, `${filename}`, config.gzipTcxFiles)
+  }
+
+  async function activeWorkoutToTcx () {
+    const stringifiedStartTime = startTime.toISOString().replace(/T/, '_').replace(/:/g, '-').replace(/\..+/, '')
+    const filename = `${stringifiedStartTime}_rowing.tcx`
+
+    const tcx = await workoutToTcx({
+      id: startTime.toISOString(),
+      startTime,
+      strokes
+    })
+
+    return {
+      tcx,
+      filename
+    }
+  }
+
+  async function workoutToTcx (workout) {
     let versionArray = process.env.npm_package_version.split('.')
     if (versionArray.length < 3) versionArray = [0, 0, 0]
     const lastStroke = workout.strokes[strokes.length - 1]
@@ -164,7 +171,7 @@ function createWorkoutRecorder () {
     }
 
     const builder = new xml2js.Builder()
-    await createFile(builder.buildObject(tcxObject), workout.filename, config.gzipTcxFiles)
+    return builder.buildObject(tcxObject)
   }
 
   async function reset () {
@@ -177,9 +184,9 @@ function createWorkoutRecorder () {
   async function createFile (content, filename, compress = false) {
     if (compress) {
       const gzipContent = await gzip(content)
-      await writeFile(filename, gzipContent, (err) => { if (err) log.error(err) })
+      await fs.writeFile(filename, gzipContent, (err) => { if (err) log.error(err) })
     } else {
-      await writeFile(filename, content, (err) => { if (err) log.error(err) })
+      await fs.writeFile(filename, content, (err) => { if (err) log.error(err) })
     }
   }
 
@@ -192,11 +199,8 @@ function createWorkoutRecorder () {
       return
     }
 
-    const minimumRecordingTimeInSeconds = 10
-    const rotationImpulseTimeTotal = rotationImpulses.reduce((acc, impulse) => acc + impulse, 0)
-    const strokeTimeTotal = strokes.reduce((acc, stroke) => acc + stroke.strokeTime, 0)
-    if (Math.max(rotationImpulseTimeTotal, strokeTimeTotal) < minimumRecordingTimeInSeconds) {
-      log.debug(`recording time is less than ${minimumRecordingTimeInSeconds}s, skipping creation of recording files...`)
+    if (!canCreateRecordings()) {
+      log.debug('workout is shorter than minimum workout time, skipping creation of recordings...')
       return
     }
 
@@ -211,10 +215,19 @@ function createWorkoutRecorder () {
     await Promise.all(parallelCalls)
   }
 
+  function canCreateRecordings () {
+    const minimumRecordingTimeInSeconds = 10
+    const rotationImpulseTimeTotal = rotationImpulses.reduce((acc, impulse) => acc + impulse, 0)
+    const strokeTimeTotal = strokes.reduce((acc, stroke) => acc + stroke.strokeTime, 0)
+    return (Math.max(rotationImpulseTimeTotal, strokeTimeTotal) > minimumRecordingTimeInSeconds)
+  }
+
   return {
     recordStroke,
     recordRotationImpulse,
+    canCreateRecordings,
     handlePause,
+    activeWorkoutToTcx,
     reset
   }
 }
