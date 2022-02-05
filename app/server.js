@@ -52,7 +52,7 @@ peripheralManager.on('control', (event) => {
     peripheralManager.notifyStatus({ name: 'startedOrResumedByUser' })
     event.res = true
   } else if (event?.req?.name === 'peripheralMode') {
-    webServer.notifyClients({ peripheralMode: event.req.peripheralMode })
+    webServer.notifyClients('metrics', { peripheralMode: event.req.peripheralMode })
     event.res = true
   } else {
     log.info('unhandled Command', event.req)
@@ -81,7 +81,7 @@ const workoutRecorder = createWorkoutRecorder()
 const workoutUploader = createWorkoutUploader(workoutRecorder)
 
 rowingStatistics.on('driveFinished', (metrics) => {
-  webServer.notifyClients(metrics)
+  webServer.notifyClients('metrics', metrics)
   peripheralManager.notifyMetrics('strokeStateChanged', metrics)
 })
 
@@ -90,7 +90,7 @@ rowingStatistics.on('recoveryFinished', (metrics) => {
   `, split: ${metrics.splitFormatted}, ratio: ${metrics.powerRatio.toFixed(2)}, dist: ${metrics.distanceTotal.toFixed(1)}m` +
   `, cal: ${metrics.caloriesTotal.toFixed(1)}kcal, SPM: ${metrics.strokesPerMinute.toFixed(1)}, speed: ${metrics.speed.toFixed(2)}km/h` +
   `, cal/hour: ${metrics.caloriesPerHour.toFixed(1)}kcal, cal/minute: ${metrics.caloriesPerMinute.toFixed(1)}kcal`)
-  webServer.notifyClients(metrics)
+  webServer.notifyClients('metrics', metrics)
   peripheralManager.notifyMetrics('strokeFinished', metrics)
   if (metrics.sessionState === 'rowing') {
     workoutRecorder.recordStroke(metrics)
@@ -98,7 +98,7 @@ rowingStatistics.on('recoveryFinished', (metrics) => {
 })
 
 rowingStatistics.on('webMetricsUpdate', (metrics) => {
-  webServer.notifyClients(metrics)
+  webServer.notifyClients('metrics', metrics)
 })
 
 rowingStatistics.on('peripheralMetricsUpdate', (metrics) => {
@@ -123,6 +123,10 @@ if (config.heartrateMonitorANT) {
   })
 }
 
+workoutUploader.on('authorizeStrava', (data) => {
+  webServer.notifyClients('authorizeStrava', data)
+})
+
 const webServer = createWebServer()
 webServer.on('messageReceived', (message) => {
   switch (message.command) {
@@ -138,6 +142,10 @@ webServer.on('messageReceived', (message) => {
       workoutUploader.upload()
       break
     }
+    case 'stravaAuthorizationCode': {
+      workoutUploader.stravaAuthorizationCode(message.data)
+      break
+    }
     default: {
       log.warn('invalid command received:', message)
     }
@@ -145,7 +153,7 @@ webServer.on('messageReceived', (message) => {
 })
 
 webServer.on('clientConnected', () => {
-  webServer.notifyClients({ peripheralMode: peripheralManager.getPeripheralMode() })
+  webServer.notifyClients('metrics', { peripheralMode: peripheralManager.getPeripheralMode() })
 })
 
 /*

@@ -12,9 +12,12 @@ const rowingMetricsFields = ['strokesTotal', 'distanceTotal', 'caloriesTotal', '
   'heartrateBatteryLevel', 'splitFormatted', 'strokesPerMinute', 'durationTotalFormatted']
 
 export function createApp (app) {
-  const mode = window.location.hash
-  const appMode = mode === '#:standalone:' ? 'STANDALONE' : mode === '#:kiosk:' ? 'KIOSK' : 'BROWSER'
+  const urlParameters = new URLSearchParams(window.location.search)
+  const mode = urlParameters.get('mode')
+  const appMode = mode === 'standalone' ? 'STANDALONE' : mode === 'kiosk' ? 'KIOSK' : 'BROWSER'
   app.updateState({ ...app.getState(), appMode })
+
+  const stravaAuthorizationCode = urlParameters.get('code')
 
   let socket
 
@@ -22,13 +25,27 @@ export function createApp (app) {
   resetFields()
   requestWakeLock()
 
+  function websocketOpened () {
+    if (stravaAuthorizationCode) {
+      handleStravaAuthorization(stravaAuthorizationCode)
+    }
+  }
+
+  function handleStravaAuthorization (stravaAuthorizationCode) {
+    if (socket)socket.send(JSON.stringify({ command: 'stravaAuthorizationCode', data: stravaAuthorizationCode }))
+  }
+
+  let initialWebsocketOpenend = true
   function initWebsocket () {
     // use the native websocket implementation of browser to communicate with backend
-    // eslint-disable-next-line no-undef
     socket = new WebSocket(`ws://${location.host}/websocket`)
 
     socket.addEventListener('open', (event) => {
       console.log('websocket opened')
+      if (initialWebsocketOpenend) {
+        websocketOpened()
+        initialWebsocketOpenend = false
+      }
     })
 
     socket.addEventListener('error', (error) => {
@@ -46,21 +63,37 @@ export function createApp (app) {
     // todo: we should use different types of messages to make processing easier
     socket.addEventListener('message', (event) => {
       try {
-        const data = JSON.parse(event.data)
-
-        let activeFields = rowingMetricsFields
-        // if we are in reset state only update heart rate
-        if (data.strokesTotal === 0) {
-          activeFields = ['heartrate', 'heartrateBatteryLevel']
+        const message = JSON.parse(event.data)
+        if (!message.type) {
+          console.error('message does not contain messageType specifier', message)
+          return
         }
+        const data = message.data
+        switch (message.type) {
+          case 'metrics': {
+            let activeFields = rowingMetricsFields
+            // if we are in reset state only update heart rate
+            if (data.strokesTotal === 0) {
+              activeFields = ['heartrate', 'heartrateBatteryLevel']
+            }
 
-        const filteredData = filterObjectByKeys(data, activeFields)
-
-        let updatedState = { ...app.getState(), metrics: filteredData }
-        if (data.peripheralMode) {
-          updatedState = { ...app.getState(), peripheralMode: data.peripheralMode }
+            const filteredData = filterObjectByKeys(data, activeFields)
+            let updatedState = { ...app.getState(), metrics: filteredData }
+            if (data.peripheralMode) {
+              updatedState = { ...app.getState(), peripheralMode: data.peripheralMode }
+            }
+            app.updateState(updatedState)
+            break
+          }
+          case 'authorizeStrava': {
+            const currentUrl = encodeURIComponent(window.location.href)
+            window.location.href = `https://www.strava.com/oauth/authorize?client_id=${data.stravaClientId}&response_type=code&redirect_uri=${currentUrl}&approval_prompt=force&scope=activity:write`
+            break
+          }
+          default: {
+            console.error(`unknown message type: ${message.type}`)
+          }
         }
-        app.updateState(updatedState)
       } catch (err) {
         console.log(err)
       }

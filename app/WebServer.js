@@ -48,8 +48,8 @@ function createWebServer () {
     })
   })
 
-  function notifyClients (message) {
-    const messageString = JSON.stringify(message)
+  function notifyClients (type, data) {
+    const messageString = JSON.stringify({ type, data })
     wss.clients.forEach(function each (client) {
       if (client.readyState === WebSocket.OPEN) {
         client.send(messageString)

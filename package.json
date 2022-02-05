@@ -21,7 +21,7 @@
     "lint": "eslint ./app ./config && markdownlint-cli2 '**/*.md' '#node_modules'",
     "start": "node app/server.js",
     "dev": "npm-run-all --parallel dev:backend dev:frontend",
-    "dev:backend": "nodemon app/server.js",
+    "dev:backend": "nodemon --ignore 'app/client/**/*' app/server.js",
     "dev:frontend": "snowpack dev",
     "build": "rollup -c",
     "build:watch": "rollup -cw",
