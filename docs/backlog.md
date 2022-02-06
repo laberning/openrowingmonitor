@@ -1,6 +1,8 @@
 # Development Roadmap for Open Rowing Monitor
 
-This is the very minimalistic Backlog for further development of this project.
+This is currently is a very minimalistic Backlog for further development of this project.
+
+If you would like to contribute to this project, please read the [Contributing Guidelines](CONTRIBUTING.md) first.
 
 ## Soon
 
@@ -13,13 +15,12 @@ This is the very minimalistic Backlog for further development of this project.
 * automatically upload recorded rowing sessions to training platforms (i.e. Strava)
 * figure out where to set the Service Advertising Data (FTMS.pdf p 15)
 * add some attributes to BLE DeviceInformationService
-* make Web UI a proper Web Application (tooling and SPA framework)
 * record the workout and show a visual graph of metrics
 * show a splash screen while booting the device
 
 ## Ideas
 
 * add video playback to the Web UI
-* implement or integrate some rowing games
+* implement or integrate some rowing games (i.e. a little 2D or 3D, game implemented as Web Component)
 * add possibility to define training timers
 * add possibility to define workouts (i.e. training intervals with goals)

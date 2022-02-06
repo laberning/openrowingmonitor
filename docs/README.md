@@ -11,8 +11,8 @@ A free and open source performance monitor for rowing machines. It upgrades a ro
 
 Open Rowing Monitor is a Node.js application that runs on a Raspberry Pi and measures the rotation of the rower's flywheel (or similar) to calculate rowing specific metrics, such as power, split time, speed, stroke rate, distance and calories.
 
-We currently develop and test it with a Sportstech WRX700 water-rower and a NordicTrack RX-800 hybrid magnetic / air-rower. But it should run fine with any rowing machine that uses some kind of damping mechanism, as long as you can add something to measure the speed of the flywheel.
-We suspect it works well with DIY rowing machines like the [Openergo](https://openergo.webs.com) too.
+It is currently developed and tested with a Sportstech WRX700 water-rower. But it should run fine with any rowing machine that uses some kind of damping mechanism, as long as you can add something to measure the speed of the flywheel.
+It should also work well with DIY rowing machines like the [Openergo](https://openergo.webs.com).
 
 ## Features
 
@@ -47,7 +47,7 @@ Fitness Machine Service (FTMS) is a standardized GATT protocol for different typ
 
 **FTMS Rower:** This is the FTMS profile for rowing machines and supports all rowing specific metrics (such as stroke rate). So far not many training applications for this profile exist, but the market is evolving. I've successfully tested it with [EXR](https://www.exrgame.com), [MyHomeFit](https://myhomefit.de) and [Kinomap](https://www.kinomap.com).
 
-**FTMS Indoor Bike:** This FTMS profile is used by Smart Bike Trainers and widely adopted by training applications for bike training. It does not support rowing specific metrics. But we can present metrics such as power and distance to the biking application and use cadence for stroke rate. So why not use your virtual rowing bike to row up a mountain in [Zwift](https://www.zwift.com), [Bkool](https://www.bkool.com), [The Sufferfest](https://thesufferfest.com) or similar :-)
+**FTMS Indoor Bike:** This FTMS profile is used by Smart Bike Trainers and widely adopted by training applications for bike training. It does not support rowing specific metrics. But it can present metrics such as power and distance to the biking application and use cadence for stroke rate. So why not use your virtual rowing bike to row up a mountain in [Zwift](https://www.zwift.com), [Bkool](https://www.bkool.com), [The Sufferfest](https://thesufferfest.com) or similar :-)
 
 **Concept2 PM:** Open Rowing Monitor also implements part of the Concept2 PM Bluetooth Smart Communication Interface Definition. This is still work in progress and only implements the most common parts of the spec, so it will not work with all applications that support C2 rowing machines. It currently works with all the samples from [The Erg Arcade](https://ergarcade.com), i.e. you can [row in the clouds](https://ergarcade.github.io/mrdoob-clouds/). This also works very well with [EXR](https://www.exrgame.com).
 
@@ -83,6 +83,6 @@ Feel free to leave a message in the [GitHub Discussions](https://github.com/labe
 
 Check the advanced information on the [Physics behind Open Rowing Monitor](physics_openrowingmonitor.md).
 
-We plan to add more features, here is the [Development Roadmap](backlog.md).
+I plan to add more features, here is the [Development Roadmap](backlog.md). Contributions are welcome, please read the [Contributing Guidelines](CONTRIBUTING.md) first.
 
 This project uses some great work by others, see the [Attribution here](attribution.md).
