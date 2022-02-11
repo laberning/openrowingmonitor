@@ -12,45 +12,45 @@ import fs from 'fs/promises'
 
 const clientId = config.stravaClientId
 const clientSecret = config.stravaClientSecret
+const stravaTokenFile = './config/stravatoken'
 
 function createAuthorizedConnection (getStravaAuthorizationCode) {
-  const controller = new AbortController()
   let accessToken
   let refreshToken
 
   const authorizedConnection = axios.create({
-    baseURL: 'https://www.strava.com/api/v3',
-    signal: controller.signal
+    baseURL: 'https://www.strava.com/api/v3'
   })
 
   authorizedConnection.interceptors.request.use(async config => {
     if (!refreshToken) {
       try {
-        refreshToken = await fs.readFile('./config/stravatoken', 'utf-8')
+        refreshToken = await fs.readFile(stravaTokenFile, 'utf-8')
       } catch (error) {
         log.info('no strava token available yet')
       }
     }
     // if no refresh token is set, then the app has not yet been authorized with Strava
+    // start oAuth authorization process
     if (!refreshToken) {
       const authorizationCode = await getStravaAuthorizationCode();
       ({ accessToken, refreshToken } = await authorize(authorizationCode))
+      await writeToken('', refreshToken)
+    // otherwise we just need to get a valid accessToken
     } else {
+      const oldRefreshToken = refreshToken;
       ({ accessToken, refreshToken } = await getAccessTokens(refreshToken))
       if (!refreshToken) {
-        log.error('strava token is invalid, delete config/stravatoken and try again')
+        log.error(`strava token is invalid, deleting ${stravaTokenFile}...`)
+        await fs.unlink(stravaTokenFile)
+      // if the refreshToken has changed, persist it
       } else {
-        try {
-          await fs.writeFile('./config/stravatoken', refreshToken, 'utf-8')
-        } catch (error) {
-          log.info('can not persist strava token', error)
-        }
+        await writeToken(oldRefreshToken, refreshToken)
       }
     }
 
     if (!accessToken) {
       log.error('strava authorization not successful')
-      controller.abort()
     }
 
     Object.assign(config.headers, { Authorization: `Bearer ${accessToken}` })
@@ -109,6 +109,16 @@ function createAuthorizedConnection (getStravaAuthorizationCode) {
     return {
       refreshToken: response?.refresh_token,
       accessToken: response?.access_token
+    }
+  }
+
+  async function writeToken (oldToken, newToken) {
+    if (oldToken !== newToken) {
+      try {
+        await fs.writeFile(stravaTokenFile, newToken, 'utf-8')
+      } catch (error) {
+        log.info(`can not write strava token to file ${stravaTokenFile}`, error)
+      }
     }
   }
 

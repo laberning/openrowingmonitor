@@ -55,6 +55,10 @@ function createWorkoutRecorder () {
 
   async function createTcxFile () {
     const tcxRecord = await activeWorkoutToTcx()
+    if (tcxRecord === undefined) {
+      log.error('error creating tcx file')
+      return
+    }
     const directory = `${config.dataDirectory}/recordings/${startTime.getFullYear()}/${(startTime.getMonth() + 1).toString().padStart(2, '0')}`
     const filename = `${directory}/${tcxRecord.filename}${config.gzipTcxFiles ? '.gz' : ''}`
     log.info(`saving session as tcx file ${filename}...`)
@@ -71,6 +75,8 @@ function createWorkoutRecorder () {
   }
 
   async function activeWorkoutToTcx () {
+    // we need at least two strokes to generate a valid tcx file
+    if (strokes.length < 2) return
     const stringifiedStartTime = startTime.toISOString().replace(/T/, '_').replace(/:/g, '-').replace(/\..+/, '')
     const filename = `${stringifiedStartTime}_rowing.tcx`
 
@@ -199,8 +205,8 @@ function createWorkoutRecorder () {
       return
     }
 
-    if (!canCreateRecordings()) {
-      log.debug('workout is shorter than minimum workout time, skipping creation of recordings...')
+    if (!minimumRecordingTimeHasPassed()) {
+      log.debug('workout is shorter than minimum workout time, skipping automatic creation of recordings...')
       return
     }
 
@@ -215,7 +221,7 @@ function createWorkoutRecorder () {
     await Promise.all(parallelCalls)
   }
 
-  function canCreateRecordings () {
+  function minimumRecordingTimeHasPassed () {
     const minimumRecordingTimeInSeconds = 10
     const rotationImpulseTimeTotal = rotationImpulses.reduce((acc, impulse) => acc + impulse, 0)
     const strokeTimeTotal = strokes.reduce((acc, stroke) => acc + stroke.strokeTime, 0)
@@ -225,7 +231,6 @@ function createWorkoutRecorder () {
   return {
     recordStroke,
     recordRotationImpulse,
-    canCreateRecordings,
     handlePause,
     activeWorkoutToTcx,
     reset

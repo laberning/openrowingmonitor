@@ -43,7 +43,6 @@ export default {
       upgrade: (req, socket, head) => {
         const defaultWSHandler = (err, req, socket, head) => {
           if (err) {
-            console.error('proxy error', err)
             socket.destroy()
           }
         }

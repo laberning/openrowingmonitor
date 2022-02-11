@@ -13,11 +13,11 @@ function createWorkoutUploader (workoutRecorder) {
   const emitter = new EventEmitter()
 
   let stravaAuthorizationCodeResolver
+  let requestingClient
 
   function getStravaAuthorizationCode () {
     return new Promise((resolve) => {
-      log.info('please open https://www.strava.com/oauth/authorize?client_id=&response_type=code&redirect_uri=http://localhost/index.html&approval_prompt=force&scope=activity:write')
-      emitter.emit('authorizeStrava', { stravaClientId: config.stravaClientId })
+      emitter.emit('authorizeStrava', { stravaClientId: config.stravaClientId }, requestingClient)
       stravaAuthorizationCodeResolver = resolve
     })
   }
@@ -31,12 +31,20 @@ function createWorkoutUploader (workoutRecorder) {
     }
   }
 
-  async function upload () {
-    if (workoutRecorder.canCreateRecordings()) {
-      log.debug('uploading workout to strava...')
-      await stravaAPI.uploadActivityTcx(await workoutRecorder.activeWorkoutToTcx())
-    } else {
-      log.debug('workout is shorter than minimum workout time, skipping upload')
+  async function upload (client) {
+    log.debug('uploading workout to strava...')
+    try {
+      requestingClient = client
+      // todo: we might signal back to the client whether we had success or not
+      const tcxActivity = await workoutRecorder.activeWorkoutToTcx()
+      if (tcxActivity !== undefined) {
+        await stravaAPI.uploadActivityTcx(tcxActivity)
+        emitter.emit('resetWorkout')
+      } else {
+        log.error('can not upload an empty workout to strava')
+      }
+    } catch (error) {
+      log.error('can not upload workout to strava:', error.message)
     }
   }
 

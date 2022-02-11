@@ -70,6 +70,10 @@ export function createApp (app) {
         }
         const data = message.data
         switch (message.type) {
+          case 'config': {
+            app.updateState({ ...app.getState(), config: data })
+            break
+          }
           case 'metrics': {
             let activeFields = rowingMetricsFields
             // if we are in reset state only update heart rate
@@ -78,11 +82,7 @@ export function createApp (app) {
             }
 
             const filteredData = filterObjectByKeys(data, activeFields)
-            let updatedState = { ...app.getState(), metrics: filteredData }
-            if (data.peripheralMode) {
-              updatedState = { ...app.getState(), peripheralMode: data.peripheralMode }
-            }
-            app.updateState(updatedState)
+            app.updateState({ ...app.getState(), metrics: filteredData })
             break
           }
           case 'authorizeStrava': {
@@ -91,7 +91,7 @@ export function createApp (app) {
             break
           }
           default: {
-            console.error(`unknown message type: ${message.type}`)
+            console.error(`unknown message type: ${message.type}`, message.data)
           }
         }
       } catch (err) {

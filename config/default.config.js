@@ -105,6 +105,9 @@ export default {
   // Note that these values are not your Strava credentials
   // Instead you have to create a Strava API Application as described here:
   // https://developers.strava.com/docs/getting-started/#account and use the corresponding values
+  // WARNING: if you enabled the network share via the installer script, then this config file will be
+  // exposed via network share on your local network. You might consider disabling (or password protect)
+  // the Configuration share in smb.conf
   // The "Client ID" of your Strava API Application
   stravaClientId: '',
 

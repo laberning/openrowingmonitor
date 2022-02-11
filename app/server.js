@@ -52,7 +52,7 @@ peripheralManager.on('control', (event) => {
     peripheralManager.notifyStatus({ name: 'startedOrResumedByUser' })
     event.res = true
   } else if (event?.req?.name === 'peripheralMode') {
-    webServer.notifyClients('metrics', { peripheralMode: event.req.peripheralMode })
+    webServer.notifyClients('config', getConfig())
     event.res = true
   } else {
     log.info('unhandled Command', event.req)
@@ -123,12 +123,16 @@ if (config.heartrateMonitorANT) {
   })
 }
 
-workoutUploader.on('authorizeStrava', (data) => {
-  webServer.notifyClients('authorizeStrava', data)
+workoutUploader.on('authorizeStrava', (data, client) => {
+  webServer.notifyClient(client, 'authorizeStrava', data)
+})
+
+workoutUploader.on('resetWorkout', () => {
+  resetWorkout()
 })
 
 const webServer = createWebServer()
-webServer.on('messageReceived', (message) => {
+webServer.on('messageReceived', (message, client) => {
   switch (message.command) {
     case 'switchPeripheralMode': {
       peripheralManager.switchPeripheralMode()
@@ -139,7 +143,7 @@ webServer.on('messageReceived', (message) => {
       break
     }
     case 'uploadTraining': {
-      workoutUploader.upload()
+      workoutUploader.upload(client)
       break
     }
     case 'stravaAuthorizationCode': {
@@ -152,9 +156,17 @@ webServer.on('messageReceived', (message) => {
   }
 })
 
-webServer.on('clientConnected', () => {
-  webServer.notifyClients('metrics', { peripheralMode: peripheralManager.getPeripheralMode() })
+webServer.on('clientConnected', (client) => {
+  webServer.notifyClient(client, 'config', getConfig())
 })
+
+// todo: extract this into some kind of state manager
+function getConfig () {
+  return {
+    peripheralMode: peripheralManager.getPeripheralMode(),
+    stravaUploadEnabled: !!config.stravaClientId && !!config.stravaClientSecret
+  }
+}
 
 /*
 replayRowingSession(handleRotationImpulse, {

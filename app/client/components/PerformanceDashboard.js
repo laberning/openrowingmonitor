@@ -37,6 +37,7 @@ export class PerformanceDashboard extends AppElement {
       text-align: center;
       position: relative;
       padding: 0.5em 0.2em 0 0.2em;
+      border-radius: var(--theme-border-radius);
     }
 
     dashboard-actions {

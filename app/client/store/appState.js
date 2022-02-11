@@ -8,8 +8,12 @@
 export const APP_STATE = {
   // currently can be STANDALONE (Mobile Home Screen App), KIOSK (Raspberry Pi deployment) or '' (default)
   appMode: '',
-  // currently can be FTMS, FTMSBIKE or PM5
-  peripheralMode: 'FTMS',
   // contains all the rowing metrics that are delivered from the backend
-  metrics: {}
+  metrics: {},
+  config: {
+    // currently can be FTMS, FTMSBIKE or PM5
+    peripheralMode: '',
+    // true if upload to strava is configured
+    stravaUploadEnabled: false
+  }
 }
