@@ -137,6 +137,10 @@ export function createApp (app) {
         if (socket)socket.send(JSON.stringify({ command: 'uploadTraining' }))
         break
       }
+      case 'shutdown': {
+        if (socket)socket.send(JSON.stringify({ command: 'shutdown' }))
+        break
+      }
       default: {
         console.error('no handler defined for action', action)
       }

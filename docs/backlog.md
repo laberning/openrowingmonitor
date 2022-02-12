@@ -10,7 +10,6 @@ This is the very minimalistic Backlog for further development of this project.
 
 ## Later
 
-* automatically upload recorded rowing sessions to training platforms (i.e. Strava)
 * figure out where to set the Service Advertising Data (FTMS.pdf p 15)
 * add some attributes to BLE DeviceInformationService
 * make Web UI a proper Web Application (tooling and SPA framework)

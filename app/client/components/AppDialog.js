@@ -17,10 +17,6 @@ export class AppDialog extends AppElement {
   }
 
   static styles = css`
-    dialog::backdrop {
-      background: none;
-      backdrop-filter: contrast(15%) blur(2px);
-    }
     dialog {
       border: none;
       color: var(--theme-font-color);
@@ -30,6 +26,11 @@ export class AppDialog extends AppElement {
       padding: 1.6rem;
       max-width: 80%;
     }
+    dialog::backdrop {
+      background: none;
+      backdrop-filter: contrast(15%) blur(2px);
+    }
+
     button {
       outline:none;
       background-color: var(--theme-button-color);
@@ -45,6 +46,10 @@ export class AppDialog extends AppElement {
       justify-content: center;
       align-items: center;
     }
+    button:hover {
+      filter: brightness(150%);
+    }
+
     fieldset {
       border: 0;
       margin: unset;

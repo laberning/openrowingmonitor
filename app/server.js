@@ -6,7 +6,8 @@
   everything together while figuring out the physics and model of the application.
   todo: refactor this as we progress
 */
-import { fork } from 'child_process'
+import child_process from 'child_process'
+import { promisify } from 'util'
 import log from 'loglevel'
 import config from './tools/ConfigManager.js'
 import { createRowingEngine } from './engine/RowingEngine.js'
@@ -18,6 +19,7 @@ import { createAntManager } from './ant/AntManager.js'
 import { replayRowingSession } from './tools/RowingRecorder.js'
 import { createWorkoutRecorder } from './engine/WorkoutRecorder.js'
 import { createWorkoutUploader } from './engine/WorkoutUploader.js'
+const exec = promisify(child_process.exec)
 
 // set the log levels
 log.setLevel(config.loglevel.default)
@@ -66,7 +68,7 @@ function resetWorkout () {
   peripheralManager.notifyStatus({ name: 'reset' })
 }
 
-const gpioTimerService = fork('./app/gpio/GpioTimerService.js')
+const gpioTimerService = child_process.fork('./app/gpio/GpioTimerService.js')
 gpioTimerService.on('message', handleRotationImpulse)
 
 function handleRotationImpulse (dataPoint) {
@@ -110,7 +112,7 @@ rowingStatistics.on('rowingPaused', () => {
 })
 
 if (config.heartrateMonitorBLE) {
-  const bleCentralService = fork('./app/ble/CentralService.js')
+  const bleCentralService = child_process.fork('./app/ble/CentralService.js')
   bleCentralService.on('message', (heartrateMeasurement) => {
     rowingStatistics.handleHeartrateMeasurement(heartrateMeasurement)
   })
@@ -132,7 +134,7 @@ workoutUploader.on('resetWorkout', () => {
 })
 
 const webServer = createWebServer()
-webServer.on('messageReceived', (message, client) => {
+webServer.on('messageReceived', async (message, client) => {
   switch (message.command) {
     case 'switchPeripheralMode': {
       peripheralManager.switchPeripheralMode()
@@ -144,6 +146,21 @@ webServer.on('messageReceived', (message, client) => {
     }
     case 'uploadTraining': {
       workoutUploader.upload(client)
+      break
+    }
+    case 'shutdown': {
+      if (getConfig().shutdownEnabled) {
+        console.info('shutting down device...')
+        try {
+          const { stdout, stderr } = await exec(config.shutdownCommand)
+          if (stderr) {
+            log.error('can not shutdown: ', stderr)
+          }
+          log.info(stdout)
+        } catch (error) {
+          log.error('can not shutdown: ', error)
+        }
+      }
       break
     }
     case 'stravaAuthorizationCode': {
@@ -164,7 +181,8 @@ webServer.on('clientConnected', (client) => {
 function getConfig () {
   return {
     peripheralMode: peripheralManager.getPeripheralMode(),
-    stravaUploadEnabled: !!config.stravaClientId && !!config.stravaClientSecret
+    stravaUploadEnabled: !!config.stravaClientId && !!config.stravaClientSecret,
+    shutdownEnabled: !!config.shutdownCommand
   }
 }
 

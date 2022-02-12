@@ -13,7 +13,9 @@ export const APP_STATE = {
   config: {
     // currently can be FTMS, FTMSBIKE or PM5
     peripheralMode: '',
-    // true if upload to strava is configured
-    stravaUploadEnabled: false
+    // true if upload to strava is enabled
+    stravaUploadEnabled: false,
+    // true if remote device shutdown is enabled
+    shutdownEnabled: false
   }
 }

@@ -101,6 +101,9 @@ export default {
   // is the fallback for the default profile settings
   rowerSettings: rowerProfiles.DEFAULT,
 
+  // command to shutdown the device via the user interface, leave empty to disable this feature
+  shutdownCommand: 'halt',
+
   // Configures the connection to Strava (to directly upload workouts to Strava)
   // Note that these values are not your Strava credentials
   // Instead you have to create a Strava API Application as described here:
