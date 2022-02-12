@@ -1,7 +1,7 @@
 {
   "name": "openrowingmonitor",
-  "version": "0.8.1",
-  "description": "A rowing monitor for rowing exercise machines",
+  "version": "0.8.2",
+  "description": "A free and open source performance monitor for rowing machines",
   "main": "app/server.js",
   "author": "Lars Berning",
   "license": "GPL-3.0",
