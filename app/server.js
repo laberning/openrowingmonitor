@@ -6,7 +6,8 @@
   everything together while figuring out the physics and model of the application.
   todo: refactor this as we progress
 */
-import { fork } from 'child_process'
+import child_process from 'child_process'
+import { promisify } from 'util'
 import log from 'loglevel'
 import config from './tools/ConfigManager.js'
 import { createRowingEngine } from './engine/RowingEngine.js'
@@ -17,6 +18,8 @@ import { createAntManager } from './ant/AntManager.js'
 // eslint-disable-next-line no-unused-vars
 import { replayRowingSession } from './tools/RowingRecorder.js'
 import { createWorkoutRecorder } from './engine/WorkoutRecorder.js'
+import { createWorkoutUploader } from './engine/WorkoutUploader.js'
+const exec = promisify(child_process.exec)
 
 // set the log levels
 log.setLevel(config.loglevel.default)
@@ -51,7 +54,7 @@ peripheralManager.on('control', (event) => {
     peripheralManager.notifyStatus({ name: 'startedOrResumedByUser' })
     event.res = true
   } else if (event?.req?.name === 'peripheralMode') {
-    webServer.notifyClients({ peripheralMode: event.req.peripheralMode })
+    webServer.notifyClients('config', getConfig())
     event.res = true
   } else {
     log.info('unhandled Command', event.req)
@@ -65,7 +68,7 @@ function resetWorkout () {
   peripheralManager.notifyStatus({ name: 'reset' })
 }
 
-const gpioTimerService = fork('./app/gpio/GpioTimerService.js')
+const gpioTimerService = child_process.fork('./app/gpio/GpioTimerService.js')
 gpioTimerService.on('message', handleRotationImpulse)
 
 function handleRotationImpulse (dataPoint) {
@@ -77,9 +80,10 @@ const rowingEngine = createRowingEngine(config.rowerSettings)
 const rowingStatistics = createRowingStatistics(config)
 rowingEngine.notify(rowingStatistics)
 const workoutRecorder = createWorkoutRecorder()
+const workoutUploader = createWorkoutUploader(workoutRecorder)
 
 rowingStatistics.on('driveFinished', (metrics) => {
-  webServer.notifyClients(metrics)
+  webServer.notifyClients('metrics', metrics)
   peripheralManager.notifyMetrics('strokeStateChanged', metrics)
 })
 
@@ -88,7 +92,7 @@ rowingStatistics.on('recoveryFinished', (metrics) => {
   `, split: ${metrics.splitFormatted}, ratio: ${metrics.powerRatio.toFixed(2)}, dist: ${metrics.distanceTotal.toFixed(1)}m` +
   `, cal: ${metrics.caloriesTotal.toFixed(1)}kcal, SPM: ${metrics.strokesPerMinute.toFixed(1)}, speed: ${metrics.speed.toFixed(2)}km/h` +
   `, cal/hour: ${metrics.caloriesPerHour.toFixed(1)}kcal, cal/minute: ${metrics.caloriesPerMinute.toFixed(1)}kcal`)
-  webServer.notifyClients(metrics)
+  webServer.notifyClients('metrics', metrics)
   peripheralManager.notifyMetrics('strokeFinished', metrics)
   if (metrics.sessionState === 'rowing') {
     workoutRecorder.recordStroke(metrics)
@@ -96,7 +100,7 @@ rowingStatistics.on('recoveryFinished', (metrics) => {
 })
 
 rowingStatistics.on('webMetricsUpdate', (metrics) => {
-  webServer.notifyClients(metrics)
+  webServer.notifyClients('metrics', metrics)
 })
 
 rowingStatistics.on('peripheralMetricsUpdate', (metrics) => {
@@ -108,7 +112,7 @@ rowingStatistics.on('rowingPaused', () => {
 })
 
 if (config.heartrateMonitorBLE) {
-  const bleCentralService = fork('./app/ble/CentralService.js')
+  const bleCentralService = child_process.fork('./app/ble/CentralService.js')
   bleCentralService.on('message', (heartrateMeasurement) => {
     rowingStatistics.handleHeartrateMeasurement(heartrateMeasurement)
   })
@@ -121,20 +125,66 @@ if (config.heartrateMonitorANT) {
   })
 }
 
+workoutUploader.on('authorizeStrava', (data, client) => {
+  webServer.notifyClient(client, 'authorizeStrava', data)
+})
+
+workoutUploader.on('resetWorkout', () => {
+  resetWorkout()
+})
+
 const webServer = createWebServer()
-webServer.on('messageReceived', (message) => {
-  if (message.command === 'reset') {
-    resetWorkout()
-  } else if (message.command === 'switchPeripheralMode') {
-    peripheralManager.switchPeripheralMode()
-  } else {
-    log.warn('invalid command received:', message)
+webServer.on('messageReceived', async (message, client) => {
+  switch (message.command) {
+    case 'switchPeripheralMode': {
+      peripheralManager.switchPeripheralMode()
+      break
+    }
+    case 'reset': {
+      resetWorkout()
+      break
+    }
+    case 'uploadTraining': {
+      workoutUploader.upload(client)
+      break
+    }
+    case 'shutdown': {
+      if (getConfig().shutdownEnabled) {
+        console.info('shutting down device...')
+        try {
+          const { stdout, stderr } = await exec(config.shutdownCommand)
+          if (stderr) {
+            log.error('can not shutdown: ', stderr)
+          }
+          log.info(stdout)
+        } catch (error) {
+          log.error('can not shutdown: ', error)
+        }
+      }
+      break
+    }
+    case 'stravaAuthorizationCode': {
+      workoutUploader.stravaAuthorizationCode(message.data)
+      break
+    }
+    default: {
+      log.warn('invalid command received:', message)
+    }
   }
 })
 
-webServer.on('clientConnected', () => {
-  webServer.notifyClients({ peripheralMode: peripheralManager.getPeripheralMode() })
+webServer.on('clientConnected', (client) => {
+  webServer.notifyClient(client, 'config', getConfig())
 })
+
+// todo: extract this into some kind of state manager
+function getConfig () {
+  return {
+    peripheralMode: peripheralManager.getPeripheralMode(),
+    stravaUploadEnabled: !!config.stravaClientId && !!config.stravaClientSecret,
+    shutdownEnabled: !!config.shutdownCommand
+  }
+}
 
 /*
 replayRowingSession(handleRotationImpulse, {

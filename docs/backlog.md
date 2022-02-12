@@ -12,7 +12,6 @@ If you would like to contribute to this project, please read the [Contributing G
 
 ## Later
 
-* automatically upload recorded rowing sessions to training platforms (i.e. Strava)
 * figure out where to set the Service Advertising Data (FTMS.pdf p 15)
 * add some attributes to BLE DeviceInformationService
 * record the workout and show a visual graph of metrics

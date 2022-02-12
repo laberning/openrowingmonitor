@@ -28,14 +28,14 @@ function createWebServer () {
 
   const wss = new WebSocketServer({ server })
 
-  wss.on('connection', function connection (ws) {
+  wss.on('connection', function connection (client) {
     log.debug('websocket client connected')
-    emitter.emit('clientConnected', ws)
-    ws.on('message', function incoming (data) {
+    emitter.emit('clientConnected', client)
+    client.on('message', function incoming (data) {
       try {
         const message = JSON.parse(data)
         if (message) {
-          emitter.emit('messageReceived', message)
+          emitter.emit('messageReceived', message, client)
         } else {
           log.warn(`invalid message received: ${data}`)
         }
@@ -43,13 +43,24 @@ function createWebServer () {
         log.error(err)
       }
     })
-    ws.on('close', function () {
+    client.on('close', function () {
       log.debug('websocket client disconnected')
     })
   })
 
-  function notifyClients (message) {
-    const messageString = JSON.stringify(message)
+  function notifyClient (client, type, data) {
+    const messageString = JSON.stringify({ type, data })
+    if (wss.clients.has(client)) {
+      if (client.readyState === WebSocket.OPEN) {
+        client.send(messageString)
+      }
+    } else {
+      log.error('trying to send message to a client that does not exist')
+    }
+  }
+
+  function notifyClients (type, data) {
+    const messageString = JSON.stringify({ type, data })
     wss.clients.forEach(function each (client) {
       if (client.readyState === WebSocket.OPEN) {
         client.send(messageString)
@@ -58,6 +69,7 @@ function createWebServer () {
   }
 
   return Object.assign(emitter, {
+    notifyClient,
     notifyClients
   })
 }

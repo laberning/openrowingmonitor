@@ -99,5 +99,23 @@ export default {
   // the device to the profiles.
   // !! Only change this setting in the config/config.js file, and leave this on DEFAULT as that
   // is the fallback for the default profile settings
-  rowerSettings: rowerProfiles.DEFAULT
+  rowerSettings: rowerProfiles.DEFAULT,
+
+  // command to shutdown the device via the user interface, leave empty to disable this feature
+  shutdownCommand: 'halt',
+
+  // Configures the connection to Strava (to directly upload workouts to Strava)
+  // Note that these values are not your Strava credentials
+  // Instead you have to create a Strava API Application as described here:
+  // https://developers.strava.com/docs/getting-started/#account and use the corresponding values
+  // When creating your Strava API application, set the "Authorization Callback Domain" to the IP address
+  // of your Raspberry Pi
+  // WARNING: if you enabled the network share via the installer script, then this config file will be
+  // exposed via network share on your local network. You might consider disabling (or password protect)
+  // the Configuration share in smb.conf
+  // The "Client ID" of your Strava API Application
+  stravaClientId: '',
+
+  // The "Client Secret" of your Strava API Application
+  stravaClientSecret: ''
 }

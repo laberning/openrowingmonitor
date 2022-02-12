@@ -55,7 +55,7 @@ Fitness Machine Service (FTMS) is a standardized GATT protocol for different typ
 
 Open Rowing Monitor can create Training Center XML files (TCX). You can upload these files to training platforms like [Strava](https://www.strava.com), [Garmin Connect](https://connect.garmin.com) or [Trainingpeaks](https://trainingpeaks.com) to track your training sessions.
 
-Currently this is a manual step. The installer can set up a network share that contains all training data so it is easy to grab the files from there and upload them to the training platform of your choice.
+Uploading your sessions to Strava is an integrated feature, for all other platforms this is currently a manual step. The installer can set up a network share that contains all training data so it is easy to grab the files from there and upload them to the training platform of your choice.
 
 Open Rowing Monitor can also store the raw measurements of the flywheel into CSV files. These files are great to start your own exploration of your rowing style and also to learn about the specifics of your rowing machine (some Excel files that can help with this are included in the `docs` folder).
 
