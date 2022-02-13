@@ -10,6 +10,7 @@ import { customElement, state } from 'lit/decorators.js'
 import { APP_STATE } from './store/appState.js'
 import { createApp } from './lib/app.js'
 import './components/PerformanceDashboard.js'
+import './components/GameComponent.js'
 
 @customElement('web-app')
 export class App extends LitElement {
@@ -55,14 +56,23 @@ export class App extends LitElement {
     return JSON.parse(JSON.stringify(this.appState))
   }
 
-  // once we have multiple views, then we would rather reference some kind of router here
-  // instead of embedding the performance-dashboard directly
+  // currently just toggle between games and dashboard, if this gets more complex we might use a router here...
   render () {
+    return this.appState?.activeRoute === 'DASHBOARD' ? this.renderDashboard() : this.renderRowingGames()
+  }
+
+  renderDashboard () {
     return html`
       <performance-dashboard
         .appState=${this.appState}
         .metrics=${this.metrics}
       ></performance-dashboard>
+    `
+  }
+
+  renderRowingGames () {
+    return html`
+      <game-component></game-component>
     `
   }
 

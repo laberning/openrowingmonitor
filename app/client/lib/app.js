@@ -128,6 +128,10 @@ export function createApp (app) {
         if (socket)socket.send(JSON.stringify({ command: 'switchPeripheralMode' }))
         break
       }
+      case 'openRowingGames': {
+        app.updateState({ ...app.getState(), activeRoute: 'ROWINGGAMES' })
+        break
+      }
       case 'reset': {
         resetFields()
         if (socket)socket.send(JSON.stringify({ command: 'reset' }))

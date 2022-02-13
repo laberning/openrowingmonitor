@@ -7,7 +7,7 @@
 
 import { AppElement, html, css } from './AppElement.js'
 import { customElement, state } from 'lit/decorators.js'
-import { icon_undo, icon_expand, icon_compress, icon_poweroff, icon_bluetooth, icon_upload } from '../lib/icons.js'
+import { icon_undo, icon_expand, icon_compress, icon_poweroff, icon_bluetooth, icon_upload, icon_gamepad } from '../lib/icons.js'
 import './AppDialog.js'
 
 @customElement('dashboard-actions')
@@ -65,6 +65,7 @@ export class DashboardActions extends AppElement {
     return html`
     <button @click=${this.reset}>${icon_undo}</button>
     ${this.renderOptionalButtons()}
+    <button @click=${this.openRowingGames}>${icon_gamepad}</button>
     <button @click=${this.switchPeripheralMode}>${icon_bluetooth}</button>
     <div class="peripheral-mode">${this.peripheralMode()}</div>
     ${this.dialog ? this.dialog : ''}
@@ -127,6 +128,10 @@ export class DashboardActions extends AppElement {
 
   reset () {
     this.sendEvent('triggerAction', { command: 'reset' })
+  }
+
+  openRowingGames () {
+    this.sendEvent('triggerAction', { command: 'openRowingGames' })
   }
 
   switchPeripheralMode () {

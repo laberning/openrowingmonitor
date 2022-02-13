@@ -25,10 +25,10 @@ export class DashboardMetric extends AppElement {
 
   render () {
     // 416 is the max width value of the battery bar in the SVG graphic
-    const batteryWidth = this.batteryLevel * 416 / 100
+    const batteryWidth = parseInt(this.batteryLevel) * 416 / 100
 
     // if battery level is low, highlight the battery icon
-    const iconClass = this.batteryLevel > 25 ? 'icon' : 'icon low-battery'
+    const iconClass = parseInt(this.batteryLevel) > 25 ? 'icon' : 'icon low-battery'
 
     return svg`
       <svg aria-hidden="true" focusable="false" class="${iconClass}" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512">
