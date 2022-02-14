@@ -5,9 +5,9 @@
   Wrapper for the Open Rowing Monitor rowing games
 */
 
-import { AppElement, html, css } from './AppElement.js'
 import { customElement } from 'lit/decorators.js'
 import { createRowingGames } from '../arcade/RowingGames.js'
+import { AppElement, css, html } from './AppElement.js'
 
 @customElement('game-component')
 export class GameComponent extends AppElement {
@@ -28,6 +28,15 @@ export class GameComponent extends AppElement {
 
   firstUpdated () {
     const canvas = this.renderRoot.querySelector('#arcade')
-    createRowingGames(canvas, canvas.clientWidth, canvas.clientHeight)
+    // @ts-ignore
+    this.rowingGames = createRowingGames(canvas, canvas.clientWidth, canvas.clientHeight)
+  }
+
+  updated (changedProperties) {
+    if (changedProperties.has('appState')) {
+      if (this.rowingGames !== undefined) {
+        this.rowingGames.appState(changedProperties.get('appState'))
+      }
+    }
   }
 }

@@ -5,7 +5,12 @@
   Helper functions
 */
 
-// Filters an object so that it only contains the attributes that are defined in a list
+/**
+ * Filters an object so that it only contains the attributes that are defined in a list
+ * @param {Object} object
+ * @param {Array} keys List of allowed attributs
+ * @returns Object
+ */
 export function filterObjectByKeys (object, keys) {
   return Object.keys(object)
     .filter(key => keys.includes(key))

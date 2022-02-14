@@ -5,13 +5,13 @@
   Component that renders the dashboard
 */
 
-import { AppElement, html, css } from './AppElement.js'
-import { APP_STATE } from '../store/appState.js'
 import { customElement, property } from 'lit/decorators.js'
-import './DashboardMetric.js'
-import './DashboardActions.js'
+import { icon_bolt, icon_clock, icon_fire, icon_heartbeat, icon_paddle, icon_route, icon_stopwatch } from '../lib/icons.js'
+import { APP_STATE } from '../store/appState.js'
+import { AppElement, css, html } from './AppElement.js'
 import './BatteryIcon.js'
-import { icon_route, icon_stopwatch, icon_bolt, icon_paddle, icon_heartbeat, icon_fire, icon_clock } from '../lib/icons.js'
+import './DashboardActions.js'
+import './DashboardMetric.js'
 
 @customElement('performance-dashboard')
 export class PerformanceDashboard extends AppElement {
@@ -44,9 +44,6 @@ export class PerformanceDashboard extends AppElement {
       padding: 0.5em 0 0 0;
     }
   `
-
-  @property({ type: Object })
-    metrics
 
   @property({ type: Object })
     appState = APP_STATE

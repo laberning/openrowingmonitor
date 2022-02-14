@@ -5,8 +5,8 @@
   Component that renders a battery indicator
 */
 
-import { AppElement, svg, css } from './AppElement.js'
 import { customElement, property } from 'lit/decorators.js'
+import { AppElement, css, svg } from './AppElement.js'
 
 @customElement('battery-icon')
 export class DashboardMetric extends AppElement {

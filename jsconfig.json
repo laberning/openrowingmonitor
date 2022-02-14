@@ -5,5 +5,9 @@
 		"checkJs": true,
 		"esModuleInterop": true,
     "experimentalDecorators": true
-  }
+  },
+  "editor.codeActionsOnSave": {
+    "source.organizeImports": false
+  },
+  "exclude": ["node_modules", "**/node_modules/*"]
 }

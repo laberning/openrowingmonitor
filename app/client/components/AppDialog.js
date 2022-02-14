@@ -5,9 +5,9 @@
   Component that renders a html dialog
 */
 
-import { AppElement, html, css } from './AppElement.js'
 import { customElement, property } from 'lit/decorators.js'
-import { ref, createRef } from 'lit/directives/ref.js'
+import { createRef, ref } from 'lit/directives/ref.js'
+import { AppElement, css, html } from './AppElement.js'
 
 @customElement('app-dialog')
 export class AppDialog extends AppElement {
@@ -96,14 +96,17 @@ export class AppDialog extends AppElement {
   }
 
   firstUpdated () {
+    // @ts-ignore
     this.dialog.value.showModal()
   }
 
   updated (changedProperties) {
     if (changedProperties.has('dialogOpen')) {
       if (this.dialogOpen) {
+        // @ts-ignore
         this.dialog.value.showModal()
       } else {
+        // @ts-ignore
         this.dialog.value.close()
       }
     }

@@ -2,20 +2,31 @@
 /*
   Open Rowing Monitor, https://github.com/laberning/openrowingmonitor
 
-  Implements the Battle Actions of the Stroke Fighter Game
+  Implements the Battle Action of the Stroke Fighter Game
 */
 
 import addSpaceBackground from './SpaceBackground.js'
 
-const ENEMY_SPRITE_NAMES = ['enemyBlack1', 'enemyBlue2', 'enemyGreen3', 'enemyRed4', 'enemyRed5',
-  'spaceShips_004', 'spaceShips_006', 'spaceShips_007', 'spaceShips_009', 'ufoGreen']
-
+/**
+ * Creates the main scene of Storke Fighter
+ * @param {import('kaboom').KaboomCtx} k Kaboom Context
+ */
 export default function StrokeFighterBattleScene (k) {
   const BULLET_SPEED = 1200
   const ENEMY_SPEED = 60
   const PLAYER_SPEED = 480
-  const ENEMY_HEALTH = 4
   const SPRITE_WIDTH = 90
+  const ENEMIES = [
+    { sprite: 'enemyBlack1', health: 1 },
+    { sprite: 'enemyBlue2', health: 1 },
+    { sprite: 'enemyGreen3', health: 1 },
+    { sprite: 'enemyRed4', health: 1 },
+    { sprite: 'enemyRed5', health: 1 },
+    { sprite: 'spaceShips_004', health: 3 },
+    { sprite: 'spaceShips_006', health: 2 },
+    { sprite: 'spaceShips_007', health: 3 },
+    { sprite: 'spaceShips_009', health: 2 }
+  ]
 
   k.layers([
     'background',
@@ -107,23 +118,36 @@ export default function StrokeFighterBattleScene (k) {
     ])
   }
 
-  // todo: this should be triggered by a finished rowing drive phase
-  k.onKeyPress('space', () => {
-    spawnBullet(player.pos.sub(16, 15))
-    spawnBullet(player.pos.add(16, -15))
+  k.onKeyPress('space', () => { fireWeapons(2) })
+
+  /**
+   * fires the weapons of our spaceship
+   * @param {number} destructivePower the deadliness the weapon
+   */
+  function fireWeapons (destructivePower) {
+    if (destructivePower <= 1) {
+      spawnBullet(player.pos.sub(0, 20))
+    } else if (destructivePower <= 2) {
+      spawnBullet(player.pos.sub(16, 15))
+      spawnBullet(player.pos.add(16, -15))
+    } else {
+      spawnBullet(player.pos.sub(0, 20))
+      spawnBullet(player.pos.sub(16, 15))
+      spawnBullet(player.pos.add(16, -15))
+    }
     k.play('shoot', {
       volume: 0.3,
       detune: k.rand(-1200, 1200)
     })
-  })
+  }
 
   function spawnEnemy () {
-    const name = k.choose(ENEMY_SPRITE_NAMES)
+    const enemy = k.choose(ENEMIES)
     k.add([
-      k.sprite(name),
+      k.sprite(enemy.sprite),
       k.area(),
       k.pos(k.rand(0 + SPRITE_WIDTH / 2, k.width() - SPRITE_WIDTH / 2), 0),
-      k.health(ENEMY_HEALTH),
+      k.health(enemy.health),
       k.origin('bot'),
       'enemy',
       { speed: k.rand(ENEMY_SPEED * 0.5, ENEMY_SPEED * 1.5) }
@@ -133,6 +157,7 @@ export default function StrokeFighterBattleScene (k) {
 
   k.on('death', 'enemy', (e) => {
     k.destroy(e)
+    k.every('bullet', (bullet) => { k.destroy(bullet) })
     k.shake(2)
   })
 
@@ -146,7 +171,7 @@ export default function StrokeFighterBattleScene (k) {
   })
 
   const timer = k.add([
-    k.text(0),
+    k.text('0'),
     k.pos(12, 32),
     k.fixed(),
     k.layer('ui'),
@@ -170,5 +195,31 @@ export default function StrokeFighterBattleScene (k) {
       k.destroy(sprite)
     }
   })
+
+  let lastStrokeState = 'DRIVING'
+  function appState (appState) {
+    if (appState?.metrics.strokeState === undefined) {
+      return
+    }
+    if (lastStrokeState === 'DRIVING' && appState.metrics.strokeState === 'RECOVERY') {
+      driveFinished(appState.metrics)
+    }
+    lastStrokeState = appState.metrics.strokeState
+  }
+
+  function driveFinished (metrics) {
+    if (metrics.power < 120) {
+      fireWeapons(1)
+    } else if (metrics.power < 180) {
+      fireWeapons(2)
+    } else {
+      fireWeapons(3)
+    }
+  }
+
   spawnEnemy()
+
+  return {
+    appState
+  }
 }

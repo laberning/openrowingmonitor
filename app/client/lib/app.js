@@ -9,7 +9,7 @@ import NoSleep from 'nosleep.js'
 import { filterObjectByKeys } from './helper.js'
 
 const rowingMetricsFields = ['strokesTotal', 'distanceTotal', 'caloriesTotal', 'power', 'heartrate',
-  'heartrateBatteryLevel', 'splitFormatted', 'strokesPerMinute', 'durationTotalFormatted']
+  'heartrateBatteryLevel', 'splitFormatted', 'strokesPerMinute', 'durationTotalFormatted', 'strokeState']
 
 export function createApp (app) {
   const urlParameters = new URLSearchParams(window.location.search)
@@ -60,7 +60,6 @@ export function createApp (app) {
       }, 1000)
     })
 
-    // todo: we should use different types of messages to make processing easier
     socket.addEventListener('message', (event) => {
       try {
         const message = JSON.parse(event.data)
@@ -122,6 +121,10 @@ export function createApp (app) {
     app.updateState(appState)
   }
 
+  /**
+   * triggers handling of action
+   * @param {Object} action type of action
+   */
   function handleAction (action) {
     switch (action.command) {
       case 'switchPeripheralMode': {

@@ -5,20 +5,17 @@
   Main Initialization Component of the Web Component App
 */
 
-import { LitElement, html } from 'lit'
+import { html, LitElement } from 'lit'
 import { customElement, state } from 'lit/decorators.js'
-import { APP_STATE } from './store/appState.js'
-import { createApp } from './lib/app.js'
-import './components/PerformanceDashboard.js'
 import './components/GameComponent.js'
+import './components/PerformanceDashboard.js'
+import { createApp } from './lib/app.js'
+import { APP_STATE } from './store/appState.js'
 
 @customElement('web-app')
 export class App extends LitElement {
   @state()
     appState = APP_STATE
-
-  @state()
-    metrics
 
   constructor () {
     super()
@@ -33,23 +30,31 @@ export class App extends LitElement {
     // once any child component sends this CustomEvent we update the global state according
     // to the changes that were passed to us
     this.addEventListener('appStateChanged', (event) => {
+      // @ts-ignore
       this.updateState(event.detail)
     })
 
     // notify the app about the triggered action
     this.addEventListener('triggerAction', (event) => {
+      // @ts-ignore
       this.app.handleAction(event.detail)
     })
   }
 
-  // the global state is updated by replacing the appState with a copy of the new state
-  // todo: maybe it is more convenient to just pass the state elements that should be changed?
-  // i.e. do something like this.appState = { ..this.appState, ...newState }
+  /**
+   * the global state is updated by replacing the appState with a copy of the new state
+   * todo: maybe it is more convenient to just pass the state elements that should be changed?
+   * i.e. do something like this.appState = { ..this.appState, ...newState }
+   * @param {Object} newState the new state of the application
+   */
   updateState = (newState) => {
     this.appState = { ...newState }
   }
 
-  // return a deep copy of the state to other components to minimize risk of side effects
+  /**
+   * return a deep copy of the state to other components to minimize risk of side effects
+   * @returns Object
+   */
   getState = () => {
     // could use structuredClone once the browser support is wider
     // https://developer.mozilla.org/en-US/docs/Web/API/structuredClone
@@ -65,14 +70,15 @@ export class App extends LitElement {
     return html`
       <performance-dashboard
         .appState=${this.appState}
-        .metrics=${this.metrics}
       ></performance-dashboard>
     `
   }
 
   renderRowingGames () {
     return html`
-      <game-component></game-component>
+      <game-component
+        .appState=${this.appState}
+      ></game-component>
     `
   }
 

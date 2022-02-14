@@ -9,6 +9,10 @@ const STAR_SPEED = 20
 const STAR_SPRITE_NAMES = ['star1', 'star2']
 const STAR_NUM = 10
 
+/**
+ * adds a scrolling space background to the background layer
+ * @param {import('kaboom').KaboomCtx} k Kaboom Context
+ */
 export default function addSpaceBackground (k) {
   k.add([
     k.rect(k.width() + 50, k.height() + 50),

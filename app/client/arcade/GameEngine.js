@@ -7,6 +7,11 @@
 
 import kaboom from 'kaboom'
 
+/**
+ *
+ * @param {import('kaboom').KaboomOpt} options Kaboom Options
+ * @returns KaboomCtx Kaboom Context
+ */
 export function createGameEngine (options) {
   return kaboom(options)
 }

@@ -4,10 +4,9 @@
 */
 import { test } from 'uvu'
 import * as assert from 'uvu/assert'
-
 import { filterObjectByKeys } from './helper.js'
 
-test('filterd list should only contain the elements specified', () => {
+test('filtered list should only contain the elements specified', () => {
   const object1 = {
     a: ['a1', 'a2'],
     b: 'b'

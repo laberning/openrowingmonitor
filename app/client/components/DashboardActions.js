@@ -5,10 +5,10 @@
   Component that renders the action buttons of the dashboard
 */
 
-import { AppElement, html, css } from './AppElement.js'
 import { customElement, state } from 'lit/decorators.js'
-import { icon_undo, icon_expand, icon_compress, icon_poweroff, icon_bluetooth, icon_upload, icon_gamepad } from '../lib/icons.js'
+import { icon_bluetooth, icon_compress, icon_expand, icon_gamepad, icon_poweroff, icon_undo, icon_upload } from '../lib/icons.js'
 import './AppDialog.js'
+import { AppElement, css, html } from './AppElement.js'
 
 @customElement('dashboard-actions')
 export class DashboardActions extends AppElement {
@@ -58,7 +58,7 @@ export class DashboardActions extends AppElement {
     }
   `
 
-  @state({ type: Object })
+  @state()
     dialog
 
   render () {
@@ -148,6 +148,7 @@ export class DashboardActions extends AppElement {
     function dialogClosed (event) {
       this.dialog = undefined
       if (event.detail === 'confirm') {
+        // @ts-ignore
         this.sendEvent('triggerAction', { command: 'uploadTraining' })
       }
     }
@@ -163,6 +164,7 @@ export class DashboardActions extends AppElement {
     function dialogClosed (event) {
       this.dialog = undefined
       if (event.detail === 'confirm') {
+        // @ts-ignore
         this.sendEvent('triggerAction', { command: 'shutdown' })
       }
     }
