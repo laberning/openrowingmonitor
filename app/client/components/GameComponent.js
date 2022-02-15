@@ -13,8 +13,8 @@ import { AppElement, css, html } from './AppElement.js'
 export class GameComponent extends AppElement {
   static styles = css`
     :host {
-      width: 100%;
-      height: 100%;
+      width: 100vw;
+      height: 100vh;
       display: flex;
     }
     #arcade {
@@ -54,7 +54,6 @@ export class GameComponent extends AppElement {
     }
     #controls {
       width: 100%;
-      height: 100%;
       text-align: center;
       position: relative;
     }

@@ -1,14 +1,15 @@
 // Import rollup plugins
-import html from '@web/rollup-plugin-html'
-import resolve from '@rollup/plugin-node-resolve'
-import commonjs from '@rollup/plugin-commonjs'
 import { babel } from '@rollup/plugin-babel'
-import { terser } from 'rollup-plugin-terser'
+import commonjs from '@rollup/plugin-commonjs'
+import resolve from '@rollup/plugin-node-resolve'
+import html from '@web/rollup-plugin-html'
+import copy from 'rollup-plugin-copy'
 import summary from 'rollup-plugin-summary'
+import { terser } from 'rollup-plugin-terser'
 
 // Configure an instance of @web/rollup-plugin-html
 const htmlPlugin = html({
-  rootDir: './app/client',
+  rootDir: 'app/client',
   flattenOutput: false
 })
 
@@ -17,6 +18,11 @@ export default {
   // HTML files for non-SPA app
   input: 'index.html',
   plugins: [
+    copy({
+      targets: [
+        { src: 'app/client/assets/*', dest: 'build/assets' }
+      ]
+    }),
     htmlPlugin,
     // transpile decorators so we can use the upcoming ES decorator syntax
     babel({
