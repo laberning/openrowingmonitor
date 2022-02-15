@@ -1,5 +1,7 @@
 'use strict'
 /*
+  LOOKS LIKE DEAD CODE!!!!!
+
   Open Rowing Monitor, https://github.com/laberning/openrowingmonitor
 
   Stopwatch used to measure multiple time intervals
