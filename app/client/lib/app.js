@@ -135,6 +135,10 @@ export function createApp (app) {
         app.updateState({ ...app.getState(), activeRoute: 'ROWINGGAMES' })
         break
       }
+      case 'openDashboard': {
+        app.updateState({ ...app.getState(), activeRoute: 'DASHBOARD' })
+        break
+      }
       case 'reset': {
         resetFields()
         if (socket)socket.send(JSON.stringify({ command: 'reset' }))

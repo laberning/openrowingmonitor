@@ -7,23 +7,77 @@
 
 import { customElement } from 'lit/decorators.js'
 import { createRowingGames } from '../arcade/RowingGames.js'
+import { icon_exit } from '../lib/icons.js'
 import { AppElement, css, html } from './AppElement.js'
-
 @customElement('game-component')
 export class GameComponent extends AppElement {
   static styles = css`
     :host {
       width: 100%;
       height: 100%;
-      display: block;
+      display: flex;
     }
     #arcade {
+      width: 100vh;
+      height: 100vh;
+    }
+    @media (orientation: portrait) {
+      :host {
+        flex-direction: column
+      }
+      #arcade {
+        width: 100vw;
+        height: 100vw;
+      }
+    }
+
+    button {
+      outline:none;
+      background-color: var(--theme-button-color);
+      border: 0;
+      border-radius: var(--theme-border-radius);
+      color: var(--theme-font-color);
+      margin: 0.2em 0;
+      font-size: 60%;
+      text-decoration: none;
+      display: inline-flex;
+      width: 3.5em;
+      height: 2.5em;
+      justify-content: center;
+      align-items: center;
+    }
+    button:hover {
+      filter: brightness(150%);
+    }
+    .icon {
+      height: 1.7em;
+    }
+    #controls {
       width: 100%;
       height: 100%;
+      text-align: center;
+      position: relative;
+    }
+    #buttons {
+      padding: 0.5em 0 0.5em 0;
+      margin: 1vw;
+      background: var(--theme-widget-color);
+      border-radius: var(--theme-border-radius);
     }
   `
   render () {
-    return html`<canvas id="arcade"></canvas>`
+    return html`
+      <canvas id="arcade"></canvas>
+      <div id="controls">
+        <div id="buttons">
+          <button @click=${this.openDashboard}>${icon_exit}</button>
+        </div>
+      </div>
+    `
+  }
+
+  openDashboard () {
+    this.sendEvent('triggerAction', { command: 'openDashboard' })
   }
 
   firstUpdated () {

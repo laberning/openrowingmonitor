@@ -24,7 +24,7 @@ export function createRowingGames (canvasElement, clientWidth, clientHeight) {
     height: clientHeight
   })
   // for now show debug infos all the time
-  k.debug.inspect = true
+  // k.debug.inspect = true
 
   // todo: once there are multiple games, asset loadingshould be moved to the individual games
   const assets = '/assets'

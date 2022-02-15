@@ -17,7 +17,7 @@ export default function addSpaceBackground (k) {
   k.add([
     k.rect(k.width() + 50, k.height() + 50),
     k.pos(-25, -25),
-    k.color(0, 0, 0),
+    k.color(0, 9, 28),
     k.layer('background')
   ])
 
@@ -45,10 +45,10 @@ export default function addSpaceBackground (k) {
     ])
   }
 
-  k.onUpdate('star', (component) => {
-    component.move(0, component.speed)
-    if (component.pos.y - component.height > k.height()) {
-      k.destroy(component)
+  k.onUpdate('star', (star) => {
+    star.move(0, star.speed)
+    if (star.pos.y - star.height > k.height()) {
+      k.destroy(star)
       addStar(true)
     }
   })
