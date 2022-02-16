@@ -92,4 +92,10 @@ export class GameComponent extends AppElement {
       }
     }
   }
+
+  disconnectedCallback () {
+    if (this.rowingGames !== undefined) {
+      this.rowingGames.dispose()
+    }
+  }
 }

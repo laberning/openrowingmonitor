@@ -29,6 +29,10 @@ function createWeightedAverager (maxNumOfDataPoints) {
     }
   }
 
+  function getLastPushedValue () {
+    return dataPoints[0]
+  }
+
   function reset () {
     dataPoints = []
   }
@@ -36,6 +40,7 @@ function createWeightedAverager (maxNumOfDataPoints) {
   return {
     pushValue,
     getAverage,
+    getLastPushedValue,
     reset
   }
 }

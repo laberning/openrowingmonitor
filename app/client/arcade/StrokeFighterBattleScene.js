@@ -182,16 +182,33 @@ export default function StrokeFighterBattleScene (k) {
   })
 
   const timer = k.add([
-    k.text('0'),
+    k.text('00:00'),
+    k.scale(0.8),
     k.pos(12, 32),
     k.fixed(),
     k.layer('ui')
   ])
 
+  let trainingTimeRounded = 0
   timer.onUpdate(() => {
     trainingTime += k.dt()
-    timer.text = trainingTime.toFixed(2)
+    const newTrainingTimeRounded = Math.round(trainingTime)
+    if (trainingTimeRounded !== newTrainingTimeRounded) {
+      timer.text = `${secondsToTimeString(newTrainingTimeRounded)} / ${k.debug.fps()}fps`
+      trainingTimeRounded = newTrainingTimeRounded
+    }
   })
+
+  // converts a timestamp in seconds to a human readable hh:mm:ss format
+  function secondsToTimeString (secondsTimeStamp) {
+    if (secondsTimeStamp === Infinity) return '∞'
+    const hours = Math.floor(secondsTimeStamp / 60 / 60)
+    const minutes = Math.floor(secondsTimeStamp / 60) - (hours * 60)
+    const seconds = Math.floor(secondsTimeStamp % 60)
+    let timeString = hours > 0 ? ` ${hours.toString().padStart(2, '0')}:` : ''
+    timeString += `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`
+    return timeString
+  }
 
   k.onCollide('bullet', 'enemy', (bullet, enemy) => {
     k.destroy(bullet)
@@ -218,9 +235,9 @@ export default function StrokeFighterBattleScene (k) {
   }
 
   function driveFinished (metrics) {
-    if (metrics.power < THRESHOLD_POWER * 0.75) {
+    if (metrics.powerRaw < THRESHOLD_POWER * 0.75) {
       fireWeapons(1)
-    } else if (metrics.power < THRESHOLD_POWER) {
+    } else if (metrics.powerRaw < THRESHOLD_POWER) {
       fireWeapons(2)
     } else {
       fireWeapons(3)

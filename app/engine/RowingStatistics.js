@@ -158,6 +158,7 @@ function createRowingStatistics (config) {
       strokeTime: lastStrokeDuration, // seconds
       distance: lastStrokeDistance > 0 && lastStrokeSpeed > 0 && sessionState === 'rowing' ? lastStrokeDistance : 0, // meters
       power: powerAverager.getAverage() > 0 && lastStrokeSpeed > 0 && sessionState === 'rowing' ? powerAverager.getAverage() : 0, // watts
+      powerRaw: powerAverager.getLastPushedValue() > 0 && lastStrokeSpeed > 0 && sessionState === 'rowing' ? powerAverager.getLastPushedValue() : 0, // watts
       split: splitTime, // seconds/500m
       splitFormatted: secondsToTimeString(splitTime),
       powerRatio: powerRatioAverager.getAverage() > 0 && lastStrokeSpeed > 0 && sessionState === 'rowing' ? powerRatioAverager.getAverage() : 0,

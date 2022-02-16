@@ -41,6 +41,7 @@ export function createRowingGames (canvasElement, clientWidth, clientHeight) {
   // todo: check if there is some kaboomish way to get the active scene
   let activeScene
   k.scene('strokeFighterBattle', () => { activeScene = StrokeFighterBattleScene(k) })
+  k.scene('disposed', () => { })
 
   k.go('strokeFighterBattle')
 
@@ -50,8 +51,15 @@ export function createRowingGames (canvasElement, clientWidth, clientHeight) {
     }
   }
 
+  // todo: currently we move to an empty scene to dispose the game as there does not seem to be
+  // a mechanism in kaboom to dispose the instance.
+  function dispose () {
+    k.go('disposed')
+  }
+
   return {
     k,
+    dispose,
     appState
   }
 }

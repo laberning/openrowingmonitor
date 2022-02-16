@@ -25,6 +25,22 @@ test('average of a and b is (2*b + a) / 3', () => {
   assert.is(weightedAverager.getAverage(), 3)
 })
 
+test('average of a, b and c is (2*c + b) / 3 if maxNumOfDataPoints is 2', () => {
+  const weightedAverager = createWeightedAverager(2)
+  weightedAverager.pushValue(5) // a
+  weightedAverager.pushValue(2) // b
+  weightedAverager.pushValue(17) // c
+  assert.is(weightedAverager.getAverage(), 12)
+})
+
+test('lastPushedValue of a, b and c is c', () => {
+  const weightedAverager = createWeightedAverager(10)
+  weightedAverager.pushValue(5) // a
+  weightedAverager.pushValue(2) // b
+  weightedAverager.pushValue(17) // c
+  assert.is(weightedAverager.getLastPushedValue(), 17)
+})
+
 test('average should be 0 after reset', () => {
   const weightedAverager = createWeightedAverager(10)
   weightedAverager.pushValue(5)

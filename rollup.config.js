@@ -37,14 +37,13 @@ export default {
     terser({
       ecma: 2020,
       module: true,
-      warnings: true,
       mangle: {
         properties: {
           regex: /^__/
         }
       }
     }),
-    summary()
+    summary({})
   ],
   output:
     {

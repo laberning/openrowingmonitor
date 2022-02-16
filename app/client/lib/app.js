@@ -8,9 +8,6 @@
 import NoSleep from 'nosleep.js'
 import { filterObjectByKeys } from './helper.js'
 
-const rowingMetricsFields = ['strokesTotal', 'distanceTotal', 'caloriesTotal', 'power', 'heartrate',
-  'heartrateBatteryLevel', 'splitFormatted', 'strokesPerMinute', 'durationTotalFormatted', 'strokeState']
-
 export function createApp (app) {
   const urlParameters = new URLSearchParams(window.location.search)
   const mode = urlParameters.get('mode')
@@ -74,13 +71,9 @@ export function createApp (app) {
             break
           }
           case 'metrics': {
-            let activeFields = rowingMetricsFields
+            const resetStateFields = ['heartrate', 'heartrateBatteryLevel']
             // if we are in reset state only update heart rate
-            if (data.strokesTotal === 0) {
-              activeFields = ['heartrate', 'heartrateBatteryLevel']
-            }
-
-            const filteredData = filterObjectByKeys(data, activeFields)
+            const filteredData = (data.strokesTotal === 0) ? filterObjectByKeys(data, resetStateFields) : data
             app.updateState({ ...app.getState(), metrics: filteredData })
             break
           }
