@@ -34,7 +34,7 @@ export class GameComponent extends AppElement {
             height: 100vw;
           }
         }
-        span .icon {
+        div > .icon {
           height: 0.8em;
           width: 1.5em;
         }
@@ -44,10 +44,24 @@ export class GameComponent extends AppElement {
           position: relative;
         }
         #widget {
+          display: flex;
+          flex-direction: row;
+          flex-wrap: wrap;
           padding: 0.5em;
           margin: 1vw;
-          background: var(--theme-widget-color);
+          background: var(--theme-background-color);
           border-radius: var(--theme-border-radius);
+        }
+        .metric-unit {
+          font-size: 80%
+        }
+        #widget div {
+          width: 6.5em;
+          white-space: nowrap;
+        }
+        #buttons {
+          padding: 0.5em;
+          flex-basis: 100%;
         }
       `
     ]
@@ -59,13 +73,19 @@ export class GameComponent extends AppElement {
       <canvas id="arcade"></canvas>
       <div id="container">
         <div id="widget">
-          <span>${icon_route}${Math.round(metrics.distanceTotal)}</span><br/>
-          <span>${icon_stopwatch}${metrics.splitFormatted}</span><br/>
-          <span>${icon_bolt}${Math.round(metrics.powerRaw)}</span><br/>
-          <span>${icon_paddle}${Math.round(metrics.strokesPerMinute)}</span><br/>
-          ${metrics?.heartrate ? html`<span>${icon_heartbeat}${Math.round(metrics.heartrate)}</span><br/>` : ''}
+          <!-- todo: should use the same calculations as PerformanceDashboard -->
+          <div>${icon_route}${Math.round(metrics.distanceTotal)}<span class="metric-unit">m</span></div>
+          <div>${icon_stopwatch}${metrics.splitFormatted}<span class="metric-unit">/500m</span></div>
+          <div>${icon_bolt}${Math.round(metrics.powerRaw)}<span class="metric-unit">watt</span></div>
+          <div>${icon_paddle}${Math.round(metrics.strokesPerMinute)}<span class="metric-unit">/min</span></div>
+          ${metrics?.heartrate ? html`<div>${icon_heartbeat}${Math.round(metrics.heartrate)}<span class="metric-unit">bpm</span></div>` : ''}
+          <div>${icon_bolt}${metrics.instantaneousTorque.toFixed(2)}<span class="metric-unit">trq</span></div>
+          <div>${icon_bolt}${metrics.powerRatio.toFixed(2)}<span class="metric-unit">ratio</span></div>
+          <div>${icon_bolt}${metrics.strokeState}</div>
 
-          <button @click=${this.openDashboard}>${icon_exit}</button>
+          <div id='buttons'>
+            <button @click=${this.openDashboard}>${icon_exit}</button>
+          </div>
         </div>
       </div>
     `

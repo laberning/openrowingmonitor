@@ -15,9 +15,9 @@ export default function StrokeFighterBattleScene (k) {
   // how much stroke power is needed to fire high power lasers
   const THRESHOLD_POWER = 180
   // training duration in seconds
-  const TARGET_TIME = 5 * 60
+  const TARGET_TIME = 10 * 60
   // strokes per minute at start of training
-  const SPM_START = 14
+  const SPM_START = 18
   // strokes per minute at end of training
   const SPM_END = 28
   const BULLET_SPEED = 1200
@@ -44,7 +44,7 @@ export default function StrokeFighterBattleScene (k) {
     'ui'
   ], 'game')
 
-  addSpaceBackground(k)
+  const background = addSpaceBackground(k)
 
   function grow (rate) {
     return {
@@ -82,7 +82,7 @@ export default function StrokeFighterBattleScene (k) {
     k.shake(4)
     k.play('hit', {
       detune: -1200,
-      volume: 0.3,
+      volume: 0.6,
       speed: k.rand(0.5, 2)
     })
   })
@@ -141,12 +141,13 @@ export default function StrokeFighterBattleScene (k) {
       spawnBullet(player.pos.sub(16, 15))
       spawnBullet(player.pos.add(16, -15))
     } else {
+      background.redify()
       spawnBullet(player.pos.sub(0, 20))
       spawnBullet(player.pos.sub(16, 15))
       spawnBullet(player.pos.add(16, -15))
     }
     k.play('shoot', {
-      volume: 0.3,
+      volume: 0.6,
       detune: k.rand(-1200, 1200)
     })
   }
@@ -176,7 +177,7 @@ export default function StrokeFighterBattleScene (k) {
     k.shake(1)
     k.play('hit', {
       detune: k.rand(-1200, 1200),
-      volume: 0.1,
+      volume: 0.3,
       speed: k.rand(0.2, 2)
     })
   })

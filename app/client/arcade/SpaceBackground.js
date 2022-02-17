@@ -14,10 +14,11 @@ const STAR_NUM = 10
  * @param {import('kaboom').KaboomCtx} k Kaboom Context
  */
 export default function addSpaceBackground (k) {
-  k.add([
+  const background = k.add([
     k.rect(k.width() + 50, k.height() + 50),
     k.pos(-25, -25),
     k.color(0, 9, 28),
+    redflash(),
     k.layer('background')
   ])
 
@@ -44,6 +45,28 @@ export default function addSpaceBackground (k) {
       { speed: k.rand(STAR_SPEED * 0.5, STAR_SPEED * 1.5) }
     ])
   }
+  function redflash () {
+    let timer = 0
+    let origR = 0
+    let flashing = false
+    return {
+      add () {
+        origR = this.color.r
+      },
+      update () {
+        if (flashing && timer < 0.2) {
+          this.color.r = k.wave(origR, 100, timer * 20)
+          timer += k.dt()
+        } else {
+          this.color.r = origR
+        }
+      },
+      redflash () {
+        timer = 0
+        flashing = true
+      }
+    }
+  }
 
   k.onUpdate('star', (star) => {
     star.move(0, star.speed)
@@ -52,4 +75,12 @@ export default function addSpaceBackground (k) {
       addStar(true)
     }
   })
+
+  function _redflash () {
+    background.redflash()
+  }
+
+  return {
+    redflash: _redflash
+  }
 }

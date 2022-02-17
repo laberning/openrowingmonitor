@@ -5,7 +5,7 @@
   Common styles for UI elements
 */
 
-import { css } from 'lit-element'
+import { css } from 'lit'
 
 export const buttonStyles = css`
     button {
