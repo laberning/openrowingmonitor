@@ -10,29 +10,31 @@ import { AppElement, css, html } from './AppElement.js'
 
 @customElement('dashboard-metric')
 export class DashboardMetric extends AppElement {
-  static styles = css`
-    .label, .content {
-      padding: 0.1em 0;
-    }
+  static get styles () {
+    return css`
+      .label, .content {
+        padding: 0.1em 0;
+      }
 
-    .icon {
-      height: 1.8em;
-    }
+      .icon {
+        height: 1.8em;
+      }
 
-    .metric-value {
-        font-size: 150%;
-    }
+      .metric-value {
+          font-size: 150%;
+      }
 
-    .metric-unit {
-        font-size: 80%;
-    }
+      .metric-unit {
+          font-size: 80%;
+      }
 
-    ::slotted(*) {
-      right: 0.2em;
-      bottom: 0;
-      position: absolute;
-    }
-  `
+      ::slotted(*) {
+        right: 0.2em;
+        bottom: 0;
+        position: absolute;
+      }
+    `
+  }
 
   @property({ type: Object })
     icon

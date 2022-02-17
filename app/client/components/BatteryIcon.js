@@ -10,15 +10,17 @@ import { AppElement, css, svg } from './AppElement.js'
 
 @customElement('battery-icon')
 export class DashboardMetric extends AppElement {
-  static styles = css`
-    .icon {
-      height: 1.2em;
-    }
+  static get styles () {
+    return css`
+      .icon {
+        height: 1.2em;
+      }
 
-    .low-battery {
-      color: var(--theme-warning-color)
-    }
-  `
+      .low-battery {
+        color: var(--theme-warning-color)
+      }
+    `
+  }
 
   @property({ type: String })
     batteryLevel = ''

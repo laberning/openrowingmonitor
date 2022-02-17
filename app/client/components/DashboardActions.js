@@ -7,56 +7,38 @@
 
 import { customElement, state } from 'lit/decorators.js'
 import { icon_bluetooth, icon_compress, icon_expand, icon_gamepad, icon_poweroff, icon_undo, icon_upload } from '../lib/icons.js'
+import { buttonStyles } from '../lib/styles.js'
 import './AppDialog.js'
 import { AppElement, css, html } from './AppElement.js'
-
 @customElement('dashboard-actions')
 export class DashboardActions extends AppElement {
-  static styles = css`
-    button {
-      outline:none;
-      background-color: var(--theme-button-color);
-      border: 0;
-      border-radius: var(--theme-border-radius);
-      color: var(--theme-font-color);
-      margin: 0.2em 0;
-      font-size: 60%;
-      text-decoration: none;
-      display: inline-flex;
-      width: 3.5em;
-      height: 2.5em;
-      justify-content: center;
-      align-items: center;
-    }
-    button:hover {
-      filter: brightness(150%);
-    }
+  static get styles () {
+    return [
+      buttonStyles,
+      css`
+        #fullscreen-icon {
+            display: inline-flex;
+        }
 
-    #fullscreen-icon {
-        display: inline-flex;
-    }
+        #windowed-icon {
+          display: none;
+        }
 
-    #windowed-icon {
-      display: none;
-    }
+        .peripheral-mode {
+          font-size: 80%;
+        }
 
-    .icon {
-      height: 1.7em;
-    }
-
-    .peripheral-mode {
-      font-size: 80%;
-    }
-
-    @media (display-mode: fullscreen) {
-      #fullscreen-icon {
-        display: none;
-      }
-      #windowed-icon {
-        display: inline-flex;
-      }
-    }
-  `
+        @media (display-mode: fullscreen) {
+          #fullscreen-icon {
+            display: none;
+          }
+          #windowed-icon {
+            display: inline-flex;
+          }
+        }
+      `
+    ]
+  }
 
   @state()
     dialog

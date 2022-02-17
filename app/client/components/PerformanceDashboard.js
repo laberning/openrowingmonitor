@@ -15,35 +15,37 @@ import './DashboardMetric.js'
 
 @customElement('performance-dashboard')
 export class PerformanceDashboard extends AppElement {
-  static styles = css`
-    :host {
-      display: grid;
-      height: calc(100vh - 2vw);
-      padding: 1vw;
-      grid-gap: 1vw;
-      grid-template-columns: repeat(4, minmax(0, 1fr));
-      grid-template-rows: repeat(2, minmax(0, 1fr));
-    }
-
-    @media (orientation: portrait) {
+  static get styles () {
+    return css`
       :host {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-        grid-template-rows: repeat(4, minmax(0, 1fr));
+        display: grid;
+        height: calc(100vh - 2vw);
+        padding: 1vw;
+        grid-gap: 1vw;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        grid-template-rows: repeat(2, minmax(0, 1fr));
       }
-    }
 
-    dashboard-metric, dashboard-actions {
-      background: var(--theme-widget-color);
-      text-align: center;
-      position: relative;
-      padding: 0.5em 0.2em 0 0.2em;
-      border-radius: var(--theme-border-radius);
-    }
+      @media (orientation: portrait) {
+        :host {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+          grid-template-rows: repeat(4, minmax(0, 1fr));
+        }
+      }
 
-    dashboard-actions {
-      padding: 0.5em 0 0 0;
-    }
-  `
+      dashboard-metric, dashboard-actions {
+        background: var(--theme-widget-color);
+        text-align: center;
+        position: relative;
+        padding: 0.5em 0.2em 0 0.2em;
+        border-radius: var(--theme-border-radius);
+      }
+
+      dashboard-actions {
+        padding: 0.5em 0 0 0;
+      }
+    `
+  }
 
   @property({ type: Object })
     appState = APP_STATE

@@ -7,68 +7,64 @@
 
 import { customElement } from 'lit/decorators.js'
 import { createRowingGames } from '../arcade/RowingGames.js'
-import { icon_exit } from '../lib/icons.js'
+import { icon_bolt, icon_exit, icon_heartbeat, icon_paddle, icon_route, icon_stopwatch } from '../lib/icons.js'
+import { buttonStyles } from '../lib/styles.js'
 import { AppElement, css, html } from './AppElement.js'
 @customElement('game-component')
 export class GameComponent extends AppElement {
-  static styles = css`
-    :host {
-      width: 100vw;
-      height: 100vh;
-      display: flex;
-    }
-    #arcade {
-      width: 100vh;
-      height: 100vh;
-    }
-    @media (orientation: portrait) {
-      :host {
-        flex-direction: column
-      }
-      #arcade {
-        width: 100vw;
-        height: 100vw;
-      }
-    }
+  static get styles () {
+    return [
+      buttonStyles,
+      css`
+        :host {
+          width: 100vw;
+          height: 100vh;
+          display: flex;
+        }
+        #arcade {
+          width: 100vh;
+          height: 100vh;
+        }
+        @media (orientation: portrait) {
+          :host {
+            flex-direction: column
+          }
+          #arcade {
+            width: 100vw;
+            height: 100vw;
+          }
+        }
+        span .icon {
+          height: 0.8em;
+          width: 1.5em;
+        }
+        #container {
+          width: 100%;
+          text-align: left;
+          position: relative;
+        }
+        #widget {
+          padding: 0.5em;
+          margin: 1vw;
+          background: var(--theme-widget-color);
+          border-radius: var(--theme-border-radius);
+        }
+      `
+    ]
+  }
 
-    button {
-      outline:none;
-      background-color: var(--theme-button-color);
-      border: 0;
-      border-radius: var(--theme-border-radius);
-      color: var(--theme-font-color);
-      margin: 0.2em 0;
-      font-size: 60%;
-      text-decoration: none;
-      display: inline-flex;
-      width: 3.5em;
-      height: 2.5em;
-      justify-content: center;
-      align-items: center;
-    }
-    button:hover {
-      filter: brightness(150%);
-    }
-    .icon {
-      height: 1.7em;
-    }
-    #controls {
-      width: 100%;
-      text-align: center;
-      position: relative;
-    }
-    #buttons {
-      padding: 0.5em 0 0.5em 0;
-      margin: 1vw;
-      background: var(--theme-widget-color);
-      border-radius: var(--theme-border-radius);
-    }
-  `
   render () {
+    const metrics = this.appState.metrics
     return html`
       <canvas id="arcade"></canvas>
-      <div id="controls">
-        <div id="buttons">
+      <div id="container">
+        <div id="widget">
+          <span>${icon_route}${Math.round(metrics.distanceTotal)}</span><br/>
+          <span>${icon_stopwatch}${metrics.splitFormatted}</span><br/>
+          <span>${icon_bolt}${Math.round(metrics.powerRaw)}</span><br/>
+          <span>${icon_paddle}${Math.round(metrics.strokesPerMinute)}</span><br/>
+          ${metrics?.heartrate ? html`<span>${icon_heartbeat}${Math.round(metrics.heartrate)}</span><br/>` : ''}
+
           <button @click=${this.openDashboard}>${icon_exit}</button>
         </div>
       </div>
@@ -80,9 +76,16 @@ export class GameComponent extends AppElement {
   }
 
   firstUpdated () {
+    // todo: haven't decided at what resolution to render the game.
+    // might use the screen resolution for this, but then the game would look and behave differently
+    // depending on the resolution
+    // using a square screen has the advantage that it works well on portrait and landscape screens
+    // for now will set it to a fixed square resolution and let css take care of scaling it
+    const gameSize = 600
     const canvas = this.renderRoot.querySelector('#arcade')
+    // this.rowingGames = createRowingGames(canvas, canvas.clientWidth, canvas.clientHeight)
     // @ts-ignore
-    this.rowingGames = createRowingGames(canvas, canvas.clientWidth, canvas.clientHeight)
+    this.rowingGames = createRowingGames(canvas, gameSize, gameSize)
   }
 
   updated (changedProperties) {

@@ -19,7 +19,7 @@ export function createRowingGames (canvasElement, clientWidth, clientHeight) {
     debug: true,
     global: false,
     canvas: canvasElement,
-    crisp: true,
+    crisp: false,
     width: clientWidth,
     height: clientHeight
   })
