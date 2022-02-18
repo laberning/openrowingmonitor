@@ -8,6 +8,7 @@
 import { customElement } from 'lit/decorators.js'
 import { createRowingGames } from '../arcade/RowingGames.js'
 import { icon_bolt, icon_exit, icon_heartbeat, icon_paddle, icon_route, icon_stopwatch } from '../lib/icons.js'
+import { metricValue, metricUnit } from '../lib/helper.js'
 import { buttonStyles } from '../lib/styles.js'
 import { AppElement, css, html } from './AppElement.js'
 @customElement('game-component')
@@ -73,15 +74,16 @@ export class GameComponent extends AppElement {
       <canvas id="arcade"></canvas>
       <div id="container">
         <div id="widget">
-          <!-- todo: should use the same calculations as PerformanceDashboard -->
-          <div>${icon_route}${Math.round(metrics.distanceTotal)}<span class="metric-unit">m</span></div>
-          <div>${icon_stopwatch}${metrics.splitFormatted}<span class="metric-unit">/500m</span></div>
-          <div>${icon_bolt}${Math.round(metrics.powerRaw)}<span class="metric-unit">watt</span></div>
-          <div>${icon_paddle}${Math.round(metrics.strokesPerMinute)}<span class="metric-unit">/min</span></div>
-          ${metrics?.heartrate ? html`<div>${icon_heartbeat}${Math.round(metrics.heartrate)}<span class="metric-unit">bpm</span></div>` : ''}
-          <div>${icon_bolt}${metrics.instantaneousTorque.toFixed(2)}<span class="metric-unit">trq</span></div>
-          <div>${icon_bolt}${metrics.powerRatio.toFixed(2)}<span class="metric-unit">ratio</span></div>
-          <div>${icon_bolt}${metrics.strokeState}</div>
+          <div>${icon_route}${metricValue(metrics, 'distanceTotal')}<span class="metric-unit">${metricUnit(metrics, 'distanceTotal')}</span></div>
+          <div>${icon_stopwatch}${metricValue(metrics, 'splitFormatted')}<span class="metric-unit">/500m</span></div>
+          <div>${icon_bolt}${metricValue(metrics, 'powerRaw')}<span class="metric-unit">watt</span></div>
+          <div>${icon_paddle}${metricValue(metrics, 'strokesPerMinute')}<span class="metric-unit">/min</span></div>
+          ${metrics?.heartrate
+            ? html`<div>${icon_heartbeat}${metricValue(metrics, 'heartrate')}<span class="metric-unit">bpm</span></div>`
+            : ''}
+          <div>${icon_bolt}${metricValue(metrics, 'instantaneousTorque')}<span class="metric-unit">trq</span></div>
+          <div>${icon_bolt}${metricValue(metrics, 'powerRatio')}<span class="metric-unit">ratio</span></div>
+          <div>${icon_bolt}${metricValue(metrics, 'strokeState')}</div>
 
           <div id='buttons'>
             <button @click=${this.openDashboard}>${icon_exit}</button>

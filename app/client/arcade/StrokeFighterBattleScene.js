@@ -136,15 +136,15 @@ export default function StrokeFighterBattleScene (k) {
    */
   function fireWeapons (destructivePower) {
     if (destructivePower <= 1) {
-      spawnBullet(player.pos.sub(0, 20))
+      spawnBullet(player.pos.sub(0, 65))
     } else if (destructivePower <= 2) {
-      spawnBullet(player.pos.sub(16, 15))
-      spawnBullet(player.pos.add(16, -15))
+      spawnBullet(player.pos.sub(20, 40))
+      spawnBullet(player.pos.sub(-20, 40))
     } else {
-      background.redify()
-      spawnBullet(player.pos.sub(0, 20))
-      spawnBullet(player.pos.sub(16, 15))
-      spawnBullet(player.pos.add(16, -15))
+      background.redflash()
+      spawnBullet(player.pos.sub(0, 65))
+      spawnBullet(player.pos.sub(20, 40))
+      spawnBullet(player.pos.sub(-20, 40))
     }
     k.play('shoot', {
       volume: 0.6,
@@ -183,9 +183,8 @@ export default function StrokeFighterBattleScene (k) {
   })
 
   const timer = k.add([
-    k.text('00:00'),
-    k.scale(0.8),
-    k.pos(12, 32),
+    k.text('00:00', { size: 25, font: 'sinko' }),
+    k.pos(10, 10),
     k.fixed(),
     k.layer('ui')
   ])

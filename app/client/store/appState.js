@@ -8,7 +8,7 @@
 export const APP_STATE = {
   // currently can be STANDALONE (Mobile Home Screen App), KIOSK (Raspberry Pi deployment) or '' (default)
   appMode: '',
-  // currently can be DASHBOARD or 'ROWINGGAMES' (default)
+  // currently can be DASHBOARD or 'ROWINGGAMES'
   activeRoute: 'DASHBOARD',
   // contains all the rowing metrics that are delivered from the backend
   metrics: {},

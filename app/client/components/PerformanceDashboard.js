@@ -6,6 +6,7 @@
 */
 
 import { customElement, property } from 'lit/decorators.js'
+import { metricUnit, metricValue } from '../lib/helper.js'
 import { icon_bolt, icon_clock, icon_fire, icon_heartbeat, icon_paddle, icon_route, icon_stopwatch } from '../lib/icons.js'
 import { APP_STATE } from '../store/appState.js'
 import { AppElement, css, html } from './AppElement.js'
@@ -51,15 +52,15 @@ export class PerformanceDashboard extends AppElement {
     appState = APP_STATE
 
   render () {
-    const metrics = this.calculateFormattedMetrics(this.appState.metrics)
+    const metrics = this.appState.metrics
     return html`
-      <dashboard-metric .icon=${icon_route} .unit=${metrics?.distanceTotal?.unit || 'm'} .value=${metrics?.distanceTotal?.value}></dashboard-metric>
-      <dashboard-metric .icon=${icon_stopwatch} unit="/500m" .value=${metrics?.splitFormatted?.value}></dashboard-metric>
-      <dashboard-metric .icon=${icon_bolt} unit="watt" .value=${metrics?.power?.value}></dashboard-metric>
-      <dashboard-metric .icon=${icon_paddle} unit="/min" .value=${metrics?.strokesPerMinute?.value}></dashboard-metric>
+      <dashboard-metric .icon=${icon_route} .unit=${metricUnit(metrics, 'distanceTotal')} .value=${metricValue(metrics, 'distanceTotal')}></dashboard-metric>
+      <dashboard-metric .icon=${icon_stopwatch} unit="/500m" .value=${metricValue(metrics, 'splitFormatted')}></dashboard-metric>
+      <dashboard-metric .icon=${icon_bolt} unit="watt" .value=${metricValue(metrics, 'power')}></dashboard-metric>
+      <dashboard-metric .icon=${icon_paddle} unit="/min" .value=${metricValue(metrics, 'strokesPerMinute')}></dashboard-metric>
       ${metrics?.heartrate?.value
         ? html`
-          <dashboard-metric .icon=${icon_heartbeat} unit="bpm" .value=${metrics?.heartrate?.value}>
+          <dashboard-metric .icon=${icon_heartbeat} unit="bpm" .value=${metricValue(metrics, 'heartrate')}>
             ${metrics?.heartrateBatteryLevel?.value
               ? html`
                 <battery-icon .batteryLevel=${metrics?.heartrateBatteryLevel?.value}></battery-icon>
@@ -67,39 +68,10 @@ export class PerformanceDashboard extends AppElement {
               : ''
             }
           </dashboard-metric>`
-        : html`<dashboard-metric .icon=${icon_paddle} unit="total" .value=${metrics?.strokesTotal?.value}></dashboard-metric>`}
-      <dashboard-metric .icon=${icon_fire} unit="kcal" .value=${metrics?.caloriesTotal?.value}></dashboard-metric>
-      <dashboard-metric .icon=${icon_clock} .value=${metrics?.durationTotalFormatted?.value}></dashboard-metric>
+        : html`<dashboard-metric .icon=${icon_paddle} unit="total" .value=${metricValue(metrics, 'strokesTotal')}></dashboard-metric>`}
+      <dashboard-metric .icon=${icon_fire} unit="kcal" .value=${metricValue(metrics, 'caloriesTotal')}></dashboard-metric>
+      <dashboard-metric .icon=${icon_clock} .value=${metricValue(metrics, 'durationTotalFormatted')}></dashboard-metric>
       <dashboard-actions .appState=${this.appState}></dashboard-actions>
     `
-  }
-
-  // todo: so far this is just a port of the formatter from the initial proof of concept client
-  // we could split this up to make it more readable and testable
-  calculateFormattedMetrics (metrics) {
-    const fieldFormatter = {
-      distanceTotal: (value) => value >= 10000
-        ? { value: (value / 1000).toFixed(1), unit: 'km' }
-        : { value: Math.round(value), unit: 'm' },
-      caloriesTotal: (value) => Math.round(value),
-      power: (value) => Math.round(value),
-      strokesPerMinute: (value) => Math.round(value)
-    }
-
-    const formattedMetrics = {}
-    for (const [key, value] of Object.entries(metrics)) {
-      const valueFormatted = fieldFormatter[key] ? fieldFormatter[key](value) : value
-      if (valueFormatted.value !== undefined && valueFormatted.unit !== undefined) {
-        formattedMetrics[key] = {
-          value: valueFormatted.value,
-          unit: valueFormatted.unit
-        }
-      } else {
-        formattedMetrics[key] = {
-          value: valueFormatted
-        }
-      }
-    }
-    return formattedMetrics
   }
 }

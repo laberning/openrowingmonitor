@@ -7,6 +7,7 @@
 
 import { createGameEngine } from './GameEngine.js'
 import StrokeFighterBattleScene from './StrokeFighterBattleScene.js'
+import StrokeFighterStartScene from './StrokeFighterStartScene.js'
 
 /**
  * creates and initializes the rowing games
@@ -41,10 +42,13 @@ export function createRowingGames (canvasElement, clientWidth, clientHeight) {
   // todo: check if there is some kaboomish way to get the active scene
   let activeScene
   k.scene('strokeFighterBattle', () => { activeScene = StrokeFighterBattleScene(k) })
+  k.scene('strokeFighterStart', () => { activeScene = StrokeFighterStartScene(k) })
   k.scene('disposed', () => { })
 
-  k.go('strokeFighterBattle')
+  k.go('strokeFighterStart')
 
+  // on changes, forward the appState to the active scene, used to monitor the rowing metrics
+  // from the game scene
   function appState (appState) {
     if (activeScene?.appState) {
       activeScene.appState(appState)
