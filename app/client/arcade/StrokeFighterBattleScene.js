@@ -57,6 +57,7 @@ export default function StrokeFighterBattleScene (k) {
 
   const player = k.add([
     k.sprite('playerShip2_orange'),
+    k.scale(0.5),
     k.area(),
     k.pos(k.width() / 2, k.height() - 64),
     k.origin('center')
@@ -105,7 +106,7 @@ export default function StrokeFighterBattleScene (k) {
           k.add([
             k.sprite('laserRed09'),
             k.pos(pos.sub(0, 10)),
-            k.scale(k.vec2(0.5)),
+            k.scale(k.vec2(0.25)),
             k.lifespan(0.1),
             grow(k.rand(0.5, 2)),
             k.origin('center')
@@ -118,6 +119,7 @@ export default function StrokeFighterBattleScene (k) {
   function spawnBullet (pos) {
     k.add([
       k.sprite('laserRed01'),
+      k.scale(0.5),
       k.area(),
       k.pos(pos),
       k.origin('center'),
@@ -154,12 +156,13 @@ export default function StrokeFighterBattleScene (k) {
   function spawnEnemy (enemy) {
     k.add([
       k.sprite(enemy.sprite),
+      k.scale(0.5),
       k.area(),
       k.pos(k.rand(0 + SPRITE_WIDTH / 2, k.width() - SPRITE_WIDTH / 2), 0),
       k.health(enemy.health),
       k.origin('bot'),
       'enemy',
-      { speed: k.rand(ENEMY_SPEED * 0.5, ENEMY_SPEED * 1.5) }
+      { speed: k.rand(ENEMY_SPEED * 0.8, ENEMY_SPEED * 1.2) }
     ])
   }
 

@@ -5,7 +5,7 @@
   Initializer for the Rowing Games
 */
 
-import { createGameEngine } from './GameEngine.js'
+import kaboom from 'kaboom'
 import StrokeFighterBattleScene from './StrokeFighterBattleScene.js'
 import StrokeFighterStartScene from './StrokeFighterStartScene.js'
 
@@ -16,7 +16,7 @@ import StrokeFighterStartScene from './StrokeFighterStartScene.js'
  * @param {number} clientHeight
  */
 export function createRowingGames (rootComponent, canvasElement, clientWidth, clientHeight) {
-  const k = createGameEngine({
+  const k = kaboom({
     debug: true,
     global: false,
     canvas: canvasElement,
@@ -35,7 +35,7 @@ export function createRowingGames (rootComponent, canvasElement, clientWidth, cl
     'laserRed01', 'laserRed09']
 
   for (const sprite of sprites) {
-    k.loadSprite(sprite, `${assets}/sprites/${sprite}.png`)
+    k.loadSprite(sprite, `${assets}/sprites/${sprite}@2x.png`)
   }
   k.loadSound('hit', `${assets}/sounds/explosionCrunch_000.ogg`)
   k.loadSound('shoot', `${assets}/sounds/laserSmall_001.ogg`)

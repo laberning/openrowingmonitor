@@ -38,7 +38,7 @@ export default function addSpaceBackground (k) {
     k.add([
       k.sprite(spriteName),
       k.z(-100),
-      k.scale(k.rand(0.2, 0.7)),
+      k.scale(k.rand(0.1, 0.35)),
       k.color(starColor, starColor, starColor),
       k.pos(position),
       'star',
