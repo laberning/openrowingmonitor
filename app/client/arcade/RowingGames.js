@@ -15,11 +15,12 @@ import StrokeFighterStartScene from './StrokeFighterStartScene.js'
  * @param {number} clientWidth
  * @param {number} clientHeight
  */
-export function createRowingGames (canvasElement, clientWidth, clientHeight) {
+export function createRowingGames (rootComponent, canvasElement, clientWidth, clientHeight) {
   const k = createGameEngine({
     debug: true,
     global: false,
     canvas: canvasElement,
+    root: rootComponent,
     crisp: false,
     width: clientWidth,
     height: clientHeight

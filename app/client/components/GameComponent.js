@@ -22,17 +22,19 @@ export class GameComponent extends AppElement {
           height: 100vh;
           display: flex;
         }
-        #arcade {
-          width: 100vh !important;
-          height: 100vh !important;
+        @media (orientation: landscape) {
+          #arcade {
+            width: 100vh !important;
+            height: 100vh !important;
+          }
         }
         @media (orientation: portrait) {
           :host {
             flex-direction: column
           }
           #arcade {
-            width: 100vw;
-            height: 100vw;
+            width: 100vw !important;
+            height: 100vw !important;
           }
         }
         div > .icon {
@@ -110,7 +112,7 @@ export class GameComponent extends AppElement {
     const canvas = this.renderRoot.querySelector('#arcade')
     // this.rowingGames = createRowingGames(canvas, canvas.clientWidth, canvas.clientHeight)
     // @ts-ignore
-    this.rowingGames = createRowingGames(canvas, gameSize, gameSize)
+    this.rowingGames = createRowingGames(this.renderRoot, canvas, gameSize, gameSize)
 
     // This mitigates a problem with delayed app state updates in the kaboom game.
     // If we use the change events from our Web Component to notify the game (i.e. by using the
