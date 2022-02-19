@@ -134,6 +134,7 @@ if getopts "b:" arg; then
 
   if ask "Do you want to switch from branch \"$CURRENT_BRANCH\" to branch \"$OPTARG\"?" Y; then
     print "Switching to branch \"$OPTARG\"..."
+    sudo git reset --hard origin/$CURRENT_BRANCH
     CURRENT_BRANCH=$OPTARG
     switch_branch
   else
