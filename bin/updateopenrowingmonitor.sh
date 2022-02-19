@@ -59,11 +59,19 @@ update_branch() {
   sudo git reset --hard origin/$CURRENT_BRANCH
 
   print "Updating Runtime dependencies..."
+  sudo rm -rf node_modules
+  sudo rm -rf build
   sudo npm ci
   sudo npm run build
 
   print "Starting Open Rowing Monitor..."
   sudo systemctl start openrowingmonitor
+
+  browserservice="webbrowserkiosk.service"
+  if systemctl --all --type service | grep -q "$browserservice" && systemctl is-active --quiet "$browserservice";then
+      echo "Restarting Graphical User Interface..."
+      sudo systemctl restart "$browserservice"
+  fi
 
   print
   print "Update complete, Open Rowing Monitor now has the following exciting new features:"
@@ -83,11 +91,18 @@ switch_branch() {
 
   print "Updating Runtime dependencies..."
   sudo rm -rf node_modules
-  sudo npm install
+  sudo rm -rf build
+  sudo npm ci
   sudo npm run build
 
   print "Starting Open Rowing Monitor..."
   sudo systemctl start openrowingmonitor
+
+  browserservice="webbrowserkiosk.service"
+  if systemctl --all --type service | grep -q "$browserservice" && systemctl is-active --quiet "$browserservice";then
+      echo "Restarting Graphical User Interface..."
+      sudo systemctl restart "$browserservice"
+  fi
 
   print
   print "Switch to branch \"$CURRENT_BRANCH\" complete, Open Rowing Monitor now has the following exciting new features:"
