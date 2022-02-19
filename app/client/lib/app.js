@@ -37,27 +37,27 @@ export function createApp (app) {
     // use the native websocket implementation of browser to communicate with backend
     socket = new WebSocket(`ws://${location.host}/websocket`)
 
-    socket.addEventListener('open', (event) => {
+    socket.onopen = (event) => {
       console.log('websocket opened')
       if (initialWebsocketOpenend) {
         websocketOpened()
         initialWebsocketOpenend = false
       }
-    })
+    }
 
-    socket.addEventListener('error', (error) => {
+    socket.onerror = (error) => {
       console.log('websocket error', error)
       socket.close()
-    })
+    }
 
-    socket.addEventListener('close', (event) => {
+    socket.onclose = (event) => {
       console.log('websocket closed, attempting reconnect')
       setTimeout(() => {
         initWebsocket()
       }, 1000)
-    })
+    }
 
-    socket.addEventListener('message', (event) => {
+    socket.onmessage = (event) => {
       try {
         const message = JSON.parse(event.data)
         if (!message.type) {
@@ -89,7 +89,7 @@ export function createApp (app) {
       } catch (err) {
         console.log(err)
       }
-    })
+    }
   }
 
   async function requestWakeLock () {

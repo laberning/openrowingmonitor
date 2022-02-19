@@ -39,6 +39,12 @@ export class App extends LitElement {
       // @ts-ignore
       this.app.handleAction(event.detail)
     })
+
+    // sets the handler to notify games about new app states
+    this.addEventListener('setGameStateUpdater', (event) => {
+      // @ts-ignore
+      this.gameStateUpdater = event.detail
+    })
   }
 
   /**
@@ -49,6 +55,8 @@ export class App extends LitElement {
    */
   updateState = (newState) => {
     this.appState = { ...newState }
+    // notify games about new app state
+    if (this.gameStateUpdater) this.gameStateUpdater(this.appState)
   }
 
   /**

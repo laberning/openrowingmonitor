@@ -41,10 +41,13 @@ export class GameComponent extends AppElement {
         }
         #container {
           width: 100%;
+          height: 100%;
           text-align: left;
           position: relative;
         }
         #widget {
+          position: absolute;
+          bottom: 0;
           display: flex;
           flex-direction: row;
           flex-wrap: wrap;
@@ -61,7 +64,7 @@ export class GameComponent extends AppElement {
           white-space: nowrap;
         }
         #buttons {
-          padding: 0.5em;
+          padding: 0.5em 0.5em 0 0.5em;
           flex-basis: 100%;
         }
       `
@@ -108,14 +111,21 @@ export class GameComponent extends AppElement {
     // this.rowingGames = createRowingGames(canvas, canvas.clientWidth, canvas.clientHeight)
     // @ts-ignore
     this.rowingGames = createRowingGames(canvas, gameSize, gameSize)
+
+    // This mitigates a problem with delayed app state updates in the kaboom game.
+    // If we use the change events from our Web Component to notify the game (i.e. by using the
+    // change notifiers available in this component), then the state changes will be processed by the
+    // game with a certain delay. This is pretty weird, since they are processed by this component at
+    // the correct time. Also when we look at timestamps in the games callback, then it seems that they
+    // are called completely in sync with the event and without dely.
+    // This problem only occures, when the update events are created from a web request (i.e. by receiving
+    // new rowing metrics via web socket).
+    // By delivering the app state updates directly here from index.js, this problem does not occure.
+    this.sendEvent('setGameStateUpdater', (appState) => { this.gameAppState(appState) })
   }
 
-  updated (changedProperties) {
-    if (changedProperties.has('appState')) {
-      if (this.rowingGames !== undefined) {
-        this.rowingGames.appState(changedProperties.get('appState'))
-      }
-    }
+  gameAppState (appState) {
+    if (this.rowingGames) this.rowingGames.appState(appState)
   }
 
   disconnectedCallback () {
