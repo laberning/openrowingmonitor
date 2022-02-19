@@ -12,11 +12,6 @@ import addSpaceBackground from './SpaceBackground.js'
  * @param {import('kaboom').KaboomCtx} k Kaboom Context
  */
 export default function StrokeFighterStartScene (k) {
-  k.layers([
-    'background',
-    'ui'
-  ], 'ui')
-
   addSpaceBackground(k)
 
   k.add([

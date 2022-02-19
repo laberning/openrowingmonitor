@@ -16,10 +16,10 @@ const STAR_NUM = 10
 export default function addSpaceBackground (k) {
   const background = k.add([
     k.rect(k.width() + 50, k.height() + 50),
+    k.z(-100),
     k.pos(-25, -25),
     k.color(0, 9, 28),
-    redflash(),
-    k.layer('background')
+    redflash()
   ])
 
   for (let i = 0; i < STAR_NUM; i++) {
@@ -37,9 +37,9 @@ export default function addSpaceBackground (k) {
     const starColor = k.rand(120, 200)
     k.add([
       k.sprite(spriteName),
+      k.z(-100),
       k.scale(k.rand(0.2, 0.7)),
       k.color(starColor, starColor, starColor),
-      k.layer('background'),
       k.pos(position),
       'star',
       { speed: k.rand(STAR_SPEED * 0.5, STAR_SPEED * 1.5) }

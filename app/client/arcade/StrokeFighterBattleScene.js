@@ -38,11 +38,10 @@ export default function StrokeFighterBattleScene (k) {
 
   let trainingTime = 0
 
-  k.layers([
-    'background',
-    'game',
-    'ui'
-  ], 'game')
+  const ui = k.add([
+    k.fixed(),
+    k.z(100)
+  ])
 
   const background = addSpaceBackground(k)
 
@@ -182,11 +181,10 @@ export default function StrokeFighterBattleScene (k) {
     })
   })
 
-  const timer = k.add([
+  const timer = ui.add([
     k.text('00:00', { size: 25, font: 'sinko' }),
     k.pos(10, 10),
-    k.fixed(),
-    k.layer('ui')
+    k.fixed()
   ])
 
   let trainingTimeRounded = 0
