@@ -90,17 +90,17 @@ export default function StrokeFighterBattleScene (k, args) {
     })
   }
 
-  function moveLeft () {
-    player.move(-PLAYER_SPEED, 0)
+  function moveLeft (speed) {
+    player.move(-speed, 0)
     if (player.pos.x < 0) {
-      player.pos.x = k.width()
+      player.pos.x = 0
     }
   }
 
-  function moveRight () {
-    player.move(PLAYER_SPEED, 0)
+  function moveRight (speed) {
+    player.move(speed, 0)
     if (player.pos.x > k.width()) {
-      player.pos.x = 0
+      player.pos.x = k.width()
     }
   }
 
@@ -135,13 +135,16 @@ export default function StrokeFighterBattleScene (k, args) {
   })
 
   player.onUpdate(() => {
-    const tolerance = 10
+    const tolerance = 5
     const closestEnemy = k.get('enemy').reduce((prev, enemy) => { return enemy?.pos.y > prev?.pos.y ? enemy : prev }, { pos: { y: 0 } })
     if (closestEnemy?.pos?.x) {
+      const distance = Math.abs(closestEnemy.pos.x - player.pos.x)
+      // slow down a bit if we are close to the enemy
+      const speed = distance < 100 ? distance / 100 * PLAYER_SPEED : PLAYER_SPEED
       if (closestEnemy.pos.x > player.pos.x + tolerance) {
-        moveRight()
+        moveRight(speed)
       } else if (closestEnemy.pos.x < player.pos.x - tolerance) {
-        moveLeft()
+        moveLeft(speed)
       }
     }
   })
