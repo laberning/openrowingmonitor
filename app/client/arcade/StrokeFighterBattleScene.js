@@ -38,7 +38,7 @@ export default function StrokeFighterBattleScene (k, args) {
   ]
 
   let trainingTime = args?.trainingTime || 0
-  let playerLifes = args?.gameOver ? 0 : PLAYER_LIFES
+  let playerLifes = args?.gameState === 'LOST' ? 0 : args?.playerLifes ? args?.playerLifes : PLAYER_LIFES
 
   const ui = k.add([
     k.fixed(),
@@ -65,7 +65,7 @@ export default function StrokeFighterBattleScene (k, args) {
     k.origin('center')
   ])
 
-  if (args?.gameOver) {
+  if (args?.gameState === 'LOST') {
     const shield = k.add([
       k.sprite('shield1'),
       k.scale(0.5),
@@ -116,9 +116,21 @@ export default function StrokeFighterBattleScene (k, args) {
     playerLifes -= 1
     drawPlayerLifes()
     if (playerLifes <= 0) {
-      k.go('strokeFighterGameOver', {
-        trainingTime
-      })
+      // if we already won the game before, go back to win message without possibility for overtime
+      if (args?.gameState === 'WON') {
+        k.go('strokeFighterEnd', {
+          trainingTime,
+          gameState: 'WON',
+          overtimePossible: false
+        })
+      // if we did not win or lose the game the game before, go to loose message with possibility for overtime
+      } else {
+        k.go('strokeFighterEnd', {
+          trainingTime,
+          gameState: 'LOST',
+          overtimePossible: true
+        })
+      }
     }
   })
 
@@ -231,6 +243,26 @@ export default function StrokeFighterBattleScene (k, args) {
     if (trainingTimeRounded !== newTrainingTimeRounded) {
       timer.text = `${secondsToTimeString(newTrainingTimeRounded)} / ${k.debug.fps()}fps`
       trainingTimeRounded = newTrainingTimeRounded
+      if (trainingTimeRounded >= TARGET_TIME) {
+        // if we already lost the game before, go back to loose message without possibility for overtime
+        if (args?.gameState === 'LOST') {
+          k.go('strokeFighterEnd', {
+            trainingTime,
+            playerLifes,
+            gameState: 'LOST',
+            overtimePossible: false
+          })
+        }
+        // if we did not win or loose the game before, go to win message with possibility for overtime
+        if (!(args?.gameState)) {
+          k.go('strokeFighterEnd', {
+            trainingTime,
+            playerLifes,
+            gameState: 'WON',
+            overtimePossible: true
+          })
+        }
+      }
     }
   })
 

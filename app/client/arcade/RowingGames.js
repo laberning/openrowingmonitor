@@ -7,8 +7,8 @@
 
 import kaboom from 'kaboom'
 import StrokeFighterBattleScene from './StrokeFighterBattleScene.js'
+import StrokeFighterEndScene from './StrokeFighterEndScene.js'
 import StrokeFighterStartScene from './StrokeFighterStartScene.js'
-import StrokeFighterGameOverScene from './StrokeFighterGameOverScene.js'
 
 /**
  * creates and initializes the rowing games
@@ -46,7 +46,7 @@ export function createRowingGames (rootComponent, canvasElement, clientWidth, cl
   let activeScene
   k.scene('strokeFighterBattle', (args) => { activeScene = StrokeFighterBattleScene(k, args) })
   k.scene('strokeFighterStart', (args) => { activeScene = StrokeFighterStartScene(k, args) })
-  k.scene('strokeFighterGameOver', (args) => { activeScene = StrokeFighterGameOverScene(k, args) })
+  k.scene('strokeFighterEnd', (args) => { activeScene = StrokeFighterEndScene(k, args) })
 
   k.go('strokeFighterStart')
 
