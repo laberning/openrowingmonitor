@@ -11,16 +11,16 @@ import addSpaceBackground from './SpaceBackground.js'
  * Creates the main scene of Storke Fighter
  * @param {import('kaboom').KaboomCtx} k Kaboom Context
  */
-export default function StrokeFighterStartScene (k) {
+export default function StrokeFighterStartScene (k, args) {
   addSpaceBackground(k)
 
   k.add([
-    k.text('Stroke Fighter', { size: 50, font: 'sinko' }),
+    k.text('Stroke Fighter', { size: 50 }),
     k.pos(k.width() / 2, 50),
     k.origin('center')
   ])
   k.add([
-    k.text('start rowing...', { size: 40, font: 'sinko' }),
+    k.text('start rowing...', { size: 40 }),
     k.pos(k.width() / 2, 110),
     k.origin('center')
   ])
@@ -55,17 +55,17 @@ export default function StrokeFighterStartScene (k) {
 
   const explainPos = k.vec2(40, 260)
   k.add([
-    k.text('light stroke = ', { size: 28, font: 'sinko' }),
+    k.text('light stroke = ', { size: 28 }),
     k.pos(explainPos),
     k.origin('left')
   ])
   k.add([
-    k.text('normal stroke = ', { size: 28, font: 'sinko' }),
+    k.text('normal stroke = ', { size: 28 }),
     k.pos(explainPos.add(0, 140)),
     k.origin('left')
   ])
   k.add([
-    k.text('heavy stroke = ', { size: 28, font: 'sinko' }),
+    k.text('heavy stroke = ', { size: 28 }),
     k.pos(explainPos.add(0, 280)),
     k.origin('left')
   ])
@@ -79,8 +79,15 @@ export default function StrokeFighterStartScene (k) {
     ])
   }
 
+  let motionDetectionEnabled = false
+  k.wait(5, () => {
+    motionDetectionEnabled = true
+  })
   let lastStrokeState = 'DRIVING'
   function appState (appState) {
+    if (!motionDetectionEnabled) {
+      return
+    }
     if (appState?.metrics.strokeState === undefined) {
       return
     }
@@ -91,7 +98,7 @@ export default function StrokeFighterStartScene (k) {
   }
 
   function driveFinished (metrics) {
-    k.wait(2, () => { k.go('strokeFighterBattle') })
+    k.go('strokeFighterBattle')
   }
 
   return {

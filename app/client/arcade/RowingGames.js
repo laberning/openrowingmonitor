@@ -8,6 +8,7 @@
 import kaboom from 'kaboom'
 import StrokeFighterBattleScene from './StrokeFighterBattleScene.js'
 import StrokeFighterStartScene from './StrokeFighterStartScene.js'
+import StrokeFighterGameOverScene from './StrokeFighterGameOverScene.js'
 
 /**
  * creates and initializes the rowing games
@@ -23,7 +24,8 @@ export function createRowingGames (rootComponent, canvasElement, clientWidth, cl
     root: rootComponent,
     crisp: false,
     width: clientWidth,
-    height: clientHeight
+    height: clientHeight,
+    font: 'sinko'
   })
   // for now show debug infos all the time
   // k.debug.inspect = true
@@ -31,8 +33,8 @@ export function createRowingGames (rootComponent, canvasElement, clientWidth, cl
   // todo: once there are multiple games, asset loadingshould be moved to the individual games
   const assets = '/assets'
   const sprites = ['enemyBlack1', 'enemyBlue2', 'enemyGreen3', 'enemyRed4', 'enemyRed5', 'playerShip2_orange',
-    'spaceShips_004', 'spaceShips_006', 'spaceShips_007', 'spaceShips_009', 'star1', 'star2',
-    'laserRed01', 'laserRed09']
+    'playerLife2_orange', 'spaceShips_004', 'spaceShips_006', 'spaceShips_007', 'spaceShips_009', 'star1', 'star2',
+    'laserRed01', 'laserRed09', 'shield1']
 
   for (const sprite of sprites) {
     k.loadSprite(sprite, `${assets}/sprites/${sprite}@2x.png`)
@@ -42,8 +44,9 @@ export function createRowingGames (rootComponent, canvasElement, clientWidth, cl
 
   // todo: check if there is some kaboomish way to get the active scene
   let activeScene
-  k.scene('strokeFighterBattle', () => { activeScene = StrokeFighterBattleScene(k) })
-  k.scene('strokeFighterStart', () => { activeScene = StrokeFighterStartScene(k) })
+  k.scene('strokeFighterBattle', (args) => { activeScene = StrokeFighterBattleScene(k, args) })
+  k.scene('strokeFighterStart', (args) => { activeScene = StrokeFighterStartScene(k, args) })
+  k.scene('strokeFighterGameOver', (args) => { activeScene = StrokeFighterGameOverScene(k, args) })
 
   k.go('strokeFighterStart')
 

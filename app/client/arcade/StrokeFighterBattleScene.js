@@ -11,7 +11,7 @@ import addSpaceBackground from './SpaceBackground.js'
  * Creates the main scene of Storke Fighter
  * @param {import('kaboom').KaboomCtx} k Kaboom Context
  */
-export default function StrokeFighterBattleScene (k) {
+export default function StrokeFighterBattleScene (k, args) {
   // how much stroke power is needed to fire high power lasers
   const THRESHOLD_POWER = 180
   // training duration in seconds
@@ -23,6 +23,7 @@ export default function StrokeFighterBattleScene (k) {
   const BULLET_SPEED = 1200
   const ENEMY_SPEED = 60
   const PLAYER_SPEED = 480
+  const PLAYER_LIFES = 3
   const SPRITE_WIDTH = 90
   const ENEMIES = [
     { sprite: 'enemyBlack1', health: 1 },
@@ -36,7 +37,8 @@ export default function StrokeFighterBattleScene (k) {
     { sprite: 'spaceShips_009', health: 2 }
   ]
 
-  let trainingTime = 0
+  let trainingTime = args?.trainingTime || 0
+  let playerLifes = args?.gameOver ? 0 : PLAYER_LIFES
 
   const ui = k.add([
     k.fixed(),
@@ -63,6 +65,31 @@ export default function StrokeFighterBattleScene (k) {
     k.origin('center')
   ])
 
+  if (args?.gameOver) {
+    const shield = k.add([
+      k.sprite('shield1'),
+      k.scale(0.5),
+      k.area(),
+      k.opacity(0.4),
+      k.pos(player.pos),
+      k.origin('center')
+    ])
+
+    shield.onUpdate(() => {
+      shield.pos = player.pos
+    })
+
+    shield.onCollide('enemy', (enemy) => {
+      k.destroy(enemy)
+      k.shake(4)
+      k.play('hit', {
+        detune: -1200,
+        volume: 0.6,
+        speed: k.rand(0.5, 2)
+      })
+    })
+  }
+
   function moveLeft () {
     player.move(-PLAYER_SPEED, 0)
     if (player.pos.x < 0) {
@@ -80,11 +107,19 @@ export default function StrokeFighterBattleScene (k) {
   player.onCollide('enemy', (enemy) => {
     k.destroy(enemy)
     k.shake(4)
+    background.redflash()
     k.play('hit', {
       detune: -1200,
       volume: 0.6,
       speed: k.rand(0.5, 2)
     })
+    playerLifes -= 1
+    drawPlayerLifes()
+    if (playerLifes <= 0) {
+      k.go('strokeFighterGameOver', {
+        trainingTime
+      })
+    }
   })
 
   player.onUpdate(() => {
@@ -142,7 +177,6 @@ export default function StrokeFighterBattleScene (k) {
       spawnBullet(player.pos.sub(20, 40))
       spawnBullet(player.pos.sub(-20, 40))
     } else {
-      background.redflash()
       spawnBullet(player.pos.sub(0, 65))
       spawnBullet(player.pos.sub(20, 40))
       spawnBullet(player.pos.sub(-20, 40))
@@ -185,7 +219,7 @@ export default function StrokeFighterBattleScene (k) {
   })
 
   const timer = ui.add([
-    k.text('00:00', { size: 25, font: 'sinko' }),
+    k.text('00:00', { size: 25 }),
     k.pos(10, 10),
     k.fixed()
   ])
@@ -199,6 +233,21 @@ export default function StrokeFighterBattleScene (k) {
       trainingTimeRounded = newTrainingTimeRounded
     }
   })
+
+  function drawPlayerLifes () {
+    k.destroyAll('playerLife')
+
+    // todo: would want to draw these on the "ui", but not sure on how to delete them then...
+    for (let i = 1; i <= playerLifes; i++) {
+      k.add([
+        k.sprite('playerLife2_orange'),
+        k.scale(0.5),
+        k.pos(k.width() - i * 40, 10),
+        k.z(100),
+        'playerLife'
+      ])
+    }
+  }
 
   // converts a timestamp in seconds to a human readable hh:mm:ss format
   function secondsToTimeString (secondsTimeStamp) {
@@ -260,6 +309,7 @@ export default function StrokeFighterBattleScene (k) {
     k.wait(60 / currentSPM, scheduleNextEnemy)
   }
 
+  drawPlayerLifes()
   scheduleNextEnemy()
 
   return {
