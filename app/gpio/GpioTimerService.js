@@ -1,6 +1,6 @@
 'use strict'
 /*
-  Open Rowing Monitor, https://github.com/laberning/openrowingmonitor
+  Open Rowing Monitor, https://github.com/jaapvanekris/openrowingmonitor
 
   Measures the time between impulses on the GPIO pin. Started in a
   separate thread, since we want the measured time to be as close as
@@ -16,12 +16,12 @@ log.setLevel(config.loglevel.default)
 
 export function createGpioTimerService () {
   if (Gpio.accessible) {
-    if (config.gpioHighPriority) {
-      // setting top (near-real-time) priority for the Gpio process, as we don't want to miss anything
-      log.debug('setting priority for the Gpio-service to maximum (-20)')
+    if (config.gpioPriority) {
+      // setting a specific priority for the Gpio process, as we don't want to miss anything
+      log.debug(`setting priority for the Gpio-service to ${config.gpioPriority}`)
       try {
         // setting priority of current process
-        os.setPriority(-20)
+        os.setPriority(config.gpioPriority)
       } catch (err) {
         log.debug('need root permission to set priority of Gpio-Thread')
       }
