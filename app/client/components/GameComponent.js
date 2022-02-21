@@ -23,9 +23,16 @@ export class GameComponent extends AppElement {
           display: flex;
         }
         @media (orientation: landscape) {
+          :host {
+            flex-direction: row
+          }
           #arcade {
-            width: 100vh !important;
-            height: 100vh !important;
+            width: 100vh;
+            height: 100vh;
+          }
+          #controls {
+            width: calc(100vw - 100vh);
+            height: 100vh;
           }
         }
         @media (orientation: portrait) {
@@ -33,19 +40,23 @@ export class GameComponent extends AppElement {
             flex-direction: column
           }
           #arcade {
-            width: 100vw !important;
-            height: 100vw !important;
+            width: 100vw;
+            height: 100vw;
+          }
+          #controls {
+            width: 100vw;
+            height: calc(100vh - 100vw);
           }
         }
+
         div > .icon {
           height: 0.8em;
           width: 1.5em;
         }
-        #container {
-          width: 100%;
-          height: 100%;
+        #controls {
           text-align: left;
           position: relative;
+          overflow: hidden;
         }
         #widget {
           position: absolute;
@@ -76,8 +87,8 @@ export class GameComponent extends AppElement {
   render () {
     const metrics = this.appState.metrics
     return html`
-      <canvas id="arcade"></canvas>
-      <div id="container">
+      <div id="arcade"></div>
+      <div id="controls">
         <div id="widget">
           <div>${icon_route}${metricValue(metrics, 'distanceTotal')}<span class="metric-unit">${metricUnit(metrics, 'distanceTotal')}</span></div>
           <div>${icon_stopwatch}${metricValue(metrics, 'splitFormatted')}<span class="metric-unit">/500m</span></div>
@@ -109,10 +120,10 @@ export class GameComponent extends AppElement {
     // using a square screen has the advantage that it works well on portrait and landscape screens
     // for now will set it to a fixed square resolution and let css take care of scaling it
     const gameSize = 600
-    const canvas = this.renderRoot.querySelector('#arcade')
-    // this.rowingGames = createRowingGames(canvas, canvas.clientWidth, canvas.clientHeight)
+    const arcade = this.renderRoot.querySelector('#arcade')
+    // this.rowingGames = createRowingGames(arcade, canvas.clientWidth, canvas.clientHeight)
     // @ts-ignore
-    this.rowingGames = createRowingGames(this.renderRoot, canvas, gameSize, gameSize)
+    this.rowingGames = createRowingGames(arcade, gameSize, gameSize)
 
     // This mitigates a problem with delayed app state updates in the kaboom game.
     // If we use the change events from our Web Component to notify the game (i.e. by using the

@@ -12,23 +12,21 @@ import StrokeFighterStartScene from './StrokeFighterStartScene.js'
 
 /**
  * creates and initializes the rowing games
- * @param {HTMLCanvasElement} canvasElement
+ * @param {HTMLCanvasElement} rootComponent
  * @param {number} clientWidth
  * @param {number} clientHeight
  */
-export function createRowingGames (rootComponent, canvasElement, clientWidth, clientHeight) {
+export function createRowingGames (rootComponent, clientWidth, clientHeight) {
   const k = kaboom({
     debug: true,
     global: false,
-    canvas: canvasElement,
+    stretch: true,
     root: rootComponent,
     crisp: false,
     width: clientWidth,
     height: clientHeight,
     font: 'sinko'
   })
-  // for now show debug infos all the time
-  // k.debug.inspect = true
 
   // todo: once there are multiple games, asset loadingshould be moved to the individual games
   const assets = '/assets'
