@@ -10,7 +10,7 @@
 */
 
 function createMovingAverager (maxLength, defaultValue) {
-  let dataPoints = new Array(maxLength)
+  const dataPoints = new Array(maxLength)
   let currentLength
   reset()
 
