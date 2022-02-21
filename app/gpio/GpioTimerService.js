@@ -1,6 +1,6 @@
 'use strict'
 /*
-  Open Rowing Monitor, https://github.com/laberning/openrowingmonitor
+  Open Rowing Monitor, https://github.com/jaapvanekris/openrowingmonitor
 
   Measures the time between impulses on the GPIO pin. Started in a
   separate thread, since we want the measured time to be as close as
