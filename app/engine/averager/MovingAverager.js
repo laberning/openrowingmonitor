@@ -36,7 +36,7 @@ function createMovingAverager (maxLength, defaultValue) {
 
   function getAverage () {
     let arrayAverage = 0
-    if (currentLength > 1 || (currentLength === 1 && maxLength === 1)) {
+    if (currentLength > 1 || (maxLength === 1 && currentLength === 1)) {
       // The array is sufficiently filled to calculate an acceptable average
       let i = currentLength - 1
       let arrayTotal = 0.0
