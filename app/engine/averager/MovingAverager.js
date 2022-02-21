@@ -48,7 +48,7 @@ function createMovingAverager (maxLength, defaultValue) {
       arrayAverage = arrayTotal / currentLength
     } else {
       // The array isn't sufficiently filled
-      if (currentLength == 1) {
+      if (currentLength === 1) {
         arrayAverage = (dataPoints[0] + defaultValue) / 2
       } else {
         arrayAverage = defaultValue
