@@ -15,7 +15,7 @@ test('average should be initValue on empty dataset', () => {
 test('an averager of length 1 should return the last added value averaged with the default value', () => {
   const movingAverager = createMovingAverager(1, 3)
   movingAverager.pushValue(9)
-  assert.is(movingAverager.getAverage(), 6)
+  assert.is(movingAverager.getAverage(), 9)
 })
 
 test('an averager of length 2 should return average of last 2 added elements', () => {
