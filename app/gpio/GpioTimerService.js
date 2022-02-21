@@ -18,7 +18,7 @@ export function createGpioTimerService () {
   if (Gpio.accessible) {
     if (config.gpioPriority) {
       // setting a specific priority for the Gpio process, as we don't want to miss anything
-      log.debug('setting priority for the Gpio-service to ${config.gpioPriority}')
+      log.debug(`setting priority for the Gpio-service to ${config.gpioPriority}`)
       try {
         // setting priority of current process
         os.setPriority(config.gpioPriority)
