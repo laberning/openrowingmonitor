@@ -28,7 +28,7 @@ export function createRowingGames (rootComponent, clientWidth, clientHeight) {
     font: 'sinko'
   })
 
-  // todo: once there are multiple games, asset loadingshould be moved to the individual games
+  // todo: once there are multiple games, asset loading should be moved to the individual games
   const assets = '/assets'
   const sprites = ['enemyBlack1', 'enemyBlue2', 'enemyGreen3', 'enemyRed4', 'enemyRed5', 'playerShip2_orange',
     'playerLife2_orange', 'spaceShips_004', 'spaceShips_006', 'spaceShips_007', 'spaceShips_009', 'star1', 'star2',
@@ -56,8 +56,9 @@ export function createRowingGames (rootComponent, clientWidth, clientHeight) {
     }
   }
 
-  // todo: currently we move to an empty scene to dispose the game as there does not seem to be
-  // a mechanism in kaboom to dispose the instance.
+  /**
+   * clean up the game resources
+   */
   function dispose () {
     k.quit()
   }

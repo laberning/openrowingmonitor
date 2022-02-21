@@ -8,7 +8,7 @@
 import addSpaceBackground from './SpaceBackground.js'
 
 /**
- * Creates the main scene of Storke Fighter
+ * Creates the main scene of Stroke Fighter
  * @param {import('kaboom').KaboomCtx} k Kaboom Context
  */
 export default function StrokeFighterBattleScene (k, args) {
@@ -21,7 +21,7 @@ export default function StrokeFighterBattleScene (k, args) {
   // strokes per minute at end of training
   const SPM_END = 28
   const BULLET_SPEED = 1200
-  const ENEMY_SPEED = 60
+  const ENEMY_SPEED = 50
   const PLAYER_SPEED = 480
   const PLAYER_LIFES = 3
   const SPRITE_WIDTH = 90
@@ -72,12 +72,9 @@ export default function StrokeFighterBattleScene (k, args) {
       k.area(),
       k.opacity(0.4),
       k.pos(player.pos),
+      k.follow(player),
       k.origin('center')
     ])
-
-    shield.onUpdate(() => {
-      shield.pos = player.pos
-    })
 
     shield.onCollide('enemy', (enemy) => {
       k.destroy(enemy)
@@ -331,8 +328,10 @@ export default function StrokeFighterBattleScene (k, args) {
 
   function scheduleNextEnemy () {
     const percentTrainingFinished = trainingTime / TARGET_TIME
-    const currentSPM = SPM_START + (SPM_END - SPM_START) * percentTrainingFinished
+    // linearly increase the SPM over time
+    let currentSPM = SPM_START + (SPM_END - SPM_START) * percentTrainingFinished
     let maxEnemyHealth = 1
+    let minEnemyHealth = 1
     if (percentTrainingFinished < 0.4) {
       maxEnemyHealth = 1
     } else if (percentTrainingFinished < 0.8) {
@@ -340,7 +339,16 @@ export default function StrokeFighterBattleScene (k, args) {
     } else {
       maxEnemyHealth = 3
     }
-    spawnEnemy(k.choose(ENEMIES.filter((enemy) => enemy.health <= maxEnemyHealth)))
+    // insane mode (keep on rowing after winning)
+    if (percentTrainingFinished > 1) {
+      // cap SPM at 20% above SPM_END (for insane mode)
+      currentSPM = Math.max(currentSPM, SPM_END * 1.2)
+      minEnemyHealth = 2
+      if (percentTrainingFinished > 1.3) {
+        minEnemyHealth = 3
+      }
+    }
+    spawnEnemy(k.choose(ENEMIES.filter((enemy) => enemy.health >= minEnemyHealth && enemy.health <= maxEnemyHealth)))
     k.wait(60 / currentSPM, scheduleNextEnemy)
   }
 

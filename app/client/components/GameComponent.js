@@ -119,7 +119,7 @@ export class GameComponent extends AppElement {
     // depending on the resolution
     // using a square screen has the advantage that it works well on portrait and landscape screens
     // for now will set it to a fixed square resolution and let css take care of scaling it
-    const gameSize = 600
+    const gameSize = 700
     const arcade = this.renderRoot.querySelector('#arcade')
     // this.rowingGames = createRowingGames(arcade, canvas.clientWidth, canvas.clientHeight)
     // @ts-ignore
@@ -130,10 +130,10 @@ export class GameComponent extends AppElement {
     // change notifiers available in this component), then the state changes will be processed by the
     // game with a certain delay. This is pretty weird, since they are processed by this component at
     // the correct time. Also when we look at timestamps in the games callback, then it seems that they
-    // are called completely in sync with the event and without dely.
-    // This problem only occures, when the update events are created from a web request (i.e. by receiving
+    // are called completely in sync with the event and without delay.
+    // This problem only occurs, when the update events are created from a web request (i.e. by receiving
     // new rowing metrics via web socket).
-    // By delivering the app state updates directly here from index.js, this problem does not occure.
+    // By delivering the app state updates directly here from index.js, this problem does not occur.
     this.sendEvent('setGameStateUpdater', (appState) => { this.gameAppState(appState) })
   }
 

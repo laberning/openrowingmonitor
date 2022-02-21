@@ -8,7 +8,7 @@
 import addSpaceBackground from './SpaceBackground.js'
 
 /**
- * Creates the main scene of Storke Fighter
+ * Creates the main scene of Stroke Fighter
  * @param {import('kaboom').KaboomCtx} k Kaboom Context
  */
 export default function StrokeFighterStartScene (k, args) {
@@ -19,13 +19,8 @@ export default function StrokeFighterStartScene (k, args) {
     k.pos(k.width() / 2, 50),
     k.origin('center')
   ])
-  k.add([
-    k.text('start rowing...', { size: 40 }),
-    k.pos(k.width() / 2, 110),
-    k.origin('center')
-  ])
 
-  const shipsPos = k.vec2(450, 260)
+  const shipsPos = k.vec2(520, 240)
   const ship1 = k.add([
     k.sprite('playerShip2_orange'),
     k.scale(0.5),
@@ -53,7 +48,7 @@ export default function StrokeFighterStartScene (k, args) {
   addBullet(ship3.pos.sub(20, 40))
   addBullet(ship3.pos.sub(-20, 40))
 
-  const explainPos = k.vec2(40, 260)
+  const explainPos = k.vec2(60, 240)
   k.add([
     k.text('light stroke = ', { size: 28 }),
     k.pos(explainPos),
@@ -78,6 +73,12 @@ export default function StrokeFighterStartScene (k, args) {
       k.origin('center')
     ])
   }
+
+  k.add([
+    k.text('start rowing to charge lasers', { size: 28 }),
+    k.pos(k.width() / 2, 650),
+    k.origin('center')
+  ])
 
   let motionDetectionEnabled = false
   k.wait(5, () => {
