@@ -31,7 +31,12 @@ RowingEngine.js interprets the flywheel behaviour and translates it into the row
 
 ### Flywheel.js
 
-A model of the key parameters of the Flywheel, to provide the rest of ORM with essential physical metrics and state regarding the flywheel. Aside temporal metrics (i.e. Angular Velocity, Angular Acceleration, Torque, etc.) it also maintains several absolute metrics (like total elapsed time and total angular distance traveled). It also maintains physical properties of the flywheel, like the flywheel drag and flywheel inertia.
+A model of the key parameters of the Flywheel, to provide the rest of ORM with essential physical metrics and state regarding the flywheel. It provides the following types of information:
+
+* temporal metrics (i.e. Angular Velocity, Angular Acceleration, Torque, etc.)
+* several absolute metrics (i.e. total elapsed time and total angular distance traveled)
+* the state of the flywheel (i.e. is the flywheel powered, unpowered or even in the process of stopping)
+* physical properties of the flywheel, (i.e. the flywheel drag and flywheel inertia)
 
 ## Major design decissions
 
