@@ -15,7 +15,7 @@ Server.js orchestrates all information flows and starts/stops processes when nee
 
 ### RowingStatistics.js
 
-RowingStatistics.js takes RowingEngine.js's status reports and translates them into meaningful information for the consumers of data. Where RowingEngine.js reports metrics for the entire session (i.e. absolute times, distances and instant velocities, etc.), RowingStatistics.js will consume this data and transform it into more stable metrics useable for presentation.
+RowingStatistics.js takes RowingEngine.js's status reports and translates them into meaningful information for the consumers of data. RowingEngine.js reports limited updates of absolute metrics for the entire session (updates to absolute times, distances and instant velocities, etc., but only when they can be updated). RowingStatistics.js will consume this data, combines it with other datasources like the heartrate and transform it into a consistent set of more stable metrics useable for presentation.
 
 In a nutshell:
 
@@ -27,11 +27,11 @@ In total, this takes full control of the displayed metrics in a specific interva
 
 ### RowingEngine.js
 
-RowingEngine.js interprets the flywheel behaviour and translates it into the rower's state (i.e. waiting, drive, recovery, stopped) in a finite state machine and calculates associated metrics (i.e. linear velocity, linear distance, power, etc.). Aside temporal metrics (Linear Velocity, Power, etc.) it also maintains several absolute metrics (like total total linear distance travelled).
+RowingEngine.js interprets the flywheel behaviour and translates it into the rower's state (i.e. waiting, drive, recovery, stopped) in a finite state machine and calculates the updated associated metrics (i.e. linear velocity, linear distance, power, etc.) for that specific phase transition. Aside temporal metrics (Linear Velocity, Power, etc.) it also maintains several absolute metrics (like total total linear distance travelled). It only updates metrics that can be updated meaningful, and it will not resend (potentially stale) data that isn't updated.
 
 ### Flywheel.js
 
-A model of the key parameters of the Flywheel, to provide the rest of ORM with essential metrics and state regarding the flywheel. Aside temporal metrics (i.e. Angular Velocity, Angular Acceleration, Torque, etc.) it also maintains several absolute metrics (like total elapsed time and total angular distance travelled).
+A model of the key parameters of the Flywheel, to provide the rest of ORM with essential physical metrics and state regarding the flywheel. Aside temporal metrics (i.e. Angular Velocity, Angular Acceleration, Torque, etc.) it also maintains several absolute metrics (like total elapsed time and total angular distance traveled). It also maintains physical properties of the flywheel, like the flywheel drag and flywheel inertia.
 
 ## Major design decissions
 
