@@ -45,4 +45,4 @@ Working with small numbers, and using the impulse time to calculate the angular 
 
 RowingEngine.js could report distance incrementally to RowingStatistics.js. However, we chose to report in absolute times and distances, making RowingEngine.js in full control of these essential metrics. This way, RowingEngine.js can report absolute times and distances, taking full control of the metrics regarding linear movement. Any derived metrics for specific clients, and smoothing/buffering, is done by RowingStatistics.
 
-Adittionally benefit of this approach is that it makes transitions in intervals more smooth: RowingStatistics.js can intersect stroke without causing any pause in metrics (as RowingEngine.js keeps reporting absolutes, intervals and laps become a view on the same data). 
+Adittionally benefit of this approach is that it makes transitions in intervals more smooth: RowingStatistics.js can intersect stroke without causing any pause in metrics (as RowingEngine.js keeps reporting absolutes, intervals and laps become a view on the same data).
