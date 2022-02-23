@@ -27,7 +27,7 @@ In total, this takes full control of the displayed metrics in a specific interva
 
 ### RowingEngine.js
 
-RowingEngine.js interprets the flywheel behaviour and translates it into the rower's state (i.e. waiting, drive, recovery, stopped) and associated metrics (i.e. linear velocity, linear distance, power, etc.). Aside temporal metrics (Linear Velocity, Power, etc.) it also maintains several absolute metrics (like total total linear distance travelled).
+RowingEngine.js interprets the flywheel behaviour and translates it into the rower's state (i.e. waiting, drive, recovery, stopped) in a finite state machine and calculates associated metrics (i.e. linear velocity, linear distance, power, etc.). Aside temporal metrics (Linear Velocity, Power, etc.) it also maintains several absolute metrics (like total total linear distance travelled).
 
 ### Flywheel.js
 
