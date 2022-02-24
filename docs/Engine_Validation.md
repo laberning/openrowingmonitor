@@ -400,7 +400,9 @@ Looking at the ORM2f algorithm with these settings, it is quite close to the int
 | Test | Drag factor | Target | #strokes on PM5| Result on PM5 | #strokes on ORM | Result on ORM | Deviation |
 | :-: | --: | --: | --: | --: |--: | --: | --: |
 | 28 | 129 | 10000 m | 981 | 44:15.2 | 984 | 44:20.4 | -0.20% |
-| 29 | 70 | 4000 m | 440 | 17:00.2 | 442 | 17:02.8 | -0.25% |
+| 29 | 69 | 4000 m | 440 | 17:00.2 | 442 | 17:02.8 | -0.25% |
+| 30 | 78 | 4000 m | 431 | 17:06.1 | 433 | 17:08.0 | -0,19% |
+| 31 | 91 | 4000 m | 408 | 17:11.6 | 410 | 17:14.3 | -0,26% |
 
 ### Validation of the linear speed caclulation
 
