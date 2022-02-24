@@ -310,7 +310,7 @@ ORM2f frequently outperforms ORM1f, especially when it comes to spread and outli
 Having updated the algorithm to ORM2f, our next step is a further optimisation of these settings. Our initial experiments were based on a r<sup>2</sup> needs to be above 92.5% before a dragfactor was accepted. Having collected several rowing sessions and having selected an algorithm, we now can further optimise the settings.
 
 Here we try to optimise the settings, with the explicit goal to reduce the overall standard deviation and accuracy of the prediction, while trying to avoid a specific caveat. The caveat would be to set the r<sup>2</sup> very high, resulting in a static dragfactor as all calculated factors would be rejected. Therefore we explicitly explore the lower values of r<sup>2</sup>, to see if those values also produce robust and reliable results. To assess the useability, we simulate the effects of the 21 rows with the different settings of r<sup>2</sup>, allowing us to assess the relative negative deviation, the average and relative positive deviation, the standard deviation, the first stroke where a valid value is used, the percentage of valid dragfactors and the number of rows where at least 75% of the strokes is valid. This leads to the following results:
-| Certainty | Min | Avg | Max | SD | Average first valid stroke | Valid drag calculations | Number of rows above 75% |
+| Certainty | Min | Avg | Max | SD | Average first valid stroke | Valid drag calculations | Number of rowing sessions with over 75% validity |
 | :-- | --: | --: | --: | --: | --: | --: | --: |
 | 0.95 | -1.39% | -0.26% | 1.25% | 0.5481 | 15 | 70.25% | 11 |
 | 0.945 | -1.46% | -0.25% | 1.29% | 0.5572 | 7 | 73.07% | 12 |
@@ -356,7 +356,7 @@ Here we try to optimise the settings, with the explicit goal to reduce the overa
 
 Based on this we conclude that the ORM2f algorithm combined with the requirement that r<sup>2</sup> needs to be above 0.84 is the most optimal solution: it filters enough noise to surpress outliers but the remaining valid dragfactors are frequent enough to allow a good pickup early in the rowing session.
 
-| Certainty | Drag smoothing | Min | Avg | Max | SD | Average first valid stroke | Valid drag calculations | Number of rows above 75% |
+| Certainty | Drag smoothing | Min | Avg | Max | SD | Average first valid stroke | Valid drag calculations | Number of rowing sessions with over 75% validity |
 | :-- | --: | --: | --: | --: | --: | --: | --: | --: |
 | 0.84 | 1 | -1.78% | -0.26% | 2.64% | 0.6033 | 1 | 90.49% | 21 |
 | 0.84 | 2 | -1.46% | -0.26% | 1.91% | 0.4826 | 1 | 90.49% | 21 |
