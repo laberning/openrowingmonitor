@@ -421,7 +421,6 @@ Looking at the ORM2f algorithm with these settings, it is quite close to the int
 | 47 | 210 | 4000 m |  | :. |  | :. | -0,% |
 | 48 | 220 | 4000 m |  | :. |  | :. | -0,% |
 
-
 ### Validation of the linear speed caclulation
 
 @@
