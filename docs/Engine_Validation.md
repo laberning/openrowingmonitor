@@ -41,126 +41,12 @@ With the right settings in config.js, the stroke detection seems to be in sync b
 
 We describe the resulting physics model used by OpenRowingMonitor in [[5]](#5). To validate the physics engine of OpenRowingMonitor, we need to validate the folling calculations:
 
-* The static calculation of linear distance, based on a fixed drag factor
 * The dynamic calculation of the dragfactor
-* The calculation of the linear distance, based on a dynamically determined drag factor (i.e. integration test)
+* The calculation of the linear distance, based on a dynamically determined drag factor
 * The calculation of linear speed
 * Calculation of the displayed power
 
-First, we verify the calculation of the distance and elapsed time, as this only depends on counting impulses and (a fixed) dragfactor, without any dependence on other parts of the algorithms like stroke detection. In OpenRowingMonitor, total time is defined as the sum of all impulse lengths (i.e. the sum of all *CurrentDt*'s), which therefore is also tested alongside distance. Subsequently, we use the distance as the key indicators for the verification of the dynamic calculation of the dragfactor. When these key parameters are found to be solid, we then use them as a basis to verify all other dependent metrics.
-
-### Validation of the linear distance calculation
-
-The distance calculations is solely dependent on known factors that can be fixed (the dragfactor used is fairly stable, can be displayed by the Concept 2 monitor and is fixed for OpenRowingMonitor to a single value by setting autoAdjustDragFactor to false) and the duplicated impulses. Thus, as the impulses are duplicated across the monitors, the resulting distance calculation is a good indicator for the quality of this calculation, as it depends on the number of impulses encountered, not on their timing (as with the speed).
-
-#### Theoretical basis of the linear distance calculation
-
-From theory [[1]](#1) and [[2]](#2) the initial calculation was based on formula 9.1 described in [[1]](#1):
-
-> P=2.8 \* u<sup>3</sup>
-
-The calculation of linear distance accordingly becomes [[1]](#1), formula 9.3:
-
-> s=(k/2.8)<sup>1/3</sup> &theta;
-
-In RowingEngine 2.0 (in RowingEngine.js, OpenRowingMonitor version 0.8.2) we implemented formula 9.3 as follows:
-
-```javascript
-LinearDistance = Math.pow((dragFactor / rowerSettings.magicConstant), 1.0 / 3.0) * AngularDisplacement
-```
-
-Although OpenRowingMonitor calculates a completed distance per recorded impulse for display purposses, the completed distance is definitively calculated per phase.
-
-#### Results and interpretation of a first side-by-side linear distance test
-
-The first series side-by-side test are fixed distance or fixed time tests (taking approximatly 15 minutes or more), where both monitors are fed the same stream of impulses (as described above). This test stops when both monitors have reached 3500 meters. The focus in this test is on a steady-state rowing. We consider the distance sufficiently long to be able to abstract away from any differences in start-up behaviour of the two monitors. We obtained the following times:
-
-| Test | Drag factor | Target | #strokes on PM5| Result on PM5 | #strokes on ORM | Result on ORM | Deviation |
-| :-: | --: | --: | --: | --: |--: | --: | --: |
-| 1 | 115 | 3500 m | 365 | 14:48.0 | 355 | 14:27.2 | +2,35% |
-| 2 | 114 | 3500 m | 365 | 14:57.4 | 356 | 14:35.5 | +2.44% |
-| 3 | 116 | 3500 m | 367 | 14:53.5 | 357 | 14:27.8 | +2.88% |
-| 4 | 132 | 3500 m | 355 | 14:50.1 | 346 | 14:26.0 | +2.71% |
-| 6 | 103 | 30 min | 660 | 6837 m | 660 | 7018 m | +2.65% |
-| 7 | 70 | 3500 m | 385 | 15:23.5 | 376 | 15:00.1 | +2.53% |
-| 8 | 79 | 3500 m | 370 | 15:01.3 | 362 | 14:39.2 | +2.45% |
-| 9 | 92 | 3500 m | 357 | 15:04.3 | 358 | 14.42.3 | +2.42% |
-| 10 | 102 | 3500 m | 366 | 14:56.1 | 357 | 14:32.1 | +2.68% |
-| 11 | 112 | 3500 m | 375 | 14:48.1 | 361 | 14:21.6 | +2.98% |
-| 12 | 122 | 3500 m | 367 | 15:04.6 | 357 | 14:38.4 | +2.90% |
-| 13 | 101 | 3500 m | 333 | 15:54.5 | 326 | 15:30.8 | +2.48% |
-| 14 | 101 | 3500 m | 329 | 15:36.6 | 322 | 15:14.4 | +2.37% |
-| 15 | 133 | 3500 m | 353 | 14:44.2 | 343 | 14:17.6 | +3.01% |
-| 16 | 145 | 3500 m | 358 | 14:45.5 | 348 | 14:18.6 | +3.04% |
-| 17 | 156 | 3500 m | 355 | 14:47.1 | 344 | 14:17.1 | +3.38% |
-| 18 | 115 | 3500 m | 371 | 15:20.6 | 362 | 14:52.3 | +3.07% |
-| 19 | 105 | 30 min | 711 | 6918 m | 712 | 7137 m | +3.16% |
-| 20 | 108 | 3500 m | 366 | 14:53.9 | 357 | 14:29.1 | +2.77% |
-| 21 | 166 | 3500 m | 351 | 14:33.8 | 340 | 14:05.5 | +3.24% |
-| 22 | 177 | 3500 m | 353 | 14:43.3 | 342 | 14:13.3 | +3.40% |
-| 23 | 191 | 3500 m | 348 | 14:46.8 | 336 | 14:17.0 | +3.36% |
-| 24 | 203 | 3500 m | 355 | 14:57.6 | 342 | 14:26.6 | +3.45% |
-| 25 | 105 | 10000 m | 1041 | 43:39.3 | 1014 | 42:31.5 | +2.59% |
-| 26 | 214 | 3500 m | 340 | 14:35.2 | 329 | 14:04.6 | +3.50% |
-| 27 | 348 | 3500 m | 348 | 14:34.8 | 336 | 14:03.9 | +3,53% |
-
-Here, a positive deviation indicates that that OpenRowingMonitor was too fast when compared to the PM5 data. The strokerate was nearly identical along the row, and only varied slightly between 23 and 24 SPM). The total number of strokes across the monitors was sufficiently similar at similar times. This suggests that stroke detection (and thus the waveform of the imulses) is valid across both machines. The measured dragfactor on the Concept 2's PM5 (displayed through ErgData app) remained a stable until test 23, at test 23 it started to become more unstable.
-
-There is a very significant difference (at least over 20 seconds) in end-times, which can't be explained by starting behaviour or variations in other factors. As an observation, the difference was subtle in the begin (meters) but grew to around 100 meters as the row progressed. These differences in results can't be explained by rounding errors in the dragfactor (as displayed by the Concept 2 PM5 during the row) and/or constant C (the magicconstant in config.js): a sensitivity analysis on these values, varying these constants with several steps (dragfactor + or minus 5, magic constant + or - 0.5) will not align these values to bridge this gap. The impact of these values is too small (as they are part of a cubic root calculation) to explain this big a difference. As this difference can't be explained, it suggests that the cause is to be found at a more fundamental level.
-
-#### Improvements based on the first side-by-side linear distance test
-
-We interpret this difference, as the impulses are duplicated across the two monitors and do not seem to exhibit deviating artifacts, as a clear indication that the calculation of distance differs between the two monitors, as all other factors (the constant C and the dragfactor) are fixed.
-
-According to [[1]](#1) and [[2]](#2), Marinus van Holst observed that C2 seems to use a different formula for its calculations, which is described in formula 9.4 [[1]](#1):
-
-> P=4.31 \* u<sup>2.75</sup>
-
-By applying formula 9.4 to calculate the linear speed, we obtain the following formula, replacing formula 9.2 [[1]](#1):
-
-> u=((k \* &omega;<sup>0.25</sup>) / 4.31)<sup>1/2.75</sup> &omega;
-
-As s = u \* t, we can also use this formula 9.4 to calculate the linear distance. By doing so we obtain the following formula, replacing formula 9.3 [[1]](#1):
-
-> s=((k \* &omega; <sup>0.25</sup>) / 4.31)<sup>1/2.75</sup> &theta;
-
-An important element in the algorithm is the granularity of &omega; and &theta; used: does the algorithm calculate the completed distance once per completed stroke, once per completed phase, once per flywheel rotation or once per recorded impulse? The current implementation calculates the completed distance definitively per completed phase. From small experiments, we must conclude that changing the granularity has a measurable effect on the recorded distance. At this stage we keep the granularity as it was implemented originally, but we will conduct an sensitivity analysis with respect to the granularity used.
-
-#### Results and interpretation of the second series of side-by-side linear distance tests
-
-Having modified the code based on the previous test, we validate this modified physics model. Again this test uses a 3500 meters fixed distance (taking approximatly 15 minutes) or a 30 minutes fixed time training. Here, both monitors are fed the same stream of impulses (as described above) and the test is stoped when both monitors have reached their target. The focus in this test is on a steady-state rowing. We consider the distance sufficiently long to be able to abstract away from any differences in start-up behaviour of the two monitors. As the physics model should work, we focus not only on (nearly) reproducing the results of the PM5 on ORM, but also on its behaviour at different drag factors. The following tests yielded the following results:
-
-| Test | Drag factor | Target | #strokes on PM5| Result on PM5 | #strokes on ORM | Result on ORM | Deviation |
-| :-: | --: | --: | --: | --: |--: | --: | --: |
-| 2 | 114 | 3500 m | 365 | 14:57.4 | 365 | 14:55.4| +0.22% |
-| 3 | 116 | 3500 m | 367 | 14:53.5 | 367 | 14:50.1| +0.38% |
-| 4 | 132 | 3500 m | 355 | 14:50.1 | 353 | 14:48.3| +0.20% |
-| 6 | 103 | 30 min | 660 | 6837 m | 661 | 6837 m | 0% |
-| 7 | 70 | 3500 m | 385 | 15:23.5 | 388 | 15:28.7 | -0.56% |
-| 8 | 79 | 3500 m | 370 | 15:01.3 | 371 | 15:01.7 | -0.04% |
-| 9 | 92 | 3500 m | 357 | 15:04.3 | 358 | 15:01.9 | +0.13% |
-| 10 | 102 | 3500 m | 366 | 14:56.1 | 366 | 14:54.5 | +0.17% |
-| 11 | 112 | 3500 m | 375 | 14:48.1 | 372 | 14:46.1 | +0.23% |
-| 12 | 122 | 3500 m | 367 | 15:04.6 | 367 | 15:01.3 | +0.36% |
-| 13 | 101 | 3500 m | 333 | 15:54.5 | 335 | 16:02.7 | -0.85% |
-| 14 | 101 | 3500 m | 329 | 15:36.6 | 331 | 15:41.6 | -0.53% |
-| 15 | 133 | 3500 m | 353 | 14:44.2 | 353 | 14:40.8 | +0.38% |
-| 16 | 145 | 3500 m | 358 | 14:45.5 | 357 | 14:40.4 | +0.58% |
-| 17 | 156 | 3500 m | 355 | 14:47.1 | 355 | 14:43.3 | +0,43% |
-| 18 | 115 | 3500 m | 371 | 15:20.6 | 371 | 15:15.5 | +0.55% |
-| 19 | 105 | 30 min | 711 | 6918 m | 712 | 6915 m | -0.04% |
-| 20 | 108 | 3500 m | 366 | 14:53.9 | 366 | 14:51.4 | +0.28% |
-| 21 | 166 | 3500 m | 351 | 14:33.8 | 350 | 14:29.7 | +0.47% |
-| 22 | 177 | 3500 m | 353 | 14:43.3 | 352 | 14:37.4 | +0.67% |
-| 23 | 191 | 3500 m | 348 | 14:46.8 | 346 | 14:39.8 | +0.79% |
-| 24 | 203 | 3500 m | 355 | 14:57.6 | 353 | 14:50.4 | +0.80% |
-| 25 | 105 | 10000 m | 1041 | 43:39.3 | 1038 | 43:31.6 | +0.29% |
-| 26 | 214 | 3500 m | 340 | 14:35.2 | 338 | 14:28.4 | +0.78% |
-| 27 | 348 | 3500 m | 348 | 14:34.8 | 344 | 14:22.9 | +1.36% |
-
-Here, a negative deviation indicates that that OpenRowingMonitor was too slow, a positive deviation shows it is too fast. In test 13 and 14, the setup of both the Concept2 and OpenRowingMonitor was kept the same, keeping the dragfactor and all settings identical in the two tests. This test-retest, especially when combined with the result of test 10, shows that deviations between the PM5 and OpenRowingMonitor are potentially drag-independent as keeping the exaxt same dragfactor results in different deviations. It is noted that in tests 23 to 27 , the dragfacor of the PM5 varied significantly (over +/- 2 N*M*S<sup>2</sup>) from stroke to stroke.
-
-Compared to the original algorithm, the improvement is significant. The differences in distance in these tests can be explained by subtle rounding errors and observed fluctuations of the dragfactor used by Concept2's PM, where the dragfactor of OpenRowingMonitor was deliberatly kept static. It is also noted that from research it is known that variations in rowing could influence the PM5 [[16]](#16), where the effects on OpenRowingMonitor are unknown. Given that these tests have been conducted by a recreational rower, we consider variations in power likely. Despite these deviations, we consider the stronger similarity of these PM5 and OpenRowingMonitor results compared with the results of the previous algorithm, as support for Marinus van Holsts' observations and the use of the new distance algorithm.
+First, we verify the calculation the dragfactor, without any dependence on other parts of the algorithms like stroke detection, as this is the basis of any following calculation. In OpenRowingMonitor, total time is defined as the sum of all impulse lengths (i.e. the sum of all *CurrentDt*'s), which therefore is also tested alongside distance. Subsequently, after we used the distance as the key indicator for the verification of the dynamic calculation of the dragfactor and impuls detection, we use them as a basis to verify all other dependent metrics.
 
 ### Validation of the drag factor calculation
 
@@ -392,6 +278,119 @@ Based on this, we come to the following results based on the ORM2f algorithm com
 | 27 | 348 | 220 | 223 | 226 | 219 | 221 | 227 | 0.8 | 1 | 97% |
 
 Looking at the ORM2f algorithm with these settings, it is quite close to the intended target of the Concept2 dragfactor. Also the standard deviation is sufficiently small with the ORM2f algorithm, and the standard deviation is at least 3 and sometimes 10 times smaller than the original implementation, supporting its use. We observe that the percentage valid dragfactors seems to be correlated with the dragfactor. Our hypohtesis is that this might be due to (a lack of decent) rowingstyle, which at lower dragfactors is more dominant than at higher dragfactors as there was a clear focus on the PM5's powercurve to prevent injury.
+
+### Validation of the linear distance calculation
+
+The distance calculations is solely dependent on known factors that can be fixed (the dragfactor used is fairly stable, can be displayed by the Concept 2 monitor and is fixed for OpenRowingMonitor to a single value by setting autoAdjustDragFactor to false) and the duplicated impulses. Thus, as the impulses are duplicated across the monitors, the resulting distance calculation is a good indicator for the quality of this calculation, as it depends on the number of impulses encountered, not on their timing (as with the speed).
+
+#### Theoretical basis of the linear distance calculation
+
+From theory [[1]](#1) and [[2]](#2) the initial calculation was based on formula 9.1 described in [[1]](#1):
+
+> P=2.8 \* u<sup>3</sup>
+
+The calculation of linear distance accordingly becomes [[1]](#1), formula 9.3:
+
+> s=(k/2.8)<sup>1/3</sup> &theta;
+
+In RowingEngine 2.0 (in RowingEngine.js, OpenRowingMonitor version 0.8.2) we implemented formula 9.3 as follows:
+
+```javascript
+LinearDistance = Math.pow((dragFactor / rowerSettings.magicConstant), 1.0 / 3.0) * AngularDisplacement
+```
+
+Although OpenRowingMonitor calculates a completed distance per recorded impulse for display purposses, the completed distance is definitively calculated per phase.
+
+#### Results and interpretation of a first side-by-side linear distance test
+
+The first series side-by-side test are fixed distance or fixed time tests (taking approximatly 15 minutes or more), where both monitors are fed the same stream of impulses (as described above). This test stops when both monitors have reached 3500 meters. The focus in this test is on a steady-state rowing. We consider the distance sufficiently long to be able to abstract away from any differences in start-up behaviour of the two monitors. We obtained the following times:
+
+| Test | Drag factor | Target | #strokes on PM5| Result on PM5 | #strokes on ORM | Result on ORM | Deviation |
+| :-: | --: | --: | --: | --: |--: | --: | --: |
+| 1 | 115 | 3500 m | 365 | 14:48.0 | 355 | 14:27.2 | +2,35% |
+| 2 | 114 | 3500 m | 365 | 14:57.4 | 356 | 14:35.5 | +2.44% |
+| 3 | 116 | 3500 m | 367 | 14:53.5 | 357 | 14:27.8 | +2.88% |
+| 4 | 132 | 3500 m | 355 | 14:50.1 | 346 | 14:26.0 | +2.71% |
+| 6 | 103 | 30 min | 660 | 6837 m | 660 | 7018 m | +2.65% |
+| 7 | 70 | 3500 m | 385 | 15:23.5 | 376 | 15:00.1 | +2.53% |
+| 8 | 79 | 3500 m | 370 | 15:01.3 | 362 | 14:39.2 | +2.45% |
+| 9 | 92 | 3500 m | 357 | 15:04.3 | 358 | 14.42.3 | +2.42% |
+| 10 | 102 | 3500 m | 366 | 14:56.1 | 357 | 14:32.1 | +2.68% |
+| 11 | 112 | 3500 m | 375 | 14:48.1 | 361 | 14:21.6 | +2.98% |
+| 12 | 122 | 3500 m | 367 | 15:04.6 | 357 | 14:38.4 | +2.90% |
+| 13 | 101 | 3500 m | 333 | 15:54.5 | 326 | 15:30.8 | +2.48% |
+| 14 | 101 | 3500 m | 329 | 15:36.6 | 322 | 15:14.4 | +2.37% |
+| 15 | 133 | 3500 m | 353 | 14:44.2 | 343 | 14:17.6 | +3.01% |
+| 16 | 145 | 3500 m | 358 | 14:45.5 | 348 | 14:18.6 | +3.04% |
+| 17 | 156 | 3500 m | 355 | 14:47.1 | 344 | 14:17.1 | +3.38% |
+| 18 | 115 | 3500 m | 371 | 15:20.6 | 362 | 14:52.3 | +3.07% |
+| 19 | 105 | 30 min | 711 | 6918 m | 712 | 7137 m | +3.16% |
+| 20 | 108 | 3500 m | 366 | 14:53.9 | 357 | 14:29.1 | +2.77% |
+| 21 | 166 | 3500 m | 351 | 14:33.8 | 340 | 14:05.5 | +3.24% |
+| 22 | 177 | 3500 m | 353 | 14:43.3 | 342 | 14:13.3 | +3.40% |
+| 23 | 191 | 3500 m | 348 | 14:46.8 | 336 | 14:17.0 | +3.36% |
+| 24 | 203 | 3500 m | 355 | 14:57.6 | 342 | 14:26.6 | +3.45% |
+| 25 | 105 | 10000 m | 1041 | 43:39.3 | 1014 | 42:31.5 | +2.59% |
+| 26 | 214 | 3500 m | 340 | 14:35.2 | 329 | 14:04.6 | +3.50% |
+| 27 | 348 | 3500 m | 348 | 14:34.8 | 336 | 14:03.9 | +3,53% |
+
+Here, a positive deviation indicates that that OpenRowingMonitor was too fast when compared to the PM5 data. The strokerate was nearly identical along the row, and only varied slightly between 23 and 24 SPM). The total number of strokes across the monitors was sufficiently similar at similar times. This suggests that stroke detection (and thus the waveform of the imulses) is valid across both machines. The measured dragfactor on the Concept 2's PM5 (displayed through ErgData app) remained a stable until test 23, at test 23 it started to become more unstable.
+
+There is a very significant difference (at least over 20 seconds) in end-times, which can't be explained by starting behaviour or variations in other factors. As an observation, the difference was subtle in the begin (meters) but grew to around 100 meters as the row progressed. These differences in results can't be explained by rounding errors in the dragfactor (as displayed by the Concept 2 PM5 during the row) and/or constant C (the magicconstant in config.js): a sensitivity analysis on these values, varying these constants with several steps (dragfactor + or minus 5, magic constant + or - 0.5) will not align these values to bridge this gap. The impact of these values is too small (as they are part of a cubic root calculation) to explain this big a difference. As this difference can't be explained, it suggests that the cause is to be found at a more fundamental level.
+
+#### Improvements based on the first side-by-side linear distance test
+
+We interpret this difference, as the impulses are duplicated across the two monitors and do not seem to exhibit deviating artifacts, as a clear indication that the calculation of distance differs between the two monitors, as all other factors (the constant C and the dragfactor) are fixed.
+
+According to [[1]](#1) and [[2]](#2), Marinus van Holst observed that C2 seems to use a different formula for its calculations, which is described in formula 9.4 [[1]](#1):
+
+> P=4.31 \* u<sup>2.75</sup>
+
+By applying formula 9.4 to calculate the linear speed, we obtain the following formula, replacing formula 9.2 [[1]](#1):
+
+> u=((k \* &omega;<sup>0.25</sup>) / 4.31)<sup>1/2.75</sup> &omega;
+
+As s = u \* t, we can also use this formula 9.4 to calculate the linear distance. By doing so we obtain the following formula, replacing formula 9.3 [[1]](#1):
+
+> s=((k \* &omega; <sup>0.25</sup>) / 4.31)<sup>1/2.75</sup> &theta;
+
+An important element in the algorithm is the granularity of &omega; and &theta; used: does the algorithm calculate the completed distance once per completed stroke, once per completed phase, once per flywheel rotation or once per recorded impulse? The current implementation calculates the completed distance definitively per completed phase. From small experiments, we must conclude that changing the granularity has a measurable effect on the recorded distance. At this stage we keep the granularity as it was implemented originally, but we will conduct an sensitivity analysis with respect to the granularity used.
+
+#### Results and interpretation of the second series of side-by-side linear distance tests
+
+Having modified the code based on the previous test, we validate this modified physics model. Again this test uses a 3500 meters fixed distance (taking approximatly 15 minutes) or a 30 minutes fixed time training. Here, both monitors are fed the same stream of impulses (as described above) and the test is stoped when both monitors have reached their target. The focus in this test is on a steady-state rowing. We consider the distance sufficiently long to be able to abstract away from any differences in start-up behaviour of the two monitors. As the physics model should work, we focus not only on (nearly) reproducing the results of the PM5 on ORM, but also on its behaviour at different drag factors. The following tests yielded the following results:
+
+| Test | Drag factor | Target | #strokes on PM5| Result on PM5 | #strokes on ORM | Result on ORM | Deviation |
+| :-: | --: | --: | --: | --: |--: | --: | --: |
+| 2 | 114 | 3500 m | 365 | 14:57.4 | 365 | 14:55.4| +0.22% |
+| 3 | 116 | 3500 m | 367 | 14:53.5 | 367 | 14:50.1| +0.38% |
+| 4 | 132 | 3500 m | 355 | 14:50.1 | 353 | 14:48.3| +0.20% |
+| 6 | 103 | 30 min | 660 | 6837 m | 661 | 6837 m | 0% |
+| 7 | 70 | 3500 m | 385 | 15:23.5 | 388 | 15:28.7 | -0.56% |
+| 8 | 79 | 3500 m | 370 | 15:01.3 | 371 | 15:01.7 | -0.04% |
+| 9 | 92 | 3500 m | 357 | 15:04.3 | 358 | 15:01.9 | +0.13% |
+| 10 | 102 | 3500 m | 366 | 14:56.1 | 366 | 14:54.5 | +0.17% |
+| 11 | 112 | 3500 m | 375 | 14:48.1 | 372 | 14:46.1 | +0.23% |
+| 12 | 122 | 3500 m | 367 | 15:04.6 | 367 | 15:01.3 | +0.36% |
+| 13 | 101 | 3500 m | 333 | 15:54.5 | 335 | 16:02.7 | -0.85% |
+| 14 | 101 | 3500 m | 329 | 15:36.6 | 331 | 15:41.6 | -0.53% |
+| 15 | 133 | 3500 m | 353 | 14:44.2 | 353 | 14:40.8 | +0.38% |
+| 16 | 145 | 3500 m | 358 | 14:45.5 | 357 | 14:40.4 | +0.58% |
+| 17 | 156 | 3500 m | 355 | 14:47.1 | 355 | 14:43.3 | +0,43% |
+| 18 | 115 | 3500 m | 371 | 15:20.6 | 371 | 15:15.5 | +0.55% |
+| 19 | 105 | 30 min | 711 | 6918 m | 712 | 6915 m | -0.04% |
+| 20 | 108 | 3500 m | 366 | 14:53.9 | 366 | 14:51.4 | +0.28% |
+| 21 | 166 | 3500 m | 351 | 14:33.8 | 350 | 14:29.7 | +0.47% |
+| 22 | 177 | 3500 m | 353 | 14:43.3 | 352 | 14:37.4 | +0.67% |
+| 23 | 191 | 3500 m | 348 | 14:46.8 | 346 | 14:39.8 | +0.79% |
+| 24 | 203 | 3500 m | 355 | 14:57.6 | 353 | 14:50.4 | +0.80% |
+| 25 | 105 | 10000 m | 1041 | 43:39.3 | 1038 | 43:31.6 | +0.29% |
+| 26 | 214 | 3500 m | 340 | 14:35.2 | 338 | 14:28.4 | +0.78% |
+| 27 | 348 | 3500 m | 348 | 14:34.8 | 344 | 14:22.9 | +1.36% |
+
+Here, a negative deviation indicates that that OpenRowingMonitor was too slow, a positive deviation shows it is too fast. In test 13 and 14, the setup of both the Concept2 and OpenRowingMonitor was kept the same, keeping the dragfactor and all settings identical in the two tests. This test-retest, especially when combined with the result of test 10, shows that deviations between the PM5 and OpenRowingMonitor are potentially drag-independent as keeping the exaxt same dragfactor results in different deviations. It is noted that in tests 23 to 27 , the dragfacor of the PM5 varied significantly (over +/- 2 N*M*S<sup>2</sup>) from stroke to stroke.
+
+Compared to the original algorithm, the improvement is significant. The differences in distance in these tests can be explained by subtle rounding errors and observed fluctuations of the dragfactor used by Concept2's PM, where the dragfactor of OpenRowingMonitor was deliberatly kept static. It is also noted that from research it is known that variations in rowing could influence the PM5 [[16]](#16), where the effects on OpenRowingMonitor are unknown. Given that these tests have been conducted by a recreational rower, we consider variations in power likely. Despite these deviations, we consider the stronger similarity of these PM5 and OpenRowingMonitor results compared with the results of the previous algorithm, as support for Marinus van Holsts' observations and the use of the new distance algorithm.
 
 ### Validation of the distance calculation, based on a dynamically determined drag factor (i.e. integration test)
 
