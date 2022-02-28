@@ -132,7 +132,7 @@ However, our testing has shown this approach is too volatile to be useful (see [
 
 > (k \* 2&pi;)/(I \* Impulses Per Rotation) = &delta;currentDt / &delta;t
 
-This means that the dragfactor can be determined through linear regression (see [[5]](#5) and [[6]](#6)) for the collection of datapoints where x is the time since the start of the recovery phase and y is the currentDt.
+As the left-hand of the equation only contains constants and the dragfactor, this means that the dragfactor can be determined through linear regression (see [[5]](#5) and [[6]](#6)) for the collection of datapoints where x is the time since the start of the recovery phase and y is the currentDt.
 
 ### Linear distance
 
