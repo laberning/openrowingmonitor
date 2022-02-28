@@ -128,11 +128,11 @@ As [[1]](#1) describes in formula 7.2:
 
 > k = I \* &delta;(1/&omega;) / &delta;t
 
-However, our testing has shown this approach is too volatile to be useful (see [these test results](https://github.com/JaapvanEkris/openrowingmonitor/blob/docs/Engine_Validation.md#validation-of-the-drag-factor-calculation)). However, this formula can be transformed into (see [this derivation](https://github.com/JaapvanEkris/openrowingmonitor/blob/docs/Engine_Validation.md#improvements-based-on-the-first-side-by-side-dragfactor-test))
+However, our testing has shown this approach is too volatile to be useful (see [these test results](https://github.com/JaapvanEkris/openrowingmonitor/blob/docs/Engine_Validation.md#validation-of-the-drag-factor-calculation)). However, this formula can be transformed into (see [this derivation](https://github.com/JaapvanEkris/openrowingmonitor/blob/docs/Engine_Validation.md#improvements-based-on-the-first-side-by-side-dragfactor-test)).
 
 > (k \* 2&pi;)/(I \* Impulses Per Rotation) = &delta;currentDt / &delta;t
 
-As the left-hand of the equation only contains constants and the dragfactor, this means that the dragfactor can be determined through linear regression (see [[5]](#5) and [[6]](#6)) for the collection of datapoints where x is the time since the start of the recovery phase and y is the currentDt. The dragfactor then can be determined through the slope of the resulting function. As linear regression algorithm, OLS was chosen as it delivered decent results in the tests, it has a O(1) complexity and can be easily implemented to work on continous datastreams.
+As the left-hand of the equation only contains constants and the dragfactor, this means that the dragfactor can be determined through linear regression (see [[5]](#5) and [[6]](#6)) for the collection of datapoints where x is the time since the start of the recovery phase and y is the currentDt. The dragfactor then can be determined through the slope of the resulting function. As linear regression algorithm, OLS was chosen as it delivered decent results in the tests, it has a O(1) complexity and can be easily implemented to work on continous datastreams (see [these considerations](https://github.com/JaapvanEkris/openrowingmonitor/blob/docs/Engine_Validation.md#improvements-based-on-the-first-side-by-side-dragfactor-test)).
 
 ### Linear distance
 
