@@ -321,7 +321,7 @@ The first series side-by-side test are fixed distance or fixed time tests (takin
 
 The focus in this test is on a steady-state rowing. We consider the distance sufficiently long to be able to abstract away from any differences in start-up behaviour of the two monitors. We obtained the following times:
 
-| Test | Drag factor | Target distance | #strokes on PM5| Result on PM5 | #strokes on ORM | Result on ORM | ORM Deviation | Result van Holst | Deviation |
+| Test | Drag factor | Target distance | #strokes on PM5| Result on PM5 | #strokes on ORM | Result on ORM | ORM Deviation | Result van Holst | van Holst Deviation |
 | :-: | --: | --: | --: | --: |--: | --: | --: | --: | --: |
 | 32 | 70 | 4,000 m | 441 | 17:31.3 | 444 | 17:36.5 | -0,49% | 3,857.0 m | -3,98% |
 | 33 | 122 | 6,000 m | 606 | 25:44.8 | 609 | 25:52.2 | -0,48% | 5,794.5 m | -3,79% |
@@ -344,7 +344,7 @@ The focus in this test is on a steady-state rowing. We consider the distance suf
 | 50 | 170 | 4,000 m | | :. |  | :. | -,% | m | -,% |
 | 51 | 110 | 6,000 m | | :. |  | :. | -,% | m | -,% |
 | 52 | 100 | 10,000 m | | :. |  | :. | -,% | m | -,% |
-| 53 | 1600 | 4,000 m | | :. |  | :. | -,% | m | -,% |
+| 53 | 160 | 4,000 m | | :. |  | :. | -,% | m | -,% |
 
 Here, a negative deviation indicates that the algorithm was too slow when compared to the PM5 data, a positive deviation indicates that the algorithm was too fast when compared to the PM5 data. The strokerate was nearly identical along the row, and only varied slightly between 23 and 24 SPM). The total number of strokes across the monitors was sufficiently similar at similar times. We observer that the PM5 contains several badly detected strokes: typically the retrieved data contained subsequent strokes where the stroke duration was between 0.5 and 1.5 seconds, suggesting that the stroke was split in two. OpenRowingMonitor, with a very conservative stroke detection flank of 10, did not have this problem. This error might be introduced through bad technique, as a badly timed bad transition from the back to the arms might cause this.
 
