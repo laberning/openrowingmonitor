@@ -117,11 +117,23 @@ There are several key metrics that underpin the performance measurement of a row
 
 * The *estimated* **Linear Distance** of the boat (in Meters): the distance the boat is expected to travel;
 
-* _estimated_ **Linear Velocity** of the boat (in Meters/Second): the speed at which the boat is expected to travel.
+* *estimated* **Linear Velocity** of the boat (in Meters/Second): the speed at which the boat is expected to travel.
+
+## Derived metrics
+
+### Drag
+
+### Linear distance
+
+### Linear Velocity
+
+### Power produced
+
+@@@@
 
 ## Measurements during the recovery phase
 
-Although not the first phase in a cycle, it is an important phase as it deducts specific information about the flywheel properties [[1]](#1). During the recovery-phase, we can _measure_ the number of impulses and the length of each impulse. Some things we can easily _estimate_ with a decent accuracy based on the data at the end of the recovery phase:
+Although not the first phase in a cycle, it is an important phase as it deducts specific information about the flywheel properties [[1]](#1). During the recovery-phase, we can *measure* the number of impulses and the length of each impulse. Some things we can easily *estimate* with a decent accuracy based on the data at the end of the recovery phase:
 
 * The length of time between the start and end of the recovery phase
 
@@ -155,7 +167,7 @@ By applying [[1]](#1) formula 9.4 to calculate the linear speed, we obtain the f
 
 ## Measurements during the drive phase
 
-During the drive-phase, we again can _measure_ the number of impulses and the length of each impulse. Some things we can easily _estimate_ with a decent accuracy based on the data at the end of the drive phase:
+During the drive-phase, we again can *measure* the number of impulses and the length of each impulse. Some things we can easily *estimate* with a decent accuracy based on the data at the end of the drive phase:
 
 * The length of time between the start and end of the drive phase
 
@@ -253,9 +265,9 @@ Our robust implementation of the drag factor is:
 
 Looking at the effect of erroneously starting the recovery early and ending it late, it affects two variables:
 
-* Recovery length will _systematically_ become too long (approx. 200 ms from our experiments)
+* Recovery length will *systematically* become too long (approx. 200 ms from our experiments)
 
-* The Angular Velocity will _systematically_ become too high as the flywheel already starts to decelerate at the end of the drive phase, which we mistakenly consider the start of the recovery (in our tests this was approx. 83,2 Rad/sec instead of 82,7 Rad/sec). A similar thing can happen at the begin of the recovery phase when the rower doesn't have an explosive Drive.
+* The Angular Velocity will *systematically* become too high as the flywheel already starts to decelerate at the end of the drive phase, which we mistakenly consider the start of the recovery (in our tests this was approx. 83,2 Rad/sec instead of 82,7 Rad/sec). A similar thing can happen at the begin of the recovery phase when the rower doesn't have an explosive Drive.
 
 Example calculations based on several tests show that this results in a systematically too high estimate of the drag factor. As these errors are systematic, it is safe to assume these will be fixed by the calibration of the power and distance corrections (i.e. the estimate of the *FlywheelInertia* and the *MagicConstant*). Thus, as long as the user calibrates the rower to provide credible data for his setting of *naturalDeceleration*, there will be no issues.
 
@@ -269,9 +281,9 @@ Question is what the effect of this deviation of the drag factor is on the power
 
 Here, the drag factor is affected upwards. Here the average speed is determined by measuring the angular displacement and divided by the time, being affected in the following manner:
 
-* Time spend in the Drive phase is _systematically_ too short
+* Time spend in the Drive phase is *systematically* too short
 
-* Angular displacement in the Drive phase will _systematically_ be too short
+* Angular displacement in the Drive phase will *systematically* be too short
 
 These effects do not cancel out: in essence the flywheel decelerates at the end of the drive phase, which we mistakenly include in the recovery phase. This means that on average, the average speed is systematically too high: it misses some slower speed at the end of the drive. As all factors of the power calculation are systematically overestimating, the result will be a systematic overestimation.
 
