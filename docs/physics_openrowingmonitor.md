@@ -116,7 +116,7 @@ There are several key metrics that underpin the performance measurement of a row
 * The *estimated* **drag factor** of the flywheel
 * The *estimated* **Linear Distance** of the boat (in Meters): the distance the boat is expected to travel;
 * *estimated* **Linear Velocity** of the boat (in Meters/Second): the speed at which the boat is expected to travel.
-* * *estimated* **power produced** by the rower (in Watts): the power the rower produced during the stroke.
+* *estimated* **power produced** by the rower (in Watts): the power the rower produced during the stroke.
 
 In the following sections we describe the physics used to come to the estimated metrics.
 
@@ -128,7 +128,7 @@ As [[1]](#1) describes in formula 7.2:
 
 > k = I \* &delta;(1/&omega;) / &delta;t
 
-Which can be transformed into (see [this derivation](https://github.com/JaapvanEkris/openrowingmonitor/blob/docs/Engine_Validation.md#improvements-based-on-the-first-side-by-side-dragfactor-test))
+However, our testing has shown this approach is too volatile to be useful (see [these test results](https://github.com/JaapvanEkris/openrowingmonitor/blob/docs/Engine_Validation.md#validation-of-the-drag-factor-calculation)). However, this formula can be transformed into (see [this derivation](https://github.com/JaapvanEkris/openrowingmonitor/blob/docs/Engine_Validation.md#improvements-based-on-the-first-side-by-side-dragfactor-test))
 
 > (k \* 2&pi;)/(I \* Impulses Per Rotation) = &delta;currentDt / &delta;t
 
