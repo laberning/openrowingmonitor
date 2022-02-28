@@ -112,16 +112,27 @@ There are several key metrics that underpin the performance measurement of a row
 * The **Angular Displacement** of the flywheel in Radians: in essence the distance the flywheel has traveled (i.e. the number of Radians the flywheel has rotated). As the impulse-givers are evenly spread over the flywheel, the **angular displacement** between two **impulses** is 2π/(*number of impulse providers on the flywheel*). This can easily be measured by counting the number of impulses;
 
 * The **Angular Velocity** of the flywheel in Radians/second: in essence the number of (partial) rotations of the flywheel per second. As the *Angular Displacement* is fixed for a specific rowing machine, the *Angular Velocity* is (*angular displacement between impulses*) / (time between impulses);
-
 * The **Angular Acceleration** of the flywheel (in Radians/second<sup>2</sup>): the acceleration/deceleration of the flywheel;
-
+* The *estimated* **drag factor** of the flywheel
 * The *estimated* **Linear Distance** of the boat (in Meters): the distance the boat is expected to travel;
-
 * *estimated* **Linear Velocity** of the boat (in Meters/Second): the speed at which the boat is expected to travel.
+* * *estimated* **power produced** by the rower (in Watts): the power the rower produced during the stroke.
 
-## Derived metrics
+In the following sections we describe the physics used to come to the estimated metrics.
 
-### Drag
+### Drag factor
+
+In the recovery phase, the only force exerted on the flywheel is the (air/water/magnetic)resistance. Thus we can calculate the Drag factor of the Flywheel based on the entire recovery phase.
+
+As [[1]](#1) describes in formula 7.2:
+
+> k = I \* &delta;(1/&omega;) / &delta;t
+
+Which can be transformed into (see [this derivation](https://github.com/JaapvanEkris/openrowingmonitor/blob/docs/Engine_Validation.md#improvements-based-on-the-first-side-by-side-dragfactor-test))
+
+> (k \* 2&pi;)/(I \* Impulses Per Rotation) = &delta;currentDt / &delta;t
+
+This means that the dragfactor can be determined through linear regression (see [[5]](#5) and [[6]](#6)) for the collection of datapoints where x is the time since the start of the recovery phase and y is the currentDt.
 
 ### Linear distance
 
@@ -140,18 +151,6 @@ Although not the first phase in a cycle, it is an important phase as it deducts 
 * The angular displacement between the start and end of the recovery phase
 
 * The angular velocity at the beginning and end of the recovery phase
-
-In the recovery phase, the only force exerted on the flywheel is the (air/water/magnetic)resistance. Thus we can calculate the Drag factor of the Flywheel based on the entire phase.
-
-As [[1]](#1) describes in formula 7.2:
-
-> k = I \* &delta;(1/&omega;) / &delta;t
-
-Which can be transformed into
-
-> (k \* 2&pi;)/(I \* Impulses Per Rotation) = &delta;currentDt / &delta;t
-
-This means that the dragfactor can be determined through linear regression (see [[5]](#5) and [[6]](#6)) for the collection of datapoints where x is the time since the start of the recovery phase and y is the currentDt.
 
 In [[1]](#1) and [[2]](#2), it is described that power on a Concept 2 is determined through (formula 9.4):
 
