@@ -54,7 +54,7 @@ First, we verify the calculation the dragfactor, without any dependence on other
 
 From theory [[1]](#1) (described in [[5]](#5)), the dragfactor can be calculated through formula 7.2 [[1]](#1):
 
-> k = I \* &delta;(1/&omega;) / &delta;t
+> k = -I \* &delta;(1/&omega;) / &delta;t
 
 In RowingEngine 2.0 (i.e. RowingEngine.js, OpenRowingMonitor version 0.8.2), this is implemented by:
 
