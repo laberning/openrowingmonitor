@@ -289,7 +289,11 @@ From theory [[1]](#1) and [[2]](#2) the initial calculation was based on formula
 
 > P=2.8 \* u<sup>3</sup>
 
-The calculation of linear distance accordingly becomes [[1]](#1), formula 9.3:
+The calculation of linear speed is based on this, resulting in the following formula [[1]](#1), formula 9.2:
+
+> u=(k/2.8)<sup>1/3</sup> &omega;
+
+As s = u \* t, the calculation of linear distance accordingly becomes [[1]](#1), formula 9.3:
 
 > s=(k/2.8)<sup>1/3</sup> &theta;
 
@@ -305,11 +309,11 @@ According to [[1]](#1) and [[2]](#2), Marinus van Holst observed that C2 seems t
 
 > P=4.31 \* u<sup>2.75</sup>
 
-By applying formula 9.4 to calculate the linear speed, we obtain the following formula, replacing formula 9.2 [[1]](#1):
+By applying formula 9.4 to calculate the linear speed, we obtain the following formula, replacing beforementioned formula 9.2:
 
 > u=((k \* &omega;<sup>0.25</sup>) / 4.31)<sup>1/2.75</sup> &omega;
 
-As s = u \* t, we can also use this formula 9.4 to calculate the linear distance. By doing so we obtain the following formula, replacing formula 9.3 [[1]](#1):
+As s = u \* t, we can also use this formula 9.4 to calculate the linear distance. By doing so we obtain the following formula, replacing beforementiond formula 9.3:
 
 > s=((k \* &omega; <sup>0.25</sup>) / 4.31)<sup>1/2.75</sup> &theta;
 
