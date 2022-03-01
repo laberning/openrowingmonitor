@@ -25,6 +25,7 @@ In config.js the following settings were used:
 
 * Based on [[13]](#13), we conclude that Concept2 defines the drive-phase as an accelerating flywheel, which is simulated in OpenRowingMonitor by setting naturalDeceleration to 0, which triggers an identical algorithm for stroke detection. It is noted that the number of consecutive impulses that indicate acceleration isn't mentioned or known.
 * A flywheel inertia of 0.1001 kg/m2, as indicated by [[2]](#2) and [[7]](#7), where [[7]](#7) also emperically verifies these results.
+* A magic Constant of 2.8, as using csv-extractions of the Concept2 website systematically confirm this value as being the relation between P = Magic Constant \* u<sup>3</sup>
 * *numOfPhasesForAveragingScreenData* is set to 3, to make the data as volatile as possible.
 
 ### Rowing style
