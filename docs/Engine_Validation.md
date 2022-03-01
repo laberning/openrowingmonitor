@@ -281,7 +281,7 @@ Looking at the ORM2f algorithm with these settings, it is quite close to the int
 
 ### Validation of the linear distance calculation
 
-The distance calculations is solely dependent on known factors that already have been validated and can be checked afterwards (i.e. the dragfactor) and the duplicated impulses. Thus, as the impulses are duplicated across the monitors, the resulting distance calculation is a good indicator for the quality of this calculation, as it depends on the number of impulses encountered, irrelevant of their timing (as would be the case with the speed).
+The distance calculation is solely dependent on the drag factor (a known factor that already is validated and that can be checked afterwards) and the duplicated impulses. Thus, as the impulses are duplicated across the monitors, the resulting distance calculation is a good indicator for the quality of this calculation, as it depends on the number of impulses encountered, irrelevant of their timing (as would be the case with the speed).
 
 #### Theoretical basis of the linear distance calculation
 
@@ -299,7 +299,7 @@ In RowingEngine 2.0 (in RowingEngine.js, OpenRowingMonitor version 0.8.2) we imp
 LinearDistance = Math.pow((dragFactor / rowerSettings.magicConstant), 1.0 / 3.0) * AngularDisplacement
 ```
 
-Although OpenRowingMonitor temporarily calculates a completed distance per recorded impulse for display purposses, the completed distance is definitively calculated per phase as the dragfactor then can be applied retrospectively onto the Recovery phase.
+Although OpenRowingMonitor temporarily calculates a completed distance per recorded impulse for display purposses, the completed distance is definite value is calculated per phase as the dragfactor then can be applied retrospectively onto the Recovery phase.
 
 According to [[1]](#1) and [[2]](#2), Marinus van Holst observed that C2 seems to use a different formula for its calculations, which is described in formula 9.4 [[1]](#1):
 
@@ -313,7 +313,7 @@ As s = u \* t, we can also use this formula 9.4 to calculate the linear distance
 
 > s=((k \* &omega; <sup>0.25</sup>) / 4.31)<sup>1/2.75</sup> &theta;
 
-The introduction of &omega; into the distance calculation adds some complexity and introduces the need to take a design decission. An important element in the van Holst algorithm is the granularity of &omega; used: the finegrainedness of applying the algorithm to calculate the distance (i.e. once per completed stroke, once per completed phase, once per flywheel rotation or once per recorded impulse) influences the &omega; used and its robustness. The current implementation calculates the completed distance definitively per completed phase. From small experiments, we must conclude that changing the granularity has a measurable effect on the recorded distance. At this stage we keep the granularity as it was implemented originally, per phase, but we will conduct an sensitivity analysis with respect to the granularity used when the van Holst approach delivers feasible results.
+The introduction of &omega; into the distance calculation adds some complexity and introduces a specific dependency that requires a concious design decission. The dependency on &omega; in the van Holst algorithm requires a decission on the is the granularity of &omega; determination used: the finegrainedness of applying the algorithm to calculate the distance (i.e. an average over a completed stroke, a completed phase, a comnpleted flywheel rotation or for each recorded impulse) influences both the &omega; used and its robustness. From small experiments, we must conclude that changing the granularity has a measurable effect on the recorded distance. The current implementation calculates the completed distance definitively per completed phase. At this stage we keep the granularity as it was implemented originally, per phase, but we will conduct an sensitivity analysis with respect to the granularity used when the van Holst approach delivers feasible results.
 
 #### Results and interpretation of a first side-by-side linear distance test
 
