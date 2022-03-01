@@ -321,7 +321,7 @@ The first series side-by-side test are fixed distance or fixed time tests (takin
 
 The focus in this test is on a steady-state rowing. We consider the distance sufficiently long to be able to abstract away from any differences in start-up behaviour of the two monitors. We obtained the following times:
 
-| Test | Drag factor | Target distance | #strokes on PM5| Result on PM5 | #strokes on ORM | Result on ORM | ORM Deviation | Result van Holst | van Holst Deviation |
+| Test | Drag factor | Target distance | #strokes on PM5| Result on PM5 | #strokes on ORM | Base algorithm result | Base algorithm Deviation | Result van Holst | van Holst Deviation |
 | :-: | --: | --: | --: | --: |--: | --: | --: | --: | --: |
 | 32 | 70 | 4,000 m | 441 | 17:31.3 | 444 | 17:36.5 | -0,49% | 3,857.0 m | -3,98% |
 | 33 | 122 | 6,000 m | 606 | 25:44.8 | 609 | 25:52.2 | -0,48% | 5,794.5 m | -3,79% |
