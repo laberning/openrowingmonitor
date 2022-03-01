@@ -277,7 +277,9 @@ Based on this, we come to the following results based on the ORM2f algorithm com
 | 26 | 340 | 211 | 213 | 216 | 211 | 214 | 219 | 0.5 | 1 | 97% |
 | 27 | 348 | 220 | 223 | 226 | 219 | 221 | 227 | 0.8 | 1 | 97% |
 
-Looking at the ORM2f algorithm with these settings, it is quite close to the intended target of the Concept2 dragfactor. Also the standard deviation is sufficiently small with the ORM2f algorithm, and the standard deviation is at least 3 and sometimes 10 times smaller than the original implementation, supporting its use. We observe that the percentage valid dragfactors seems to be correlated with the dragfactor. Our hypohtesis is that this might be due to (a lack of decent) rowingstyle, which at lower dragfactors is more dominant than at higher dragfactors as there was a clear focus on the PM5's powercurve to prevent injury.
+Looking at the ORM2f algorithm with these settings, it is quite close to the intended target of the Concept2 dragfactor. Also the standard deviation is sufficiently small with the ORM2f algorithm, and the standard deviation is at least 3 and sometimes 10 times smaller than the original implementation, supporting its use.
+
+We observe that the percentage valid dragfactors seems to be correlated with the dragfactor. On explanation is that this might be due to the stronger acceleration/decelleration of the flywheel speed during the phases when rowing at higher drag factors, which additionally has the benefit of making stroke detection much more robust, jointly resulting in less outliers. Another hypohtesis is that this might be due to (a lack of decent) rowingstyle, which at lower dragfactors is more dominant than at higher dragfactors as there was a very strong focus on rowing technique and the resulting PM5's powercurve to prevent injury from the forces associated.
 
 ### Validation of the linear distance calculation
 
