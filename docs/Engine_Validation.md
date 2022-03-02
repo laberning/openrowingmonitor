@@ -337,23 +337,24 @@ The focus in this test is on a steady-state rowing. We consider the distance suf
 | 34 | 112 | 10,000 m | 1051 | 43:08.2 | 1056 | 43:20.3 | -0,47% | 9,659.2 m | -3,82% |
 | 35 | 80 | 4,000 m | 438 | 17:26.0 | 440 | 17:30.9 | -0,47% | 3,856.3 m | -3,96% |
 | 36 | 226 | 4,000 m | 403 | 17:08.8 | 404 | 17:13.7 | -0,48% | 3,861.7 m | -3,78% |
-| 37 | 90 | 4,000 m | 433 | 17:40.3 | 436 | 17:48.1 | -0,74% | 3.856.5 m | -4,28% |
-| 38 | 210 | 4,000 m | | :. |  | :. | -,% | m | -,% |
+| 38 | 90 | 4,000 m |  | :. | | :. | -,% | m | -,% |
 | 39 | 120 | 6,000 m | | :. |  | :. | -,% | m | -,% |
 | 40 | 110 | 10,000 m | | :. |  | :. | -,% | m | -,% |
-| 41 | 200 | 4,000 m | | :. |  | :. | -,% | m | -,% |
+| 41 | 210 | 4,000 m | | :. |  | :. | -,% | m | -,% |
 | 42 | 100 | 5,000 m | | :. |  | :. | -,% | m | -,% |
 | 43 | 130 | 4,000 m | | :. |  | :. | -,% | m | -,% |
-| 44 | 190 | 4,000 m | | :. |  | :. | -,% | m | -,% |
+| 44 | 200 | 4,000 m | | :. |  | :. | -,% | m | -,% |
 | 45 | 120 | 6,000 m | | :. |  | :. | -,% | m | -,% |
 | 46 | 110 | 10,000 m | | :. |  | :. | -,% | m | -,% |
 | 47 | 140 | 4,000 m | | :. |  | :. | -,% | m | -,% |
-| 48 | 180 | 4,000 m | | :. |  | :. | -,% | m | -,% |
+| 48 | 190 | 4,000 m | | :. |  | :. | -,% | m | -,% |
 | 49 | 150 | 4,000 m | | :. |  | :. | -,% | m | -,% |
-| 50 | 170 | 4,000 m | | :. |  | :. | -,% | m | -,% |
+| 50 | 180 | 4,000 m | | :. |  | :. | -,% | m | -,% |
 | 51 | 110 | 6,000 m | | :. |  | :. | -,% | m | -,% |
 | 52 | 100 | 10,000 m | | :. |  | :. | -,% | m | -,% |
-| 53 | 160 | 4,000 m | | :. |  | :. | -,% | m | -,% |
+| 53 | 170 | 4,000 m | | :. |  | :. | -,% | m | -,% |
+| 54 | 139 | 4,000 m | | :. |  | :. | -,% | m | -,% |
+| 55 | 160 | 4,000 m | | :. |  | :. | -,% | m | -,% |
 
 Here, a negative deviation indicates that the algorithm was too slow when compared to the PM5 data, a positive deviation indicates that the algorithm was too fast when compared to the PM5 data. The strokerate was nearly identical along the row, and only varied slightly between 23 and 24 SPM). The total number of strokes across the monitors was sufficiently similar at similar times. We observer that the PM5 contains several badly detected strokes: typically the retrieved data contained subsequent strokes where the stroke duration was between 0.5 and 1.5 seconds, suggesting that the stroke was split in two. OpenRowingMonitor, with a very conservative stroke detection flank of 10, did not have this problem. This error might be introduced through bad technique, as a badly timed bad transition from the back to the arms might cause this.
 
