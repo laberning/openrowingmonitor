@@ -324,7 +324,9 @@ The introduction of &omega; into the distance calculation adds some complexity a
 
 #### Results and interpretation of a first side-by-side linear distance test
 
-The first series side-by-side test are fixed distance or fixed time tests (taking at least 15 minutes), where both monitors are fed the same stream of impulses (as described above). This test stops when both monitors have reached 4000 meters, where OpenRowingMonitor uses its traditional algorithm to calculate this criterion. If the van Holst algorithm hasn't reached the target distance, the relative slowness will be calculated on the completed distances compared with the projected distance of the PM5, instead of the reached time.
+The first series side-by-side test are fixed distance or fixed time tests (taking at least 15 minutes), where both monitors are fed the same stream of impulses (as described above). We vary in length fortests to investigate whether the deviations change (potentially signalling temporary deviations like start-up noise) and whether the deviations remain stable across tests.
+
+This test stops when both monitors have reached 4000 meters, where OpenRowingMonitor uses its traditional algorithm to calculate this criterion. If the van Holst algorithm hasn't reached the target distance, the relative slowness will be calculated on the completed distances compared with the projected distance of the PM5, instead of the reached time.
 
 The focus in this test is on a steady-state rowing. We consider the distance sufficiently long to be able to abstract away from any differences in start-up behaviour of the two monitors. We obtained the following times:
 
@@ -335,7 +337,7 @@ The focus in this test is on a steady-state rowing. We consider the distance suf
 | 34 | 112 | 10,000 m | 1051 | 43:08.2 | 1056 | 43:20.3 | -0,47% | 9,659.2 m | -3,82% |
 | 35 | 80 | 4,000 m | 438 | 17:26.0 | 440 | 17:30.9 | -0,47% | 3,856.3 m | -3,96% |
 | 36 | 226 | 4,000 m | 403 | 17:08.8 | 404 | 17:13.7 | -0,48% | 3,861.7 m | -3,78% |
-| 37 | 90 | 4,000 m | 433 | 17:40.3 | 436 | 17:48.1 | -0,74% | 3856.5 m | -4,28% |
+| 37 | 90 | 4,000 m | 433 | 17:40.3 | 436 | 17:48.1 | -0,74% | 3.856.5 m | -4,28% |
 | 38 | 210 | 4,000 m | | :. |  | :. | -,% | m | -,% |
 | 39 | 120 | 6,000 m | | :. |  | :. | -,% | m | -,% |
 | 40 | 110 | 10,000 m | | :. |  | :. | -,% | m | -,% |
