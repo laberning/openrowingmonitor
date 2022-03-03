@@ -23,9 +23,9 @@ To process the 15V signal for the 3.3V Raspberry Pi, a 24V to 3.3V DST-1R4P-P op
 
 In config.js the following settings were used:
 
-* Based on [[13]](#13), we conclude that Concept2 defines the drive-phase as an accelerating flywheel, which is simulated in OpenRowingMonitor by setting naturalDeceleration to 0, which triggers an identical algorithm for stroke detection. It is noted that the number of consecutive impulses that indicate acceleration isn't mentioned or known.
-* A flywheel inertia of 0.1001 kg/m2, as indicated by [[2]](#2) and [[7]](#7), where [[7]](#7) also emperically verifies these results.
-* A magic Constant of 2.8, as using csv-extractions of the Concept2 website systematically confirm this value as being the relation between P = Magic Constant \* u<sup>3</sup>
+* Based on [[13]](#13), we conclude that Concept2 defines the drive-phase as an accelerating flywheel, which is simulated in OpenRowingMonitor by setting *naturalDeceleration* to 0, which triggers an identical algorithm for stroke detection. It is noted that the number of consecutive impulses that indicate acceleration isn't mentioned or known.
+* A *flywheel inertia* of 0.1001 kg/m<sup>2</sup>, as indicated by [[2]](#2) and [[7]](#7), where [[7]](#7) also emperically verifies these results.
+* There is some debate about the power calculation [[1]](#1),[[2]](#2). Some indicate that P = 2.8 \* u<sup>3</sup> [[1]](#1), others suggest P=4.31 \* u<sup>2.75</sup> [[2]](#2). Using a csv-extractions of the Concept2 website, we could extract both the calculated P and the used u for each stroke in several rowing sessions as recorded by the ErgData app. These rowing sessions systematically confirm the relation being P = 2.8 \* u<sup>3</sup>. Thus we use a *Magic Constant* of 2.8.
 * *numOfPhasesForAveragingScreenData* is set to 3, to make the data as volatile as possible.
 
 ### Rowing style
@@ -290,15 +290,15 @@ The distance calculation is solely dependent on the drag factor (a known factor 
 
 From theory [[1]](#1) and [[2]](#2) the initial calculation was based on formula 9.1 described in [[1]](#1):
 
-> P=2.8 \* u<sup>3</sup>
+> P = 2.8 \* u<sup>3</sup>
 
 The calculation of linear speed is based on this, resulting in the following formula [[1]](#1), formula 9.2:
 
-> u=(k/2.8)<sup>1/3</sup> &omega;
+> u = (k/2.8)<sup>1/3</sup> &omega;
 
 As s = u \* t, the calculation of linear distance accordingly becomes [[1]](#1), formula 9.3:
 
-> s=(k/2.8)<sup>1/3</sup> &theta;
+> s = (k/2.8)<sup>1/3</sup> &theta;
 
 In RowingEngine 2.0 (in RowingEngine.js, OpenRowingMonitor version 0.8.2) we implemented formula 9.3 as follows:
 
@@ -310,15 +310,15 @@ Although OpenRowingMonitor temporarily calculates a completed distance per recor
 
 According to [[1]](#1) and [[2]](#2), Marinus van Holst observed that C2 seems to use a different formula for its calculations, which is described in formula 9.4 [[1]](#1):
 
-> P=4.31 \* u<sup>2.75</sup>
+> P = 4.31 \* u<sup>2.75</sup>
 
 By applying formula 9.4 to calculate the linear speed, we obtain the following formula, replacing beforementioned formula 9.2:
 
-> u=((k \* &omega;<sup>0.25</sup>) / 4.31)<sup>1/2.75</sup> &omega;
+> u = ((k \* &omega;<sup>0.25</sup>) / 4.31)<sup>1/2.75</sup> &omega;
 
 As s = u \* t, we can also use this formula 9.4 to calculate the linear distance. By doing so we obtain the following formula, replacing beforementiond formula 9.3:
 
-> s=((k \* &omega; <sup>0.25</sup>) / 4.31)<sup>1/2.75</sup> &theta;
+> s = ((k \* &omega; <sup>0.25</sup>) / 4.31)<sup>1/2.75</sup> &theta;
 
 The introduction of &omega; into the distance calculation adds some complexity and introduces a specific dependency that requires a concious design decission. The dependency on &omega; in the van Holst algorithm requires a decission on the is the granularity of &omega; determination used: the finegrainedness of applying the algorithm to calculate the distance (i.e. an average over a completed stroke, a completed phase, a comnpleted flywheel rotation or for each recorded impulse) influences both the &omega; used and its robustness. From small experiments, we must conclude that changing the granularity has a measurable effect on the recorded distance. The current implementation calculates the completed distance definitively per completed phase. At this stage we keep the granularity as it was implemented originally, per phase, but we will conduct an sensitivity analysis with respect to the granularity used when the van Holst approach delivers feasible results.
 
@@ -337,28 +337,63 @@ The focus in this test is on a steady-state rowing. We consider the distance suf
 | 34 | 112 | 10,000 m | 1051 | 43:08.2 | 1056 | 43:20.3 | -0,47% | 9,659.2 m | -3,82% |
 | 35 | 80 | 4,000 m | 438 | 17:26.0 | 440 | 17:30.9 | -0,47% | 3,856.3 m | -3,96% |
 | 36 | 226 | 4,000 m | 403 | 17:08.8 | 404 | 17:13.7 | -0,48% | 3,861.7 m | -3,78% |
-| 38 | 90 | 4,000 m |  | :. | | :. | -,% | m | -,% |
+| 38 | 210 | 4,000 m |  | :. | | :. | -,% | m | -,% |
 | 39 | 120 | 6,000 m | | :. |  | :. | -,% | m | -,% |
 | 40 | 110 | 10,000 m | | :. |  | :. | -,% | m | -,% |
-| 41 | 210 | 4,000 m | | :. |  | :. | -,% | m | -,% |
+| 41 | 200 | 4,000 m | | :. |  | :. | -,% | m | -,% |
 | 42 | 100 | 5,000 m | | :. |  | :. | -,% | m | -,% |
-| 43 | 130 | 4,000 m | | :. |  | :. | -,% | m | -,% |
-| 44 | 200 | 4,000 m | | :. |  | :. | -,% | m | -,% |
+| 43 | 190 | 4,000 m | | :. |  | :. | -,% | m | -,% |
+| 44 | 90 | 4,000 m | | :. |  | :. | -,% | m | -,% |
 | 45 | 120 | 6,000 m | | :. |  | :. | -,% | m | -,% |
 | 46 | 110 | 10,000 m | | :. |  | :. | -,% | m | -,% |
-| 47 | 140 | 4,000 m | | :. |  | :. | -,% | m | -,% |
-| 48 | 190 | 4,000 m | | :. |  | :. | -,% | m | -,% |
-| 49 | 150 | 4,000 m | | :. |  | :. | -,% | m | -,% |
-| 50 | 180 | 4,000 m | | :. |  | :. | -,% | m | -,% |
+| 47 | 130 | 4,000 m | | :. |  | :. | -,% | m | -,% |
+| 48 | 180 | 4,000 m | | :. |  | :. | -,% | m | -,% |
+| 49 | 140 | 4,000 m | | :. |  | :. | -,% | m | -,% |
+| 50 | 170 | 4,000 m | | :. |  | :. | -,% | m | -,% |
 | 51 | 110 | 6,000 m | | :. |  | :. | -,% | m | -,% |
 | 52 | 100 | 10,000 m | | :. |  | :. | -,% | m | -,% |
-| 53 | 170 | 4,000 m | | :. |  | :. | -,% | m | -,% |
-| 54 | 139 | 4,000 m | | :. |  | :. | -,% | m | -,% |
-| 55 | 160 | 4,000 m | | :. |  | :. | -,% | m | -,% |
+| 53 | 160 | 4,000 m | | :. |  | :. | -,% | m | -,% |
+| 54 | 150 | 4,000 m | | :. |  | :. | -,% | m | -,% |
 
-Here, a negative deviation indicates that the algorithm was too slow when compared to the PM5 data, a positive deviation indicates that the algorithm was too fast when compared to the PM5 data. The strokerate was nearly identical along the row, and only varied slightly between 23 and 24 SPM). The total number of strokes across the monitors was sufficiently similar at similar times. We observer that the PM5 contains several badly detected strokes: typically the retrieved data contained subsequent strokes where the stroke duration was between 0.5 and 1.5 seconds, suggesting that the stroke was split in two. OpenRowingMonitor, with a very conservative stroke detection flank of 10, did not have this problem. This error might be introduced through bad technique, as a badly timed bad transition from the back to the arms might cause this.
+Here, a negative deviation indicates that the algorithm was too slow when compared to the PM5 data, a positive deviation indicates that the algorithm was too fast when compared to the PM5 data. The strokerate was nearly identical along the row, and only varied slightly between 23 and 24 SPM). The total number of strokes across the monitors was sufficiently similar at similar times.
+
+We observe that the PM5 contains several badly detected strokes: typically the retrieved data contained subsequent strokes where the stroke duration was between 0.5 and 1.5 seconds, suggesting that the stroke was split in two. OpenRowingMonitor, with a very conservative stroke detection flank of 10, did not have this problem. This error might be introduced through bad technique, as a badly timed bad transition from the back to the arms might cause this.
 
 #### Results and interpretation of the first series of side-by-side linear distance tests
+
+The van Holst algorithm was earlier already dismissed as the basis for Power calculations, and the above data seems to confirm this. The deviation is not just large (over -3,75%), it also changes based on the drag. Simulations show this is also hard to correct by adjusting the formula slightly. The simpeler algorithm has show to be off systematically by -0,47%, which is stable across all drag factors, suggesting a slight systemic error. This supports the use of this algorithm.
+
+The systematic deviation of -0,47% can be corrected in several ways:
+
+* One approach is the adjustment of the Magic Factor from 2,8 to 2,76. However, as the relation P=2.8 \* u<sup>3</sup> seems to hold for exported data, this is a highly unlikely approach;
+* Adjusting the flywheel inertia of 0.1001 kg/m<sup>2</sup> to 0.1015 kg/m<sup>2</sup>. There is a case to be made for this, as the 0.1001 kg/m<sup>2</sup> seems to be based on the older Concept2's which contained three magnets for measuring the speed of the flywheel. The newer models contain a 12-pole magnet that is used to generate sufficient electricity to feed the monitor, which causes a magnetic drag on the flywheel. This force isn't velocity dependent (like air resistence), but it is a constant force. One way to compensate for this, is by using a higher flywheel inertia;
+* Another explanation can be found in [[8]](#8), where it is observed that measuring the drag factor could contain (systematic) errors when the flanks are included. The current test setup of OpenRowingMonitor includes flanks, as Concept 2 indicated it defined a "recovery" as a decelerating flywheel, which OpenRowingMonitor simulates. However, this approach is inaccurate: the flywheel also decelerates when the force by the rower is less than the dragforce. Incorrectly including such flanks could structurally add outliers to the calculation, and thus could introduce systematic errors.
+
+To include/exclude the last explanation, we replay the raw data from the rwoing sessions with identical settings, except setting *naturalDeceleration* to an appropriate value below zero. These simulations have the following result:
+| Test | Drag factor | Target distance | #strokes on PM5| Result on PM5 | #strokes on ORM | Base algorithm result | Base algorithm Deviation |
+| :-: | --: | --: | --: | --: |--: | --: | --: |
+| 32 | 70 | 4,000 m | 441 | 17:31.3 | | :. | -,% |
+| 33 | 122 | 6,000 m | 606 | 25:44.8 | | | -,% |
+| 34 | 112 | 10,000 m | 1051 | 43:08.2 | | :. | -,% |
+| 35 | 80 | 4,000 m | 438 | 17:26.0 | | :. | -,% |
+| 36 | 226 | 4,000 m | 403 | 17:08.8 | | :. | -,% |
+| 38 | 210 | 4,000 m |  | :. | | :. | -,% | m | -,% |
+| 39 | 120 | 6,000 m | | :. |  | :. | -,% | m | -,% |
+| 40 | 110 | 10,000 m | | :. |  | :. | -,% | m | -,% |
+| 41 | 200 | 4,000 m | | :. |  | :. | -,% | m | -,% |
+| 42 | 100 | 5,000 m | | :. |  | :. | -,% | m | -,% |
+| 43 | 190 | 4,000 m | | :. |  | :. | -,% | m | -,% |
+| 44 | 90 | 4,000 m | | :. |  | :. | -,% | m | -,% |
+| 45 | 120 | 6,000 m | | :. |  | :. | -,% | m | -,% |
+| 46 | 110 | 10,000 m | | :. |  | :. | -,% | m | -,% |
+| 47 | 130 | 4,000 m | | :. |  | :. | -,% | m | -,% |
+| 48 | 180 | 4,000 m | | :. |  | :. | -,% | m | -,% |
+| 49 | 140 | 4,000 m | | :. |  | :. | -,% | m | -,% |
+| 50 | 170 | 4,000 m | | :. |  | :. | -,% | m | -,% |
+| 51 | 110 | 6,000 m | | :. |  | :. | -,% | m | -,% |
+| 52 | 100 | 10,000 m | | :. |  | :. | -,% | m | -,% |
+| 53 | 160 | 4,000 m | | :. |  | :. | -,% | m | -,% |
+| 54 | 150 | 4,000 m | | :. |  | :. | -,% | m | -,% |
 
 ### Validation of the linear speed caclulation
 
