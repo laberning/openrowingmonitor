@@ -1,15 +1,27 @@
+// Rollup bundling is currently not used any more since the experimental esbuild included in
+// snowpack does seem to work just fine with Open Rowing Monitor and produces bundles of similar size
+// If you want to use rollup bundling, make sure that you install the following dev dependencies
+// @rollup/plugin-commonjs
+// @rollup/plugin-node-resolve
+// @rollup/plugin-typescript
+// @web/rollup-plugin-html
+// rollup
+// rollup-plugin-copy
+// rollup-plugin-summary
+// rollup-plugin-terser
+
 // Import rollup plugins
-import { babel } from '@rollup/plugin-babel'
 import commonjs from '@rollup/plugin-commonjs'
 import resolve from '@rollup/plugin-node-resolve'
 import html from '@web/rollup-plugin-html'
 import copy from 'rollup-plugin-copy'
 import summary from 'rollup-plugin-summary'
 import { terser } from 'rollup-plugin-terser'
+import typescript from '@rollup/plugin-typescript'
 
 // Configure an instance of @web/rollup-plugin-html
 const htmlPlugin = html({
-  rootDir: 'app/client',
+  rootDir: 'app-webclient',
   flattenOutput: false
 })
 
@@ -20,14 +32,15 @@ export default {
   plugins: [
     copy({
       targets: [
-        { src: 'app/client/assets/*', dest: 'build/assets' }
+        { src: 'app-webclient/assets/*', dest: 'build/assets' }
       ]
     }),
     htmlPlugin,
-    // transpile decorators so we can use the upcoming ES decorator syntax
-    babel({
-      babelrc: true,
-      babelHelpers: 'bundled'
+    typescript({
+      tsconfig: './app-webclient/tsconfig.json',
+      compilerOptions: {
+        outDir: 'build/ts'
+      }
     }),
     // convert modules with commonJS syntax to ESM
     commonjs(),

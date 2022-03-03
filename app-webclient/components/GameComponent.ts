@@ -1,4 +1,3 @@
-'use strict'
 /*
   Open Rowing Monitor, https://github.com/laberning/openrowingmonitor
 
@@ -11,8 +10,10 @@ import { icon_bolt, icon_exit, icon_heartbeat, icon_paddle, icon_route, icon_sto
 import { metricValue, metricUnit } from '../lib/helper.js'
 import { buttonStyles } from '../lib/styles.js'
 import { AppElement, css, html } from './AppElement.js'
+import { AppState } from '../store/appState.js'
 @customElement('game-component')
 export class GameComponent extends AppElement {
+  rowingGames: any
   static get styles () {
     return [
       buttonStyles,
@@ -134,10 +135,10 @@ export class GameComponent extends AppElement {
     // This problem only occurs, when the update events are created from a web request (i.e. by receiving
     // new rowing metrics via web socket).
     // By delivering the app state updates directly here from index.js, this problem does not occur.
-    this.sendEvent('setGameStateUpdater', (appState) => { this.gameAppState(appState) })
+    this.sendEvent('setGameStateUpdater', (appState: AppState) => { this.gameAppState(appState) })
   }
 
-  gameAppState (appState) {
+  gameAppState (appState: AppState) {
     if (this.rowingGames) this.rowingGames.appState(appState)
   }
 

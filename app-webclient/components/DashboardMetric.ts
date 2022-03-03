@@ -1,4 +1,3 @@
-'use strict'
 /*
   Open Rowing Monitor, https://github.com/laberning/openrowingmonitor
 
@@ -6,7 +5,7 @@
 */
 
 import { customElement, property } from 'lit/decorators.js'
-import { AppElement, css, html } from './AppElement.js'
+import { AppElement, css, html, svg } from './AppElement'
 
 @customElement('dashboard-metric')
 export class DashboardMetric extends AppElement {
@@ -37,7 +36,7 @@ export class DashboardMetric extends AppElement {
   }
 
   @property({ type: Object })
-    icon
+    icon = svg``
 
   @property({ type: String })
     unit = ''

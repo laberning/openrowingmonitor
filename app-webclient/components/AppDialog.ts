@@ -1,4 +1,3 @@
-'use strict'
 /*
   Open Rowing Monitor, https://github.com/laberning/openrowingmonitor
 
@@ -7,11 +6,12 @@
 
 import { customElement, property } from 'lit/decorators.js'
 import { buttonStyles } from '../lib/styles.js'
-import { createRef, ref } from 'lit/directives/ref.js'
-import { AppElement, css, html } from './AppElement.js'
+import { createRef, ref, Ref } from 'lit/directives/ref.js'
+import { AppElement, css, html } from './AppElement'
 
 @customElement('app-dialog')
 export class AppDialog extends AppElement {
+  dialog: Ref<Element>
   constructor () {
     super()
     this.dialog = createRef()
@@ -58,7 +58,7 @@ export class AppDialog extends AppElement {
   }
 
   @property({ type: Boolean, reflect: true })
-    dialogOpen
+    dialogOpen: boolean = false
 
   render () {
     return html`
@@ -76,7 +76,7 @@ export class AppDialog extends AppElement {
     `
   }
 
-  close (event) {
+  close (event: any) {
     if (event.target.returnValue !== 'confirm') {
       this.dispatchEvent(new CustomEvent('close', { detail: 'cancel' }))
     } else {
@@ -89,7 +89,7 @@ export class AppDialog extends AppElement {
     this.dialog.value.showModal()
   }
 
-  updated (changedProperties) {
+  updated (changedProperties: Map<string, object>) {
     if (changedProperties.has('dialogOpen')) {
       if (this.dialogOpen) {
         // @ts-ignore

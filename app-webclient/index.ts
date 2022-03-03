@@ -1,4 +1,3 @@
-'use strict'
 /*
   Open Rowing Monitor, https://github.com/laberning/openrowingmonitor
 
@@ -10,12 +9,17 @@ import { customElement, state } from 'lit/decorators.js'
 import './components/GameComponent.js'
 import './components/PerformanceDashboard.js'
 import { createApp } from './lib/app.js'
-import { APP_STATE } from './store/appState.js'
+import { AppState, APP_STATE } from './store/appState.js'
 
 @customElement('web-app')
 export class App extends LitElement {
   @state()
-    appState = APP_STATE
+    appState: AppState = APP_STATE
+
+  private app: {
+    handleAction: (action: object) => void
+  }
+  private gameStateUpdater?: (state: AppState) => void
 
   constructor () {
     super()
@@ -51,9 +55,9 @@ export class App extends LitElement {
    * the global state is updated by replacing the appState with a copy of the new state
    * todo: maybe it is more convenient to just pass the state elements that should be changed?
    * i.e. do something like this.appState = { ..this.appState, ...newState }
-   * @param {Object} newState the new state of the application
+   * @param {AppState} newState the new state of the application
    */
-  updateState = (newState) => {
+  updateState = (newState: AppState) => {
     this.appState = { ...newState }
     // notify games about new app state
     if (this.gameStateUpdater) this.gameStateUpdater(this.appState)

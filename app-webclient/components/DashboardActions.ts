@@ -1,4 +1,3 @@
-'use strict'
 /*
   Open Rowing Monitor, https://github.com/laberning/openrowingmonitor
 
@@ -8,8 +7,8 @@
 import { customElement, state } from 'lit/decorators.js'
 import { icon_bluetooth, icon_compress, icon_expand, icon_gamepad, icon_poweroff, icon_undo, icon_upload } from '../lib/icons.js'
 import { buttonStyles } from '../lib/styles.js'
-import './AppDialog.js'
-import { AppElement, css, html } from './AppElement.js'
+import './AppDialog'
+import { AppElement, css, html, TemplateResult } from './AppElement'
 @customElement('dashboard-actions')
 export class DashboardActions extends AppElement {
   static get styles () {
@@ -41,7 +40,7 @@ export class DashboardActions extends AppElement {
   }
 
   @state()
-    dialog
+    dialog: TemplateResult<1> | undefined = undefined
 
   render () {
     return html`
@@ -121,34 +120,34 @@ export class DashboardActions extends AppElement {
   }
 
   uploadTraining () {
+    const dialogClosed = (event: any) => {
+      this.dialog = undefined
+      if (event.detail === 'confirm') {
+        this.sendEvent('triggerAction', { command: 'uploadTraining' })
+      }
+    }
+
     this.dialog = html`
       <app-dialog @close=${dialogClosed}>
         <legend>${icon_upload}<br/>Upload to Strava?</legend>
         <p>Do you want to finish your workout and upload it to Strava?</p>
       </app-dialog>
     `
-    function dialogClosed (event) {
-      this.dialog = undefined
-      if (event.detail === 'confirm') {
-        // @ts-ignore
-        this.sendEvent('triggerAction', { command: 'uploadTraining' })
-      }
-    }
   }
 
   shutdown () {
+    const dialogClosed = (event: any) => {
+      this.dialog = undefined
+      if (event.detail === 'confirm') {
+        this.sendEvent('triggerAction', { command: 'shutdown' })
+      }
+    }
+
     this.dialog = html`
       <app-dialog @close=${dialogClosed}>
         <legend>${icon_poweroff}<br/>Shutdown Open Rowing Monitor?</legend>
         <p>Do you want to shutdown the device?</p>
       </app-dialog>
     `
-    function dialogClosed (event) {
-      this.dialog = undefined
-      if (event.detail === 'confirm') {
-        // @ts-ignore
-        this.sendEvent('triggerAction', { command: 'shutdown' })
-      }
-    }
   }
 }

@@ -1,24 +1,22 @@
 // Snowpack Configuration File
 // See all supported options: https://www.snowpack.dev/reference/configuration
 import proxy from 'http2-proxy'
-import { nodeResolve } from '@rollup/plugin-node-resolve'
+// import { nodeResolve } from '@rollup/plugin-node-resolve'
 
 export default {
   mount: {
     // the web frontend is located in this directory
-    './app/client': { url: '/' }
+    './app-webclient': { url: '/' }
   },
-  plugins: ['@snowpack/plugin-babel'],
   mode: 'development',
   packageOptions: {
     rollup: {
       plugins: [
         // todo: related to the lit documentation this should enable development mode
         // unfortunately this currently does not seem to work
-        nodeResolve({
-          exportConditions: ['development'],
-          dedupe: true
-        })
+        // nodeResolve({
+        //   exportConditions: ['development']
+        // })
       ]
     }
   },
@@ -29,14 +27,16 @@ export default {
   buildOptions: {
     out: 'build'
   },
+  // the esbuild based bundler in snowpack is still quite young, but does seem to work
+  // nicely with this project
   optimize: {
     bundle: true,
     treeshake: true,
-    minify: false,
+    minify: true,
     target: 'es2020',
-    sourcemap: false
+    sourcemap: true
   },
-  // add a proxy for websocket requests for the dev setting
+  // add a proxy for web socket requests for the dev setting
   routes: [
     {
       src: '/websocket',

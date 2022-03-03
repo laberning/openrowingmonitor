@@ -186,10 +186,8 @@ function getConfig () {
   }
 }
 
-/*
 replayRowingSession(handleRotationImpulse, {
-  filename: 'recordings/WRX700_2magnets.csv',
+  filename: 'data/recordings/2022-02-18_12-51-00_raw.csv',
   realtime: true,
   loop: true
 })
-*/
