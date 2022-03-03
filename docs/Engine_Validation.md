@@ -370,30 +370,29 @@ The systematic deviation of -0,47% can be corrected in several ways:
 * Another explanation can be found in [[8]](#8), where it is observed that measuring the drag factor could contain (systematic) errors when the flanks are included. The current test setup of OpenRowingMonitor includes flanks, as Concept 2 indicated it defined a "recovery" as a decelerating flywheel, which OpenRowingMonitor simulates. However, this approach is inaccurate: the flywheel also decelerates when the force by the rower is less than the dragforce. Incorrectly including such flanks could structurally add outliers to the calculation, and thus could introduce systematic errors.
 
 To include/exclude the last explanation, we replay the raw data from the rwoing sessions with identical settings, except setting *naturalDeceleration* to an appropriate value below zero. These simulations have the following result:
-| Test | Drag factor | Target distance | #strokes on PM5| Result on PM5 | #strokes on ORM | Base algorithm result | Base algorithm Deviation |
-| :-: | --: | --: | --: | --: |--: | --: | --: |
-| 32 | 70 | 4,000 m | 441 | 17:31.3 | | :. | -,% |
-| 33 | 122 | 6,000 m | 606 | 25:44.8 | | | -,% |
-| 34 | 112 | 10,000 m | 1051 | 43:08.2 | | :. | -,% |
-| 35 | 80 | 4,000 m | 438 | 17:26.0 | | :. | -,% |
-| 36 | 226 | 4,000 m | 403 | 17:08.8 | | :. | -,% |
-| 38 | 210 | 4,000 m |  | :. | | :. | -,% | m | -,% |
-| 39 | 120 | 6,000 m | | :. |  | :. | -,% | m | -,% |
-| 40 | 110 | 10,000 m | | :. |  | :. | -,% | m | -,% |
-| 41 | 200 | 4,000 m | | :. |  | :. | -,% | m | -,% |
-| 42 | 100 | 5,000 m | | :. |  | :. | -,% | m | -,% |
-| 43 | 190 | 4,000 m | | :. |  | :. | -,% | m | -,% |
-| 44 | 90 | 4,000 m | | :. |  | :. | -,% | m | -,% |
-| 45 | 120 | 6,000 m | | :. |  | :. | -,% | m | -,% |
-| 46 | 110 | 10,000 m | | :. |  | :. | -,% | m | -,% |
-| 47 | 130 | 4,000 m | | :. |  | :. | -,% | m | -,% |
-| 48 | 180 | 4,000 m | | :. |  | :. | -,% | m | -,% |
-| 49 | 140 | 4,000 m | | :. |  | :. | -,% | m | -,% |
-| 50 | 170 | 4,000 m | | :. |  | :. | -,% | m | -,% |
-| 51 | 110 | 6,000 m | | :. |  | :. | -,% | m | -,% |
-| 52 | 100 | 10,000 m | | :. |  | :. | -,% | m | -,% |
-| 53 | 160 | 4,000 m | | :. |  | :. | -,% | m | -,% |
-| 54 | 150 | 4,000 m | | :. |  | :. | -,% | m | -,% |
+| Test | Drag factor | Target distance | #strokes on PM5| Result on PM5 | Natural Deceleration | #strokes on ORM | Base algorithm result | Base algorithm Deviation |
+| :-: | --: | --: | --: | --: | --: |--: | --: | --: |
+| 32 | 70 | 4,000 m | 441 | 17:31.3 | | | :. | -,% |
+| 33 | 122 | 6,000 m | 606 | 25:44.8 | | | | -,% |
+| 34 | 112 | 10,000 m | 1051 | 43:08.2 | | | :. | -,% |
+| 35 | 80 | 4,000 m | 438 | 17:26.0 | | | :. | -,% |
+| 36 | 226 | 4,000 m | 403 | 17:08.8 | | | :. | -,% |
+| 38 | 210 | 4,000 m | | | :. | | :. | -,% |
+| 39 | 120 | 6,000 m | | | :. |  | :. | -,% |
+| 40 | 110 | 10,000 m | | | :. |  | :. | -,% |
+| 41 | 200 | 4,000 m | | | :. |  | :. | -,% |
+| 42 | 100 | 5,000 m | | | :. |  | :. | -,% |
+| 43 | 190 | 4,000 m | | | :. |  | :. | -,% |
+| 44 | 90 | 4,000 m | | | :. |  | :. | -,% |
+| 45 | 120 | 6,000 m | | | :. |  | :. | -,% |
+| 46 | 110 | 10,000 m | | | :. |  | :. | -,% |
+| 47 | 130 | 4,000 m | | | :. |  | :. | -,% |
+| 48 | 180 | 4,000 m | | | :. |  | :. | -,% |
+| 49 | 140 | 4,000 m | | | :. |  | :. | -,% |
+| 51 | 110 | 6,000 m | | | :. |  | :. | -,% |
+| 52 | 100 | 10,000 m | | | :. |  | :. | -,% |
+| 53 | 160 | 4,000 m | | | :. |  | :. | -,% |
+| 54 | 150 | 4,000 m | | | :. |  | :. | -,% |
 
 ### Validation of the linear speed caclulation
 
