@@ -374,7 +374,7 @@ To include/exclude the last explanation, we replay the raw data from the rowing 
 These simulations have the following result:
 | Test | Drag factor | Target distance | #strokes on PM5| Result on PM5 | Natural Deceleration | #strokes on ORM | Base algorithm result | Base algorithm Deviation |
 | :-: | --: | --: | --: | --: | --: |--: | --: | --: |
-| 32 | 70 | 4,000 m | 441 | 17:31.3 | | | :. | -,% |
+| 32 | 70 | 4,000 m | 441 | 17:31.3 | -1.16 | 443 | 17:36.4 | -0,49% |
 | 33 | 122 | 6,000 m | 606 | 25:44.8 | | | :. | -,% |
 | 34 | 112 | 10,000 m | 1051 | 43:08.2 | | | :. | -,% |
 | 35 | 80 | 4,000 m | 438 | 17:26.0 | | | :. | -,% |
