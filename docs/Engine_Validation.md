@@ -398,7 +398,7 @@ These simulations have the following result:
 | 53 | 160 | 4,000 m | | :. | | | :. | -,% |
 | 54 | 150 | 4,000 m | | :. | | | :. | -,% |
 
-Based on these results, we conclude that changing the *naturalDeceleration*, and thus excluding more of the unjustly included flanks of the recovery phase, does not change the dragfactor significantly enough to influence the outcome. This suggests that the dragfactor calculation is sufficiently robust against these outliers and ignores them.
+Based on these results, we conclude that changing the *naturalDeceleration*, and thus excluding more of the unjustly included flanks of the recovery phase, does not change the dragfactor significantly enough to influence the outcome. This suggests that the dragfactor calculation is sufficiently robust against these outliers and ignores them. As we can reasobly exclude any other sources of systematic deviation, we coclude we need to adjust the *flywheel inertia* to 0.1015 kg/m<sup>2</sup>.
 
 ### Validation of the linear speed caclulation
 
