@@ -369,7 +369,9 @@ The systematic deviation of -0,47% can be explained in several ways:
 * Adjusting the flywheel inertia of 0.1001 kg/m<sup>2</sup> to 0.1015 kg/m<sup>2</sup>. There is a case to be made for this, as the 0.1001 kg/m<sup>2</sup> seems to be based on the older Concept2's which contained three magnets for measuring the speed of the flywheel. The newer models contain a 12-pole magnet that is used to generate sufficient electricity to feed the monitor, which causes a magnetic drag on the flywheel and possibly adds weight to the flywheel. This force isn't velocity dependent (like air resistence), but it is a constant force. One way to compensate for this, is by using a higher flywheel inertia;
 * Another explanation can be found in [[8]](#8), where it is observed that measuring the drag factor could contain (systematic) errors when the flanks are included. The current test setup of OpenRowingMonitor includes flanks, as Concept 2 indicated it defined a "recovery" as a decelerating flywheel [[13]](#13), which OpenRowingMonitor simulates by setting *Natural Deceleration* to 0. However, the approach suggested by this definition potentially introduces a systematic inaccuracy: the flywheel also decelerates when the force by the rower is less than the dragforce. Incorrectly including such flanks where the flywheel does decelerate, but less than an unpowered flywheel, could structurally add outliers to the calculation, and thus could introduce systematic errors.
 
-To include/exclude the last explanation, we replay the raw data from the rowing sessions with identical settings, except setting *naturalDeceleration* to an appropriate value below zero. The effect of this setting, as intended by the design of OpenRowingMonitor, is to reduce the beformementioned flanks as much as possible from the Recovery Phase, and include them in the Drive phase. This corrects the Drive and Recovery times, but also improves drag calculation as it removes systematic outliers.
+To include/exclude the last explanation, we replay the raw data from the rowing sessions with identical settings, except setting *naturalDeceleration* to an appropriate value below zero. The effect of this setting, as intended by the design of OpenRowingMonitor, is to reduce the beformementioned flanks as much as possible from the Recovery Phase, and include them in the Drive phase. This corrects the Drive and Recovery times, but also improves drag calculation as it removes systematic outliers in the flanks.
+
+There is no deterministic way to determine the *naturalDeceleration*: we determine it by increasing it in small steps until the stroke detection begins to break down, an indication that the detection is too rigid.
 
 These simulations have the following result:
 | Test | Drag factor | Target distance | #strokes on PM5| Result on PM5 | Natural Deceleration | #strokes on ORM | Base algorithm result | Base algorithm Deviation |
@@ -377,7 +379,7 @@ These simulations have the following result:
 | 32 | 70 | 4,000 m | 441 | 17:31.3 | -1.16 | 443 | 17:36.4 | -0,49% |
 | 33 | 122 | 6,000 m | 606 | 25:44.8 | | | :. | -,% |
 | 34 | 112 | 10,000 m | 1051 | 43:08.2 | | | :. | -,% |
-| 35 | 80 | 4,000 m | 438 | 17:26.0 | -2.8 | 439 | 17:30.9 | -0,47% |
+| 35 | 80 | 4,000 m | 438 | 17:26.0 | -2.8 | 440 | 17:30.9 | -0,47% |
 | 36 | 226 | 4,000 m | 403 | 17:08.8 | | | :. | -,% |
 | 38 | 212 | 4,000 m | 400 | 17:01.8 | | | :. | -,% |
 | 39 | 120 | 6,000 m | | :. | | | :. | -,% |
@@ -395,6 +397,8 @@ These simulations have the following result:
 | 52 | 100 | 10,000 m | | :. | | | :. | -,% |
 | 53 | 160 | 4,000 m | | :. | | | :. | -,% |
 | 54 | 150 | 4,000 m | | :. | | | :. | -,% |
+
+Based on these results, we conclude that changing the *naturalDeceleration*, and thus excluding more of the unjustly included flanks of the recovery phase, does not change the dragfactor significantly enough to influence the outcome. This suggests that the dragfactor calculation is sufficiently robust against these outliers and ignores them.
 
 ### Validation of the linear speed caclulation
 
