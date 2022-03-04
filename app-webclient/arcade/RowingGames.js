@@ -30,12 +30,11 @@ export function createRowingGames (rootComponent, clientWidth, clientHeight) {
 
   // todo: once there are multiple games, asset loading should be moved to the individual games
   const assets = '/assets'
-  const sprites = ['enemyBlack1', 'enemyBlue2', 'enemyGreen3', 'enemyRed4', 'enemyRed5', 'playerShip2_orange',
-    'playerLife2_orange', 'spaceShips_004', 'spaceShips_006', 'spaceShips_007', 'spaceShips_009', 'star1', 'star2',
-    'laserRed01', 'laserRed09', 'shield1']
+  const sprites = ['enemyLight1', 'enemyLight2', 'enemyLight3', 'enemyLight4', 'enemyLight5', 'enemyMiddle1', 'enemyMiddle2',
+    'enemyHeavy1', 'enemyHeavy2', 'playerShip', 'playerLife', 'star1', 'star2', 'laser1', 'laser2', 'shield']
 
   for (const sprite of sprites) {
-    k.loadSprite(sprite, `${assets}/sprites/${sprite}@2x.png`)
+    k.loadSprite(sprite, `${assets}/sprites/${sprite}.png`)
   }
   k.loadSound('hit', `${assets}/sounds/explosionCrunch_000.ogg`)
   k.loadSound('shoot', `${assets}/sounds/laserSmall_001.ogg`)

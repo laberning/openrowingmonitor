@@ -34,7 +34,7 @@ export default function StrokeFighterEndScene (k, args) {
     ])
   }
   k.add([
-    k.sprite('playerShip2_orange'),
+    k.sprite('playerShip'),
     k.scale(0.5),
     k.pos(k.width() / 2, 320),
     k.origin('center')

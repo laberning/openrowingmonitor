@@ -22,7 +22,7 @@ export default function StrokeFighterStartScene (k, args) {
 
   const shipsPos = k.vec2(520, 240)
   const ship1 = k.add([
-    k.sprite('playerShip2_orange'),
+    k.sprite('playerShip'),
     k.scale(0.5),
     k.pos(shipsPos),
     k.origin('center')
@@ -30,7 +30,7 @@ export default function StrokeFighterStartScene (k, args) {
   addBullet(ship1.pos.sub(0, 65))
 
   const ship2 = k.add([
-    k.sprite('playerShip2_orange'),
+    k.sprite('playerShip'),
     k.scale(0.5),
     k.pos(shipsPos.add(0, 140)),
     k.origin('center')
@@ -39,7 +39,7 @@ export default function StrokeFighterStartScene (k, args) {
   addBullet(ship2.pos.sub(-20, 40))
 
   const ship3 = k.add([
-    k.sprite('playerShip2_orange'),
+    k.sprite('playerShip'),
     k.scale(0.5),
     k.pos(shipsPos.add(0, 280)),
     k.origin('center')
@@ -67,7 +67,7 @@ export default function StrokeFighterStartScene (k, args) {
 
   function addBullet (pos) {
     k.add([
-      k.sprite('laserRed01'),
+      k.sprite('laser1'),
       k.scale(0.5),
       k.pos(pos),
       k.origin('center')

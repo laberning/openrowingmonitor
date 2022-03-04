@@ -22,19 +22,20 @@ export default function StrokeFighterBattleScene (k, args) {
   const SPM_END = 28
   const BULLET_SPEED = 1200
   const ENEMY_SPEED = 50
-  const PLAYER_SPEED = 480
+  const PLAYER_SPEED = 500
+  const PLAYER_ACCELERATION = 500
   const PLAYER_LIFES = 3
   const SPRITE_WIDTH = 90
   const ENEMIES = [
-    { sprite: 'enemyBlack1', health: 1 },
-    { sprite: 'enemyBlue2', health: 1 },
-    { sprite: 'enemyGreen3', health: 1 },
-    { sprite: 'enemyRed4', health: 1 },
-    { sprite: 'enemyRed5', health: 1 },
-    { sprite: 'spaceShips_004', health: 3 },
-    { sprite: 'spaceShips_006', health: 2 },
-    { sprite: 'spaceShips_007', health: 3 },
-    { sprite: 'spaceShips_009', health: 2 }
+    { sprite: 'enemyLight1', health: 1 },
+    { sprite: 'enemyLight2', health: 1 },
+    { sprite: 'enemyLight3', health: 1 },
+    { sprite: 'enemyLight4', health: 1 },
+    { sprite: 'enemyLight5', health: 1 },
+    { sprite: 'enemyMiddle1', health: 2 },
+    { sprite: 'enemyMiddle2', health: 2 },
+    { sprite: 'enemyHeavy1', health: 3 },
+    { sprite: 'enemyHeavy2', health: 3 }
   ]
 
   let trainingTime = args?.trainingTime || 0
@@ -58,16 +59,17 @@ export default function StrokeFighterBattleScene (k, args) {
   }
 
   const player = k.add([
-    k.sprite('playerShip2_orange'),
+    k.sprite('playerShip'),
     k.scale(0.5),
     k.area(),
     k.pos(k.width() / 2, k.height() - 64),
-    k.origin('center')
+    k.origin('center'),
+    acceleration()
   ])
 
   if (args?.gameState === 'LOST') {
     const shield = k.add([
-      k.sprite('shield1'),
+      k.sprite('shield'),
       k.scale(0.5),
       k.area(),
       k.opacity(0.4),
@@ -87,17 +89,29 @@ export default function StrokeFighterBattleScene (k, args) {
     })
   }
 
-  function moveLeft (speed) {
-    player.move(-speed, 0)
-    if (player.pos.x < 0) {
-      player.pos.x = 0
-    }
-  }
-
-  function moveRight (speed) {
-    player.move(speed, 0)
-    if (player.pos.x > k.width()) {
-      player.pos.x = k.width()
+  function acceleration () {
+    return {
+      add () {
+        this.acceleration = 0
+        this.speed = 0
+      },
+      update () {
+        this.speed = this.speed + this.acceleration * k.dt()
+        // do not exceed max speed
+        this.speed = this.speed > 0 ? Math.min(this.speed, PLAYER_SPEED) : Math.max(this.speed, -PLAYER_SPEED)
+        this.move(this.speed, 0)
+        // do not move beyond the screen borders
+        if (this.pos.x < 0) {
+          this.pos.x = 0
+          this.acceleration = 0
+          this.speed = 0
+        }
+        if (this.pos.x > k.width()) {
+          this.pos.x = k.width()
+          this.acceleration = 0
+          this.speed = 0
+        }
+      }
     }
   }
 
@@ -132,17 +146,31 @@ export default function StrokeFighterBattleScene (k, args) {
   })
 
   player.onUpdate(() => {
-    const tolerance = 5
+    const tolerance = 0
     const closestEnemy = k.get('enemy').reduce((prev, enemy) => { return enemy?.pos.y > prev?.pos.y ? enemy : prev }, { pos: { y: 0 } })
     if (closestEnemy?.pos?.x) {
-      const distance = Math.abs(closestEnemy.pos.x - player.pos.x)
-      // slow down a bit if we are close to the enemy
-      const speed = distance < 100 ? distance / 100 * PLAYER_SPEED : PLAYER_SPEED
+      const distance = closestEnemy.pos.x - player.pos.x
+      // distance in pixel to stop the spaceship with full break throttle
+      const stopDistance = Math.pow(player.speed, 2) / (2 * PLAYER_ACCELERATION) * (player.speed < 0 ? -1.1 : 1.1)
+      // if we are on the left side of enemy
       if (closestEnemy.pos.x > player.pos.x + tolerance) {
-        moveRight(speed)
+        if (distance > stopDistance) { accelerateRight() } else { accelerateLeft() }
+      // if we are on the right side of enemy
       } else if (closestEnemy.pos.x < player.pos.x - tolerance) {
-        moveLeft(speed)
-      }
+        if (distance < stopDistance) { accelerateLeft() } else { accelerateRight() }
+      // otherwise we are directly aligned to enemy (with tolerance)
+      } else { stop() }
+      // if there is no enemy, make sure we don't move
+    } else { stop() }
+    function accelerateLeft () {
+      player.acceleration = -PLAYER_ACCELERATION
+    }
+    function accelerateRight () {
+      player.acceleration = PLAYER_ACCELERATION
+    }
+    function stop () {
+      player.acceleration = 0
+      player.speed = 0
     }
   })
 
@@ -151,7 +179,7 @@ export default function StrokeFighterBattleScene (k, args) {
       k.wait(k.rand(n * 0.1), () => {
         for (let i = 0; i < 2; i++) {
           k.add([
-            k.sprite('laserRed09'),
+            k.sprite('laser2'),
             k.pos(pos.sub(0, 10)),
             k.scale(k.vec2(0.25)),
             k.lifespan(0.1),
@@ -165,7 +193,7 @@ export default function StrokeFighterBattleScene (k, args) {
 
   function spawnBullet (pos) {
     k.add([
-      k.sprite('laserRed01'),
+      k.sprite('laser1'),
       k.scale(0.5),
       k.area(),
       k.pos(pos),
@@ -272,7 +300,7 @@ export default function StrokeFighterBattleScene (k, args) {
     // todo: would want to draw these on the "ui", but not sure on how to delete them then...
     for (let i = 1; i <= playerLifes; i++) {
       k.add([
-        k.sprite('playerLife2_orange'),
+        k.sprite('playerLife'),
         k.scale(0.5),
         k.pos(k.width() - i * 40, 10),
         k.z(100),
