@@ -354,6 +354,8 @@ The focus in this test is on a steady-state rowing. We consider the distance suf
 | 52 | 100 | 10,000 m | | :. |  | :. | -,% | m | -,% |
 | 53 | 160 | 4,000 m | | :. |  | :. | -,% | m | -,% |
 | 54 | 150 | 4,000 m | | :. |  | :. | -,% | m | -,% |
+| 55 | 130 | 2,000 m | | :. |  | :. | -,% | m | -,% |
+| 54 | 150 | 500 m | | :. |  | :. | -,% | m | -,% |
 
 Here, a negative deviation indicates that the algorithm was too slow when compared to the PM5 data, a positive deviation indicates that the algorithm was too fast when compared to the PM5 data. The strokerate was nearly identical along the row, and only varied slightly between 23 and 24 SPM). The total number of strokes across the monitors was sufficiently similar at similar times.
 
@@ -397,6 +399,8 @@ These simulations have the following result:
 | 52 | 100 | 10,000 m | | :. | | | :. | -,% |
 | 53 | 160 | 4,000 m | | :. | | | :. | -,% |
 | 54 | 150 | 4,000 m | | :. | | | :. | -,% |
+| 55 | 130 | 2,000 m | | :. | | | :. | -,% |
+| 56 | 150 | 500 m | | :. | | | :. | -,% |
 
 Based on these results, we conclude that changing the *naturalDeceleration*, and thus excluding more of the unjustly included flanks of the recovery phase, does not change the dragfactor significantly enough to influence the outcome. This suggests that the dragfactor calculation is sufficiently robust against these outliers and is capable of ignoring them. As we can reasobly exclude any other sources of systematic deviation, we conclude the *flywheel inertia* used is 0.1015 kg/m<sup>2</sup>.
 
