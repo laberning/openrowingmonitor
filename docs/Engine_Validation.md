@@ -1,17 +1,17 @@
 # A validation and improvement of the OpenRowingMonitor physics engine
 
 <!-- markdownlint-disable no-inline-html -->
-The primary goal of this validation is to validate the physics engine of OpenRowingMonitor: are the results produced by OpenRowingMonitor reliable? Although OpenRowingMonitor is built upon a tested theoretical model [[1]](#1),[[2]](#2),[[3]](#3),[[4]](#4), some open questions remain. For example, the formula used for power calculations [[1]](#1),[[2]](#2). In this article, we compare OpenRowingMonitor against the golden standard in indoor Rowing: the Concept2 RowErg's PM5. We consider the physics model of OpenRowingMonitor valid when it produces results very similar to the Concept2 PM5.
+Our primary goal is to validate the physics engine of OpenRowingMonitor: are the results produced by OpenRowingMonitor reliable and accurate? Although OpenRowingMonitor is built upon a tested theoretical model [[1]](#1),[[2]](#2),[[3]](#3),[[4]](#4), some open questions remain. For example, the formula used for power calculations [[1]](#1),[[2]](#2). In this article, we compare OpenRowingMonitor against the golden standard in indoor Rowing: the Concept2 RowErg's PM5. We consider the physics model of OpenRowingMonitor valid when it produces results very similar to the Concept2 PM5.
 
-Please note that we don't strive to reverse engineer the PM5, we want OpenRowingMonitor to be as reliable and deliver similar results as the PM5. Although the physics behind rowing monitors are well-known and even well-described [[1]](#1),[[2]](#2), what distinguishes one monitor from another is how well and robust they are implemented. Our experience in implementing OpenRowingMonitor is that this involves a lot of trade-offs between robustness of the metrics (preventing unexpected changes due to measurement errors) and accuracy/reactiveness of these same metrics. We are not aiming to reconstruct the internal mechanisms Concept2 implemented to get to an acceptable trade-off, but do want the same robustness of results. What we do in this validation, is to detect and explain why metrics are deviating between OpenRowingMonitor and the PM5, as these deviations might indicate an issue in OpenRowingMonitor's physics engine.
+Please note that we don't strive to reverse engineer the PM5, we only want OpenRowingMonitor to be as reliable and deliver similar results as the PM5. Although the physics behind rowing monitors are well-known and even well-described [[1]](#1),[[2]](#2), what distinguishes one monitor from another is how well and robust they are implemented. Our experience in implementing OpenRowingMonitor is that this involves a lot of trade-offs between robustness of the metrics (preventing unexpected changes due to measurement errors) and accuracy/reactiveness of these same metrics. We are not aiming to reconstruct the internal mechanisms Concept2 implemented to get to their acceptable trade-off, but do aim for the same accuracy and robustness of results. What we do in this validation, is to detect and explain why metrics are deviating between OpenRowingMonitor and the PM5, as these deviations might indicate an issue in OpenRowingMonitor's physics engine.
 
 ## Set-up of test environment
 
-We aim for a side-by-side test: comparing the results on both monitors for the same row. To realistically compare the two monitors, without introducing any measurement errors, we split the signal from the Concept2 RowErg's internal sensor and feed it to the two monitors simultanously. This approach will exclude any measurement errors by misaligned sensors, etc..
+Our main approach is a series of side-by-side tests: comparing the results on both monitors for the same row. To realistically compare the two monitors, without introducing any measurement errors, we split the signal from the Concept2 RowErg's internal sensor and feed it to the two monitors simultanously. This approach will exclude any measurement errors by misaligned sensors, etc..
 
 ### Concept2's signal
 
-The Concept2 produces a 15V signal [[6]](#6), which alternates between 0V and 15V [[7]](#7). This signal is produced by a 12-pole magnet [[8]](#8) which rotates with the flywheel, also doubling as a generator for the PM5. Although [[7]](#7) suggests a sinoid signal, another interpretation is that this a full-wave recified signal [[9]](#9). This later makes more sense given the polarity which doesn't reverse, which would be expected given the construction of the magnets and generator. To evade any dependencies on this assumption, we explicitly choose to measure on the upper part of the signal, removing any dependency on the behaviour on the lower part of the signal.
+The Concept2 produces a 15V signal [[6]](#6), which alternates between 0V and 15V [[7]](#7). This signal is produced by a 12-pole magnet [[8]](#8) which are attached to the flywheel, also doubling as a generator for the PM5. Although [[7]](#7) suggests a sinoid signal, another interpretation is that this a full-wave recified signal [[9]](#9). This later makes more sense given the lack of reversal of the polarity, which would be expected given the construction of the magnets and generator. To evade any dependencies on this assumption, we explicitly choose to measure on the upper part of the signal, removing any dependency on the behaviour on the lower part of the signal.
 
 The shortest impulses measured on a scope are 15-16 pulses per 100 msec, when the rower rows 1:13/500m [[10]](#10), which implies an average time between impulses of 6.25ms, or a frequency 160Hz.
 
@@ -21,11 +21,11 @@ To process the 15V signal for the 3.3V Raspberry Pi, a 24V to 3.3V DST-1R4P-P op
 
 ### Settings used
 
-In config.js the following settings were used:
+In config.js we set the following parameters:
 
-* Based on [[13]](#13), we conclude that Concept2 defines the drive-phase as an accelerating flywheel, which is simulated in OpenRowingMonitor by setting *naturalDeceleration* to 0, which triggers an identical algorithm for stroke detection. It is noted that the number of consecutive impulses that indicate acceleration isn't mentioned or known.
+* Based on [[13]](#13), we conclude that Concept2 defines the drive-phase as an accelerating flywheel, which is simulated in OpenRowingMonitor by setting *naturalDeceleration* to 0, which triggers an identical algorithm for stroke detection. It is noted that the number of consecutive impulses that indicate acceleration (i.e. *flanklength*) isn't mentioned or known. We set the *flanklength* to a conservative 10 with 2 *NumberofErrorsAllowed*, which produces a solid stroke detection.
 * A *flywheel inertia* of 0.1001 kg/m<sup>2</sup>, as indicated by [[2]](#2) and [[7]](#7), where [[7]](#7) also emperically verifies these results.
-* There is some debate about the power calculation [[1]](#1),[[2]](#2). Some indicate that P = 2.8 \* u<sup>3</sup> [[1]](#1), others suggest P=4.31 \* u<sup>2.75</sup> [[2]](#2). Using a csv-extractions of the Concept2 website, we could extract both the calculated P and the used u for each stroke in several rowing sessions as recorded by the ErgData app. These rowing sessions systematically confirm the relation being P = 2.8 \* u<sup>3</sup>. Thus we use a *Magic Constant* of 2.8.
+* There is some debate about the power calculation [[1]](#1),[[2]](#2). Some indicate that P = 2.8 \* u<sup>3</sup> [[1]](#1), Prof. van Holst suggest P = 4.31 \* u<sup>2.75</sup> [[2]](#2). Using a csv-extractions of the Concept2 website, we extracted both the calculated P and the used u for each stroke in several rowing sessions as recorded by the ErgData app. These rowing sessions systematically confirm the relation being P = 2.8 \* u<sup>3</sup>. Therefore, we use a *Magic Constant* of 2.8.
 * *numOfPhasesForAveragingScreenData* is set to 3, to make the data as volatile as possible.
 
 ### Rowing style
@@ -47,7 +47,7 @@ We describe the resulting physics model used by OpenRowingMonitor in [[5]](#5). 
 * The calculation of linear speed
 * Calculation of the displayed power
 
-First, we verify the calculation the dragfactor, without any dependence on other parts of the algorithms like stroke detection, as this is the basis of any following calculation. In OpenRowingMonitor, total time is defined as the sum of all impulse lengths (i.e. the sum of all *CurrentDt*'s), which therefore is also tested alongside distance. Subsequently, after we used the distance as the key indicator for the verification of the dynamic calculation of the dragfactor and impuls detection, we use them as a basis to verify all other dependent metrics.
+First, we verify the calculation the dragfactor. Next, we apply this dragfactor without any dependence on other parts of the algorithms like stroke detection in a distance calculation. In OpenRowingMonitor, total time is defined as the sum of all impulse lengths (i.e. the sum of all *CurrentDt*'s), which therefore is also tested alongside distance. Here, we use the distance as the key indicator for the verification of the dynamic calculation of the dragfactor and impuls detection. In subsequent tests, we use these metrics as the basis to verify all other dependent metrics.
 
 ### Validation of the drag factor calculation
 
@@ -115,7 +115,7 @@ Such a more fundamental approach is found in the method used by [[7]](#7), where
 
 > k = I \* &delta;(1/&omega;) / &delta;t
 
-This can be percieved as the definition of the slope of a line, by reformulating it as:
+This can be transformed as the definition of the slope of a line, by reformulating it as:
 
 > k / I = &delta;(1/&omega;) / &delta;t
 
@@ -252,7 +252,7 @@ Based on this we conclude that the ORM2f algorithm combined with the requirement
 | 0.84 | 5 | -1.09% | -0.25% | 1.70% | 0.3745 | 1 | 90.49% | 21 |
 | 0.84 | 6 | -1.05% | -0.25% | 1.70% | 0.3603 | 1 | 90.49% | 21 |
 
-Based on this, we come to the following results based on the ORM2f algorithm combined with the requirement that r<sup>2</sup> needs to be above 0.84, with a running average of 6 strokes. Increasing the running average further might further improve the stability of the dragfactor, but this hasn't been applied in this test due to practical limitations. Applying these settings to the sessions, leads to the following (simulated) results:
+Based on this, we conclude that the ORM2f algorithm combined with the requirement that r<sup>2</sup> needs to be above 0.84, with a running average of 6 strokes would produce the best results. Increasing the running average further might further improve the stability of the dragfactor, but this hasn't been applied in this test due to practical limitations. Applying these settings to the sessions, leads to the following (simulated) results:
 
 | Test | Strokes | PM5 Min Drag | PM5 Modus Drag | PM5 Max Drag | ORM2f Min Drag | ORM2f Avg. Drag | ORM2f Max Drag | ORM2f Drag SD | Stroke with first valid Dragfactor | Percentage strokes with valid dragfactors |
 | :-: | --: | --: |--: | --: | --: | --: | --: | --: | --: | --: |
@@ -306,9 +306,9 @@ In RowingEngine 2.0 (in RowingEngine.js, OpenRowingMonitor version 0.8.2) we imp
 LinearDistance = Math.pow((dragFactor / rowerSettings.magicConstant), 1.0 / 3.0) * AngularDisplacement
 ```
 
-Although OpenRowingMonitor temporarily calculates a completed distance per recorded impulse for display purposses, the completed distance is definite value is calculated per phase as the dragfactor then can be applied retrospectively onto the Recovery phase.
+Although OpenRowingMonitor temporarily calculates a completed distance per recorded impulse for display purposses, the definite value of the completed distance is calculated per phase as the dragfactor then can be applied retrospectively onto the Recovery phase.
 
-According to [[1]](#1) and [[2]](#2), Marinus van Holst observed that C2 seems to use a different formula for its calculations, which is described in formula 9.4 [[1]](#1):
+According to [[1]](#1) and [[2]](#2), Prof. Marinus van Holst observed that C2 seems to use a different formula for its calculations, which is described in formula 9.4 [[1]](#1):
 
 > P = 4.31 \* u<sup>2.75</sup>
 
@@ -320,7 +320,7 @@ As s = u \* t, we can also use this formula 9.4 to calculate the linear distance
 
 > s = ((k \* &omega; <sup>0.25</sup>) / 4.31)<sup>1/2.75</sup> &theta;
 
-The introduction of &omega; into the distance calculation adds some complexity and introduces a specific dependency that requires a concious design decission. The dependency on &omega; in the van Holst algorithm requires a decission on the is the granularity of &omega; determination used: the finegrainedness of applying the algorithm to calculate the distance (i.e. an average over a completed stroke, a completed phase, a comnpleted flywheel rotation or for each recorded impulse) influences both the &omega; used and its robustness. From small experiments, we must conclude that changing the granularity has a measurable effect on the recorded distance. The current implementation calculates the completed distance definitively per completed phase. At this stage we keep the granularity as it was implemented originally, per phase, but we will conduct an sensitivity analysis with respect to the granularity used when the van Holst approach delivers feasible results.
+The introduction of &omega; into the distance calculation adds some complexity but also introduces a dependency that requires a concious design decission: the dependency on &omega; requires a decission on the granularity of &omega; determination used. The finegrainedness of applying the algorithm to calculate the distance (i.e. an average over a completed stroke, a completed phase, a comnpleted flywheel rotation or for each recorded impulse) influences both the &omega; used and its robustness. From small experiments, we conclude that changing the granularity has a measurable effect on the recorded distance. The current implementation calculates the completed distance per completed phase. At this stage we keep the granularity as it was implemented originally, per phase, but we will conduct an sensitivity analysis with respect to the granularity used when the van Holst approach delivers feasible results.
 
 #### Results and interpretation of a first side-by-side linear distance test
 
@@ -357,19 +357,19 @@ The focus in this test is on a steady-state rowing. We consider the distance suf
 
 Here, a negative deviation indicates that the algorithm was too slow when compared to the PM5 data, a positive deviation indicates that the algorithm was too fast when compared to the PM5 data. The strokerate was nearly identical along the row, and only varied slightly between 23 and 24 SPM). The total number of strokes across the monitors was sufficiently similar at similar times.
 
-We observe that the PM5 contains several badly detected strokes: typically the retrieved data contained subsequent strokes where the stroke duration was between 0.5 and 1.5 seconds, suggesting that the stroke was split in two. OpenRowingMonitor, with a very conservative stroke detection flank of 10, did not have this problem. This error might be introduced through bad technique, as a badly timed bad transition from the back to the arms might cause this.
+We observe that the PM5 contains several badly detected strokes: typically the retrieved data contained subsequent strokes where the stroke duration was between 0.5 and 1.5 seconds, suggesting that the stroke was split in two. OpenRowingMonitor, with its very conservative stroke detection flank of 10, did not have this problem. This error might be introduced through bad technique, as a badly timed bad transition from the back to the arms might cause this.
 
 #### Results and interpretation of the first series of side-by-side linear distance tests
 
-The van Holst algorithm was earlier already dismissed as the basis for Power calculations, and the above data seems to confirm this. The deviation is not just large (over -3,75%), it also varies significantly across rowing sessions, and seems to change independently from the drag. Simulations with the raw data also show this impossible to correct by adjusting the formula and its parameters slightly. The base algorithm has show to be off systematically by -0,47%, but this is constant across all rowing sessions, drag factors and distances. This suggests a systemic error somewhere in the calculation, but it supports the use of this algorithm.
+We already dismissed the van Holst algorithm as the basis for Power calculations, and the above data seems to confirm this for the distance calculation. The deviation is not just large (over -3,75%), it also varies significantly across rowing sessions, and seems to change independently from the drag. A sensitivity analysis through simulations with the raw data also show it is impossible to correct this error by adjusting the formula and its parameters slightly. The original base algorithm has show to be off systematically by -0,47%, which is constant across all rowing sessions, drag factors and distances. Although this suggests a systemic error somewhere in the calculation, but it supports the use of this algorithm.
 
 The systematic deviation of -0,47% can be explained in several ways:
 
-* One explanation is that the Magic Factor is not 2,8, but is 2,76 instead. However, as the relation P = 2.8 \* u<sup>3</sup> holds for each stroke in all investigated exported data from several rowing sessions. Therefore, we consider this explanation infeasible;
-* Another explanation is that the assumed *flywheel inertia* of 0.1001 kg/m<sup>2</sup> might actually be 0.1015 kg/m<sup>2</sup>. There is a case to be made for this explanation, as the 0.1001 kg/m<sup>2</sup> seems to be based on the older Concept2's which contained three magnets for measuring the speed of the flywheel. The newer models contain a 12-pole magnet that is used to generate sufficient electricity to feed the monitor, which causes a magnetic drag on the flywheel and possibly adds weight to the flywheel. This force isn't velocity dependent (like air resistence), but it is a constant force. One way to compensate for this is by using a higher flywheel inertia;
-* Another explanation can be found in [[8]](#8), where it is observed that measuring the drag factor could contain (systematic) errors when the flanks are included. The current test setup of OpenRowingMonitor includes flanks, as Concept 2 indicated it defined a "recovery" as a decelerating flywheel [[13]](#13), which OpenRowingMonitor simulates by setting *Natural Deceleration* to 0. However, the approach suggested by this definition potentially introduces a systematic inaccuracy: the flywheel also decelerates when the force by the rower is less than the dragforce. Incorrectly including such flanks where the flywheel does decelerate, but less than an unpowered flywheel, could structurally add outliers to the calculation, and thus could introduce systematic errors.
+* One explanation is that the Magic Factor is not 2,8, but is 2,76 instead. However, the relation P = 2.8 \* u<sup>3</sup> holds for each stroke in all investigated exported data from several rowing sessions. Therefore, we consider this explanation infeasible;
+* Another explanation is that the assumed *flywheel inertia* of 0.1001 kg/m<sup>2</sup> might actually be 0.1015 kg/m<sup>2</sup>. There is a case to be made for this explanation, as the 0.1001 kg/m<sup>2</sup> seems to be based on the older Concept2's which contained three magnets for measuring the speed of the flywheel. The newer models contain a 12-pole magnet that is used to generate sufficient electricity to feed the monitor, causing a magnetic drag on the flywheel and possibly even adding weight to the flywheel. This magnetic force isn't velocity dependent (like air resistence), but it is a constant force. One way to compensate for this is by using a higher flywheel inertia;
+* Another explanation can be found in [[8]](#8), where it is observed that measuring the drag factor could contain (systematic) errors when the flanks are included. The current test setup of OpenRowingMonitor includes flanks, as Concept 2 indicated it defined a "recovery" as a decelerating flywheel [[13]](#13), which OpenRowingMonitor simulates by setting *Natural Deceleration* to 0. However, the approach implied by this definition introduces a systematic inaccuracy: the flywheel also decelerates when the force on the flywheel is less than the dragforce. Incorrectly including these flanks, where the flywheel does decelerate but less than an unpowered flywheel, could structurally add outliers to the calculation, and thus could introduce systematic errors.
 
-To include/exclude the last explanation, we replay the raw data from the rowing sessions with identical settings, except setting *naturalDeceleration* to an appropriate value below zero. The effect of this setting, as intended by the design of OpenRowingMonitor, is to reduce the beformementioned flanks as much as possible from the Recovery Phase, and include them in the Drive phase. This corrects the Drive and Recovery times, but also improves drag calculation as it removes systematic outliers in the flanks.
+To include/exclude the last explanation, we replay the raw data from the rowing sessions with identical settings, except setting *naturalDeceleration* to an appropriate value below zero. The effect of this setting, as intended by the design of OpenRowingMonitor, is to reduce the beformentioned flanks as much as possible from the Recovery Phase, and include them in the Drive phase. This corrects the Drive and Recovery times, but also removes systematic outliers from the drag calculation, potentially influencing the dragfactor.
 
 There is no deterministic way to determine the *naturalDeceleration*: we determine it by increasing it in small steps until the stroke detection begins to break down, an indication that the detection is too rigid.
 
@@ -398,7 +398,7 @@ These simulations have the following result:
 | 53 | 160 | 4,000 m | | :. | | | :. | -,% |
 | 54 | 150 | 4,000 m | | :. | | | :. | -,% |
 
-Based on these results, we conclude that changing the *naturalDeceleration*, and thus excluding more of the unjustly included flanks of the recovery phase, does not change the dragfactor significantly enough to influence the outcome. This suggests that the dragfactor calculation is sufficiently robust against these outliers and ignores them. As we can reasobly exclude any other sources of systematic deviation, we conclude we need to adjust the *flywheel inertia* to 0.1015 kg/m<sup>2</sup>.
+Based on these results, we conclude that changing the *naturalDeceleration*, and thus excluding more of the unjustly included flanks of the recovery phase, does not change the dragfactor significantly enough to influence the outcome. This suggests that the dragfactor calculation is sufficiently robust against these outliers and is capable of ignoring them. As we can reasobly exclude any other sources of systematic deviation, we conclude the *flywheel inertia* used is 0.1015 kg/m<sup>2</sup>.
 
 ### Validation of the linear speed caclulation
 
