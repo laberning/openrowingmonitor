@@ -44,6 +44,7 @@ export function createRowingGames (rootComponent, clientWidth, clientHeight) {
   k.scene('strokeFighterBattle', (args) => { activeScene = StrokeFighterBattleScene(k, args) })
   k.scene('strokeFighterStart', (args) => { activeScene = StrokeFighterStartScene(k, args) })
   k.scene('strokeFighterEnd', (args) => { activeScene = StrokeFighterEndScene(k, args) })
+  k.scene('disposed', () => { activeScene = undefined })
 
   k.go('strokeFighterStart')
 
@@ -59,6 +60,8 @@ export function createRowingGames (rootComponent, clientWidth, clientHeight) {
    * clean up the game resources
    */
   function dispose () {
+    // k.quit does not seem to end the game 'yet', so we move to an empty scene to stop all events...
+    k.go('disposed')
     k.quit()
   }
 

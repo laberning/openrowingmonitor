@@ -14,8 +14,6 @@ import addSpaceBackground from './SpaceBackground.js'
 export default function StrokeFighterBattleScene (k, args) {
   // how much stroke power is needed to fire high power lasers
   const THRESHOLD_POWER = 180
-  // training duration in seconds
-  const TARGET_TIME = 10 * 60
   // strokes per minute at start of training
   const SPM_START = 18
   // strokes per minute at end of training
@@ -39,6 +37,8 @@ export default function StrokeFighterBattleScene (k, args) {
   ]
 
   let trainingTime = args?.trainingTime || 0
+  // training duration in seconds
+  const targetTime = args?.targetTime || 10 * 60
   let playerLifes = args?.gameState === 'LOST' ? 0 : args?.playerLifes ? args?.playerLifes : PLAYER_LIFES
 
   const ui = k.add([
@@ -131,6 +131,7 @@ export default function StrokeFighterBattleScene (k, args) {
       if (args?.gameState === 'WON') {
         k.go('strokeFighterEnd', {
           trainingTime,
+          targetTime,
           gameState: 'WON',
           overtimePossible: false
         })
@@ -138,6 +139,7 @@ export default function StrokeFighterBattleScene (k, args) {
       } else {
         k.go('strokeFighterEnd', {
           trainingTime,
+          targetTime,
           gameState: 'LOST',
           overtimePossible: true
         })
@@ -269,13 +271,15 @@ export default function StrokeFighterBattleScene (k, args) {
     trainingTime += k.dt()
     const newTrainingTimeRounded = Math.round(trainingTime)
     if (trainingTimeRounded !== newTrainingTimeRounded) {
-      timer.text = `${secondsToTimeString(newTrainingTimeRounded)} / ${k.debug.fps()}fps`
+      const time = newTrainingTimeRounded >= targetTime ? newTrainingTimeRounded : targetTime - newTrainingTimeRounded
+      timer.text = `${secondsToTimeString(time)} / ${k.debug.fps()}fps`
       trainingTimeRounded = newTrainingTimeRounded
-      if (trainingTimeRounded >= TARGET_TIME) {
+      if (newTrainingTimeRounded >= targetTime) {
         // if we already lost the game before, go back to loose message without possibility for overtime
         if (args?.gameState === 'LOST') {
           k.go('strokeFighterEnd', {
             trainingTime,
+            targetTime,
             playerLifes,
             gameState: 'LOST',
             overtimePossible: false
@@ -285,6 +289,7 @@ export default function StrokeFighterBattleScene (k, args) {
         if (!(args?.gameState)) {
           k.go('strokeFighterEnd', {
             trainingTime,
+            targetTime,
             playerLifes,
             gameState: 'WON',
             overtimePossible: true
@@ -355,7 +360,7 @@ export default function StrokeFighterBattleScene (k, args) {
   }
 
   function scheduleNextEnemy () {
-    const percentTrainingFinished = trainingTime / TARGET_TIME
+    const percentTrainingFinished = trainingTime / targetTime
     // linearly increase the SPM over time
     let currentSPM = SPM_START + (SPM_END - SPM_START) * percentTrainingFinished
     let maxEnemyHealth = 1

@@ -6,9 +6,10 @@
 */
 
 import addSpaceBackground from './SpaceBackground.js'
+import { addButton } from './arcadeHelper.js'
 
 /**
- * Creates the main scene of Stroke Fighter
+ * Creates the start screen scene of Stroke Fighter
  * @param {import('kaboom').KaboomCtx} k Kaboom Context
  */
 export default function StrokeFighterStartScene (k, args) {
@@ -20,7 +21,64 @@ export default function StrokeFighterStartScene (k, args) {
     k.origin('center')
   ])
 
-  const shipsPos = k.vec2(520, 240)
+  const GAME_DURATION_OPTIONS = [3, 5, 10, 15, 20, 30]
+  let selectedGameDuration = 1
+
+  const selectorPos = k.vec2(150, 140)
+
+  k.add([
+    k.text('time:', { size: 28 }),
+    k.pos(selectorPos),
+    k.origin('center')
+  ])
+
+  addButton({
+    k,
+    pos: selectorPos.add(100, 0),
+    width: 60,
+    height: 48,
+    text: '-',
+    textOptions: { size: 28 },
+    onClick: () => {
+      selectedGameDuration = Math.max(selectedGameDuration - 1, 0)
+      durationSelectorText.text = displayTime(selectedGameDuration)
+    }
+  })
+
+  const durationSelectorText = k.add([
+    k.text(displayTime(selectedGameDuration), { size: 28 }),
+    k.pos(selectorPos.add(168, 0)),
+    k.origin('center')
+  ])
+
+  addButton({
+    k,
+    pos: selectorPos.add(230, 0),
+    width: 60,
+    height: 48,
+    text: '+',
+    textOptions: { size: 28 },
+    onClick: () => {
+      selectedGameDuration = Math.min(selectedGameDuration + 1, GAME_DURATION_OPTIONS.length - 1)
+      durationSelectorText.text = displayTime(selectedGameDuration)
+    }
+  })
+
+  k.add([
+    k.text('minutes', { size: 28 }),
+    k.pos(selectorPos.add(280, 0)),
+    k.origin('left')
+  ])
+
+  function displayTime (option) {
+    let time = GAME_DURATION_OPTIONS[option].toString()
+    if (time.length === 1) {
+      time = '0' + time
+    }
+    return time
+  }
+
+  const shipsPos = k.vec2(550, 280)
   const ship1 = k.add([
     k.sprite('playerShip'),
     k.scale(0.5),
@@ -48,7 +106,7 @@ export default function StrokeFighterStartScene (k, args) {
   addBullet(ship3.pos.sub(20, 40))
   addBullet(ship3.pos.sub(-20, 40))
 
-  const explainPos = k.vec2(60, 240)
+  const explainPos = k.vec2(90, 280)
   k.add([
     k.text('light stroke = ', { size: 28 }),
     k.pos(explainPos),
@@ -99,7 +157,7 @@ export default function StrokeFighterStartScene (k, args) {
   }
 
   function driveFinished (metrics) {
-    k.go('strokeFighterBattle')
+    k.go('strokeFighterBattle', { targetTime: GAME_DURATION_OPTIONS[selectedGameDuration] * 60 })
   }
 
   return {
