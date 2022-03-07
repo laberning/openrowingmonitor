@@ -244,7 +244,7 @@ To assess the useability, we simulate the effects of the 21 rowing sessions with
 
 Based on this we conclude that the ORM2f algorithm combined with the requirement that r<sup>2</sup> needs to be above 0.84 is the most optimal solution: it filters enough noise to surpress outliers but the remaining valid dragfactors are frequent enough to allow a good pickup early in the rowing session.
 
-Next, we test the value of *DragfactorSmoothing* for its optimal setting: 
+Next, we test the value of *DragfactorSmoothing* for its optimal setting:
 
 | Minimal r<sup>2</sup> | Drag smoothing | Min | Avg | Max | SD | Average first valid stroke | Valid drag calculations | Number of rowing sessions with over 75% validity |
 | :-- | --: | --: | --: | --: | --: | --: | --: | --: |
