@@ -197,6 +197,7 @@ ORM2f frequently outperforms ORM1f, especially when it comes to spread and outli
 Having chosen ORM2f as our base algorithm, our next step is a further optimisation of these settings. Our initial experiments were based on a r<sup>2</sup> needs to be above 0.93 before a dragfactor was accepted. Having collected the underlying data of rowing sessions 7 to 27, and having selected an algorithm, we now can further optimise the settings. Here we try to optimise the settings, with the explicit goal to reduce the overall standard deviation and accuracy of the prediction, while trying to avoid a specific caveat. The caveat would be to set the r<sup>2</sup> very high, resulting in a static dragfactor as all calculated factors would be rejected. Therefore we explicitly explore the lower values of r<sup>2</sup>, to see if those values also produce robust and reliable results.
 
 To assess the useability, we simulate the effects of the 21 rowing sessions with the different settings of r<sup>2</sup> in Excel, based on the raw data collected during these rowing sessions. This allows us to assess the relative negative deviation, the average and relative positive deviation, the standard deviation, the first stroke where a valid value is used, the percentage of valid dragfactors and the number of rowing sessions where at least 75% of the strokes is valid. This leads to the following results:
+
 | Minimal r<sup>2</sup> | Min | Avg | Max | SD | Average first valid stroke | Valid drag calculations | Number of rowing sessions with over 75% validity |
 | :-- | --: | --: | --: | --: | --: | --: | --: |
 | 0.95 | -1.39% | -0.26% | 1.25% | 0.5481 | 15 | 70.25% | 11 |
@@ -243,6 +244,8 @@ To assess the useability, we simulate the effects of the 21 rowing sessions with
 
 Based on this we conclude that the ORM2f algorithm combined with the requirement that r<sup>2</sup> needs to be above 0.84 is the most optimal solution: it filters enough noise to surpress outliers but the remaining valid dragfactors are frequent enough to allow a good pickup early in the rowing session.
 
+Next, we test the value of *DragfactorSmoothing* for its optimal setting: 
+
 | Minimal r<sup>2</sup> | Drag smoothing | Min | Avg | Max | SD | Average first valid stroke | Valid drag calculations | Number of rowing sessions with over 75% validity |
 | :-- | --: | --: | --: | --: | --: | --: | --: | --: |
 | 0.84 | 1 | -1.78% | -0.26% | 2.64% | 0.6033 | 1 | 90.49% | 21 |
@@ -252,7 +255,9 @@ Based on this we conclude that the ORM2f algorithm combined with the requirement
 | 0.84 | 5 | -1.09% | -0.25% | 1.70% | 0.3745 | 1 | 90.49% | 21 |
 | 0.84 | 6 | -1.05% | -0.25% | 1.70% | 0.3603 | 1 | 90.49% | 21 |
 
-Based on this, we conclude that the ORM2f algorithm combined with the requirement that r<sup>2</sup> needs to be above 0.84, with a running average of 6 strokes would produce the best results. Increasing the running average further might further improve the stability of the dragfactor, but this hasn't been applied in this test due to practical limitations. Applying these settings to the sessions, leads to the following (simulated) results:
+Based on this, we conclude that the ORM2f algorithm combined with the requirement that r<sup>2</sup> needs to be above 0.84, with a running average of 6 strokes would produce the best results. Increasing the running average further might further improve the stability of the dragfactor, but this hasn't been applied in this test due to practical limitations. We do note that Concept2 seems to have used a smoothing of around 15 strokes in the PM2, and later moved to not use any smoothing at all (as suggested by [[19]](#19))). We maintain the running average of 6 as we fear instability in readings might hurt further analysis. At a later stage, we can validate the effects of setting DragfactorSmoothing to 1 on the real-life results.
+
+Applying these settings to the sessions, leads to the following (simulated) results:
 
 | Test | Strokes | PM5 Min Drag | PM5 Modus Drag | PM5 Max Drag | ORM2f Min Drag | ORM2f Avg. Drag | ORM2f Max Drag | ORM2f Drag SD | Stroke with first valid Dragfactor | Percentage strokes with valid dragfactors |
 | :-: | --: | --: |--: | --: | --: | --: | --: | --: | --: | --: |
@@ -481,6 +486,8 @@ We were only capable of testing the measurements with a singular recreational ro
 <a id="17">[17]</a> Wikipedia, Linear regression <https://en.wikipedia.org/wiki/Linear_regression>
 
 <a id="18">[18]</a> Wikipedia, Robust regression <https://en.wikipedia.org/wiki/Robust_regression>
+
+<a id="19">[19]</a> Erg Tricks and Hammers <https://books.google.pl/books?id=ZEcEAAAAMBAJ&lpg=PT6&ots=Cbv-iPB3N2&pg=PT6&redir_esc=y#v=onepage&q&f=false>
 
 ## Notes
 
