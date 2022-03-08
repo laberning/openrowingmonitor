@@ -23,6 +23,10 @@ export class DashboardActions extends AppElement {
           display: none;
         }
 
+        .icon {
+          height: 1.7em;
+        }
+
         .peripheral-mode {
           font-size: 80%;
         }
@@ -120,15 +124,14 @@ export class DashboardActions extends AppElement {
   }
 
   uploadTraining () {
-    const dialogClosed = (event: any) => {
+    const uploadDialogClosed = (event: any) => {
       this.dialog = undefined
       if (event.detail === 'confirm') {
         this.sendEvent('triggerAction', { command: 'uploadTraining' })
       }
     }
-
     this.dialog = html`
-      <app-dialog @close=${dialogClosed}>
+      <app-dialog @close=${uploadDialogClosed}>
         <legend>${icon_upload}<br/>Upload to Strava?</legend>
         <p>Do you want to finish your workout and upload it to Strava?</p>
       </app-dialog>
@@ -136,15 +139,15 @@ export class DashboardActions extends AppElement {
   }
 
   shutdown () {
-    const dialogClosed = (event: any) => {
+    const shutdownDialogClosed = (event: any) => {
+      console.log('close shutdown')
       this.dialog = undefined
       if (event.detail === 'confirm') {
         this.sendEvent('triggerAction', { command: 'shutdown' })
       }
     }
-
     this.dialog = html`
-      <app-dialog @close=${dialogClosed}>
+      <app-dialog @close=${shutdownDialogClosed}>
         <legend>${icon_poweroff}<br/>Shutdown Open Rowing Monitor?</legend>
         <p>Do you want to shutdown the device?</p>
       </app-dialog>

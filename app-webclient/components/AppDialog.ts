@@ -57,9 +57,6 @@ export class AppDialog extends AppElement {
     ]
   }
 
-  @property({ type: Boolean, reflect: true })
-    dialogOpen: boolean = false
-
   render () {
     return html`
     <dialog ${ref(this.dialog)} @close=${this.close}>
@@ -87,17 +84,5 @@ export class AppDialog extends AppElement {
   firstUpdated () {
     // @ts-ignore
     this.dialog.value.showModal()
-  }
-
-  updated (changedProperties: Map<string, object>) {
-    if (changedProperties.has('dialogOpen')) {
-      if (this.dialogOpen) {
-        // @ts-ignore
-        this.dialog.value.showModal()
-      } else {
-        // @ts-ignore
-        this.dialog.value.close()
-      }
-    }
   }
 }
