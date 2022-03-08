@@ -80,7 +80,7 @@ function createRowingEngine (rowerSettings) {
           cyclePhase = 'Recovery'
         } else {
           // We seem to have lost power to the flywheel, but it is too early according to the settings. We stay in the Drive Phase
-          log.debug(`Time: ${totalTime.toFixed(4)} sec, impuls ${totalNumberOfImpulses}: flank suggests no power (${flankDetector.accelerationAtBeginOfFlank().toFixed(1)} rad/s2), but waiting for for recoveryPhaseLength (${recoveryPhaseLength.toFixed(4)} sec) to exceed minimumRecoveryTime (${rowerSettings.minimumRecoveryTime} sec)`)
+          log.debug(`Time: ${totalTime.toFixed(4)} sec, impulse ${totalNumberOfImpulses}: flank suggests no power (${flankDetector.accelerationAtBeginOfFlank().toFixed(1)} rad/s2), but waiting for for recoveryPhaseLength (${recoveryPhaseLength.toFixed(4)} sec) to exceed minimumRecoveryTime (${rowerSettings.minimumRecoveryTime} sec)`)
           updateDrivePhase(currentDt)
         }
       } else {
@@ -99,7 +99,7 @@ function createRowingEngine (rowerSettings) {
           cyclePhase = 'Drive'
         } else {
           // We see a force, but the "Recovery" phase has been too short, we stay in the "Recovery" phase
-          log.debug(`Time: ${totalTime.toFixed(4)} sec, impuls ${totalNumberOfImpulses}: flank suggests power (${flankDetector.accelerationAtBeginOfFlank().toFixed(1)} rad/s2), but waiting for recoveryPhaseLength (${recoveryPhaseLength.toFixed(4)} sec) to exceed minimumRecoveryTime (${rowerSettings.minimumRecoveryTime} sec)`)
+          log.debug(`Time: ${totalTime.toFixed(4)} sec, impulse ${totalNumberOfImpulses}: flank suggests power (${flankDetector.accelerationAtBeginOfFlank().toFixed(1)} rad/s2), but waiting for recoveryPhaseLength (${recoveryPhaseLength.toFixed(4)} sec) to exceed minimumRecoveryTime (${rowerSettings.minimumRecoveryTime} sec)`)
           updateRecoveryPhase(currentDt)
         }
       } else {
@@ -118,7 +118,7 @@ function createRowingEngine (rowerSettings) {
     } else {
       log.debug(`CycleLength isn't plausible: recoveryPhaseLength ${recoveryPhaseLength.toFixed(4)} sec, drivePhaseLength = ${drivePhaseLength.toFixed(4)} s, maximumImpulseTimeBeforePause ${rowerSettings.maximumImpulseTimeBeforePause} s`)
     }
-    recoveryPhaseAngularDisplacement = (totalNumberOfImpulses - recoveryPhaseStartAngularDisplacement) * angularDisplacementPerImpulse
+    recoveryPhaseAngularDisplacement = ((totalNumberOfImpulses - flankDetector.noImpulsesToBeginFlank()) - recoveryPhaseStartAngularDisplacement) * angularDisplacementPerImpulse
 
     // Calculation of the drag-factor
     if (flankDetector.impulseLengthAtBeginFlank() > 0) {
@@ -135,7 +135,7 @@ function createRowingEngine (rowerSettings) {
           } else {
             // The calculated drag factor is outside the plausible range
             log.info(`Calculated drag factor: ${(currentDragFactor * 1000000).toFixed(2)}, which is too far off the currently used dragfactor of ${movingDragAverage.getAverage() * 1000000}`)
-            log.debug(`Time: ${totalTime.toFixed(4)} sec, impuls ${totalNumberOfImpulses}: recoveryStartAngularVelocity = ${recoveryStartAngularVelocity.toFixed(2)} rad/sec, recoveryEndAngularVelocity = ${recoveryEndAngularVelocity.toFixed(2)} rad/sec, recoveryPhaseLength = ${recoveryPhaseLength.toFixed(4)} sec`)
+            log.debug(`Time: ${totalTime.toFixed(4)} sec, impulse ${totalNumberOfImpulses}: recoveryStartAngularVelocity = ${recoveryStartAngularVelocity.toFixed(2)} rad/sec, recoveryEndAngularVelocity = ${recoveryEndAngularVelocity.toFixed(2)} rad/sec, recoveryPhaseLength = ${recoveryPhaseLength.toFixed(4)} sec`)
             if (currentDragFactor < (movingDragAverage.getAverage() * dragFactorMaxDownwardChange)) {
               // The current calculated dragfactor makes an abrupt downward change, let's follow the direction, but limit it to the maximum allowed change
               movingDragAverage.pushValue(movingDragAverage.getAverage() * dragFactorMaxDownwardChange)
@@ -150,10 +150,10 @@ function createRowingEngine (rowerSettings) {
           log.info(`*** Calculated drag factor: ${(currentDragFactor * 1000000).toFixed(2)}`)
         }
       } else {
-        log.error(`Time: ${totalTime.toFixed(4)} sec, impuls ${totalNumberOfImpulses}: division by 0 prevented, recoveryPhaseLength = ${recoveryPhaseLength} sec, recoveryStartAngularVelocity = ${recoveryStartAngularVelocity} rad/sec, recoveryEndAngularVelocity = ${recoveryEndAngularVelocity} rad/sec`)
+        log.error(`Time: ${totalTime.toFixed(4)} sec, impulse ${totalNumberOfImpulses}: division by 0 prevented, recoveryPhaseLength = ${recoveryPhaseLength} sec, recoveryStartAngularVelocity = ${recoveryStartAngularVelocity} rad/sec, recoveryEndAngularVelocity = ${recoveryEndAngularVelocity} rad/sec`)
       }
     } else {
-      log.error(`Time: ${totalTime.toFixed(4)} sec, impuls ${totalNumberOfImpulses}: division by 0 prevented, impulseLengthAtBeginFlank = ${flankDetector.impulseLengthAtBeginFlank()} sec`)
+      log.error(`Time: ${totalTime.toFixed(4)} sec, impulse ${totalNumberOfImpulses}: division by 0 prevented, impulseLengthAtBeginFlank = ${flankDetector.impulseLengthAtBeginFlank()} sec`)
     }
 
     // Calculate the key metrics
@@ -164,7 +164,7 @@ function createRowingEngine (rowerSettings) {
     averagedCyclePower = calculateCyclePower()
 
     // Next, we start the "Drive" Phase
-    log.debug(`*** DRIVE phase started at time: ${totalTime.toFixed(4)} sec, impuls number ${totalNumberOfImpulses}`)
+    log.debug(`*** DRIVE phase started at time: ${totalTime.toFixed(4)} sec, impulse number ${totalNumberOfImpulses}`)
     strokeNumber++
     drivePhaseStartTime = totalTime - flankDetector.timeToBeginOfFlank()
     drivePhaseStartAngularDisplacement = totalNumberOfImpulses - flankDetector.noImpulsesToBeginFlank()
@@ -277,7 +277,7 @@ function createRowingEngine (rowerSettings) {
       // There is no division by zero and the data data is plausible
       cyclePower = dragFactor * Math.pow((recoveryPhaseAngularDisplacement + drivePhaseAngularDisplacement) / cycleLength, 3.0)
     } else {
-      log.error(`Time: ${totalTime.toFixed(4)} sec, impuls ${totalNumberOfImpulses}: cycle length was not plausible, CycleLength = ${cycleLength} sec`)
+      log.error(`Time: ${totalTime.toFixed(4)} sec, impulse ${totalNumberOfImpulses}: cycle length was not plausible, CycleLength = ${cycleLength} sec`)
     }
     return cyclePower
   }
