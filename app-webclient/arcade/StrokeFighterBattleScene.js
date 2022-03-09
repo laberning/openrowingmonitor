@@ -20,10 +20,10 @@ export default function StrokeFighterBattleScene (k, args) {
   const SPM_END = 28
   const BULLET_SPEED = 1200
   const ENEMY_SPEED = 50
-  const PLAYER_SPEED = 500
-  const PLAYER_ACCELERATION = 500
+  const PLAYER_SPEED = 600
+  const PLAYER_ACCELERATION = 600
   const PLAYER_LIFES = 3
-  const SPRITE_WIDTH = 90
+  const SPRITE_WIDTH = 100
   const ENEMIES = [
     { sprite: 'enemyLight1', health: 1 },
     { sprite: 'enemyLight2', health: 1 },
@@ -148,12 +148,12 @@ export default function StrokeFighterBattleScene (k, args) {
   })
 
   player.onUpdate(() => {
-    const tolerance = 0
+    const tolerance = 3
     const closestEnemy = k.get('enemy').reduce((prev, enemy) => { return enemy?.pos.y > prev?.pos.y ? enemy : prev }, { pos: { y: 0 } })
     if (closestEnemy?.pos?.x) {
       const distance = closestEnemy.pos.x - player.pos.x
       // distance in pixel to stop the spaceship with full break throttle
-      const stopDistance = Math.pow(player.speed, 2) / (2 * PLAYER_ACCELERATION) * (player.speed < 0 ? -1.1 : 1.1)
+      const stopDistance = Math.pow(player.speed, 2) / (2 * PLAYER_ACCELERATION) * (player.speed < 0 ? -1.3 : 1.3)
       // if we are on the left side of enemy
       if (closestEnemy.pos.x > player.pos.x + tolerance) {
         if (distance > stopDistance) { accelerateRight() } else { accelerateLeft() }
@@ -229,19 +229,6 @@ export default function StrokeFighterBattleScene (k, args) {
     })
   }
 
-  function spawnEnemy (enemy) {
-    k.add([
-      k.sprite(enemy.sprite),
-      k.scale(0.5),
-      k.area(),
-      k.pos(k.rand(0 + SPRITE_WIDTH / 2, k.width() - SPRITE_WIDTH / 2), 0),
-      k.health(enemy.health),
-      k.origin('bot'),
-      'enemy',
-      { speed: k.rand(ENEMY_SPEED * 0.8, ENEMY_SPEED * 1.2) }
-    ])
-  }
-
   k.on('death', 'enemy', (enemy) => {
     k.destroy(enemy)
     k.every('bullet', (bullet) => {
@@ -261,8 +248,8 @@ export default function StrokeFighterBattleScene (k, args) {
   })
 
   const timer = ui.add([
-    k.text('00:00', { size: 25 }),
-    k.pos(10, 10),
+    k.text('', { size: 30 }),
+    k.pos(10, k.height() - 27),
     k.fixed()
   ])
 
@@ -272,7 +259,7 @@ export default function StrokeFighterBattleScene (k, args) {
     const newTrainingTimeRounded = Math.round(trainingTime)
     if (trainingTimeRounded !== newTrainingTimeRounded) {
       const time = newTrainingTimeRounded >= targetTime ? newTrainingTimeRounded : targetTime - newTrainingTimeRounded
-      timer.text = `${secondsToTimeString(time)} / ${k.debug.fps()}fps`
+      timer.text = secondsToTimeString(time)
       trainingTimeRounded = newTrainingTimeRounded
       if (newTrainingTimeRounded >= targetTime) {
         // if we already lost the game before, go back to loose message without possibility for overtime
@@ -307,7 +294,7 @@ export default function StrokeFighterBattleScene (k, args) {
       k.add([
         k.sprite('playerLife'),
         k.scale(0.5),
-        k.pos(k.width() - i * 40, 10),
+        k.pos(k.width() - i * 40, k.height() - 27),
         k.z(100),
         'playerLife'
       ])
@@ -359,10 +346,33 @@ export default function StrokeFighterBattleScene (k, args) {
     }
   }
 
+  function spawnEnemy (enemyType) {
+    // prevent enenmies from spawning above each other by defining a prohibited spawn area
+    const closestEnemy = k.get('enemy').reduce((prev, enemy) => { return enemy?.pos.y < prev?.pos.y ? enemy : prev }, { pos: { y: k.height() } })
+    let closestEnemyRangeX = [0, 0]
+    if (closestEnemy?.pos?.x) {
+      closestEnemyRangeX = [closestEnemy.pos.x - closestEnemy.width / 2, closestEnemy.pos.x + closestEnemy.width / 2]
+    }
+    const prohibitedRange = [Math.max(closestEnemyRangeX[0], 0), Math.min(closestEnemyRangeX[1], k.width())]
+    const prohibitedWidth = prohibitedRange[1] - prohibitedRange[0]
+
+    let posX = k.rand(0 + SPRITE_WIDTH / 2, k.width() - prohibitedWidth - SPRITE_WIDTH / 2)
+    if (posX > prohibitedRange[0]) posX += prohibitedWidth
+
+    k.add([
+      k.sprite(enemyType.sprite),
+      k.scale(0.5),
+      k.area(),
+      k.pos(posX, 0),
+      k.health(enemyType.health),
+      k.origin('bot'),
+      'enemy',
+      { speed: k.rand(ENEMY_SPEED * 0.8, ENEMY_SPEED * 1.2) }
+    ])
+  }
+
   function scheduleNextEnemy () {
     const percentTrainingFinished = trainingTime / targetTime
-    // linearly increase the SPM over time
-    let currentSPM = SPM_START + (SPM_END - SPM_START) * percentTrainingFinished
     let maxEnemyHealth = 1
     let minEnemyHealth = 1
     if (percentTrainingFinished < 0.4) {
@@ -374,15 +384,21 @@ export default function StrokeFighterBattleScene (k, args) {
     }
     // insane mode (keep on rowing after winning)
     if (percentTrainingFinished > 1) {
-      // cap SPM at 20% above SPM_END (for insane mode)
-      currentSPM = Math.max(currentSPM, SPM_END * 1.2)
       minEnemyHealth = 2
       if (percentTrainingFinished > 1.3) {
         minEnemyHealth = 3
       }
     }
     spawnEnemy(k.choose(ENEMIES.filter((enemy) => enemy.health >= minEnemyHealth && enemy.health <= maxEnemyHealth)))
-    k.wait(60 / currentSPM, scheduleNextEnemy)
+    k.wait(60 / currentSPM(), scheduleNextEnemy)
+  }
+
+  function currentSPM () {
+    const percentTrainingFinished = trainingTime / targetTime
+    // linearly increase the SPM over time
+    const currentSPM = SPM_START + (SPM_END - SPM_START) * percentTrainingFinished
+    // cap SPM at 20% above SPM_END (for insane mode)
+    return Math.min(currentSPM, SPM_END * 1.2)
   }
 
   drawPlayerLifes()

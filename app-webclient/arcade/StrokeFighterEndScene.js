@@ -6,7 +6,7 @@
 */
 
 import addSpaceBackground from './SpaceBackground.js'
-import { addButton } from './arcadeHelper.js'
+import { addButton, createRowingDetector } from './arcadeHelper.js'
 
 /**
  * Creates the game over screen scene of Storke Fighter
@@ -67,29 +67,16 @@ export default function StrokeFighterEndScene (k, args) {
     }
   }
 
-  let motionDetectionEnabled = false
+  let appState
   if (args?.overtimePossible) {
-    k.wait(5, () => {
-      motionDetectionEnabled = true
-    })
-  }
+    const rowingDetector = createRowingDetector(5000, driveFinished)
 
-  let lastStrokeState = 'DRIVING'
-  function appState (appState) {
-    if (!motionDetectionEnabled) {
-      return
+    appState = function (appState) {
+      rowingDetector.appState(appState)
     }
-    if (appState?.metrics.strokeState === undefined) {
-      return
+    function driveFinished (metrics) {
+      k.go('strokeFighterBattle', args)
     }
-    if (lastStrokeState === 'DRIVING' && appState.metrics.strokeState === 'RECOVERY') {
-      driveFinished(appState.metrics)
-    }
-    lastStrokeState = appState.metrics.strokeState
-  }
-
-  function driveFinished (metrics) {
-    k.go('strokeFighterBattle', args)
   }
 
   return {

@@ -98,10 +98,6 @@ export class GameComponent extends AppElement {
           ${metrics?.heartrate
             ? html`<div>${icon_heartbeat}${metricValue(metrics, 'heartrate')}<span class="metric-unit">bpm</span></div>`
             : ''}
-          <div>${icon_bolt}${metricValue(metrics, 'instantaneousTorque')}<span class="metric-unit">trq</span></div>
-          <div>${icon_bolt}${metricValue(metrics, 'powerRatio')}<span class="metric-unit">ratio</span></div>
-          <div>${icon_bolt}${metricValue(metrics, 'strokeState')}</div>
-
           <div id='buttons'>
             <button @click=${this.openDashboard}>${icon_exit}</button>
           </div>

@@ -6,7 +6,7 @@
 */
 
 import addSpaceBackground from './SpaceBackground.js'
-import { addButton } from './arcadeHelper.js'
+import { addButton, createRowingDetector } from './arcadeHelper.js'
 
 /**
  * Creates the start screen scene of Stroke Fighter
@@ -35,8 +35,8 @@ export default function StrokeFighterStartScene (k, args) {
   addButton({
     k,
     pos: selectorPos.add(100, 0),
-    width: 60,
-    height: 48,
+    width: 66,
+    height: 54,
     text: '-',
     textOptions: { size: 28 },
     onClick: () => {
@@ -54,8 +54,8 @@ export default function StrokeFighterStartScene (k, args) {
   addButton({
     k,
     pos: selectorPos.add(230, 0),
-    width: 60,
-    height: 48,
+    width: 66,
+    height: 54,
     text: '+',
     textOptions: { size: 28 },
     onClick: () => {
@@ -138,22 +138,10 @@ export default function StrokeFighterStartScene (k, args) {
     k.origin('center')
   ])
 
-  let motionDetectionEnabled = false
-  k.wait(5, () => {
-    motionDetectionEnabled = true
-  })
-  let lastStrokeState = 'DRIVING'
+  const rowingDetector = createRowingDetector(5000, driveFinished)
+
   function appState (appState) {
-    if (!motionDetectionEnabled) {
-      return
-    }
-    if (appState?.metrics.strokeState === undefined) {
-      return
-    }
-    if (lastStrokeState === 'DRIVING' && appState.metrics.strokeState === 'RECOVERY') {
-      driveFinished(appState.metrics)
-    }
-    lastStrokeState = appState.metrics.strokeState
+    rowingDetector.appState(appState)
   }
 
   function driveFinished (metrics) {
