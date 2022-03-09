@@ -95,15 +95,15 @@ export default {
   WRX700: {
     numOfImpulsesPerRevolution: 2,
     naturalDeceleration: -5.0,
-    flywheelInertia: 0.45,
-    dragFactor: 22000
+    flywheelInertia: 0.72,
+    dragFactor: 32000
   },
 
   // DKN R-320 Air Rower
   DKNR320: {
     numOfImpulsesPerRevolution: 1,
-    flywheelInertia: 0.41,
-    dragFactor: 4000
+    flywheelInertia: 0.94,
+    dragFactor: 8522
   },
 
   // NordicTrack RX800 Air Rower
@@ -151,8 +151,8 @@ export default {
     naturalDeceleration: -8.6, // perfect runs IIIXI
     minimumDriveTime: 0.28,
     minimumRecoveryTime: 0.90,
-    flywheelInertia: 0.131,
-    dragFactor: 310
+    flywheelInertia: 0.189,
+    dragFactor: 460
     //
 
     /* Damper setting 4
