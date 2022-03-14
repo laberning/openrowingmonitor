@@ -490,6 +490,6 @@ We were only capable of testing the measurements with a singular recreational ro
 
 ## Notes
 
-The numbering is based on a series of rowing sessions. Due to a bug discovered in the RowingEngine of OpenRowingMonitor 0.8.2, several test-results were invalidated and thus removed from these overviews. To retain traceability, tests have not been renumbered.
+The numbering is based on a series of rowing sessions. Due to a bug discovered in the RowingEngine of OpenRowingMonitor 0.8.2, several test-results were invalidated and thus removed from these overviews. To retain traceability, but keep results readable, these tests have not been excluded but the valid tests not renumbered.
 
 With **Drag poisoning** we mean that by including a noisy *currentDt* reading in the drag calculation, it spikes to unrealistic values, throwing off the speed, power and other metric estimation for several strokes.
