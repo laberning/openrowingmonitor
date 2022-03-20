@@ -407,7 +407,7 @@ We start with investigating the effects of *naturalDeceleration* being set below
 | 55 | 130 | 2,000 m | | :. | | | :. | -,% |
 | 56 | 150 | 500 m | | :. | | | :. | -,% |
 
-Chaning the *dragfactorSmoothing* from the original 6 strokes to 1 (as suggested by [[19]](#19))). This leads to the following results:
+When we change the *dragfactorSmoothing* from the original 6 strokes to 1 (as suggested by [[19]](#19))), while resetting the *naturalDeceleration* to 0. This leads to the following results:
 
 | Test | Drag factor | Target distance | #strokes on PM5| Result on PM5 | Modified Base algorithm result | Deviation |
 | :-: | --: | --: | --: | --: | --: | --: |
