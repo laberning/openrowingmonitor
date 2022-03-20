@@ -379,6 +379,7 @@ The systematic deviation of -0,47% can be explained in several ways:
 * To include/exclude the last two explanations, we replay the raw data from the rowing sessions with identical settings, except the settings mentioned
 
 We start with investigating the effects of *naturalDeceleration* being set below zero. There is no deterministic way to determine the *naturalDeceleration*: we determine it by increasing it in small steps until the stroke detection begins to break down, an indication that the detection is too rigid. These simulations have the following result:
+
 | Test | Drag factor | Target distance | #strokes on PM5| Result on PM5 | Natural Deceleration | #strokes on ORM | Base algorithm result | Base algorithm Deviation |
 | :-: | --: | --: | --: | --: | --: |--: | --: | --: |
 | 32 | 70 | 4,000 m | 441 | 17:31.3 | -1.16 | 443 | 17:36.4 | -0.49% |
@@ -407,8 +408,9 @@ We start with investigating the effects of *naturalDeceleration* being set below
 | 56 | 150 | 500 m | | :. | | | :. | -,% |
 
 Chaning the *dragfactorSmoothing* from the original 6 strokes to 1 (as suggested by [[19]](#19))). This leads to the following results:
-| Test | Drag factor | Target distance | #strokes on PM5| Result on PM5 | Base algorithm result | Base algorithm Deviation |
-| :-: | --: | --: | --: | --: | --: |--: | --: | --: |
+
+| Test | Drag factor | Target distance | #strokes on PM5| Result on PM5 | Modified Base algorithm result | Deviation |
+| :-: | --: | --: | --: | --: | --: | --: |
 | 32 | 70 | 4,000 m | 441 | 17:31.3 | :. | -,% |
 | 33 | 122 | 6,000 m | 606 | 25:44.8 | :. | -,% |
 | 34 | 112 | 10,000 m | 1051 | 43:08.2 | :. | -,% |
