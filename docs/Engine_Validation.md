@@ -381,7 +381,7 @@ The systematic deviation of -0,47% can be explained in several ways:
 We start with investigating the effects of *naturalDeceleration* being set below zero. There is no deterministic way to determine the *naturalDeceleration*: we normally determine it by increasing it in small steps until the stroke detection begins to break down, an indication that the detection is too rigid. Tuning this setting in a reliable way requires a lot of tests per specific dragfactor, which we consider infeasible at this specific moment. Therefore, we simulate *naturalDeceleration*'s effect by delaying the determination of the dragfactor by 0.4 seconds, and allowing it to last 1.0 seconds, an approach also used by [[8]](#8). This guarantees that the flanks are excluded, while retaining the flank of the recovery. These simulations have the following result:
 
 | Test | Drag factor | Target distance | #strokes on PM5| Result on PM5 | Modified Base algorithm result | Base algorithm Deviation |
-| :-: | --: | --: | --: | --: | --: |--: | --: | --: |
+| :-: | --: | --: | --: |--: | --: | --: |
 | 32 | 70 | 4,000 m | 441 | 17:31.3 | 17:36.4 | -0.49% |
 | 33 | 122 | 6,000 m | 606 | 25:44.8 | :. | -,% |
 | 34 | 112 | 10,000 m | 1051 | 43:08.2 | :. | -,% |
