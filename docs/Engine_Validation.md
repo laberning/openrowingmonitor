@@ -378,34 +378,34 @@ The systematic deviation of -0,47% can be explained in several ways:
 * The last explanation is Concept2 using no dragfactor smoothing (as suggested by [[19]](#19)), where we use a *dragfactorSmoothing* of 6 strokes. Although unlikely given the number of datapoints, this could result in small deviations.
 * To include/exclude the last two explanations, we replay the raw data from the rowing sessions with identical settings, except the settings mentioned
 
-We start with investigating the effects of *naturalDeceleration* being set below zero. There is no deterministic way to determine the *naturalDeceleration*: we determine it by increasing it in small steps until the stroke detection begins to break down, an indication that the detection is too rigid. These simulations have the following result:
+We start with investigating the effects of *naturalDeceleration* being set below zero. There is no deterministic way to determine the *naturalDeceleration*: we normally determine it by increasing it in small steps until the stroke detection begins to break down, an indication that the detection is too rigid. Tuning this setting in a reliable way requires a lot of tests per specific dragfactor, which we consider infeasible at this specific moment. Therefore, we simulate *naturalDeceleration*'s effect by delaying the determination of the dragfactor by 0.4 seconds, and allowing it to last 1.0 seconds, an approach also used by [[8]](#8). This guarantees that the flanks are excluded, while retaining the flank of the recovery. These simulations have the following result:
 
-| Test | Drag factor | Target distance | #strokes on PM5| Result on PM5 | Natural Deceleration | #strokes on ORM | Base algorithm result | Base algorithm Deviation |
+| Test | Drag factor | Target distance | #strokes on PM5| Result on PM5 | Modified Base algorithm result | Base algorithm Deviation |
 | :-: | --: | --: | --: | --: | --: |--: | --: | --: |
-| 32 | 70 | 4,000 m | 441 | 17:31.3 | -1.16 | 443 | 17:36.4 | -0.49% |
-| 33 | 122 | 6,000 m | 606 | 25:44.8 | | | :. | -,% |
-| 34 | 112 | 10,000 m | 1051 | 43:08.2 | | | :. | -,% |
-| 35 | 80 | 4,000 m | 438 | 17:26.0 | -1.6 | 440 | 17:30.9 | -0.47% |
-| 36 | 226 | 4,000 m | 403 | 17:08.8 | | | :. | -,% |
-| 38 | 212 | 4,000 m | 400 | 17:01.8 | | | :. | -,% |
-| 39 | 101 | 6,000 m | 633 | 26:10.2 | -1.8 | 637 | 26:18.8 | -0.55% |
-| 40 | 101 | 10,000 m | 1065 | 43:02.7 | -1.8 | 1070 | 43:13.5 | -0.42% |
-| 41 | 200 | 4,000 m | 405 | 16:54.5 | | | :. | -,% |
-| 42 | 103 | 5,000 m | 522 | 21:40.3 | | | :. | -,% |
-| 43 | 192 | 4,000 m | 410 | 17:11.1 | | | :. | -,% |
-| 44 | 90 | 4,000 m | 427 | 17:10.2 | -1.6 | 428 | 17:14.1 | -0.38% |
-| 45 | 118 | 6,000 m | 624 | 26:02.9 | | | :. | -,% |
-| 46 | 102 | 10,000 m | 994 | 44:39.5 | -1.6 | 997 | 44:49.7 | -0.38% |
-| 47 | 133 | 4,000 m | 415 | 17:11.9 | | | :. | -,% |
-| 48 | 183 | 4,000 m | 410 | 17:27.7 | | | :. | -,% |
-| 49 | 172 | 4,000 m | 407 | 16:43.2 | | | :. | -,% |
-| 50 | 110 | 6,000 m | 630 | 25:43.5 | -1.8| 633 | 25:50.4 | -0.45% |
-| 51 | 108 | 10,000 m | 983 | 44:20.9 | -1.8 | 988 | 44:32.5 | -0.43% |
-| 52 | 140 | 4,000 m | | :. | | | :. | -,% |
-| 53 | 160 | 4,000 m | | :. | | | :. | -,% |
-| 54 | 150 | 4,000 m | | :. | | | :. | -,% |
-| 55 | 130 | 2,000 m | | :. | | | :. | -,% |
-| 56 | 150 | 500 m | | :. | | | :. | -,% |
+| 32 | 70 | 4,000 m | 441 | 17:31.3 | 17:36.4 | -0.49% |
+| 33 | 122 | 6,000 m | 606 | 25:44.8 | :. | -,% |
+| 34 | 112 | 10,000 m | 1051 | 43:08.2 | :. | -,% |
+| 35 | 80 | 4,000 m | 438 | 17:26.0 | 17:30.9 | -0.47% |
+| 36 | 226 | 4,000 m | 403 | 17:08.8 | :. | -,% |
+| 38 | 212 | 4,000 m | 400 | 17:01.8 | :. | -,% |
+| 39 | 101 | 6,000 m | 633 | 26:10.2 | 26:18.8 | -0.55% |
+| 40 | 101 | 10,000 m | 1065 | 43:02.7 | 43:13.5 | -0.42% |
+| 41 | 200 | 4,000 m | 405 | 16:54.5 | :. | -,% |
+| 42 | 103 | 5,000 m | 522 | 21:40.3 | :. | -,% |
+| 43 | 192 | 4,000 m | 410 | 17:11.1 | :. | -,% |
+| 44 | 90 | 4,000 m | 427 | 17:10.2 | 17:14.1 | -0.38% |
+| 45 | 118 | 6,000 m | 624 | 26:02.9 | :. | -,% |
+| 46 | 102 | 10,000 m | 994 | 44:39.5 | 44:49.7 | -0.38% |
+| 47 | 133 | 4,000 m | 415 | 17:11.9 | :. | -,% |
+| 48 | 183 | 4,000 m | 410 | 17:27.7 | :. | -,% |
+| 49 | 172 | 4,000 m | 407 | 16:43.2 | :. | -,% |
+| 50 | 110 | 6,000 m | 630 | 25:43.5 | 25:50.4 | -0.45% |
+| 51 | 108 | 10,000 m | 983 | 44:20.9 | 44:32.5 | -0.43% |
+| 52 | 140 | 4,000 m | | :. | :. | -,% |
+| 53 | 160 | 4,000 m | | :. | :. | -,% |
+| 54 | 150 | 4,000 m | | :. | :. | -,% |
+| 55 | 130 | 2,000 m | | :. | :. | -,% |
+| 56 | 150 | 500 m | | :. | :. | -,% |
 
 When we change the *dragfactorSmoothing* from the original 6 strokes to 1 (as suggested by [[19]](#19)), while resetting the *naturalDeceleration* to 0. This leads to the following results:
 
