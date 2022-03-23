@@ -368,7 +368,7 @@ We observe that the PM5 contains several badly detected strokes: typically the r
 
 #### Results and interpretation of the first series of side-by-side linear distance tests
 
-We already dismissed the van Holst algorithm as the basis for Power calculations, and the above data seems to confirm this for the distance calculation. The deviation is not just large (over -3,75%), it also varies significantly across rowing sessions, and seems to change independently from the drag. A sensitivity analysis through simulations with the raw data also show it is impossible to correct this error by adjusting the formula and its parameters slightly. The original base algorithm has show to be off systematically by -0,47%, which is constant across all rowing sessions, drag factors and distances. Although this suggests a systemic error somewhere in the calculation, but it supports the use of this algorithm.
+We already dismissed the van Holst algorithm as the basis for Power calculations, and the above data seems to confirm this for the distance calculation. The deviation is not just large (over -3.64%), it also varies significantly across rowing sessions (up to -4.08%), and seems to change independently from the drag. A sensitivity analysis through simulations with the raw data also show it is impossible to correct this error by adjusting the formula and its parameters slightly. The original base algorithm has show to be off systematically by -0,47%, which is constant across all rowing sessions, drag factors and distances. Although this suggests a systemic error somewhere in the calculation, but it supports the use of this algorithm.
 
 The systematic deviation of -0,47% can be explained in several ways:
 
