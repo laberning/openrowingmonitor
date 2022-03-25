@@ -379,7 +379,17 @@ The systematic deviation of -0.47% can be explained in several ways:
 
 To include/exclude the last two explanations, we replay the raw data from the rowing sessions with identical settings, except the settings mentioned
 
-We start with investigating the effects of *naturalDeceleration* being set below zero. There is no deterministic way to determine the *naturalDeceleration*: we normally would determine it by increasing its value in small steps until the stroke detection begins to break down, an indication that the detection is too rigid. Tuning this setting in a reliable way requires a lot of tests at a specific dragfactor, which we consider infeasible at this specific moment. Therefore, we simulate *naturalDeceleration*'s effect by delaying the determination of the dragfactor by 0.4 seconds, and allowing the sample to span a maximum of 1.0 seconds, an approach also used by [[8]](#8). This guarantees that the outer (Drive) flanks are excluded, while retaining the core of the recovery phase. These simulations have the following result:
+We start with investigating the effects of *naturalDeceleration* being set below zero. There is no deterministic way to determine the *naturalDeceleration*: we normally would determine it by increasing its value in small steps until the stroke detection begins to break down, an indication that the detection is too rigid. Tuning this setting in a reliable way requires a lot of tests at a specific dragfactor, which we consider infeasible at this specific moment. Therefore, we simulate *naturalDeceleration*'s effect by delaying the determination of the dragfactor by 0.4 seconds, and allowing the sample to span a maximum of 1.0 seconds, an approach also used by [[8]](#8). This guarantees that the outer (Drive) flanks are excluded, while retaining the core of the recovery phase. 
+
+We accomplish by adding the following code:
+
+```javascript
+      if (dragTimer > 0.5 && dragTimer < 1.3) {
+        drag.addToDataset(dragTimer, dirtyDataPoints[rowerSettings.flankLength])
+      }
+```
+
+These simulations have the following result:
 
 | Test | Drag factor | Target distance | #strokes on PM5| Result on PM5 | Modified Base algorithm result | Modified Base algorithm Deviation |
 | :-: | --: | --: | --: |--: | --: | --: |
@@ -387,21 +397,21 @@ We start with investigating the effects of *naturalDeceleration* being set below
 | 33 | 122 | 6,000 m | 606 | 25:44.8 | :. | -.% |
 | 34 | 112 | 10,000 m | 1051 | 43:08.2 | :. | -.% |
 | 35 | 81 | 4,000 m | 438 | 17:26.0 | 17:29.5 | -0.33% |
-| 36 | 226 | 4,000 m | 403 | 17:08.8 | :. | -.% |
+| 36 | 226 | 4,000 m | 403 | 17:08.8 | 17:12.5 | -0.36% |
 | 38 | 212 | 4,000 m | 400 | 17:01.8 | :. | -.% |
 | 39 | 101 | 6,000 m | 633 | 26:10.2 | :. | -.% |
-| 40 | 101 | 10,000 m | 1065 | 43:02.7 | :. | -.% |
+| 40 | 101 | 10,000 m | 1065 | 43:02.7 | 43:08.2 | -0.21% |
 | 41 | 200 | 4,000 m | 405 | 16:54.5 | :. | -.% |
 | 42 | 103 | 5,000 m | 522 | 21:40.3 | :. | -.% |
 | 43 | 192 | 4,000 m | 410 | 17:11.1 | :. | -.% |
 | 44 | 90 | 4,000 m | 427 | 17:10.2 | :. | -.% |
 | 45 | 118 | 6,000 m | 624 | 26:02.9 | :. | -.% |
-| 46 | 102 | 10,000 m | 994 | 44:39.5 | :. | -.% |
+| 46 | 102 | 10,000 m | 994 | 44:39.5 | 44:45.3 | -0.22% |
 | 47 | 133 | 4,000 m | 415 | 17:11.9 | :. | -.% |
 | 48 | 183 | 4,000 m | 410 | 17:27.7 | :. | -.% |
 | 49 | 172 | 4,000 m | 407 | 16:43.2 | :. | -.% |
 | 50 | 110 | 6,000 m | 630 | 25:43.5 | :. | -.% |
-| 51 | 108 | 10,000 m | 983 | 44:20.9 | :. | -.% |
+| 51 | 108 | 10,000 m | 983 | 44:20.9 | 44:28.8 | -0.30% |
 | 52 | 159 | 4,000 m | 423 | 17:18.3 | :. | -.% |
 | 53 | 150 | 4,000 m | 413 | 16:55.0 | :. | -.% |
 | 54 | 140 | 4,000 m | | :. | :. | -.% |
