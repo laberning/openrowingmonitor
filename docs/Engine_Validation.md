@@ -383,10 +383,10 @@ We start with investigating the effects of *naturalDeceleration* being set below
 
 | Test | Drag factor | Target distance | #strokes on PM5| Result on PM5 | Modified Base algorithm result | Modified Base algorithm Deviation |
 | :-: | --: | --: | --: |--: | --: | --: |
-| 32 | 70 | 4,000 m | 441 | 17:31.3 | :. | -.% |
+| 32 | 70 | 4,000 m | 441 | 17:31.3 | 17:35.4 | -0.39% |
 | 33 | 122 | 6,000 m | 606 | 25:44.8 | :. | -.% |
 | 34 | 112 | 10,000 m | 1051 | 43:08.2 | :. | -.% |
-| 35 | 80 | 4,000 m | 438 | 17:26.0 | :. | -.% |
+| 35 | 81 | 4,000 m | 438 | 17:26.0 | 17:29.5 | -0.33% |
 | 36 | 226 | 4,000 m | 403 | 17:08.8 | :. | -.% |
 | 38 | 212 | 4,000 m | 400 | 17:01.8 | :. | -.% |
 | 39 | 101 | 6,000 m | 633 | 26:10.2 | :. | -.% |
