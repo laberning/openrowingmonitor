@@ -375,18 +375,25 @@ The systematic deviation of -0.47% can be explained in several ways:
 * One explanation is that the Magic Factor is 2.76, instead of the traditionally assumed 2.8 [[1]](#1). However, the relation P = 2.8 \* u<sup>3</sup> holds for each stroke in all investigated rowing sessions that were exported from the Concept2 website. Therefore, we consider this explanation infeasible;
 * Another explanation is that the assumed *flywheel inertia* of 0.1001 kg/m<sup>2</sup> might actually be 0.1015 kg/m<sup>2</sup>. There is a case to be made for this explanation, as the 0.1001 kg/m<sup>2</sup> seems to be based on the older Concept2 models which contained three magnets for measuring the speed of the flywheel. The newer models contain a 12-pole magnet that is used to generate sufficient electricity to feed the monitor, causing a magnetic drag on the flywheel and possibly even adding weight to the flywheel. This magnetic force isn't velocity dependent (like air resistence), but it is a constant force. One way to compensate for this is by using a higher flywheel inertia;
 * Another explanation is that measuring the drag factor could contain (systematic) errors when the recovery phase incorrectly includes the flanks of the drive phase, due to inaccuracies in the stroke detection algorithm (as described in [[8]](#8)). The current test setup of OpenRowingMonitor includes such flanks, as Concept 2 indicated it defined the "recovery" phase as a decelerating flywheel [[13]](#13), which is simulated by OpenRowingMonitor by setting *Natural Deceleration* to 0. However, the approach implied by Concept 2's definition introduces a systematic inaccuracy: the flywheel also decelerates when the force on the flywheel is less than the dragforce (see [[3]](#3)). Incorrectly including these flanks, where the flywheel does decelerate but less than an unpowered flywheel, could structurally add outliers to the calculation, and thus could introduce systematic errors. Setting *naturalDeceleration* to an appropriate value below zero is designed to reduce this effect: it reduces the beformentioned flanks as much as possible from the Recovery Phase, and includes them in the Drive phase. This corrects the Drive and Recovery times, but also removes these systematic outliers from the drag calculation, potentially influencing the dragfactor.
-* The last explanation is Concept2 using no dragfactor smoothing (as suggested by [[19]](#19)), where we use a *dragfactorSmoothing* of 6 strokes. Although unlikely given the number of datapoints, this could result in small deviations.
+* Another explanation is Concept2 using no dragfactor smoothing (as suggested by [[19]](#19)), where we use a *dragfactorSmoothing* of 6 strokes. Although unlikely given the number of datapoints, this could result in small deviations.
+* The last explanation is that our setting for r<sup>2</sup> being above 0.84 is too conservative, leading to a bias in the data.
 
-To include/exclude the last two explanations, we replay the raw data from the rowing sessions with identical settings, except the settings mentioned
+To include/exclude the last three explanations, we replay the raw data from the rowing sessions with identical settings, except the settings mentioned
 
 We start with investigating the effects of *naturalDeceleration* being set below zero. There is no deterministic way to determine the *naturalDeceleration*: we normally would determine it by increasing its value in small steps until the stroke detection begins to break down, an indication that the detection is too rigid. Tuning this setting in a reliable way requires a lot of tests at a specific dragfactor, which we consider infeasible at this specific moment. Therefore, we simulate *naturalDeceleration*'s effect by delaying the determination of the dragfactor by 0.4 seconds, and allowing the sample to span a maximum of 1.0 seconds, an approach also used by [[8]](#8). This guarantees that the outer (Drive) flanks are excluded, while retaining the core of the recovery phase. 
 
-We accomplish by adding the following code:
+We accomplish by replacing:
 
 ```javascript
-      if (dragTimer > 0.5 && dragTimer < 1.3) {
-        drag.addToDataset(dragTimer, dirtyDataPoints[rowerSettings.flankLength])
-      }
+drag.addToDataset(dragTimer, dirtyDataPoints[rowerSettings.flankLength])
+```
+
+with:
+
+```javascript
+if (dragTimer > 0.5 && dragTimer < 1.3) {
+  drag.addToDataset(dragTimer, dirtyDataPoints[rowerSettings.flankLength])
+}
 ```
 
 These simulations have the following result:
@@ -418,7 +425,9 @@ These simulations have the following result:
 | 55 | 130 | 2,000 m | | :. | :. | -.% |
 | 56 | 150 | 500 m | | :. | :. | -.% |
 
-When we change the *dragfactorSmoothing* from the original 6 strokes to 1 (as suggested by [[19]](#19)), while resetting the *naturalDeceleration* to 0. This leads to the following results:
+Here, we observe that this modification has a significant effect on the deviation, thus making the case to implement this permenantly.
+
+When we change the *dragfactorSmoothing* from the original 6 strokes to 1 (as suggested by [[19]](#19)), while retaining the modification for simulating *naturalDeceleration*, we get the following results:
 
 | Test | Drag factor | Target distance | #strokes on PM5| Result on PM5 | Modified Base algorithm result | Modified Base algorithm Deviation |
 | :-: | --: | --: | --: | --: | --: | --: |
@@ -448,6 +457,36 @@ When we change the *dragfactorSmoothing* from the original 6 strokes to 1 (as su
 | 56 | 150 | 500 m | | :. | :. | -.% |
 
 Based on these results, we conclude that changing the *naturalDeceleration*, and thus excluding more of the unjustly included flanks of the recovery phase, does not change the dragfactor significantly enough to influence the outcome. This suggests that the dragfactor calculation is sufficiently robust against these outliers and is capable of ignoring them. As we can reasobly exclude any other sources of systematic deviation, we conclude the *flywheel inertia* used is 0.1015 kg/m<sup>2</sup>.
+
+Setting the r<sup>2</sup> to @@, leads to the following results
+
+| Test | Drag factor | Target distance | #strokes on PM5| Result on PM5 | Modified Base algorithm result | Modified Base algorithm Deviation |
+| :-: | --: | --: | --: | --: | --: | --: |
+| 32 | 70 | 4,000 m | 441 | 17:31.3 | :. | -.% |
+| 33 | 122 | 6,000 m | 606 | 25:44.8 | :. | -.% |
+| 34 | 112 | 10,000 m | 1051 | 43:08.2 | :. | -.% |
+| 35 | 80 | 4,000 m | 438 | 17:26.0 | :. | -.% |
+| 36 | 226 | 4,000 m | 403 | 17:08.8 | :. | -.% |
+| 38 | 212 | 4,000 m | 400 | 17:01.8 | :. | -.% |
+| 39 | 101 | 6,000 m | 633 | 26:10.2 | :. | -.% |
+| 40 | 101 | 10,000 m | 1065 | 43:02.7 | :. | -.% |
+| 41 | 200 | 4,000 m | 405 | 16:54.5 | :. | -.% |
+| 42 | 103 | 5,000 m | 522 | 21:40.3 | :. | -.% |
+| 43 | 192 | 4,000 m | 410 | 17:11.1 | :. | -.% |
+| 44 | 90 | 4,000 m | 427 | 17:10.2 | :. | -.% |
+| 45 | 118 | 6,000 m | 624 | 26:02.9 | :. | -.% |
+| 46 | 102 | 10,000 m | 994 | 44:39.5 | :. | -.% |
+| 47 | 133 | 4,000 m | 415 | 17:11.9 | :. | -.% |
+| 48 | 183 | 4,000 m | 410 | 17:27.7 | :. | -.% |
+| 49 | 172 | 4,000 m | 407 | 16:43.2 | :. | -.% |
+| 50 | 110 | 6,000 m | 630 | 25:43.5 | :. | -.% |
+| 51 | 108 | 10,000 m | 983 | 44:20.9 | :. | -.% |
+| 52 | 159 | 4,000 m | 423 | 17:18.3 | :. | -.% |
+| 53 | 150 | 4,000 m | 413 | 16:55.0 | :. | -.% |
+| 54 | 140 | 4,000 m | | :. | :. | -.% |
+| 55 | 130 | 2,000 m | | :. | :. | -.% |
+| 56 | 150 | 500 m | | :. | :. | -.% |
+
 
 ### Validation of the linear speed caclulation
 
