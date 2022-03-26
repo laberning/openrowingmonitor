@@ -360,7 +360,7 @@ The focus in this test is on a steady-state rowing. We consider the distance suf
 | 53 | 150 | 4,000 m | 413 | 16:55.0 | 416 | 17:00.1 | -0.50% | 3.867.8 m | -3.69% |
 | 54 | 140 | 4,000 m | 413 | 17:39.3 | 416 | 17:44.7 | -0,51% | 3,852.9 m | -4.07% |
 | 55 | 130 | 2,000 m | 219 | 9:01.0 | 221 | 9:03.9 | -0.54% | 1,924.2 m | -4,28% |
-| 56 | 150 | 4,00 m | 399 | 18:13.5 | 400 | 18:18.5 | -0.46% | 3,842.2 m | -4.28% |
+| 56 | 150 | 4,000 m | 399 | 18:13.5 | 400 | 18:18.5 | -0.46% | 3,842.2 m | -4.28% |
 
 Here, a negative deviation indicates that the algorithm was too slow when compared to the PM5 data, a positive deviation indicates that the algorithm was too fast when compared to the PM5 data. The strokerate was nearly identical along the row, and only varied slightly between 23 and 24 SPM). The total number of strokes across the monitors was sufficiently similar at similar times.
 
@@ -423,7 +423,7 @@ These simulations have the following result:
 | 53 | 150 | 4,000 m | 413 | 16:55.0 | :. | -.% |
 | 54 | 140 | 4,000 m | 413 | 17:39.3 | :. | -.% |
 | 55 | 130 | 2,000 m | 219 | 9:01.0 | :. | -.% |
-| 56 | 150 | 4,00 m | 399 | 18:13.5 | :. | -.% |
+| 56 | 150 | 4,000 m | 399 | 18:13.5 | :. | -.% |
 
 Here, we observe that this modification has a significant effect on the deviation, thus making the case to implement this permenantly.
 
@@ -454,7 +454,7 @@ When we change the *dragfactorSmoothing* from the original 6 strokes to 1 (as su
 | 53 | 150 | 4,000 m | 413 | 16:55.0 | :. | -.% |
 | 54 | 140 | 4,000 m | 413 | 17:39.3 | :. | -.% |
 | 55 | 130 | 2,000 m | 219 | 9:01.0 | :. | -.% |
-| 56 | 150 | 4,00 m | 399 | 18:13.5 | :. | -.% |
+| 56 | 150 | 4,000 m | 399 | 18:13.5 | :. | -.% |
 
 Based on these results, we conclude that changing the *naturalDeceleration*, and thus excluding more of the unjustly included flanks of the recovery phase, does not change the dragfactor significantly enough to influence the outcome. This suggests that the dragfactor calculation is sufficiently robust against these outliers and is capable of ignoring them. As we can reasobly exclude any other sources of systematic deviation, we conclude the *flywheel inertia* used is 0.1015 kg/m<sup>2</sup>.
 
@@ -484,9 +484,8 @@ Setting the r<sup>2</sup> to @@, leads to the following results
 | 52 | 159 | 4,000 m | 423 | 17:18.3 | :. | -.% |
 | 53 | 150 | 4,000 m | 413 | 16:55.0 | :. | -.% |
 | 54 | 140 | 4,000 m | 413 | 17:39.3 | :. | -.% |
-| 55 | 130 | 2,000 m | | :. | :. | -.% |
-| 56 | 150 | 500 m | | :. | :. | -.% |
-
+| 55 | 130 | 2,000 m | 219 | 9:01.0 | :. | -.% |
+| 56 | 150 | 4,000 m | 399 | 18:13.5 | :. | -.% |
 
 ### Validation of the linear speed caclulation
 
