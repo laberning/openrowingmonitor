@@ -391,7 +391,7 @@ drag.addToDataset(dragTimer, dirtyDataPoints[rowerSettings.flankLength])
 with:
 
 ```javascript
-if (dragTimer > 0.25 && dragTimer < 0.8) {
+if (dragTimer > 0.1 && dragTimer < (maxPreviousDragTimer - 0.1)) {
   drag.addToDataset(dragTimer, dirtyDataPoints[rowerSettings.flankLength])
 }
 ```
