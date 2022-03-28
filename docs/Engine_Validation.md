@@ -380,9 +380,9 @@ The systematic deviation of -0.47% can be explained and thus resolved in several
 
 To include/exclude the last three explanations, we replay the raw data from the rowing sessions with identical settings, except the settings mentioned
 
-We start with investigating the effects of *naturalDeceleration* being set below zero. There is no deterministic way to determine the *naturalDeceleration*: we normally would determine it by increasing its value in small steps until the stroke detection begins to break down, an indication that the detection is too rigid. Tuning this setting in a reliable way requires a lot of tests at a specific dragfactor, which we consider infeasible at this specific moment. Therefore, we simulate *naturalDeceleration*'s effect by delaying the determination of the dragfactor by 0.25 seconds, and allowing the sample used to span a maximum of 0.55 seconds, an approach also used by [[8]](#8). This guarantees that the outer (Drive) flanks are excluded, while retaining the core of the recovery phase.
+We start with investigating the effects of *naturalDeceleration* being set below zero. There is no deterministic way to determine the *naturalDeceleration*: we normally would determine it by increasing its value in small steps until the stroke detection begins to break down, an indication that the detection is too rigid. Tuning this setting in a reliable way requires a lot of tests at a specific dragfactor, which we consider infeasible at this specific moment. Therefore, we simulate *naturalDeceleration*'s effect by delaying the determination of the dragfactor by 0.1 seconds, and trying to terminate it 0.1 seconds early, an approach also used by [[8]](#8). Increasing this offset beyond 0.1 seconds leads to more dragcalculations with a bad fit, due to a significant decrease of the number of datapoints. For the Concept2, this seems to guarantee that the outer (Drive) flanks are excluded, while retaining the core of the recovery phase. Please note that this aims to simulate a correctly set *naturalDeceleration*, and is not intended a validation of a permanent construct.
 
-We accomplish this by replacing:
+We accomplish this by temporarily replacing:
 
 ```javascript
 drag.addToDataset(dragTimer, dirtyDataPoints[rowerSettings.flankLength])
@@ -396,7 +396,7 @@ if (dragTimer > 0.1 && dragTimer < (maxPreviousDragTimer - 0.1)) {
 }
 ```
 
-This effectively starts the drag calculation 0.1 seconds after the the Recovery Phase has started, and attempts to stop it 0.1 seconds before the Recovery Phase ends. Increasing this offset beyond 0.1 seconds leads to more dragcalculations with a bad fit, due to a significant decrease of the number of datapoints. These simulations have the following result:
+This effectively starts the drag calculation 0.1 seconds after the the Recovery Phase has started, and attempts to stop it 0.1 seconds before the Recovery Phase ends.  These simulations have the following result:
 
 | Test | Drag factor | Target distance | #strokes on PM5| Result on PM5 | Modified Base algorithm result | Modified Base algorithm Deviation |
 | :-: | --: | --: | --: | --: | --: | --: |
