@@ -382,13 +382,13 @@ To include/exclude the last three explanations, we replay the raw data from the 
 
 We start with investigating the effects of *naturalDeceleration* being set below zero. There is no deterministic way to determine the *naturalDeceleration*: we normally would determine it by increasing its value in small steps until the stroke detection begins to break down, an indication that the detection is too rigid. Tuning this setting in a reliable way requires a lot of tests at a specific dragfactor, which we consider infeasible at this specific moment. Therefore, we simulate *naturalDeceleration*'s effect by delaying the determination of the dragfactor by 0.25 seconds, and allowing the sample used to span a maximum of 0.55 seconds, an approach also used by [[8]](#8). This guarantees that the outer (Drive) flanks are excluded, while retaining the core of the recovery phase.
 
-We accomplish by replacing:
+We accomplish this by replacing:
 
 ```javascript
 drag.addToDataset(dragTimer, dirtyDataPoints[rowerSettings.flankLength])
 ```
 
-with:
+with the following code:
 
 ```javascript
 if (dragTimer > 0.1 && dragTimer < (maxPreviousDragTimer - 0.1)) {
@@ -396,7 +396,7 @@ if (dragTimer > 0.1 && dragTimer < (maxPreviousDragTimer - 0.1)) {
 }
 ```
 
-These simulations have the following result:
+This effectively starts the drag calculation 0.1 seconds after the the Recovery Phase has started, and attempts to stop it 0.1 seconds before the Recovery Phase ends. Increasing this offset beyond 0.1 seconds leads to more dragcalculations with a bad fit, due to a significant decrease of the number of datapoints. These simulations have the following result:
 
 | Test | Drag factor | Target distance | #strokes on PM5| Result on PM5 | Modified Base algorithm result | Modified Base algorithm Deviation |
 | :-: | --: | --: | --: | --: | --: | --: |
@@ -424,7 +424,7 @@ These simulations have the following result:
 | 55 | 130 | 2,000 m | 219 | 9:01.0 | 9:03.8 | -0.52% |
 | 56 | 150 | 4,000 m | 399 | 18:13.5 | 18:18.2 | -0.43% |
 
-Here, we observe that this modification has a significant effect on the deviation, and seems to reduce the variation in the deviation, thus making the case to implement this permenantly.
+Here, we observe that this modification has a significant effect on the deviation with respect to the PM5, and seems to reduce the variation in the deviation. This makes the case to implement this permenantly.
 
 When we change the *dragfactorSmoothing* from the original 6 strokes to 1 (as suggested by [[19]](#19)), while retaining the modification for simulating *naturalDeceleration*, we get the following results:
 
