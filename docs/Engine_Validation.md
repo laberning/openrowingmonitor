@@ -424,7 +424,7 @@ This effectively starts the drag calculation 0.1 seconds after the the Recovery 
 | 55 | 130 | 2,000 m | 219 | 9:01.0 | 9:03.8 | -0.52% |
 | 56 | 150 | 4,000 m | 399 | 18:13.5 | 18:18.2 | -0.43% |
 
-Here, we observe that this modification has a significant effect on the deviation with respect to the PM5, and seems to reduce the variation in the deviation. This makes the case to implement this permenantly.
+Here, we observe that this modification has a significant positive effect on the deviation with respect to the PM5, and seems to reduce the variation in the deviation as well. This makes the case to implement this permenantly.
 
 When we change the *dragfactorSmoothing* from the original 6 strokes to 1 (as suggested by [[19]](#19)), while retaining the modification for simulating *naturalDeceleration*, we get the following results:
 
