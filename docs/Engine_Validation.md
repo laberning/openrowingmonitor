@@ -426,36 +426,35 @@ This effectively starts the drag calculation 0.1 seconds after the the Recovery 
 
 Here, we observe that this modification has a significant positive effect on the deviation with respect to the PM5, and seems to reduce the variation in the deviation as well. This makes the case to implement this permenantly.
 
-When we change the *dragfactorSmoothing* from the original 6 strokes to 1 (as suggested by [[19]](#19)), while retaining the modification for simulating *naturalDeceleration*, we get the following results:
+When we change the *dragfactorSmoothing* from the original 6 strokes to 2 (as suggested by [[19]](#19)), while retaining the modification for simulating *naturalDeceleration*, we get the following results:
 
 | Test | Drag factor | Target distance | #strokes on PM5| Result on PM5 | Modified Base algorithm result | Modified Base algorithm Deviation |
 | :-: | --: | --: | --: | --: | --: | --: |
-| 32 | 70 | 4,000 m | 441 | 17:31.3 | :. | -.% |
-| 33 | 122 | 6,000 m | 606 | 25:44.8 | :. | -.% |
-| 34 | 112 | 10,000 m | 1051 | 43:08.2 | :. | -.% |
-| 35 | 80 | 4,000 m | 438 | 17:26.0 | :. | -.% |
-| 36 | 226 | 4,000 m | 403 | 17:08.8 | :. | -.% |
-| 38 | 212 | 4,000 m | 400 | 17:01.8 | :. | -.% |
-| 39 | 101 | 6,000 m | 633 | 26:10.2 | :. | -.% |
-| 40 | 101 | 10,000 m | 1065 | 43:02.7 | :. | -.% |
-| 41 | 200 | 4,000 m | 405 | 16:54.5 | :. | -.% |
-| 42 | 103 | 5,000 m | 522 | 21:40.3 | :. | -.% |
-| 43 | 192 | 4,000 m | 410 | 17:11.1 | :. | -.% |
-| 44 | 90 | 4,000 m | 427 | 17:10.2 | :. | -.% |
-| 45 | 118 | 6,000 m | 624 | 26:02.9 | :. | -.% |
-| 46 | 102 | 10,000 m | 994 | 44:39.5 | :. | -.% |
-| 47 | 133 | 4,000 m | 415 | 17:11.9 | :. | -.% |
-| 48 | 183 | 4,000 m | 410 | 17:27.7 | :. | -.% |
-| 49 | 172 | 4,000 m | 407 | 16:43.2 | :. | -.% |
-| 50 | 110 | 6,000 m | 630 | 25:43.5 | :. | -.% |
-| 51 | 108 | 10,000 m | 983 | 44:20.9 | :. | -.% |
-| 52 | 159 | 4,000 m | 423 | 17:18.3 | :. | -.% |
-| 53 | 150 | 4,000 m | 413 | 16:55.0 | :. | -.% |
-| 54 | 140 | 4,000 m | 413 | 17:39.3 | :. | -.% |
-| 55 | 130 | 2,000 m | 219 | 9:01.0 | :. | -.% |
-| 56 | 150 | 4,000 m | 399 | 18:13.5 | :. | -.% |
+| 32 | 70 | 4,000 m | 441 | 17:31.3 | 17:35.9 | -0.44% |
+| 33 | 122 | 6,000 m | 606 | 25:44.8 | 15:52.2 | -0.48% |
+| 34 | 112 | 10,000 m | 1051 | 43:08.2 | 43:19.8 | -0.45% |
+| 35 | 80 | 4,000 m | 438 | 17:26.0 | | |
+| 36 | 226 | 4,000 m | 403 | 17:08.8 | 17:13.6 | -0.47% |
+| 38 | 212 | 4,000 m | 400 | 17:01.8 | 17:06.5 | -0.46% |
+| 39 | 101 | 6,000 m | 633 | 26:10.2 | | |
+| 40 | 101 | 10,000 m | 1065 | 43:02.7 | 43:13.3 | -0.41% |
+| 41 | 200 | 4,000 m | 405 | 16:54.5 | 16:59.3 | -0.47% |
+| 42 | 103 | 5,000 m | 522 | 21:40.3 | 21:46.1 | -0.45% |
+| 43 | 192 | 4,000 m | 410 | 17:11.1 | 17:15.9 | -0.47% |
+| 44 | 90 | 4,000 m | 427 | 17:10.2 | 17:14.8 | -0.45% |
+| 45 | 118 | 6,000 m | 624 | 26:02.9 | 26:09.9 | -0.45% |
+| 46 | 102 | 10,000 m | 994 | 44:39.5 | 44:50.8 | -0.42% |
+| 47 | 133 | 4,000 m | 415 | 17:11.9 | 17:16.9 | -0.48% |
+| 48 | 183 | 4,000 m | 410 | 17:27.7 | 17:32.3 | -0.44% |
+| 50 | 110 | 6,000 m | 630 | 25:43.5 | 25:50.5 | -0.45% |
+| 51 | 108 | 10,000 m | 983 | 44:20.9 | 44:32.4 | -0.43% |
+| 52 | 159 | 4,000 m | 423 | 17:18.3 | 17:21.9 | -0.35% |
+| 53 | 150 | 4,000 m | 413 | 16:55.0 | 17:00.2 | -0.51% |
+| 54 | 140 | 4,000 m | 413 | 17:39.3 | 17:44.9 | -0.53% |
+| 55 | 130 | 2,000 m | 219 | 9:01.0 | | |
+| 56 | 150 | 4,000 m | 399 | 18:13.5 | 18:18.7 | -0.48% |
 
-Based on these results, we conclude that changing the *naturalDeceleration*, and thus excluding more of the unjustly included flanks of the recovery phase, does not change the dragfactor significantly enough to influence the outcome. This suggests that the dragfactor calculation is sufficiently robust against these outliers and is capable of ignoring them. As we can reasobly exclude any other sources of systematic deviation, we conclude the *flywheel inertia* used is 0.1015 kg/m<sup>2</sup>.
+Test 35, 39, 55 did not complete, as the sample was too short for the simulation to reach its intended target.
 
 Setting the r<sup>2</sup> to @@, leads to the following results
 
