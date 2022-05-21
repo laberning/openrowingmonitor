@@ -3,16 +3,6 @@
 <!-- markdownlint-disable no-inline-html -->
 In this document we explain the physics behind the Open Rowing Monitor, to allow for independent review and software maintenance. This work wouldn't have been possible without some solid physics, described by some people with real knowledge of the subject matter. Please note that any errors in our implementation probably is on us, not them. When appropriate, we link to these sources. When possible, we also link to the source code.
 
-## Leading principles
-
-The physics engine is the core of Open Rowing Monitor. Although the physics is well-understood and even well-described publicly (see [[1]](#1),[[2]](#2),[[3]](#3) and [[4]](#4)), applying these formulae in a practical solution for multiple rowers delivering reliable results is quite challenging. Especially small errors, noise, tends to produce visible effects on the recorded metrics. Therefore, in our design of the physics engine, we try to:
-
-* stay as close to the original data as possible (thus depend on direct measurements as much as possible) instead of heavily depend on derived data. This means that there are two absolute values we try to stay close to as much as possible: the **time between an impulse** and the **Number of Impulses**, where we consider **Number of Impulses** most reliable, and **time between an impulse** reliable but containing noise (the origin and meaning of these metrics, as well the effects of this approach are explained later);
-
-* use robust calculations wherever possible (i.e. not depend on a single measurements, extrapolations or derivative functions, etc.) to reduce effects of measurement errors. When we do need to calculate a derived function, we choose to use a robust linear regression method to reduce the impact of noise;
-
-* Be as close to the results of the Concept2 when possible and realistic, as they are considered the golden standard in indoor rowing metrics.
-
 ## Basic concepts
 
 @@@
@@ -88,19 +78,29 @@ Using *currentDt* means we can't measure anything directly aside from *angular d
 
 Dealing with noise is an dominant issue, especially because we have to deal with many types of machines. Aside from implementing a lot of noise reduction, we also focus on using robust calculations: calculations that don't deliver radically different results when a small measurement error is introduced in the measurement of *currentDt*. We typically avoid things like derived functions when possible, as deriving over small values of *currentDt* typically produce huge deviations in the resulting estimate. We sometimes even do this at the cost of inaccuracy with respect to the perfect theoretical model, as long as the deviation is systematic in one direction, to prevent estimates to become too unstable for practical use.
 
+## Leading design principles of the rowing engine
+
+The physics engine is the core of Open Rowing Monitor. It measures rorational metrics and determines linear metrics based on that. Although the physics is well-understood and even well-described publicly (see [[1]](#1),[[2]](#2),[[3]](#3) and [[4]](#4)), applying these formulae in a practical solution for multiple rowers delivering reliable results is quite challenging. Especially small errors, noise, tends to produce visible effects on the recorded metrics. Therefore, in our design of the physics engine, we try to:
+
+* stay as close to the original data as possible (thus depend on direct measurements as much as possible) instead of heavily depend on derived data. This means that there are two absolute values we try to stay close to as much as possible: the **time between an impulse** and the **Number of Impulses**, where we consider **Number of Impulses** most reliable, and **time between an impulse** reliable but containing noise (the origin and meaning of these metrics, as well the effects of this approach are explained later);
+
+* use robust calculations wherever possible (i.e. not depend on a single measurements, extrapolations or derivative functions, etc.) to reduce effects of measurement errors. When we do need to calculate a derived function, we choose to use a robust linear regression method to reduce the impact of noise;
+
+* Be as close to the results of the Concept2 when possible and realistic, as they are considered the golden standard in indoor rowing metrics.
+
 ## Determining the rotational metrics
 
-### Determining the **Angular Position** of the flywheel
+### Determining the "Angular Position" of the flywheel
 
-### Determining the **Time since start** of the flywheel
+### Determining the "Time since start" of the flywheel
 
-### Determining the **Angular Velocity** of the flywheel
+### Determining the "Angular Velocity" of the flywheel
  
-### Determining the **Angular Acceleration** of the flywheel
+### Determining the "Angular Acceleration" of the flywheel
 
-### Determining the **Torque** of the flywheel
+### Determining the "Torque" of the flywheel
 
-### Determining the **drag factor** of the flywheel
+### Determining the "drag factor" of the flywheel
 
 ## Determining the linear metrics
 
