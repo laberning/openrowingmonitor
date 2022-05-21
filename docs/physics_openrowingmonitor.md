@@ -44,7 +44,25 @@ Typically, measurements are done in the rotational part of the rower, on the fly
 
 ### Relevant rotational metrics
 
+* The **Angular Position** of the flywheel in Radians: in essence the distance the flywheel has traveled (i.e. the number of Radians the flywheel has rotated) since the start of the session. As the impulse-givers are evenly spread over the flywheel, this can easily be measured by counting the number of impulses, **Number of Impulses** and multiply it with the **angular displacement** between two **impulses** (i.e. 2π/(*number of impulse providers on the flywheel*));
+
+* The **Time since start** of the flywheel in seconds: in essence the time the flywheel has been spinning since the start of the session. This can easily be measured by summarising the **time between an impulse**;
+
+* The **Angular Velocity** of the flywheel in Radians/second: in essence the number of (partial) rotations of the flywheel per second;
+ 
+* The **Angular Acceleration** of the flywheel (in Radians/second<sup>2</sup>): the acceleration/deceleration of the flywheel;
+
+* the **Torque** of the flywheel
+
+* The *estimated* **drag factor** of the flywheel: the level af (air/water/magnet) resistence encountered by the flywheel, as a result of a damper setting.
+
 ### Relevant linear metrics
+
+* The *estimated* **Linear Distance** of the boat (in Meters): the distance the boat is expected to travel;
+ 
+* *estimated* **Linear Velocity** of the boat (in Meters/Second): the speed at which the boat is expected to travel.
+
+* *estimated* **power produced** by the rower (in Watts): the power the rower produced during the stroke.
 
 ### Terminology used in describing the rowing stroke and its phases
 
@@ -71,6 +89,18 @@ Using *currentDt* means we can't measure anything directly aside from *angular d
 Dealing with noise is an dominant issue, especially because we have to deal with many types of machines. Aside from implementing a lot of noise reduction, we also focus on using robust calculations: calculations that don't deliver radically different results when a small measurement error is introduced in the measurement of *currentDt*. We typically avoid things like derived functions when possible, as deriving over small values of *currentDt* typically produce huge deviations in the resulting estimate. We sometimes even do this at the cost of inaccuracy with respect to the perfect theoretical model, as long as the deviation is systematic in one direction, to prevent estimates to become too unstable for practical use.
 
 ## Determining the rotational metrics
+
+### Determining the **Angular Position** of the flywheel
+
+### Determining the **Time since start** of the flywheel
+
+### Determining the **Angular Velocity** of the flywheel
+ 
+### Determining the **Angular Acceleration** of the flywheel
+
+### Determining the **Torque** of the flywheel
+
+### Determining the **drag factor** of the flywheel
 
 ## Determining the linear metrics
 
@@ -115,16 +145,6 @@ This approach is a better approximation than the acceleration/deceleration appro
 
 ## Key physical metrics during the rowing cycle
 
-There are several key metrics that underpin the performance measurement of a rowing stroke. Here, we distinguish the following concepts:
-
-* The **Angular Displacement** of the flywheel in Radians: in essence the distance the flywheel has traveled (i.e. the number of Radians the flywheel has rotated). As the impulse-givers are evenly spread over the flywheel, the **angular displacement** between two **impulses** is 2π/(*number of impulse providers on the flywheel*). This can easily be measured by counting the number of impulses;
-
-* The **Angular Velocity** of the flywheel in Radians/second: in essence the number of (partial) rotations of the flywheel per second. As the *Angular Displacement* is fixed for a specific rowing machine, the *Angular Velocity* is (*angular displacement between impulses*) / (time between impulses);
-* The **Angular Acceleration** of the flywheel (in Radians/second<sup>2</sup>): the acceleration/deceleration of the flywheel;
-* The *estimated* **drag factor** of the flywheel
-* The *estimated* **Linear Distance** of the boat (in Meters): the distance the boat is expected to travel;
-* *estimated* **Linear Velocity** of the boat (in Meters/Second): the speed at which the boat is expected to travel.
-* *estimated* **power produced** by the rower (in Watts): the power the rower produced during the stroke.
 
 In the following sections we describe the physics used to come to the estimated metrics.
 
