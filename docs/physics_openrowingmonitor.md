@@ -90,6 +90,8 @@ The physics engine is the core of Open Rowing Monitor. It measures rorational me
 
 ## Determining the rotational metrics
 
+These metrics are typically determined in the `pushValue` function of `engine/Flywheel.js`
+
 ### Determining the "Angular Position" of the flywheel
 
 ### Determining the "Time since start" of the flywheel
