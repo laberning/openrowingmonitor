@@ -1,19 +1,21 @@
 # The physics behind Open Rowing Monitor
 
 <!-- markdownlint-disable no-inline-html -->
-In this document we explain the physics behind the OpenRowing Monitor, to allow for independent review and software maintenance. This work wouldn't have been possible without some solid physics, described by some people with real knowledge of the subject matter. Please note that any errors in our implementation probably is on us, not them. When appropriate, we link to these sources. When possible, we also link to the source code.
+In this document we explain the physics behind the Open Rowing Monitor, to allow for independent review and software maintenance. This work wouldn't have been possible without some solid physics, described by some people with real knowledge of the subject matter. Please note that any errors in our implementation probably is on us, not them. When appropriate, we link to these sources. When possible, we also link to the source code.
 
 ## Leading principles
 
-The physics engine is the core of Open Rowing Monitor. In our design of the physics engine, we try to:
+The physics engine is the core of Open Rowing Monitor. Although the physics is well-understood and even well-described publicly (see [[1]](#1),[[2]](#2),[[3]](#3) and [[4]](#4)), applying these formulae in a practical solution for multiple rowers delivering reliable results is quite challenging. Especially small errors, noise, tends to produce visible effects on the recorded metrics. Therefore, in our design of the physics engine, we try to:
 
-* stay as close to the original data as possible (thus depend on direct measurements as much as possible) instead of depending on derived data. This means that there are two absolute values we try to stay close to as much as possible: the **time between an impulse** and the **Number of Impulses** (their origin and meaning is later explained);
+* stay as close to the original data as possible (thus depend on direct measurements as much as possible) instead of heavily depend on derived data. This means that there are two absolute values we try to stay close to as much as possible: the **time between an impulse** and the **Number of Impulses**, where we consider **Number of Impulses** most reliable, and **time between an impulse** reliable but containing noise (the origin and meaning of these metrics, as well the effects of this approach are explained later);
 
-* use robust calculations wherever possible (i.e. not depend on a single measurements, extrapolations or derivative functions, etc.) to reduce effects of measurement errors;
+* use robust calculations wherever possible (i.e. not depend on a single measurements, extrapolations or derivative functions, etc.) to reduce effects of measurement errors. When we do need to calculate a derived function, we choose to use a robust linear regression method to reduce the impact of noise;
 
-* Be as close to the results of the Concept2 when possible and realistic, as they are considered the golden standard in rowing.
+* Be as close to the results of the Concept2 when possible and realistic, as they are considered the golden standard in indoor rowing metrics.
 
-## Phases, properties and concepts in the rowing cycle
+## Basic concepts
+
+@@@
 
 Before we analyze the physics of a rowing engine, we first need to define the basic concepts. First we describe the physical systems, then we define the motions in the rowing stroke.
 
@@ -40,6 +42,10 @@ There are also hybrid rowers, which combine air resistance and magnetic resistan
 
 Typically, measurements are done in the rotational part of the rower, on the flywheel. There is a reed sensor or optical sensor that will measure time between either magnets or reflective stripes, which gives an **Impulse** each time a magnet or stripe passes. Depending on the **number of impulse providers** (i.e. the number of magnets or stripes), the number of impulses per rotation increases, increasing the resolution of the measurement. By measuring the **time between impulses**, deductions about speed and acceleration of the flywheel can be made, and thus the effort of the rower.
 
+### Relevant rotational metrics
+
+### Relevant linear metrics
+
 ### Terminology used in describing the rowing stroke and its phases
 
 On an indoor rower, the rowing cycle will always start with a stroke, followed by a recovery. We define them as follows:
@@ -49,8 +55,6 @@ On an indoor rower, the rowing cycle will always start with a stroke, followed b
 * The **Recovery Phase**, where the rower returns to his starting position
 
 Combined, we consider a *Drive* followed by a *Recovery* a **Stroke**. In the calculation of several metrics, the requirement is that it should include *a* *Drive* and *a* *Recovery*, but order isn't a strict requirement for some metrics [[2]](#2). We call such combination of a *Drive* and *Recovery* without perticular order a **Cycle**, which allows us to calculate these metrics twice per *stroke*.
-
-@@@
 
 ## What a rowing machine actually measures
 
@@ -65,6 +69,10 @@ Here, it is clear that the flywheel first accelerates and then decelerates, whic
 Using *currentDt* means we can't measure anything directly aside from *angular displacement*, and that we have to accept some noise in measurements. For example, as we don't measure torque on the flywheel directly, we can't determine where the flywheel exactly accelerates/decelerates, we can only detect a change in the times between impulses. In essence, we only can conclude that an acceleration has taken place somewhere near a specific impulse, but we can't be certain about where the acceleration exactly has taken place and we can only estimate how big the force must have been. Additionally, small vibrations in the chassis due to tiny unbalance in the flywheel can lead to small deviations in measurements. This kind of noise in our measurement can make many subsequent derived calculation on this measurement too volatile, This is why we explicitly distinguish between *measurements* and *estimates* based on these measurements, to clearly indicate their potential volatility.
 
 Dealing with noise is an dominant issue, especially because we have to deal with many types of machines. Aside from implementing a lot of noise reduction, we also focus on using robust calculations: calculations that don't deliver radically different results when a small measurement error is introduced in the measurement of *currentDt*. We typically avoid things like derived functions when possible, as deriving over small values of *currentDt* typically produce huge deviations in the resulting estimate. We sometimes even do this at the cost of inaccuracy with respect to the perfect theoretical model, as long as the deviation is systematic in one direction, to prevent estimates to become too unstable for practical use.
+
+## Determining the rotational metrics
+
+## Determining the linear metrics
 
 ## Detecting the stroke and recovery phase
 
@@ -287,6 +295,13 @@ Here, the drag factor is affected upwards. Here the average speed is determined 
 These effects do not cancel out: in essence the flywheel decelerates at the end of the drive phase, which we mistakenly include in the recovery phase. This means that on average, the average speed is systematically too high: it misses some slower speed at the end of the drive. As all factors of the power calculation are systematically overestimating, the result will be a systematic overestimation.
 
 Again, this is a systematic (overestimation) of the power, which will be systematically corrected by the Inertia setting.
+
+## A mathematical perspective on key metrics
+
+### Determination of slopes
+In theory 
+
+### Models used for Linear regression
 
 ## References
 
