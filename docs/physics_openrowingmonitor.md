@@ -39,7 +39,7 @@ Typically, measurements are done in the rotational part of the rower, on the fly
 * The **Time since start** of the flywheel in seconds: in essence the time the flywheel has been spinning since the start of the session. This can easily be measured by summarising the **time between an impulse**;
 
 * The **Angular Velocity** of the flywheel in Radians/second: in essence the number of (partial) rotations of the flywheel per second;
- 
+
 * The **Angular Acceleration** of the flywheel (in Radians/second<sup>2</sup>): the acceleration/deceleration of the flywheel;
 
 * the **Torque** of the flywheel
@@ -49,7 +49,7 @@ Typically, measurements are done in the rotational part of the rower, on the fly
 ### Relevant linear metrics
 
 * The *estimated* **Linear Distance** of the boat (in Meters): the distance the boat is expected to travel;
- 
+
 * *estimated* **Linear Velocity** of the boat (in Meters/Second): the speed at which the boat is expected to travel.
 
 * *estimated* **power produced** by the rower (in Watts): the power the rower produced during the stroke.
@@ -97,7 +97,7 @@ These metrics are typically determined in the `pushValue` function of `engine/Fl
 ### Determining the "Time since start" of the flywheel
 
 ### Determining the "Angular Velocity" of the flywheel
- 
+
 ### Determining the "Angular Acceleration" of the flywheel
 
 ### Determining the "Torque" of the flywheel
@@ -146,7 +146,6 @@ Testing shows that setting a value close to the natural deceleration provides mo
 This approach is a better approximation than the acceleration/deceleration approach, but still is not perfect. For example, drag-force of the the rower presented in the above graph slowly reduces. This is expected, as the drag-force is speed dependent. For a pure air-rower, the best theoretical approach would be to see if the drag-force is the only force present by calculating the expected drag-force using the current speed and the drag factor (making the stroke detection completely independent on speed). Testing has shown that this approach is too prone to errors, as it requires another derivation with respect to *currentDt*, making it too volatile. Above this, hybrid rower behave differently as well: dependent on the speed, the balance shifts between the speed-dependent air-resistance drag-force and the speed-independent magnetic resistance force. To make the solution robust and broadly applicable, this approach has been abandoned.
 
 ## Key physical metrics during the rowing cycle
-
 
 In the following sections we describe the physics used to come to the estimated metrics.
 
@@ -321,7 +320,8 @@ Again, this is a systematic (overestimation) of the power, which will be systema
 ## A mathematical perspective on key metrics
 
 ### Determination of slopes
-In theory 
+
+In theory
 
 ### Models used for Linear regression
 
