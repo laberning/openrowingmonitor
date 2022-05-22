@@ -511,7 +511,6 @@ As these results show, the majority of the 0.47% deviation is still present. The
 | 55 | 130 | 2,000 m | 219 | 9:01.0 | :. | -0.% |
 | 56 | 150 | 4,000 m | 399 | 18:13.5 | :. | -0.%|
 
-
 ### Validation of the linear speed caclulation
 
 @@
