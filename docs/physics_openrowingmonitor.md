@@ -32,7 +32,7 @@ There are also hybrid rowers, which combine air resistance and magnetic resistan
 
 Typically, measurements are done in the rotational part of the rower, on the flywheel. There is a reed sensor or optical sensor that will measure time between either magnets or reflective stripes, which gives an **Impulse** each time a magnet or stripe passes. Depending on the **number of impulse providers** (i.e. the number of magnets or stripes), the number of impulses per rotation increases, increasing the resolution of the measurement. By measuring the **time between impulses**, deductions about speed and acceleration of the flywheel can be made, and thus the effort of the rower.
 
-### Relevant rotational metrics
+#### Relevant rotational metrics
 
 * The **Angular Position** of the flywheel in Radians: in essence the distance the flywheel has traveled (i.e. the number of Radians the flywheel has rotated) since the start of the session. As the impulse-givers are evenly spread over the flywheel, this can easily be measured by counting the number of impulses, **Number of Impulses** and multiply it with the **angular displacement** between two **impulses** (i.e. 2π/(*number of impulse providers on the flywheel*));
 
@@ -46,7 +46,7 @@ Typically, measurements are done in the rotational part of the rower, on the fly
 
 * The *estimated* **drag factor** of the flywheel: the level af (air/water/magnet) resistence encountered by the flywheel, as a result of a damper setting.
 
-### Relevant linear metrics
+#### Relevant linear metrics
 
 * The *estimated* **Linear Distance** of the boat (in Meters): the distance the boat is expected to travel;
 
