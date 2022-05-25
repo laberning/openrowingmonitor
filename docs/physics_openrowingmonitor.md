@@ -94,11 +94,21 @@ These metrics are typically determined in the `pushValue` function of `engine/Fl
 
 ### Determining the "Angular Position" of the flywheel
 
+Missed impulses is an issue
+
 ### Determining the "Time since start" of the flywheel
 
 ### Determining the "Angular Velocity" of the flywheel
 
 ### Determining the "Angular Acceleration" of the flywheel
+
+> &alpha = &Delta(&theta) / &Delta(t)
+
+Following [[8]](#8), there is an alternative approach to Angular Acceleration:
+
+
+
+> &Delta(s) = ((k \* &omega; <sup>0.25</sup>) / 4.31)<sup>1/2.75</sup> &theta;
 
 ### Determining the "Torque" of the flywheel
 
@@ -340,3 +350,5 @@ In theory
 <a id="6">[6]</a> University of Colorado, Simple Linear Regression <https://www.colorado.edu/amath/sites/default/files/attached-files/ch12_0.pdf>
 
 <a id="7">[7]</a> Nomath, "Fan blade Physics and a Peek inside C2's Black Box" <https://www.c2forum.com/viewtopic.php?f=7&t=194719>
+
+<a id="8">[8]</a> Nomath, "Rotational Kinematics" <https://physics.info/rotational-kinematics/>
