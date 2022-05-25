@@ -136,17 +136,17 @@ This can be transformed as the definition of the slope of a line, by reformulati
 
 Thus k/I represents the slope of the graph depicted by time on the *x*-axis and 1/&omega; on the *y*-axis, during the recovery phase of the stroke. However, this formula can be simplified further, as the angular velocity &omega; is determined by:
 
-> &omega; = (2&pi; / Number of impulses per revolution) / currentDt
+> &omega; = (2&pi; / Impulses Per Rotation) / currentDt
 
 thus making:
 
-> k / I = &Delta;(1/((2&pi; / Number of impulses per revolution) / currentDt)) / &Delta;t
+> k / I = &Delta;(1/((2&pi; / Impulses Per Rotation) / currentDt)) / &Delta;t
 
-resulting in
+removing the division, results in
 
-> k / I = &Delta;(currentDt /(2&pi; / Number of impulses per revolution)) / &Delta;t
+> k / I = &Delta;(currentDt \* (Impulses Per Rotation / 2&pi;)) / &Delta;t
 
-Since we are dividing a constant factor (i.e. 2&pi; / Number of impulses per revolution) through *currentDt* we can further simplify the formula by moving this division and constant outside the slope-calculation. Effectively, making the formula:
+Since we are multiplying *currentDt* with a constant factor (i.e. Impulses Per Rotation / 2&pi;), we can further simplify the formula by moving this multiplication outside the slope-calculation. Effectively, making the formula:
 
 > (k \* 2&pi;) / (I \* Impulses Per Rotation) = &Delta;currentDt / &Delta;t
 
