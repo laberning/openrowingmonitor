@@ -102,7 +102,7 @@ Missed impulses is an issue
 
 ### Determining the "Angular Acceleration" of the flywheel
 
-> &alpha = &Delta(&theta) / &Delta(t)
+> &alpha; = &Delta; &theta; / &Delta; t
 
 Following [[8]](#8), there is an alternative approach to Angular Acceleration:
 
