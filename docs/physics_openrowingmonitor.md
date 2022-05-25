@@ -136,7 +136,7 @@ Since we are dividing a constant factor (i.e. 2&pi; / Number of impulses per rev
 
 > (k \* 2&pi;) / (I \* Impulses Per Rotation) = &Delta;currentDt / &Delta;t
 
-As this formula shows, we can determine the drag factor through the slope of the line created by *time since the start of the recovery phase* on the *x*-axis and the corresponding *CurrentDt* on the *y* axis. This slope of the line can be determined in a robust manner through linear regression. This approach also brings this calculation as close as possible to the raw data, and doesn't use individual *currentDt*'s as a divider, which are explicit design goals to reduce data volatility.
+As this formula shows, we can determine the drag factor through the slope of the line created by *time* on the *x*-axis and the corresponding *CurrentDt* on the *y* axis, for a specific recovery phase. This slope of the line can be determined in a robust manner through linear regression. This approach also brings this calculation as close as possible to the raw data, and doesn't use individual *currentDt*'s as a divider, which are explicit design goals to reduce data volatility.
 
 As the slope of &Delta;currentDt / &Delta;t is equal to (k \* 2&pi;) / (I \* Impulses Per Rotation), the drag thus can be determined through
 
