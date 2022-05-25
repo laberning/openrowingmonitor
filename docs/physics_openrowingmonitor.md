@@ -124,11 +124,11 @@ Such a more fundamental approach is found in the method used by [[7]](#7), where
 
 > k = I \* &Delta;(1/&omega;) / &Delta;t
 
-This can be transformed as the definition of the slope of a line, by reformulating it as:
+This can be transformed as the definition of the slope of a line, by reformulating this formula as:
 
 > k / I = &Delta;(1/&omega;) / &Delta;t
 
-Thus k/I represents the slope of the graph depicted by time from the start of the recovery phase on the x-axis and 1/&omega; on the y axis. This formula can be simplified further as the angular velocity &omega; is determined by:
+Thus k/I represents the slope of the graph depicted by time on the x-axis and 1/&omega; on the y axis, during a specific recovery phase of the stroke. This formula can be simplified further as the angular velocity &omega; is determined by:
 
 > &omega; = (2&pi; / Number of impulses per revolution) / currentDt
 
