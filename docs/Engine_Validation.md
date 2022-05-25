@@ -55,7 +55,7 @@ First, we verify the calculation the dragfactor. Next, we apply this dragfactor 
 
 From theory [[1]](#1) (described in [[5]](#5)), the dragfactor can be calculated through formula 7.2 [[1]](#1):
 
-> k = -I \* &delta;(1/&omega;) / &delta;t
+> k = -I \* &Delta;(1/&omega;) / &Delta;t
 
 In RowingEngine 2.0 (i.e. RowingEngine.js, OpenRowingMonitor version 0.8.2), this is implemented by:
 
@@ -113,7 +113,7 @@ As the variation of the recoveryPhaseLength reported in the log is around 5%, it
 
 Such a more fundamental approach is found in the method used by [[7]](#7), where the dragfactor is determined through the slope of the relation between inverse of the angular velocity and time. Based on our own deduction [[5]](#5), we get the formula:
 
-> (k \* 2&pi;) / (I \* Impulses Per Rotation) = &delta;currentDt / &delta;t
+> (k \* 2&pi;) / (I \* Impulses Per Rotation) = &Delta;currentDt / &Delta;t
 
 As this formula shows, the definition of the slope of the line created by *time* on the *x*-axis and the corresponding *CurrentDt* on the *y* axis is equal to (k \* 2&pi;) / (I \* Impulses Per Rotation). This brings this calculation as close as possible to the raw data, doesn't use *currentDt* as a divider, and allows robust methods to determine this slope (Linear Regression), which are explicit design goals to reduce data volatility.
 
