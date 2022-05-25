@@ -140,7 +140,7 @@ As this formula shows, we can determine the drag factor through the slope of the
 
 As the slope of &Delta;currentDt / &Delta;t is equal to (k \* 2&pi;) / (I \* Impulses Per Rotation), the drag thus can be determined through
 
-> k = (slope \* I \* Impulses Per Rotation) / 2&pi;
+> k = slope \* (I \* Impulses Per Rotation) / 2&pi;
 
 ## Determining the linear metrics
 
