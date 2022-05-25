@@ -106,11 +106,11 @@ Missed impulses is an issue
 
 > &alpha; = &Delta;&omega; / &Delta;t
 
-Following [[8]](#8), there is an alternative approach to Angular Acceleration:
+However, this formula is dependent on **currentDt**, which is suspect to noise, which would be reintroduced through this parameter. Following [[8]](#8), there is an alternative approach to Angular Acceleration:
 
+> 2&alpha; = &Delta;(&omega;<sup>2</sup>) / &Delta;&theta;
 
-
-> &Delta(s) = ((k \* &omega; <sup>0.25</sup>) / 4.31)<sup>1/2.75</sup> &theta;
+This makes &alpha; dependent on &omega;, which was determined in a robust manner, and &theta; where deviations are discrete and thus easier to detect. Thus we determine &alpha; in a robust manner by Linear Regression over &omega;<sup>2</sup> on the y-axis and &theta; on the x-axis. 
 
 ### Determining the "Torque" of the flywheel
 
