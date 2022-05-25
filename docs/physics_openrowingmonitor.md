@@ -255,7 +255,7 @@ In the drive phase, the rower also puts a force on the flywheel, making it accel
 
 We can calculate the energy added to the flywheel through [[1]](#1), formula 8.2:
 
-> &delta;E = I \* (&delta;&omega; / &delta;t)&delta;&theta; + k &omega;<sup>2</sup> &delta;&theta;
+> &Delta;E = I \* (&Delta;&omega; / &Delta;t)&Delta;&theta; + k &omega;<sup>2</sup> &Delta;&theta;
 
 Or in more readable form for each measured displacement:
 
@@ -269,9 +269,9 @@ The power then becomes
 
 > P = E / TotalCycleTime
 
-Although this is an easy implementable algorithm by calculating a running sum of this function (see [[3]](#3), and more specifically [[4]](#4)). However, the presence of the many Angular Velocities makes the outcome of this calculation quite volatile. The angular velocity is measured through the formula:
+Although this is an easy implementable algorithm by calculating a running sum of this function (see [[3]](#3), and more specifically [[4]](#4)). However, the presence of the many Angular Velocities makes the outcome of this calculation quite volatile, even despite the robust calculation. The angular velocity is measured through the formula:
 
-> AngularVelocity = 2&pi; / (NumberOfImpulsegivers \* TimeBetweenImpulses)
+> &omega; = (2&pi; / Impulses Per Rotation) / currentDt
 
 As *currentDt* tends to be small (typically much smaller than 1, typically between 0,1 and 0,0015 seconds), small errors tend to increase the Angular Velocity significantly, enlarging the effect of an error and potentially causing this volatility. An approach is to use a running average on the presentation layer (in `RowingStatistics.js`). However, when this is bypassed, data shows significant spikes of 20Watts in quite stable cycles due to small changes in the data.
 
