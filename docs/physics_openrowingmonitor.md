@@ -100,9 +100,11 @@ Missed impulses is an issue
 
 ### Determining the "Angular Velocity" of the flywheel
 
+> &omega; = &Delta;&theta; / &Delta;t
+
 ### Determining the "Angular Acceleration" of the flywheel
 
-> &alpha; = &Delta; &theta; / &Delta; t
+> &alpha; = &Delta;&omega; / &Delta;t
 
 Following [[8]](#8), there is an alternative approach to Angular Acceleration:
 
