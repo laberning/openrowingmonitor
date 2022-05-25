@@ -361,7 +361,22 @@ Again, this is a systematic (overestimation) of the power, which will be systema
 
 In theory
 
-### Models used for Linear regression
+#### Models used for Linear regression
+
+There are several different linear regression methods [[9]](#9). There are several requirements on the algorithm: it has to be robust to outliers [[10]](#10) and it has to delviver results in near-real-time scenarios. From a robustness perspective, most promissing methods are [least absolute deviations](https://en.wikipedia.org/wiki/Least_absolute_deviations), the [Theil–Sen estimator](https://en.wikipedia.org/wiki/Theil%E2%80%93Sen_estimator) and the [LASSO technique](https://en.wikipedia.org/wiki/Lasso_(statistics)). Most of these methods, except the Theil–Sen estimator, do not have a near-real-time solution.
+
+Although the Theil–Sen estimator has a O(N log(N)) solution available, however we could not find a readily available solution. We did manage to develop a solution that has a O(N) impact during the addition of an additional datapoint, and O(log(N)) impact when determining the slope. 
+
+There also is an Incomplete Theis-Sen estimator [[13]](#13), which is O(1) for the addition of new datapoints, and O(log(N)) for the determination of the slope. Our tests on real-life data show that generally the Incomplete Theil-Sen is more 
+
+For the drag-factor calculation, we observe three things:
+* The number of datapoints in the recovery phase isn't known in advance, and is subject to significant change due to sprints, making a fixed 
+
+Therefore, we choose to calculate the slope by performing simple linear regression (see [[11]](#14) and [[12]](#15)) as the results are generally acceptable and the O(1) performance is well-suited for near-real-time calculations on a time series, with using a high-pass filter on the r<sup>2</sup> to disregard any unreliably approximated dragfactors.
+
+
+
+no practical implementations have been found, making such an approach practically unfeasible.
 
 ## References
 
@@ -380,3 +395,13 @@ In theory
 <a id="7">[7]</a> Nomath, "Fan blade Physics and a Peek inside C2's Black Box" <https://www.c2forum.com/viewtopic.php?f=7&t=194719>
 
 <a id="8">[8]</a> Nomath, "Rotational Kinematics" <https://physics.info/rotational-kinematics/>
+
+<a id="9">[9]</a> Wikipedia, Linear regression <https://en.wikipedia.org/wiki/Linear_regression>
+
+<a id="10">[10]</a> Wikipedia, Robust regression <https://en.wikipedia.org/wiki/Robust_regression>
+
+<a id="11">[11]</a> Wikipedia, Simple Linear Regression <https://en.wikipedia.org/wiki/Simple_linear_regression>
+
+<a id="12">[12]</a> University of Colorado, Simple Linear Regression <https://www.colorado.edu/amath/sites/default/files/attached-files/ch12_0.pdf>
+
+<a id="13">[13]</a> Incomplete Theil-Sen Regression <https://www.fon.hum.uva.nl/praat/manual/theil_regression.html>
