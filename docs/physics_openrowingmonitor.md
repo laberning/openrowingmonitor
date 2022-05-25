@@ -128,15 +128,15 @@ This can be transformed as the definition of the slope of a line, by reformulati
 
 > k / I = &Delta;(1/&omega;) / &Delta;t
 
-Thus k/I represents the slope of the graph depicted by time on the x-axis and 1/&omega; on the y axis, during a specific recovery phase of the stroke. This formula can be simplified further as the angular velocity &omega; is determined by:
+Thus k/I represents the slope of the graph depicted by time on the x-axis and 1/&omega; on the y axis, during a specific recovery phase of the stroke. However, this formula can be simplified further, as the angular velocity &omega; is determined by:
 
 > &omega; = (2&pi; / Number of impulses per revolution) / currentDt
 
-Since we are dividing a constant factor (i.e. 2&pi; / Number of impulses per revolution) through *currentDt* we can further simplify this formula by removing this division and constant outside the slope-calculation. Effectively, this makes the formula:
+Since we are dividing a constant factor (i.e. 2&pi; / Number of impulses per revolution) through *currentDt* we can further simplify the formula by removing this division and constant outside the slope-calculation. Effectively, making the formula:
 
 > (k \* 2&pi;) / (I \* Impulses Per Rotation) = &Delta;currentDt / &Delta;t
 
-As this formula shows, we can determine the drag factor through the slope of the line created by *time* on the *x*-axis and the corresponding *CurrentDt* on the *y* axis, for a specific recovery phase. This slope of the line can be determined in a robust manner through linear regression. This approach also brings this calculation as close as possible to the raw data, and doesn't use individual *currentDt*'s as a divider, which are explicit design goals to reduce data volatility.
+As this formula shows, we can determine the drag factor through the slope of the line created by *time* on the *x*-axis and the corresponding *CurrentDt* on the *y* axis, for a specific recovery phase. This slope can be determined in a robust manner through linear regression. This approach also brings this calculation as close as possible to the raw data, and doesn't use individual *currentDt*'s as a divider, which are explicit design goals to reduce data volatility.
 
 As the slope of &Delta;currentDt / &Delta;t is equal to (k \* 2&pi;) / (I \* Impulses Per Rotation), the drag thus can be determined through
 
