@@ -106,11 +106,11 @@ Missed impulses is an issue
 
 > &alpha; = &Delta;&omega; / &Delta;t
 
-However, this formula is dependent on **currentDt**, which is suspect to noise, which would be reintroduced through this parameter. Following [[8]](#8), there is an alternative approach to Angular Acceleration:
+However, this formula is dependent on *currentDt*, which is suspect to noise, which would be reintroduced through this parameter. Following [[8]](#8), there is an alternative approach to Angular Acceleration:
 
 > 2&alpha; = &Delta;(&omega;<sup>2</sup>) / &Delta;&theta;
 
-This makes &alpha; dependent on &omega;, which was determined in a robust manner, and &theta; where deviations are discrete and thus easier to detect. Thus we determine &alpha; in a robust manner by Linear Regression over &omega;<sup>2</sup> on the y-axis and &theta; on the x-axis. 
+This makes &alpha; dependent on &omega;, which was determined in a robust manner, and &theta; where deviations are discrete and thus easier to detect. Thus we determine &alpha; in a robust manner by Linear Regression by determining the slope of the line where &theta; on the x-axis and &omega;<sup>2</sup> is the y-axis.
 
 ### Determining the "Torque" of the flywheel
 
@@ -118,25 +118,29 @@ This makes &alpha; dependent on &omega;, which was determined in a robust manner
 
 From theory, the dragfactor can be calculated through formula 7.2 [[1]](#1):
 
-> k = -I \* &delta;(1/&omega;) / &delta;t
+> k = -I \* &Delta;(1/&omega;) / &Delta;t
 
 Such a more fundamental approach is found in the method used by [[7]](#7), where the dragfactor is determined through the slope of the relation between inverse of the angular velocity and time. This depends on a different perspective on formula 7.2 [[1]](#1), which states:
 
-> k = I \* &delta;(1/&omega;) / &delta;t
+> k = I \* &Delta;(1/&omega;) / &Delta;t
 
 This can be transformed as the definition of the slope of a line, by reformulating it as:
 
-> k / I = &delta;(1/&omega;) / &delta;t
+> k / I = &Delta;(1/&omega;) / &Delta;t
 
-Thus k/I represents the slope of the graph depicted by time from the start of the recovery phase on the x-axis and 1/AngularVelocity on the y axis. This formula can be simplified further as the angular velocity is determined by:
+Thus k/I represents the slope of the graph depicted by time from the start of the recovery phase on the x-axis and 1/AngularVelocity on the y axis. This formula can be simplified further as the angular velocity &omega; is determined by:
 
 > &omega; = (2&pi; / Number of impulses per revolution) / currentDt
 
 Since we are dividing a constant factor (i.e. 2&pi; / Number of impulses per revolution) through *currentDt* we can further simplify this formula by removing this division and constant outside the slope-calculation. Effectively, this makes the formula:
 
-> (k \* 2&pi;) / (I \* Impulses Per Rotation) = &delta;currentDt / &delta;t
+> (k \* 2&pi;) / (I \* Impulses Per Rotation) = &Delta;currentDt / &Delta;t
 
-As this formula shows, the definition of the slope of the line created by *time since the start of the recovery phase* on the *x*-axis and the corresponding *CurrentDt* on the *y* axis is equal to (k \* 2&pi;) / (I \* Impulses Per Rotation). This brings this calculation as close as possible to the raw data, and doesn't use *currentDt* as a divider, which are explicit design goals to reduce data volatility.
+As this formula shows, we can determine the drag factor through the slope of the line created by *time since the start of the recovery phase* on the *x*-axis and the corresponding *CurrentDt* on the *y* axis. This slope of the line can be determined in a robust manner through linear regression. This approach also brings this calculation as close as possible to the raw data, and doesn't use individual *currentDt*'s as a divider, which are explicit design goals to reduce data volatility.
+
+As the slope of &Delta;currentDt / &Delta;t is equal to (k \* 2&pi;) / (I \* Impulses Per Rotation), the drag thus can be determined through
+
+> k = (slope \* I \* Impulses Per Rotation) / 2&pi;
 
 ## Determining the linear metrics
 
