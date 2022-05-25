@@ -116,10 +116,6 @@ This makes &alpha; dependent on &omega;, which was determined in a robust manner
 
 ### Determining the "drag factor" of the flywheel
 
-
-As the left-hand of the equation only contains constants and the dragfactor, this means that the dragfactor can be determined through linear regression (see [[5]](#5) and [[6]](#6)) for the collection of datapoints where x is the time since the start of the recovery phase and y is the currentDt. The dragfactor then can be determined through the slope of the resulting function. As linear regression algorithm, OLS was chosen as it delivered decent results in the tests, it has a O(1) complexity and can be easily implemented to work on continous datastreams (see [these considerations](https://github.com/JaapvanEkris/openrowingmonitor/blob/docs/Engine_Validation.md#improvements-based-on-the-first-side-by-side-dragfactor-test)).
-
-
 In the recovery phase, the only force exerted on the flywheel is the (air-/water-/magnetic-)resistance. Thus we can calculate the Drag factor of the Flywheel based on the deceleration through the entire recovery phase through formula 7.2 [[1]](#1):
 
 > k = -I \* &Delta;(1/&omega;) / &Delta;t
@@ -150,7 +146,7 @@ Since we are multiplying *currentDt* with a constant factor (i.e. Impulses Per R
 
 > (k \* 2&pi;) / (I \* Impulses Per Rotation) = &Delta;currentDt / &Delta;t
 
-As this formula shows, we can determine the drag factor through the slope of the line created by *time* on the *x*-axis and the corresponding *CurrentDt* on the *y*-axis, for each recovery phase. This slope can be determined in a robust manner through linear regression. This approach also brings this calculation as close as possible to the raw data, and doesn't use individual *currentDt*'s as a divider, which are explicit design goals to reduce data volatility.
+As the left-hand of the equation only contains constants and the dragfactor, and the right-hand a division of two delta's, we can determine the dragfactor through linear regression (see [[5]](#5) and [[6]](#6)) for the collection of datapoints. The drag factor is effectively determined by the slope of the line created by *time* on the *x*-axis and the corresponding *CurrentDt* on the *y*-axis, for each recovery phase. This slope can be determined in a robust manner through linear regression. This approach also brings this calculation as close as possible to the raw data, and doesn't use individual *currentDt*'s as a divider, which are explicit design goals to reduce data volatility.
 
 As the slope of the line *currentDt* over *time* is equal to (k \* 2&pi;) / (I \* Impulses Per Rotation), the drag thus can be determined through
 
@@ -196,18 +192,6 @@ By specifying the expected natural deceleration of the flywheel (naturalDecelera
 Testing shows that setting a value close to the natural deceleration provides more accurate results very reliably. However, some rowers might contain a lot of noise in their data, making this approach infeasible (hence the fallback option of naturalDeceleration = 0)
 
 This approach is a better approximation than the acceleration/deceleration approach, but still is not perfect. For example, drag-force of the the rower presented in the above graph slowly reduces. This is expected, as the drag-force is speed dependent. For a pure air-rower, the best theoretical approach would be to see if the drag-force is the only force present by calculating the expected drag-force using the current speed and the drag factor (making the stroke detection completely independent on speed). Testing has shown that this approach is too prone to errors, as it requires another derivation with respect to *currentDt*, making it too volatile. Above this, hybrid rower behave differently as well: dependent on the speed, the balance shifts between the speed-dependent air-resistance drag-force and the speed-independent magnetic resistance force. To make the solution robust and broadly applicable, this approach has been abandoned.
-
-## Key physical metrics during the rowing cycle
-
-In the following sections we describe the physics used to come to the estimated metrics.
-
-### Linear distance
-
-### Linear Velocity
-
-### Power produced
-
-@@@@
 
 ## Measurements during the recovery phase
 
@@ -357,34 +341,41 @@ Again, this is a systematic (overestimation) of the power, which will be systema
 
 ## A mathematical perspective on key metrics
 
-### Noise Filtering
+### Noise Filtering algorithms applied
 
-### Determination of slopes through Linear regression
+### Linear regression algorithms applied for slope determination
 
-There are several different linear regression methods [[9]](#9). There are several requirements on the algorithm: it has to be robust to outliers [[10]](#10) and it has to delviver results in near-real-time scenarios. From a robustness perspective, most promissing methods are [least absolute deviations](https://en.wikipedia.org/wiki/Least_absolute_deviations), the [Theil–Sen estimator](https://en.wikipedia.org/wiki/Theil%E2%80%93Sen_estimator) and the [LASSO technique](https://en.wikipedia.org/wiki/Lasso_(statistics)). Most of these methods, except the Theil–Sen estimator, do not have a near-real-time solution.
+There are several different linear regression methods [[9]](#9). We have several requirements on the algorithm:
 
-#### Ordinary Least Squares
+* it has to delviver results in near-real-time scenarios in a datastream;
 
-Ordinary Least Squares regression (see [[11]](#14) and [[12]](#15)) produces results that are generally acceptable and the O(1) performance is well-suited for near-real-time calculations on a time series. When using a high-pass filter on the r<sup>2</sup> to disregard any unreliably approximated data, it can also be used to produce reliable results.
+* if possible, it has to be robust to outliers: an outlier shouldn't skew the results too much [[10]](#10).
 
-#### Theil–Sen estimator
+Ordinary Least Squares is by far the most efficient and can easily be applied to datastreams. However, it isn't robust. From a robustness perspective, most promissing methods are [least absolute deviations](https://en.wikipedia.org/wiki/Least_absolute_deviations), the [Theil–Sen estimator](https://en.wikipedia.org/wiki/Theil%E2%80%93Sen_estimator) and the [LASSO technique](https://en.wikipedia.org/wiki/Lasso_(statistics)). Most of these methods, except the Theil–Sen estimator, do not have a near-real-time solution. In the description of the linear regression methods, we describe the most promissing ones.
 
-Although the Theil–Sen estimator has a O(N log(N)) solution available, however we could not find a readily available solution. We did manage to develop a solution that has a O(N) impact during the addition of an additional datapoint, and O(log(N)) impact when determining the slope. 
+#### Ordinary Least Squares (OLS)
 
-#### Incomplete Theil–Sen estimator
+Ordinary Least Squares regression (see [[11]](#14) and [[12]](#15)) produces results that are generally acceptable and the O(N) performance is well-suited for near-real-time calculations. When implemented in a datastream, the addition of a new datapoint is O(1), and the calculation of a slope also is O(1). When using a high-pass filter on the r<sup>2</sup> to disregard any unreliably approximated data, it can also be used to produce reliable results.
 
-There also is an Incomplete Theis-Sen estimator [[13]](#13), which is O(1) for the addition of new datapoints, and O(log(N)) for the determination of the slope. Our tests on real-life data show that generally the Incomplete Theil-Sen is more 
+#### Theil–Sen estimator (TS)
 
-#### Algorithms applied
+Although the Theil–Sen estimator has a O(N log(N)) solution available, however we could not find a readily available solution. We did manage to develop a solution that has a O(N) impact during the addition of an additional datapoint in a datastream with a fixed length window, and O(log(N)) impact when determining the slope. 
+
+#### Incomplete Theil–Sen estimator (Inc TS)
+
+There also is an Incomplete Theis-Sen estimator [[13]](#13), which is O(1) for the addition of new datapoints in a datastream with a fixed length window, and O(log(N)) for the determination of the slope. Our tests on real-life data show that generally the Incomplete Theil-Sen is more 
+
+### Choices for the specific algorithms
+
+##### Linear Regression used for drag calculation
 
 For the drag-factor calculation, we observe three things:
-* The number of datapoints in the recovery phase isn't known in advance, and is subject to significant change due to sprints, making a fixed 
 
+* The number of datapoints in the recovery phase isn't known in advance, and is subject to significant change due to variations in recovery time (i.e. sprints), making both the Incomplete Theil–Sen estimator and Theil–Sen estimator incapable of calculating their slopes in the stream as the efficient implementations require a fixed window. This results in a near O(N<sup>2</sup>) calculation at the start of the *Drive* phase. Given the number of datapoints often encountered (a recoveryphase on a Concept 2 contains around 200 datapoints), this is a significant issue that could disrupt the application. OLS has a O(1) complexity for continous datastreams;
 
+* In non-time critical replays of earlier recorded rowing sessions, both the Incomplete Theil–Sen estimator and Theil–Sen estimator performed worse than OLS: OLS with a high pass filter on r<sup>2</sup> resulted in a much more stable dragfactor than the Incomplete Theil–Sen estimator and Theil–Sen estimator did (see [these considerations](https://github.com/JaapvanEkris/openrowingmonitor/blob/docs/Engine_Validation.md#improvements-based-on-the-first-side-by-side-dragfactor-test)). This suggests that the OLS algorithm handles the outliers sufficiently to prevent drag poisoning.
 
-
-
-no practical implementations have been found, making such an approach practically unfeasible.
+Therefore, we chode to apply OLS as Linear Regression model for the calculation of the dragfactor.
 
 ## References
 
