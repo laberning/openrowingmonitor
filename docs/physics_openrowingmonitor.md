@@ -357,17 +357,23 @@ Again, this is a systematic (overestimation) of the power, which will be systema
 
 ## A mathematical perspective on key metrics
 
-### Determination of slopes
+### Noise Filtering
 
-In theory
-
-#### Models used for Linear regression
+### Determination of slopes through Linear regression
 
 There are several different linear regression methods [[9]](#9). There are several requirements on the algorithm: it has to be robust to outliers [[10]](#10) and it has to delviver results in near-real-time scenarios. From a robustness perspective, most promissing methods are [least absolute deviations](https://en.wikipedia.org/wiki/Least_absolute_deviations), the [Theil–Sen estimator](https://en.wikipedia.org/wiki/Theil%E2%80%93Sen_estimator) and the [LASSO technique](https://en.wikipedia.org/wiki/Lasso_(statistics)). Most of these methods, except the Theil–Sen estimator, do not have a near-real-time solution.
 
+#### OLS
+
+#### Theil–Sen estimator
+
 Although the Theil–Sen estimator has a O(N log(N)) solution available, however we could not find a readily available solution. We did manage to develop a solution that has a O(N) impact during the addition of an additional datapoint, and O(log(N)) impact when determining the slope. 
 
+#### Incomplete Theil–Sen estimator
+
 There also is an Incomplete Theis-Sen estimator [[13]](#13), which is O(1) for the addition of new datapoints, and O(log(N)) for the determination of the slope. Our tests on real-life data show that generally the Incomplete Theil-Sen is more 
+
+#### Algorithms applied
 
 For the drag-factor calculation, we observe three things:
 * The number of datapoints in the recovery phase isn't known in advance, and is subject to significant change due to sprints, making a fixed 
