@@ -116,11 +116,17 @@ This makes &alpha; dependent on &omega;, which was determined in a robust manner
 
 ### Determining the "drag factor" of the flywheel
 
-From theory, the dragfactor can be calculated through formula 7.2 [[1]](#1):
+
+As the left-hand of the equation only contains constants and the dragfactor, this means that the dragfactor can be determined through linear regression (see [[5]](#5) and [[6]](#6)) for the collection of datapoints where x is the time since the start of the recovery phase and y is the currentDt. The dragfactor then can be determined through the slope of the resulting function. As linear regression algorithm, OLS was chosen as it delivered decent results in the tests, it has a O(1) complexity and can be easily implemented to work on continous datastreams (see [these considerations](https://github.com/JaapvanEkris/openrowingmonitor/blob/docs/Engine_Validation.md#improvements-based-on-the-first-side-by-side-dragfactor-test)).
+
+
+In the recovery phase, the only force exerted on the flywheel is the (air-/water-/magnetic-)resistance. Thus we can calculate the Drag factor of the Flywheel based on the deceleration through the entire recovery phase through formula 7.2 [[1]](#1):
 
 > k = -I \* &Delta;(1/&omega;) / &Delta;t
 
-Such a more fundamental approach is found in the method used by [[7]](#7), where the dragfactor is determined through the slope of the relation between inverse of the angular velocity and time. This depends on a different perspective on formula 7.2 [[1]](#1), which states:
+However, our testing has shown this approach is too volatile to be useful (see [these test results](https://github.com/JaapvanEkris/openrowingmonitor/blob/docs/Engine_Validation.md#validation-of-the-drag-factor-calculation)). In essence, this formula isn't robust due to the effects of small variation in *currentDT* upon both *t* and ;&omega;. Even when &Delta;t is chosen to span the entire recovery phase, small deviations in *currentDt* result in volaility of the measured drag factor, which results in an unstable drag factor. To make this calculation more robust, we need to take a more fundamental.
+
+Such a more fundamental approach is found in the method used by [[7]](#7), where the dragfactor is determined through the slope of the relation between inverse of the angular velocity &omega; and time. This depends on a different perspective on formula 7.2 [[1]](#1), which states:
 
 > k = I \* &Delta;(1/&omega;) / &Delta;t
 
@@ -128,11 +134,19 @@ This can be transformed as the definition of the slope of a line, by reformulati
 
 > k / I = &Delta;(1/&omega;) / &Delta;t
 
-Thus k/I represents the slope of the graph depicted by time on the x-axis and 1/&omega; on the y axis, during a specific recovery phase of the stroke. However, this formula can be simplified further, as the angular velocity &omega; is determined by:
+Thus k/I represents the slope of the graph depicted by time on the *x*-axis and 1/&omega; on the *y*-axis, during the recovery phase of the stroke. However, this formula can be simplified further, as the angular velocity &omega; is determined by:
 
 > &omega; = (2&pi; / Number of impulses per revolution) / currentDt
 
-Since we are dividing a constant factor (i.e. 2&pi; / Number of impulses per revolution) through *currentDt* we can further simplify the formula by removing this division and constant outside the slope-calculation. Effectively, making the formula:
+thus making:
+
+> k / I = &Delta;(1/((2&pi; / Number of impulses per revolution) / currentDt)) / &Delta;t
+
+resulting in
+
+> k / I = &Delta;(currentDt /(2&pi; / Number of impulses per revolution)) / &Delta;t
+
+Since we are dividing a constant factor (i.e. 2&pi; / Number of impulses per revolution) through *currentDt* we can further simplify the formula by moving this division and constant outside the slope-calculation. Effectively, making the formula:
 
 > (k \* 2&pi;) / (I \* Impulses Per Rotation) = &Delta;currentDt / &Delta;t
 
@@ -186,20 +200,6 @@ This approach is a better approximation than the acceleration/deceleration appro
 ## Key physical metrics during the rowing cycle
 
 In the following sections we describe the physics used to come to the estimated metrics.
-
-### Drag factor
-
-In the recovery phase, the only force exerted on the flywheel is the (air/water/magnetic)resistance. Thus we can calculate the Drag factor of the Flywheel based on the entire recovery phase.
-
-As [[1]](#1) describes in formula 7.2:
-
-> k = I \* &delta;(1/&omega;) / &delta;t
-
-However, our testing has shown this approach is too volatile to be useful (see [these test results](https://github.com/JaapvanEkris/openrowingmonitor/blob/docs/Engine_Validation.md#validation-of-the-drag-factor-calculation)). However, this formula can be transformed into (see [this derivation](https://github.com/JaapvanEkris/openrowingmonitor/blob/docs/Engine_Validation.md#improvements-based-on-the-first-side-by-side-dragfactor-test)).
-
-> (k \* 2&pi;)/(I \* Impulses Per Rotation) = &delta;currentDt / &delta;t
-
-As the left-hand of the equation only contains constants and the dragfactor, this means that the dragfactor can be determined through linear regression (see [[5]](#5) and [[6]](#6)) for the collection of datapoints where x is the time since the start of the recovery phase and y is the currentDt. The dragfactor then can be determined through the slope of the resulting function. As linear regression algorithm, OLS was chosen as it delivered decent results in the tests, it has a O(1) complexity and can be easily implemented to work on continous datastreams (see [these considerations](https://github.com/JaapvanEkris/openrowingmonitor/blob/docs/Engine_Validation.md#improvements-based-on-the-first-side-by-side-dragfactor-test)).
 
 ### Linear distance
 
