@@ -111,23 +111,11 @@ currentDragFactor = -1 * rowerSettings.flywheelInertia * ((1 / recoveryStartAngu
 
 As the variation of the recoveryPhaseLength reported in the log is around 5%, it doesn't account for the variations encountered. A more likely explanation is the reliance on two measurements that tend to be volatile: recoveryStartAngularVelocity and recoveryEndAngularVelocity. Although these derived values of *currentDt* are filtered and averaged, *CurrentDt* (which typically is in the millisecond-range) is used as a divider to obtain the angular velocity, where small variations tend to be enlarged. This is why this calculation explicitly depends on the filtered values of *currentDt*, and not the raw ones, to dampen this volatility. Although this behaviour could be surpressed by more noise filtering and smoothing, we think a more fundamental approach would yield better results.
 
-Such a more fundamental approach is found in the method used by [[7]](#7), where the dragfactor is determined through the slope of the relation between inverse of the angular velocity and time. This depends on a different perspective on formula 7.2 [[1]](#1), which states:
-
-> k = I \* &delta;(1/&omega;) / &delta;t
-
-This can be transformed as the definition of the slope of a line, by reformulating it as:
-
-> k / I = &delta;(1/&omega;) / &delta;t
-
-Thus k/I represents the slope of the graph depicted by time from the start of the recovery phase on the x-axis and 1/AngularVelocity on the y axis. This formula can be simplified further as the angular velocity is determined by:
-
-> &omega; = (2&pi; / Number of impulses per revolution) / currentDt
-
-Since we are dividing a constant factor (i.e. 2&pi; / Number of impulses per revolution) through *currentDt* we can further simplify this formula by removing this division and constant outside the slope-calculation. Effectively, this makes the formula:
+Such a more fundamental approach is found in the method used by [[7]](#7), where the dragfactor is determined through the slope of the relation between inverse of the angular velocity and time. Based on our own deduction [[5]](#5), we get the formula:
 
 > (k \* 2&pi;) / (I \* Impulses Per Rotation) = &delta;currentDt / &delta;t
 
-As this formula shows, the definition of the slope of the line created by *time since the start of the recovery phase* on the *x*-axis and the corresponding *CurrentDt* on the *y* axis is equal to (k \* 2&pi;) / (I \* Impulses Per Rotation). This brings this calculation as close as possible to the raw data, and doesn't use *currentDt* as a divider, which are explicit design goals to reduce data volatility.
+As this formula shows, the definition of the slope of the line created by *time* on the *x*-axis and the corresponding *CurrentDt* on the *y* axis is equal to (k \* 2&pi;) / (I \* Impulses Per Rotation). This brings this calculation as close as possible to the raw data, doesn't use *currentDt* as a divider, and allows robust methods to determine this slope (Linear Regression), which are explicit design goals to reduce data volatility.
 
 There are several ways to determine this slope. In essence, our initial approach was to determine this slope over the whole recovery phase by determening a delta over the begin and end *currentDt*'s. Another approach is to determine the slope with respect to its previous *currentDt*, and average that slope across all measurements, which is the essence of the first suggestion regarding formula 7.2 [[1]](#1). Initial experiments showed that both approaches are vulnerable to noise in that calculation and thus are not robust, resulting in **drag poisoning**. Therefore, we take an alternative approach which in our opinion fits the nature of the data more. We choose to calculate the slope by performing linear regression, with these values for *x* and *y*. As linear regression is typically applied to determine the optimal line through noisy datapoints orginating form experimental measurements [[17]](#17), we expect that this produces more stable results that are less vulnerable for outliers than using averages across strokes.
 
