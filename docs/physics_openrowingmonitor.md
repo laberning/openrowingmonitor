@@ -369,7 +369,7 @@ There also is an Incomplete Theis-Sen estimator [[13]](#13), which is O(1) for t
 
 ### Choices for the specific algorithms
 
-##### Linear Regression used for drag calculation
+##### Regression algorithm used for drag calculation
 
 For the drag-factor calculation, we observe three things:
 
@@ -377,7 +377,17 @@ For the drag-factor calculation, we observe three things:
 
 * In non-time critical replays of earlier recorded rowing sessions, both the Incomplete Theil–Sen estimator and Theil–Sen estimator performed worse than OLS: OLS with a high pass filter on r<sup>2</sup> resulted in a much more stable dragfactor than the Incomplete Theil–Sen estimator and Theil–Sen estimator did (see [these considerations](https://github.com/JaapvanEkris/openrowingmonitor/blob/docs/Engine_Validation.md#improvements-based-on-the-first-side-by-side-dragfactor-test)). This suggests that the OLS algorithm handles the outliers sufficiently to prevent drag poisoning.
 
-Therefore, we chode to apply OLS as Linear Regression model for the calculation of the dragfactor.
+* Applying Quadratic OLS regression does not improve its results
+
+Therefore, we chode to apply the OLS Linear Regression model for the calculation of the dragfactor.
+
+##### Regression algorithm used for Angular velocity and Angular Acceleration
+
+Incomplete Linear Theil-Sen proved more robust than OLS
+
+Complete Linear Theil-Sen delivered more noisy results than Incomplete Linear Theil-Sen
+
+Incomplete Quadratic Theil-Sen delivered more noisy results than Incomplete Linear Theil-Sen
 
 ## References
 
