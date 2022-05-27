@@ -20,15 +20,18 @@ The following items describe most of the current features, more functionality wi
 
 ### Rowing Metrics
 
-Open Rowing Monitor implements a physics model to simulate the typical metrics of a rowing boat based on the pull on the handle. The physics model can be tuned to the specifics of a rower by changing some model parameters.
+Open Rowing Monitor implements a physics model to simulate the typical metrics of a rowing boat based on the pull on the handle. The physics model can be tuned to the specifics of a rower by changing some model parameters. Open Rowing Monitor displays the following key metrics:
 
 * Stroke detection
 * Power (watts)
-* Split time (/500m)
-* Strokes per Minute
+* Pace (/500m)
+* Strokes per Minute (SPM)
 * Calories used (kcal)
 * Training Duration
+* Total number of strokes
 * Heart Rate (supports BLE and ANT+ heart rate monitors, ANT+ requires an ANT+ USB stick)
+
+It calculates and can export many other key rowing metrics, including Drive length (meters), Drive time (milliseconds), Recovery Time (milliseconds), Average handle force (Newton), Peak handle force (Newton) and a Force curve.
 
 ### Web Interface
 
