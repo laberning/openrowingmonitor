@@ -55,13 +55,15 @@ Fitness Machine Service (FTMS) is a standardized GATT protocol for different typ
 
 ### Export of Training Sessions
 
-Open Rowing Monitor can create Training Center XML files (TCX). You can upload these files to training platforms like [Strava](https://www.strava.com), [Garmin Connect](https://connect.garmin.com) or [Trainingpeaks](https://trainingpeaks.com) to track your training sessions.
+Open Rowing Monitor is based on the idea that metrics should be easily accessible for further analysis. Therefore, Open Rowing Monitor can create the following files:
 
-Uploading your sessions to Strava is an integrated feature, for all other platforms this is currently a manual step. The installer can set up a network share that contains all training data so it is easy to grab the files from there and upload them to the training platform of your choice.
+* **Training Center XML files (TCX)**: These are XML-files that contain the most essential metrics of a rowing session. You can upload these files to training platforms like [Strava](https://www.strava.com), [Garmin Connect](https://connect.garmin.com) or [Trainingpeaks](https://trainingpeaks.com) to track your training sessions;
 
-Open Rowing Monitor can also create RowingData files, which can be used with [RowingData](https://pypi.org/project/rowingdata/) to display your results locally, or uploaded to [RowsAndAll](https://rowsandall.com/) for a webbased analysis (including in-stroke metrics). These csv-files can ales be used to process in Excel, allowing your own custom analysis.
+* **RowingData** files, which are comma-seperated files with all metrics RowingData understands. These can be used with [RowingData](https://pypi.org/project/rowingdata/) to display your results locally, or uploaded to [RowsAndAll](https://rowsandall.com/) for a webbased analysis (including in-stroke metrics). The csv-files can also be used to process in Excel, allowing your own custom analysis. This is the most extensive set of metrics that Open Rowing Monitor can produce;
 
-Open Rowing Monitor can also store the raw measurements of the flywheel into CSV files. These files are great to start your own exploration of your rowing style and also to learn about the specifics of your rowing machine (some Excel files that can help with this are included in the `docs` folder).
+* **Raw flywheel measurements of the flywheel**, also in CSV files. These files are great to start your own exploration of your rowing style and also to learn about the specifics of your rowing machine (some Excel files that can help with this are included in the `docs` folder).
+
+Uploading your sessions to Strava is an integrated feature, for all other platforms this is currently a manual step, and uploading to [RowsAndAll](https://rowsandall.com/) can be automated through their e-mail interface. The installer can also set up a network share that contains all training data so it is easy to grab the files from there and manually upload them to the training platform of your choice.
 
 ## Installation
 
