@@ -20,7 +20,7 @@ The following items describe most of the current features, more functionality wi
 
 ### Rowing Metrics
 
-Open Rowing Monitor implements a physics model to simulate the typical metrics of a rowing boat based on the pull on the handle. The physics model can be tuned to the specifics of a rower by changing some model parameters. Open Rowing Monitor displays the following key metrics:
+Open Rowing Monitor implements a physics model to simulate the typical metrics of a rowing boat based on the pull on the handle. The physics model can be tuned to the specifics of a rower by changing some model parameters. Open Rowing Monitor displays the following key metrics on the user interfaces:
 
 * Stroke detection
 * Power (watts)
