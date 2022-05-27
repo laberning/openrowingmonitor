@@ -34,13 +34,15 @@ Typically, measurements are done in the rotational part of the rower, on the fly
 
 #### Relevant rotational metrics
 
-* The **Angular Position** of the flywheel in Radians: in essence the distance the flywheel has traveled (i.e. the number of Radians the flywheel has rotated) since the start of the session. As the impulse-givers are evenly spread over the flywheel, this can easily be measured by counting the number of impulses, **Number of Impulses** and multiply it with the **angular displacement** between two **impulses** (i.e. 2π/(*number of impulse providers on the flywheel*));
+Open Rowing Monitor needs to keep track of several metrics about the flywheel and its state, including
 
-* The **Time since start** of the flywheel in seconds: in essence the time the flywheel has been spinning since the start of the session. This can easily be measured by summarising the **time between an impulse**;
+* The **Angular Distance** of the flywheel in Radians (denoted with &theta;): in essence the distance the flywheel has traveled (i.e. the number of Radians the flywheel has rotated) since the start of the session. As the impulse-givers are evenly spread over the flywheel, this can easily be measured by counting the number of impulses, **Number of Impulses** and multiply it with the **angular displacement** between two **impulses** (i.e. 2π/(*number of impulse providers on the flywheel*));
 
-* The **Angular Velocity** of the flywheel in Radians/second: in essence the number of (partial) rotations of the flywheel per second;
+* The **Time since start** of the flywheel in seconds (denoted with t): in essence the time the flywheel has been spinning since the start of the session. This can easily be measured by summarising the **time between an impulse**;
 
-* The **Angular Acceleration** of the flywheel (in Radians/second<sup>2</sup>): the acceleration/deceleration of the flywheel;
+* The **Angular Velocity** of the flywheel in Radians/second (denoted with &omega;): in essence the number of (partial) rotations of the flywheel per second;
+
+* The **Angular Acceleration** of the flywheel in Radians/second<sup>2</sup> (denoted with &alpha;): the acceleration/deceleration of the flywheel;
 
 * the **Torque** of the flywheel
 
