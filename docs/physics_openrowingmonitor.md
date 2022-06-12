@@ -102,9 +102,15 @@ Missed impulses is an issue
 
 ### Determining the "Angular Velocity" of the flywheel
 
+The traditional approach uses:
+
 > &omega; = &Delta;&theta; / &Delta;t
 
+In our approximation, we map time versus distance, where the velocity is determined the specific point's slope.
+
 ### Determining the "Angular Acceleration" of the flywheel
+
+The traditional approach would be:
 
 > &alpha; = &Delta;&omega; / &Delta;t
 
@@ -112,7 +118,11 @@ However, this formula is dependent on *currentDt*, which is suspect to noise, wh
 
 > 2&alpha; = &Delta;(&omega;<sup>2</sup>) / &Delta;&theta;
 
-This makes &alpha; dependent on &omega;, which was determined in a robust manner, and &theta; where deviations are discrete and thus easier to detect. Thus we determine &alpha; in a robust manner by Linear Regression by determining the slope of the line where &theta; on the x-axis and &omega;<sup>2</sup> is the y-axis.
+This makes &alpha; dependent on &omega;, which was determined in a robust manner, and &theta; where deviations are discrete and thus easier to detect. Thus we determine &alpha; in a robust manner by Linear Regression by determining the slope of the line where &theta; on the x-axis and &omega;<sup>2</sup> is the y-axis. However, as
+
+> &theta; = ½ * &alpha; * t<sup>2</sup> + &theta;<sub>0</sub> * t + &theta;t<sub>0</sub>
+
+This can be estimates by Quadratic Regression by determining the determining the line where time is on the x-axis and &theta; on the y-axis. In this equation, the a (quadratic) coefficient equals ½ * &alpha;, and the b coefficient equals &theta;<sub>0</sub>.
 
 ### Determining the "Torque" of the flywheel
 
