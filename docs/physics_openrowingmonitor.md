@@ -74,7 +74,7 @@ The following picture shows the time between impulses through time:
 ![Measurements of flywheel](img/physics/flywheelmeasurement.png)
 *Measurements of flywheel*
 
-Here, it is clear that the flywheel first accelerates and then decelerates, which is typical for rowing.
+Here, it is clear that the flywheel first accelerates (i.e. the time between impulses become smaller) and then decelerates (i.e. the time between impulses become bigger), which is typical for the rowing motion.
 
 Using *currentDt* means we can't measure anything directly aside from *angular displacement*, and that we have to accept some noise in measurements. For example, as we don't measure torque on the flywheel directly, we can't determine where the flywheel exactly accelerates/decelerates, we can only detect a change in the times between impulses. In essence, we only can conclude that an acceleration has taken place somewhere near a specific impulse, but we can't be certain about where the acceleration exactly has taken place and we can only estimate how big the force must have been. Additionally, small vibrations in the chassis due to tiny unbalance in the flywheel can lead to small deviations in measurements. This kind of noise in our measurement can make many subsequent derived calculation on this measurement too volatile, This is why we explicitly distinguish between *measurements* and *estimates* based on these measurements, to clearly indicate their potential volatility.
 
