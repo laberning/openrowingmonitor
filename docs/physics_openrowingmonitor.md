@@ -120,7 +120,7 @@ However, this formula is dependent on *currentDt*, which is suspect to noise, wh
 
 This makes &alpha; dependent on &omega;, which was determined in a robust manner, and &theta; where deviations are discrete and thus easier to detect. Thus we determine &alpha; in a robust manner by Linear Regression by determining the slope of the line where &theta; on the x-axis and &omega;<sup>2</sup> is the y-axis. However, as
 
-> &theta; = ½ * &alpha; * t<sup>2</sup> + &theta;<sub>0</sub> * t + &theta;t<sub>0</sub>
+> &theta; = ½ * &alpha; * t<sup>2</sup> + &theta;<sub>0</sub> * t + &theta;<sub>0</sub>
 
 This can be estimates by Quadratic Regression by determining the determining the line where time is on the x-axis and &theta; on the y-axis. In this equation, the a (quadratic) coefficient equals ½ * &alpha;, and the b coefficient equals &theta;<sub>0</sub>.
 
