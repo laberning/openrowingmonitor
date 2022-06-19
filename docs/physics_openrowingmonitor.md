@@ -132,7 +132,7 @@ In the recovery phase, the only force exerted on the flywheel is the (air-/water
 
 > k = -I \* &Delta;(1/&omega;) / &Delta;t
 
-However, our testing has shown this approach is too volatile to be useful (see [these test results](https://github.com/JaapvanEkris/openrowingmonitor/blob/docs/Engine_Validation.md#validation-of-the-drag-factor-calculation)). In essence, this formula isn't robust due to the effects of small variation in *currentDT* upon both *t* and &omega;. Even when &Delta;t is chosen to span the entire recovery phase, small deviations in *currentDt* result in volaility of the measured drag factor, which results in an unstable drag factor. To make this calculation more robust, we need to take a more fundamental.
+However, our testing has shown this approach is too volatile to be useful (see [these test results](https://github.com/JaapvanEkris/openrowingmonitor/blob/docs/Engine_Validation.md#validation-of-the-drag-factor-calculation)). In essence, this formula isn't robust due to the effects of small variation in *currentDT* upon both *t* and &omega;. Even when &Delta;t is chosen to span the entire recovery phase, small deviations in *currentDt* result in volaility of the measured drag factor, which results in an unstable drag factor. To make this calculation more robust, we need to take a more fundamental approach.
 
 Such a more fundamental approach is found in the method used by [[7]](#7), where the dragfactor is determined through the slope of the relation between inverse of the angular velocity &omega; and time. This depends on a different perspective on formula 7.2 [[1]](#1), which states:
 
