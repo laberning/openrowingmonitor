@@ -110,15 +110,15 @@ In our approximation, we map time versus distance, where the velocity is determi
 
 ### Determining the "Angular Acceleration" of the flywheel
 
-The traditional approach would be:
+The traditional approach [[1]](#1), [[14]](#14) would be:
 
 > &alpha; = &Delta;&omega; / &Delta;t
 
-However, this formula is dependent on *currentDt*, which is suspect to noise, which would be reintroduced through this parameter. Following [[8]](#8), there is an alternative approach to Angular Acceleration:
+However, this formula is dependent on *currentDt*, which is suspect to noise, which would be reintroduced through this parameter. Following [[8]](#8),[[14]](#14) there is an alternative approach to Angular Acceleration:
 
 > 2&alpha; = &Delta;(&omega;<sup>2</sup>) / &Delta;&theta;
 
-This makes &alpha; dependent on &omega;, which was determined in a robust manner, and &theta; where deviations are discrete and thus easier to detect. Thus we can determine &alpha; in a robust manner by Linear Regression by determining the slope of the line where &theta; on the x-axis and &omega;<sup>2</sup> is the y-axis. However, as
+This makes &alpha; dependent on &omega;, which was determined in a robust manner, and &theta; where deviations are discrete and thus easier to detect. Thus we can determine &alpha; in a robust manner by Linear Regression by determining the slope of the line where &theta; on the x-axis and &omega;<sup>2</sup> is the y-axis. However, [[14]](#14) also provides
 
 > &theta; = ½ * &alpha; * t<sup>2</sup> + &omega;<sub>0</sub> * t + &theta;<sub>0</sub>
 
@@ -166,6 +166,23 @@ As the slope of the line *currentDt* over *time* is equal to (k \* 2&pi;) / (I \
 
 ## Determining the linear metrics
 
+
+### Linear distance
+
+### Linear Velocity
+
+### Power produced
+
+### Flywheel Torque
+
+### Handle Force
+
+From theory [[14]](#14)) and practical application [[16]](#16). we know the handle force is equal to:
+
+### Handle Velocity
+
+### Handle Power
+
 ## Detecting the stroke and recovery phase
 
 On an indoor rower, the rowing cycle will always start with a stroke, followed by a recovery. Looking at a stroke, our monitor gets the following data from its sensor:
@@ -179,7 +196,7 @@ Here we plot the *currentDt* (time between impulses) against its sequence number
 
 * The **Recovery Phase**, where the rower returns to his starting position and the flywheel decelerates as the drag on the flywheel is slowing it down;
 
-As the rowing cycle always follows this fixed schema, Open Rowing Monitor models it as a finite state machine (implemented in `handleRotationImpulse` in `engine/RowingEngine.js`).
+As the rowing cycle always follows this fixed schema, Open Rowing Monitor models it as a finite state machine (implemented in `handleRotationImpulse` in `engine/Rower.js`).
 
 ![Finite state machine of rowing cycle](img/physics/finitestatemachine.png)
 *Finite state machine of rowing cycle*
@@ -426,3 +443,9 @@ Incomplete Quadratic Theil-Sen delivered more noisy results than Incomplete Line
 <a id="12">[12]</a> University of Colorado, Simple Linear Regression <https://www.colorado.edu/amath/sites/default/files/attached-files/ch12_0.pdf>
 
 <a id="13">[13]</a> Incomplete Theil-Sen Regression <https://www.fon.hum.uva.nl/praat/manual/theil_regression.html>
+
+<a id="14">[14]</a> Glenn Elert, The Physics Hypertextbook, Rotational Kinematics <https://physics.info/rotational-kinematics/>
+
+<a id="15">[15]</a> Glenn Elert, The Physics Hypertextbook, Rotational Energy <https://physics.info/rotational-energy/>
+
+<a id="16">[16]</a> Dave Vernooy, ErgWare source code V0.6 <https://github.com/dvernooy/ErgWare/blob/master/v0.6/Standard_version/source/main.c>
