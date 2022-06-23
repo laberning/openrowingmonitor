@@ -120,9 +120,9 @@ However, this formula is dependent on *currentDt*, which is suspect to noise, wh
 
 This makes &alpha; dependent on &omega;, which was determined in a robust manner, and &theta; where deviations are discrete and thus easier to detect. Thus we can determine &alpha; in a robust manner by Linear Regression by determining the slope of the line where &theta; on the x-axis and &omega;<sup>2</sup> is the y-axis. However, [[14]](#14) also provides
 
-> &theta; = ½ * &alpha; * t<sup>2</sup> + &omega;<sub>0</sub> * t + &theta;<sub>0</sub>
+> &theta; = ½&alpha;t<sup>2</sup> + &omega;<sub>0</sub>t + &theta;<sub>0</sub>
 
-We can estimate &omega; and &alpha; by performing Quadratic Regression on the line where time is on the x-axis and &theta; on the y-axis. Quadratic Regression resolves the coefficients of y = *a* x<sup>2</sup> + *b* x + *c*. In this equation, the a (quadratic) coefficient equals ½ * &alpha;, and the b coefficient equals &omega;<sub>0</sub>. It is also noted that the derived function determines the slope (and thus &omega;) at a specific time.
+We can estimate &omega; and &alpha; by performing Quadratic Regression on the line where time is on the x-axis and &theta; on the y-axis. Quadratic Regression resolves the coefficients of y = *a* x<sup>2</sup> + *b* x + *c*. In this equation, the a (quadratic) coefficient equals ½&alpha;, and the b coefficient equals &omega;<sub>0</sub>. It is also noted that the derived function determines the slope (and thus &omega;) at a specific time.
 
 ### Determining the "Torque" of the flywheel
 
