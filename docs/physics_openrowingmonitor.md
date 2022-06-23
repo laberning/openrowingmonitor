@@ -3,6 +3,8 @@
 <!-- markdownlint-disable no-inline-html -->
 In this document we explain the physics behind the Open Rowing Monitor, to allow for independent review and software maintenance. This work wouldn't have been possible without some solid physics, described by some people with real knowledge of the subject matter. Please note that any errors in our implementation probably is on us, not them. When appropriate, we link to these sources. When possible, we also link to the source code.
 
+Please note that this text is used as a rationale for design decissions in Open Rowing Monitor. So it is of interest for people maintaining the code (as it explains why we do things the way we do) and for academics to verify of improve our solution. For these academics, we conclude with a section of open design issues. If you are interested in just using Open Rowing Monitor as-is, this might not be the text you are looking for.
+
 ## Basic concepts
 
 @@@
@@ -413,6 +415,20 @@ Incomplete Linear Theil-Sen proved more robust than OLS
 Complete Linear Theil-Sen delivered more noisy results than Incomplete Linear Theil-Sen
 
 Incomplete Quadratic Theil-Sen delivered more noisy results than Incomplete Linear Theil-Sen
+
+## Open Issues, Known problems and Regrettable design decissions
+
+### Use of Quadratic Theil-Senn regression for determining &alpha; and &omega; based on time and &theta;
+
+The underlying assumption of this approach is that the Angular Accelration &alpha; is constant, which in rowing it certainly won't be as the force will vary based on the position in the Drive phase (hence the powercurve). For us, it represents a huge improvement from both the traditional numerical approach (as taken by [[1]](#1) and [[4]](#4)) and the linear regression methods used by earlier approaches of Open Rowing Monitor. As the number of datapoints in a *Flanklength* in the relation to the total number of datapoints in a stroke is small, we consider this is a decent approximation while maintaining an sufficiently efficient algorithm to be able to process all data in the datastream in time.
+
+We can inmagine there are better suited third polynomal approaches available that can robustly calculate &alpha; and &omega; as a function of time based on time and &theta;. However, getting these to work in a datastream with very tight limitations on time and memory is quite challenging. We also observe that in several areas the theoretical best approach did not deliver the best practical result (i.e. a "better" algorithm delivered a more noisy result for &alpha; and &omega;).
+
+### Use of Quadratic Theil-Senn regression and a median filter for determining &alpha; and &omega;
+
+For a specific flank, our regression algorithm calculates the &alpha; for the flank and the &omega;'s for each point of the flank. As a datapoint will be part of several flank calculations, we obtain several &alpha;'s and &omega;'s that are valid approximations for that specific datapoint. To obtain the most stable result, we opt for the median of all valid values for &alpha; and &omega; to calculate the definitive approximation of &alpha; and &omega; for that specific datapoint. Although this approach has proven very robust, and even necessary to prevent noise from disturbing powercurves, it is very conservative. For example, when compared to Concept 2's results, the powercurves have the same shape, but the peak values are considerable lower.
+
+Reducing extreme values while maintaining the true data volatility is a subject for further improvement.
 
 ## References
 
