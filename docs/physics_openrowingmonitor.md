@@ -124,8 +124,6 @@ This makes &alpha; dependent on &omega;, which was determined in a robust manner
 
 We can estimate &omega; and &alpha; by performing Quadratic Regression on the line where time is on the x-axis and &theta; on the y-axis. Quadratic Regression resolves the coefficients of y = *a* x<sup>2</sup> + *b* x + *c*. In this equation, the a (quadratic) coefficient equals ½ * &alpha;, and the b coefficient equals &omega;<sub>0</sub>. It is also noted that the derived function determines the slope (and thus &omega;) at a specific time.
 
-### Determining the "Torque" of the flywheel
-
 ### Determining the "drag factor" of the flywheel
 
 In the recovery phase, the only force exerted on the flywheel is the (air-/water-/magnetic-)resistance. Thus we can calculate the Drag factor of the Flywheel based on the deceleration through the entire recovery phase through formula 7.2 [[1]](#1):
@@ -173,7 +171,7 @@ As the slope of the line *currentDt* over *time* is equal to (k \* 2&pi;) / (I \
 
 ### Power produced
 
-### Flywheel Torque
+### Determining the "Torque" of the flywheel
 
 ### Handle Force
 
