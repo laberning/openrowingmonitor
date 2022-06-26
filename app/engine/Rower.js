@@ -50,7 +50,7 @@ function createRower (rowerSettings) {
     switch (true) {
       case (_strokeState === 'Stopped'):
         // We are in a stopped state, so don't do anything
-        break;
+        break
       case (_strokeState === 'WaitingForDrive' && flywheel.isPowered() && !flywheel.isDwelling()):
         // We change into the "Drive" phase since were waiting for a drive phase, and we see a clear force exerted on the flywheel
         // As we are not certain what caused the "WaitingForDrive" (fresh start or restart after pause), we explicitly start the flywheel maintaining metrics again
@@ -58,33 +58,33 @@ function createRower (rowerSettings) {
         flywheel.maintainStateAndMetrics()
         _strokeState = 'Drive'
         startDrivePhase()
-        break;
+        break
       case (_strokeState === 'WaitingForDrive'):
         // We can't change into the "Drive" phase since we are waiting for a drive phase, but there isn't a clear force exerted on the flywheel. So, there is nothing more to do
-        break;
+        break
       case (_strokeState === 'Drive' && flywheel.isUnpowered() && ((flywheel.spinningTime() - drivePhaseStartTime) >= rowerSettings.minimumDriveTime)):
         // We change into the "Recovery" phase since we have been long enough in the Drive phase, and we see a clear lack  of power exerted on the flywheel
         log.debug(`*** RECOVERY phase started at time: ${flywheel.spinningTime().toFixed(4)} sec`)
         _strokeState = 'Recovery'
         endDrivePhase()
         startRecoveryPhase()
-        break;
+        break
       case (_strokeState === 'Drive' && flywheel.isUnpowered()):
         // We seem to have lost power to the flywheel, but it is too early according to the settings. We stay in the Drive Phase
         log.debug(`Time: ${flywheel.spinningTime().toFixed(4)} sec: Delta Time trend is upwards, suggests no power, but waiting for for drive phase length (${(flywheel.spinningTime() - drivePhaseStartTime).toFixed(4)} sec) to exceed minimum drive Time (${rowerSettings.minimumDriveTime} sec)`)
         updateDrivePhase()
-        break;
+        break
       case (_strokeState === 'Drive'):
         // We stay in the "Drive" phase as the decceleration is lacking
         updateDrivePhase()
-        break;
+        break
       case (_strokeState === 'Recovery' && flywheel.isDwelling() && (flywheel.spinningTime() - drivePhaseStartTime) >= rowerSettings.maximumStrokeTimeBeforePause):
         // The Flywheel is spinning too slowly to create valid CurrentDt's and the last Drive started over maximumStrokeTime ago, we consider it a pause
         log.debug(`*** PAUSED rowing at time: ${flywheel.spinningTime().toFixed(4)} sec, rower hasn't moved in ${(flywheel.spinningTime() - drivePhaseStartTime).toFixed(4)} seconds and flywheel is dwelling`)
         flywheel.maintainStateOnly()
         _strokeState = 'WaitingForDrive'
         endRecoveryPhase()
-        break;
+        break
       case (_strokeState === 'Recovery' && flywheel.isPowered() && ((flywheel.spinningTime() - recoveryPhaseStartTime) >= rowerSettings.minimumRecoveryTime)):
         // We change into the "Drive" phase since we have been long enough in the Recovery phase, and we see a clear force
         // exerted on the flywheel
@@ -92,16 +92,16 @@ function createRower (rowerSettings) {
         _strokeState = 'Drive'
         endRecoveryPhase()
         startDrivePhase()
-        break;
+        break
       case (_strokeState === 'Recovery' && flywheel.isPowered()):
         // We see a force, but the "Recovery" phase has been too short, we stay in the "Recovery" phase
         log.debug(`Time: ${flywheel.spinningTime().toFixed(4)} sec: Delta Time trend is downward, suggesting power, but waiting for recoveryDuration (${(flywheel.spinningTime() - recoveryPhaseStartTime).toFixed(4)} sec) to exceed minimumRecoveryTime (${rowerSettings.minimumRecoveryTime} sec)`)
         updateRecoveryPhase()
-        break;
+        break
       case (_strokeState === 'Recovery'):
         // No force on the flywheel, let's continue the "Recovery" phase of the stroke
         updateRecoveryPhase()
-        break;
+        break
       default:
         log.error(`Time: ${flywheel.spinningTime().toFixed(4)} sec, state ${_strokeState} found in the Rowing Engine, which is not captured by Finite State Machine`)
     }
@@ -182,17 +182,17 @@ function createRower (rowerSettings) {
     if (baseAngularDisplacement >= 0) {
       return Math.pow((flywheel.dragFactor() / rowerSettings.magicConstant), 1.0 / 3.0) * baseAngularDisplacement
     } else {
-      return 0
       log.error(`Time: ${flywheel.spinningTime().toFixed(4)} sec: calculateLinearDistance error: baseAngularDisplacement was not credible, baseTime: ${baseAngularDisplacement}`)
+      return 0
     }
   }
 
   function calculateLinearVelocity (baseAngularDisplacement, baseTime) {
     // Here we calculate the AVERAGE speed for the displays, NOT the topspeed of the stroke
-    let prevLinearVelocity = _cycleLinearVelocity
+    const prevLinearVelocity = _cycleLinearVelocity
     if (baseAngularDisplacement > 0 && baseTime > 0) {
       // let's prevent division's by zero and make sure data is credible
-      let baseAngularVelocity = baseAngularDisplacement / baseTime
+      const baseAngularVelocity = baseAngularDisplacement / baseTime
       return Math.pow((flywheel.dragFactor() / rowerSettings.magicConstant), 1.0 / 3.0) * baseAngularVelocity
     } else {
       log.error(`Time: ${flywheel.spinningTime().toFixed(4)} sec: calculateLinearVelocity error, Angular Displacement = ${baseAngularDisplacement}, baseTime = ${baseTime}`)
@@ -202,7 +202,7 @@ function createRower (rowerSettings) {
 
   function calculateCyclePower () {
     // Here we calculate the AVERAGE power for the displays, NOT the top power of the stroke
-    let prevCyclePower = _cyclePower
+    const prevCyclePower = _cyclePower
     if (_driveDuration >= rowerSettings.minimumDriveTime && _cycleDuration >= minimumCycleDuration) {
       // let's prevent division's by zero and make sure data is credible
       return flywheel.dragFactor() * Math.pow((recoveryPhaseAngularDisplacement + drivePhaseAngularDisplacement) / _cycleDuration, 3.0)
@@ -321,7 +321,7 @@ function createRower (rowerSettings) {
     _cycleLinearVelocity = 0.0
     totalLinearDistance = 0.0
     preliminaryTotalLinearDistance = 0.0
-    cyclePower = 0.0
+    _cyclePower = 0.0
     _driveLength = 0.0
   }
 
