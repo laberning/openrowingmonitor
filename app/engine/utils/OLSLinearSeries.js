@@ -49,7 +49,7 @@ function createOLSLinearSeries (maxSeriesLength = 0) {
     XY.push(x * y)
 
     // Let's approximate the line through OLS
-    if (X.length() >=2 && X.sum() > 0) {
+    if (X.length() >= 2 && X.sum() > 0) {
       _slope = (X.length() * XY.sum() - X.sum() * Y.sum()) / (X.length() * XX.sum() - X.sum() * X.sum())
       _intercept = (Y.sum() - (_slope * X.sum())) / X.length()
       const sse = YY.sum() - (_intercept * Y.sum()) - (_slope * XY.sum())
@@ -156,16 +156,16 @@ function createOLSLinearSeries (maxSeriesLength = 0) {
     return Y.series()
   }
 
-  function determineTrend(pointOne, pointTwo) {
+  function determineTrend (pointOne, pointTwo) {
     if (pointOne !== pointTwo) {
       return (Y.get(pointTwo) - Y.get(pointOne))
     } else {
-      log.error(`OLS Linear Regressor, trend determination, trend can't be applied to one point!`)
+      log.error('OLS Linear Regressor, trend determination, trend can not be applied to one point!')
       return 0
     }
   }
 
-  function reset() {
+  function reset () {
     X.reset()
     XX.reset()
     Y.reset()
