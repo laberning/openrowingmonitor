@@ -7,7 +7,7 @@
 */
 
 function createSeries (maxSeriesLength) {
-  const seriesArray = new Array()
+  const seriesArray = []
   let seriesSum = 0
   let numPos = 0
   let numNeg = 0
