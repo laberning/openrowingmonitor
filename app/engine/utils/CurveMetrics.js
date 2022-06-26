@@ -10,7 +10,7 @@
 import { createSeries } from './Series.js'
 
 function createCurveMetrics (precission = 0) {
-  let _curve = createSeries()
+  const _curve = createSeries()
   let _max = 0
   let totalInputXTime = 0
   let totaltime = 0
@@ -32,7 +32,7 @@ function createCurveMetrics (precission = 0) {
     if (_max > 0) {
       return _max
     } else {
-     return 0
+      return 0
     }
   }
 
