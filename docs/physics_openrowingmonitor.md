@@ -385,13 +385,13 @@ Ordinary Least Squares is by far the most efficient and can easily be applied to
 
 Ordinary Least Squares regression (see [[11]](#14) and [[12]](#15)) produces results that are generally acceptable and the O(N) performance is well-suited for near-real-time calculations. When implemented in a datastream, the addition of a new datapoint is O(1), and the calculation of a slope also is O(1). When using a high-pass filter on the r<sup>2</sup> to disregard any unreliably approximated data, it can also be used to produce reliable results.
 
-#### Theil–Sen estimator (TS)
+#### Theil–Sen estimator (Linear TS)
 
 Although the Theil–Sen estimator has a O(N log(N)) solution available, however we could not find a readily available solution. We did manage to develop a solution that has a O(N) impact during the addition of an additional datapoint in a datastream with a fixed length window, and O(log(N)) impact when determining the slope.
 
-#### Incomplete Theil–Sen estimator (Inc TS)
+#### Incomplete Theil–Sen estimator (Inc Linear TS)
 
-There also is an Incomplete Theis-Sen estimator [[13]](#13), which is O(1) for the addition of new datapoints in a datastream with a fixed length window, and O(log(N)) for the determination of the slope. Our tests on real-life data show that generally the Incomplete Theil-Sen is more reliable for dragfactor estimation than its alternatives.
+There also is an Incomplete Theis-Sen estimator for Linear Regression [[13]](#13), which is O(1) for the addition of new datapoints in a datastream with a fixed length window, and O(log(N)) for the determination of the slope. Our tests on real-life data show that in several cases the Incomplete Theil-Sen delivers more robust results than the full Theil-Sen estimator.
 
 ### Choices for the specific algorithms
 
