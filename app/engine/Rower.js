@@ -12,7 +12,7 @@
 */
 import loglevel from 'loglevel'
 import { createFlywheel } from './Flywheel.js'
-import { createCurveMetrics } from './utils/curveMetrics.js'
+import { createCurveMetrics } from './utils/CurveMetrics.js'
 
 const log = loglevel.getLogger('RowingEngine')
 
