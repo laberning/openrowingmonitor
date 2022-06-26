@@ -1,7 +1,7 @@
 'use strict'
 /*
   Open Rowing Monitor, https://github.com/jaapvanekris/openrowingmonitor
-  
+
   This models the flywheel with all of its attributes, which we can also test for being powered
 
   All times and distances are defined as being just before the flank as RowingEngine's metrics solely depend
