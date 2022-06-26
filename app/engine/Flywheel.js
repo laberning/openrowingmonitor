@@ -284,7 +284,7 @@ function createFlywheel (rowerSettings) {
   }
 
   function slopeToDrag (slope) {
-    return ((slope * rowerSettings.flywheelInertia ) / angularDisplacementPerImpulse)
+    return ((slope * rowerSettings.flywheelInertia) / angularDisplacementPerImpulse)
   }
 
   function reset () {
