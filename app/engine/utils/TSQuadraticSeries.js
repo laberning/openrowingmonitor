@@ -1,16 +1,16 @@
 'use strict'
 /*
-  Open Rowing Monitor, https://github.com/laberning/openrowingmonitor
+  Open Rowing Monitor, https://github.com/jaapvanekris/openrowingmonitor
 
   The TSLinearSeries is a datatype that represents a Linear Series. It allows
   values to be retrieved (like a FiFo buffer, or Queue) but it also includes
-  a Theilâ€“Sen estimator Linear Regressor to determine the slope of this timeseries.
+  a Theil-Sen estimator Linear Regressor to determine the slope of this timeseries.
 
   At creation its length is determined. After it is filled, the oldest will be pushed
   out of the queue) automatically.
 
   A key constraint is to prevent heavy calculations at the end (due to large
-  array based curve fitting), which might happen on a Pi zero
+  array based curve fitting), which might be performed on a Pi zero
 
   This implementation uses concepts that are described here:
   https://stats.stackexchange.com/questions/317777/theil-sen-estimator-for-polynomial
