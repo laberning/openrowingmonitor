@@ -23,8 +23,6 @@ function createRower (rowerSettings) {
   const driveHandlePower = createCurveMetrics(1)
   let _strokeState = 'WaitingForDrive'
   let _totalNumberOfStrokes = -1.0
-  let strokeLinearDistance = 0.0
-  const angularDisplacementPerImpulse = (2.0 * Math.PI) / rowerSettings.numOfImpulsesPerRevolution
   let recoveryPhaseStartTime = 0.0
   let _recoveryDuration = 0.0
   let drivePhaseStartTime = 0.0
@@ -41,8 +39,6 @@ function createRower (rowerSettings) {
   let _cyclePower = 0.0
   let totalLinearDistance = 0.0
   let preliminaryTotalLinearDistance = 0.0
-  let previousAngularVelocity = 0.0
-  let currentAngularVelocity = 0.0
   let _driveLength = 0.0
 
   // called if the sensor detected an impulse, currentDt is an interval in seconds
@@ -311,7 +307,6 @@ function createRower (rowerSettings) {
     _strokeState = 'WaitingForDrive'
     flywheel.maintainStateOnly()
     _totalNumberOfStrokes = 0.0
-    strokeLinearDistance = 0.0
     drivePhaseStartTime = 0.0
     drivePhaseStartAngularPosition = 0.0
     _driveDuration = 0.0
@@ -327,8 +322,6 @@ function createRower (rowerSettings) {
     totalLinearDistance = 0.0
     preliminaryTotalLinearDistance = 0.0
     cyclePower = 0.0
-    previousAngularVelocity = 0.0
-    currentAngularVelocity = 0.0
     _driveLength = 0.0
   }
 
