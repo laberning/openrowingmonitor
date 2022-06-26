@@ -26,7 +26,6 @@ function createStreamFilter (maxLength, defaultValue) {
       // The array isn't sufficiently filled
       cleanDatapoint = defaultValue
     }
-
   }
 
   function raw () {
