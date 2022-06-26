@@ -40,7 +40,7 @@ function createCurveMetrics (precission = 0) {
     if (totaltime > 0 && totalInputXTime > 0) {
       return totalInputXTime / totaltime
     } else {
-     return 0
+      return 0
     }
   }
 
