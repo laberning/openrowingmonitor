@@ -28,13 +28,12 @@ const log = loglevel.getLogger('RowingEngine')
 function createFlywheel (rowerSettings) {
   const angularDisplacementPerImpulse = (2.0 * Math.PI) / rowerSettings.numOfImpulsesPerRevolution
   const flankLength = Math.max(2, rowerSettings.flankLength)
-  const halfFlankLength = Math.floor(rowerSettings.flankLength / 2)
   const minimumDragFactorSamples = Math.floor(rowerSettings.minimumRecoveryTime / rowerSettings.maximumTimeBetweenImpulses)
   const minumumTorqueBeforeStroke = rowerSettings.minumumForceBeforeStroke * (rowerSettings.sprocketRadius / 100)
   const currentDt = createStreamFilter(3, rowerSettings.maximumTimeBetweenImpulses)
   const _deltaTime = createOLSLinearSeries(flankLength)
   const _angularDistance = createTSQuadraticSeries(flankLength)
-  const _angularVelocityMatrix = new Array()
+  const _angularVelocityMatrix = []
   const _angularAcceleration = createSeries(flankLength)
   const drag = createStreamFilter(rowerSettings.dragFactorSmoothing, (rowerSettings.dragFactor / 1000000))
   const recoveryDeltaTime = createOLSLinearSeries()
@@ -197,7 +196,7 @@ function createFlywheel (rowerSettings) {
 
   function torque () {
     if (maintainMetrics && (_deltaTime.length() >= flankLength)) {
-      return (rowerSettings.flywheelInertia * _angularAccelerationBeforeFlank + drag.clean() * Math.pow(_angularVelocityBeforeFlank, 2))
+      return _torqueBeforeFlank
     } else {
       return 0
     }
@@ -283,7 +282,6 @@ function createFlywheel (rowerSettings) {
       return false
     }
   }
-
 
   function slopeToDrag (slope) {
     return ((slope * rowerSettings.flywheelInertia ) / angularDisplacementPerImpulse)
