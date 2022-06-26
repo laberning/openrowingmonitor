@@ -26,7 +26,7 @@ const log = loglevel.getLogger('RowingEngine')
 function createTSQuadraticSeries (maxSeriesLength = 0) {
   const X = createSeries(maxSeriesLength)
   const Y = createSeries(maxSeriesLength)
-  const A = new Array()
+  const A = []
   const B = createSeries()
   let _A = 0
   let _B = 0
@@ -133,7 +133,7 @@ function createTSQuadraticSeries (maxSeriesLength = 0) {
   function goodnessOfFit () {
     // This function returns the R^2 as a goodness of fit indicator
     if (X.length() >= 2) {
-      //return _goodnessOfFit
+      // return _goodnessOfFit
       return 1
     } else {
       return 0
@@ -197,29 +197,28 @@ function createTSQuadraticSeries (maxSeriesLength = 0) {
   }
 
   function removeFirstRow () {
-    //slopes[0].splice(0, slopes[0].length)
     A.shift()
   }
 
-  function calculateA(pointOne, pointTwo, pointThree) {
+  function calculateA (pointOne, pointTwo, pointThree) {
     if (pointOne < pointTwo && pointTwo < pointThree && X.get(pointOne) !== X.get(pointTwo) && X.get(pointTwo) !== X.get(pointThree) && X.get(pointOne) !== X.get(pointThree)) {
       return (X.get(pointThree) * (Y.get(pointTwo) - Y.get(pointOne)) + X.get(pointTwo) * (Y.get(pointOne) - Y.get(pointThree)) + X.get(pointOne) * (Y.get(pointThree) - Y.get(pointTwo))) / ((X.get(pointOne) - X.get(pointTwo)) * (X.get(pointOne) - X.get(pointThree)) * (X.get(pointTwo) - X.get(pointThree)))
     } else {
-      log.error(`TS Quadratic Regressor, Division by zero prevented in CalculateA!`)
+      log.error('TS Quadratic Regressor, Division by zero prevented in CalculateA!')
       return 0
     }
   }
 
-  function calculateB(pointOne, pointTwo) {
+  function calculateB (pointOne, pointTwo) {
     if (pointOne < pointTwo && X.get(pointOne) !== X.get(pointTwo)) {
-      return ( (Y.get(pointTwo) - _A * Math.pow(X.get(pointTwo), 2)) - (Y.get(pointOne) - _A * Math.pow(X.get(pointOne), 2))) / (X.get(pointTwo) - X.get(pointOne))
+      return ((Y.get(pointTwo) - _A * Math.pow(X.get(pointTwo), 2)) - (Y.get(pointOne) - _A * Math.pow(X.get(pointOne), 2))) / (X.get(pointTwo) - X.get(pointOne))
     } else {
-      log.error(`TS Quadratic Regressor, Division by zero prevented in CalculateB!`)
+      log.error('TS Quadratic Regressor, Division by zero prevented in CalculateB!')
       return 0
     }
   }
 
-  function calculateC(pointOne) {
+  function calculateC (pointOne) {
     return Y.get(pointOne) - _A * Math.pow(X.get(pointOne), 2) - _B * X.get(pointOne)
   }
 
@@ -229,12 +228,12 @@ function createTSQuadraticSeries (maxSeriesLength = 0) {
       const mid = Math.floor(sortedArray.length / 2)
       return (sortedArray.length % 2 !== 0 ? sortedArray[mid] : ((sortedArray[mid - 1] + sortedArray[mid]) / 2))
     } else {
-      log.error(`TS Quadratic Regressor, Median calculation on empty dataset attempted!`)
+      log.error('TS Quadratic Regressor, Median calculation on empty dataset attempted!')
       return 0
     }
   }
 
-  function reset() {
+  function reset () {
     X.reset()
     Y.reset()
     A.splice(0, A.length)
