@@ -1,15 +1,15 @@
 'use strict'
 /*
-  Open Rowing Monitor, https://github.com/laberning/openrowingmonitor
+  Open Rowing Monitor, https://github.com/jaapvanekris/openrowingmonitor
 
   The Rowing Engine models the physics of a real rowing boat.
   It takes impulses from the flywheel of a rowing machine and estimates
   parameters such as energy, stroke rates and movement.
 
   This implementation uses concepts that are described here:
-  Physics of Rowing by Anu Dudhia: http://eodg.atm.ox.ac.uk/user/dudhia/rowing/physics
-  Also Dave Vernooy has some good explanations here: https://dvernooy.github.io/projects/ergware
+  https://github.com/JaapvanEkris/openrowingmonitor/blob/main/docs/physics_openrowingmonitor.md
 */
+
 import loglevel from 'loglevel'
 import { createFlywheel } from './Flywheel.js'
 import { createCurveMetrics } from './utils/CurveMetrics.js'
