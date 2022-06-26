@@ -168,7 +168,6 @@ As the slope of the line *currentDt* over *time* is equal to (k \* 2&pi;) / (I \
 
 ## Determining the linear metrics
 
-
 ### Linear distance
 
 ### Linear Velocity
@@ -388,15 +387,15 @@ Ordinary Least Squares regression (see [[11]](#14) and [[12]](#15)) produces res
 
 #### Theil–Sen estimator (TS)
 
-Although the Theil–Sen estimator has a O(N log(N)) solution available, however we could not find a readily available solution. We did manage to develop a solution that has a O(N) impact during the addition of an additional datapoint in a datastream with a fixed length window, and O(log(N)) impact when determining the slope. 
+Although the Theil–Sen estimator has a O(N log(N)) solution available, however we could not find a readily available solution. We did manage to develop a solution that has a O(N) impact during the addition of an additional datapoint in a datastream with a fixed length window, and O(log(N)) impact when determining the slope.
 
 #### Incomplete Theil–Sen estimator (Inc TS)
 
-There also is an Incomplete Theis-Sen estimator [[13]](#13), which is O(1) for the addition of new datapoints in a datastream with a fixed length window, and O(log(N)) for the determination of the slope. Our tests on real-life data show that generally the Incomplete Theil-Sen is more 
+There also is an Incomplete Theis-Sen estimator [[13]](#13), which is O(1) for the addition of new datapoints in a datastream with a fixed length window, and O(log(N)) for the determination of the slope. Our tests on real-life data show that generally the Incomplete Theil-Sen is more reliable for dragfactor estimation than its alternatives.
 
 ### Choices for the specific algorithms
 
-##### Regression algorithm used for drag calculation
+#### Regression algorithm used for drag calculation
 
 For the drag-factor calculation, we observe three things:
 
@@ -408,7 +407,7 @@ For the drag-factor calculation, we observe three things:
 
 Therefore, we chode to apply the OLS Linear Regression model for the calculation of the dragfactor.
 
-##### Regression algorithm used for Angular velocity and Angular Acceleration
+#### Regression algorithm used for Angular velocity and Angular Acceleration
 
 Incomplete Linear Theil-Sen proved more robust than OLS
 
