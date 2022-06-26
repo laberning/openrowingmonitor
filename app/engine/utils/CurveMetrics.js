@@ -2,7 +2,7 @@
 /*
   Open Rowing Monitor, https://github.com/jaapvanekris/openrowingmonitor
 
-  This keeps an array, for ForceMetrics
+  This keeps an array, for all in-stroke metrics
 
   Please note: The array contains flankLength + 1 values as it is in sync with the buffer of the FlyWheel
   They are arranged that *Buffer[0] is the oldest, and *Buffer[currentLength] the youngest
