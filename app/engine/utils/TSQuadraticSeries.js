@@ -147,6 +147,7 @@ function createTSQuadraticSeries (maxSeriesLength = 0) {
   }
 
   function projectX (x) {
+    const _C = coefficientC()
     if (X.length() > 2) {
       return ((_A * x * x) + (_B * x) + _C)
     } else {
