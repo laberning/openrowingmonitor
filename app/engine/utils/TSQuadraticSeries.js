@@ -246,13 +246,12 @@ function createTSQuadraticSeries (maxSeriesLength = 0) {
     B.reset()
     _A = 0
     _B = 0
-    _goodnessOfFit = 0
   }
 
   return {
     push,
     slope,
-    slopeAtSeriesBegin.
+    slopeAtSeriesBegin,
     slopeAtSeriesEnd,
     coefficientA,
     coefficientB,
