@@ -30,9 +30,6 @@ function createTSQuadraticSeries (maxSeriesLength = 0) {
   const B = createSeries()
   let _A = 0
   let _B = 0
-  let _C = 0
-
-  let _goodnessOfFit = 0
 
   function push (x, y) {
     X.push(x)
@@ -118,12 +115,20 @@ function createTSQuadraticSeries (maxSeriesLength = 0) {
   }
 
   function coefficientC () {
-    return _C
+    const C = createSeries()
+    let i = 0
+    let result = 0
+    while (i < X.length() - 1) {
+      result = calculateC(i)
+      C.push(result)
+      i++
+    }
+    return C.median()
   }
 
   function intercept () {
     return 0
-    // ToDo: y=intercet uitrekenen
+    // ToDo: calculate y-intercept
   }
 
   function length () {
@@ -132,6 +137,7 @@ function createTSQuadraticSeries (maxSeriesLength = 0) {
 
   function goodnessOfFit () {
     // This function returns the R^2 as a goodness of fit indicator
+    // ToDo: calculate the goodness of fit when called
     if (X.length() >= 2) {
       // return _goodnessOfFit
       return 1
@@ -246,6 +252,8 @@ function createTSQuadraticSeries (maxSeriesLength = 0) {
   return {
     push,
     slope,
+    slopeAtSeriesBegin.
+    slopeAtSeriesEnd,
     coefficientA,
     coefficientB,
     coefficientC,
