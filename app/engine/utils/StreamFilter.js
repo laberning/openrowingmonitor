@@ -16,16 +16,9 @@ function createStreamFilter (maxLength, defaultValue) {
   let cleanDatapoint = defaultValue
 
   function push (dataPoint) {
-    dataPoints.push(dataPoint)
     lastRawDatapoint = dataPoint
-
-    if (dataPoints.length() > 0) {
-      // The series contains sufficient values to be valid
-      cleanDatapoint = dataPoints.median()
-    } else {
-      // The array isn't sufficiently filled
-      cleanDatapoint = defaultValue
-    }
+    dataPoints.push(dataPoint)
+    cleanDatapoint = dataPoints.median()
   }
 
   function raw () {
@@ -33,7 +26,17 @@ function createStreamFilter (maxLength, defaultValue) {
   }
 
   function clean () {
-    return cleanDatapoint
+    if (dataPoints.length() > 0) {
+      // The series contains sufficient values to be valid
+      return cleanDatapoint
+    } else {
+      // The array isn't sufficiently filled
+      return defaultValue
+    }
+  }
+
+  function reliable () {
+    return dataPoints.length() > 0
   }
 
   function reset () {
@@ -46,6 +49,7 @@ function createStreamFilter (maxLength, defaultValue) {
     push,
     raw,
     clean,
+    reliable,
     reset
   }
 }
