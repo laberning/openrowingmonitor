@@ -146,7 +146,7 @@ function createFlywheel (rowerSettings) {
       log.debug(`*** Calculated drag factor: ${(slopeToDrag(recoveryDeltaTime.slope()) * 1000000).toFixed(4)}, no. samples: ${recoveryDeltaTime.length()}, Goodness of Fit: ${recoveryDeltaTime.goodnessOfFit().toFixed(4)}`)
       if (rowerSettings.autoAdjustRecoverySlope) {
         // We are allowed to autoadjust stroke detection slope as well, so let's do that
-        minumumRecoverySlope.push(-1 * (1 - rowerSettings.autoAdjustRecoverySlopeMargin) * recoveryDeltaTime.slope())
+        minumumRecoverySlope.push((1 - rowerSettings.autoAdjustRecoverySlopeMargin) * recoveryDeltaTime.slope())
         log.debug(`*** Calculated recovery slope: ${recoveryDeltaTime.slope().toFixed(6)}, Goodness of Fit: ${recoveryDeltaTime.goodnessOfFit().toFixed(4)}`)
       } else {
         // We aren't allowed to adjust the slope, let's report the slope to help help the user configure it
