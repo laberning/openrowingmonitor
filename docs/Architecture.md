@@ -2,36 +2,44 @@
 
 In this document, we describe the architectual construction of Open Rowing Monitor. For the reasons behind the physics, please look at [the Physics behind Open Rowing Monitor](Physics_Of_OpenRowingMonitor.md) and [its practical validation](Engine_Validation.md). In this document we describe the main functional blocks in Open Rowing Monitor, and the major design decissions.
 
+## Platform choice
+
+The choice has been made to use Raspian as OS, as it is easily installed by the user.
+
+## Choice for JavaScript
+
+The choice has been made to use JavaScript to build te application, as many components were readily available.
+
 ## Main functional components
 
 ### Server.js
 
 Server.js orchestrates all information flows and starts/stops processes when needed. It will orchestrate:
 
-* GPIO timing signals to the RowingEngine.js
-* RowingEngine.js messages to the RowingStatistics.js
-* Handle the signals from RowingStatistics.js (like the signals that the session has ended)
-* Handle use input and instruct RowingEngine.js and RowingStatistics.js accordingly
+* GPIO timing signals to the RowingStatistics.js
+* Handle the signals from RowingStatistics.js (like the updates on metrics and the signals that the interval has ended)
+* Broadcast metics-updates to webclients and blutooth periphials
+* Handle use input and instruct RowingStatistics.js accordingly
 
 ### RowingStatistics.js
 
-RowingStatistics.js takes RowingEngine.js's status reports and translates them into meaningful information for the consumers of data. RowingEngine.js reports limited updates of absolute metrics for the entire session (updates to absolute times, distances and instant velocities, etc., but only when they can be updated). RowingStatistics.js will consume this data, combines it with other datasources like the heartrate and transform it into a consistent set of more stable metrics useable for presentation.
+`RowingStatistics.js` inspects `engine/Rower.js` each impuls for state and metrics, and translates that into meaningful information for the consumers of data. `Rower.js` reports limited absolute metrics for the entire session (updates to absolute times, distances and instant velocities, etc., but only when they can be updated). RowingStatistics.js will consume this data, combines it with other datasources like the heartrate and transform it into a consistent set of more stable set of metrics useable for presentation. Typically, smoothing out eratic behaviour of metrics is stopped here as well.
 
 In a nutshell:
 
-* RowingStatistics.js applies a moving average filter to make metrics less volatile,
-* RowingStatistics.js calculates derived metrics (like Calories instead of Joules)
-* RowingStatistics.js gaurds interval and session boundaries, and will chop up the metrics-stream accordingly
+* RowingStatistics.js applies a moving median filter to make metrics less volatile and thus better suited for presentation,
+* RowingStatistics.js calculates derived metrics (like Calories),
+* RowingStatistics.js gaurds interval and session boundaries, and will chop up the metrics-stream accordingly, where Rower.js will just move on without looking at these artifical boundaries.
 
 In total, this takes full control of the displayed metrics in a specific interval.
 
-### RowingEngine.js
+### Rower.js
 
-RowingEngine.js interprets the flywheel behaviour and translates it into the rower's state (i.e. waiting, drive, recovery, stopped) in a finite state machine and calculates the updated associated metrics (i.e. linear velocity, linear distance, power, etc.) for that specific phase transition. Aside temporal metrics (Linear Velocity, Power, etc.) it also maintains several absolute metrics (like total total linear distance travelled). It only updates metrics that can be updated meaningful, and it will not resend (potentially stale) data that isn't updated.
+`Rower.js` inspects the flywheel behaviour on each impuls and translates it into the rower's state (i.e. waiting, drive, recovery, stopped) through a finite state machine and calculates the updated associated metrics (i.e. linear velocity, linear distance, power, etc.) for that specific phase transition. Aside temporal metrics (Linear Velocity, Power, etc.) it also maintains several absolute metrics (like total total linear distance travelled). It only updates metrics that can be updated meaningful, and it will not resend (potentially stale) data that isn't updated.
 
 ### Flywheel.js
 
-A model of the key parameters of the Flywheel, to provide the rest of ORM with essential physical metrics and state regarding the flywheel. It provides the following types of information:
+`Flywheel.js` provides a model of the key parameters of the Flywheel, to provide the rest of ORM with essential physical metrics and state regarding the flywheel, without the need for considering all kinds of paramterisation. It provides the following types of information:
 
 * temporal metrics (i.e. Angular Velocity, Angular Acceleration, Torque, etc.)
 * several absolute metrics (i.e. total elapsed time and total angular distance traveled)
@@ -51,3 +59,15 @@ Working with small numbers, and using the impulse time to calculate the angular 
 RowingEngine.js could report distance incrementally to RowingStatistics.js. However, we chose to report in absolute times and distances, making RowingEngine.js in full control of these essential metrics. This way, RowingEngine.js can report absolute times and distances, taking full control of the metrics regarding linear movement. Any derived metrics for specific clients, and smoothing/buffering, is done by RowingStatistics.
 
 Adittionally benefit of this approach is that it makes transitions in intervals more smooth: RowingStatistics.js can intersect stroke without causing any pause in metrics (as RowingEngine.js keeps reporting absolutes, intervals and laps become a view on the same data).
+
+## Open Issues, Known problems and Regrettable design decissions
+
+### Use of Raspbian
+
+A default Raspian install does a decent job in extracting metrics, but its 32-bit kernel isn't optimised for IoT applications with low-latency requirements, like a rowing machine. This is essential as small measurement errors in the impulse-times will throw off force-curve calculations by presenting themselves as peaks.
+
+An alternative is Ubuntu Core, which has a leaner 64-bit kernel, and where a low-latency kernel can be added later on. The IoT approach of Ubuntu, with Snap as main application vehicle, is a change from the current architecture as it would require a containered application. From an install perspective, it would make much more sense to depend on a backend (i.e the hardware measurement and webserver) to be in one Snap, and the Frontend to be in another container (as Ubuntu-Frame provides this out of the box).
+
+### use of Node.js
+
+The choice for a runtime interpreted language is at odds with the low latency requirements that is close to actual hardware, although we haven't run into any situations where CPU-load has proven to be too much, even when using experimental full quadratic Theil-Senn estimations. However, migrating the interrupt handler to C++ might reduce latency variations.
