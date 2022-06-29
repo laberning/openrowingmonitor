@@ -64,7 +64,7 @@ Adittionally benefit of this approach is that it makes transitions in intervals 
 
 ### Use of Raspbian
 
-A default Raspian install does quite a decent job in extracting metrics, but the standard 32-bit kernel isn't optimised for IoT applications with low-latency requirements, like a rowing machine. The low latency (or more precise, less fluctuating latency) is essential to measure the time between impulses, as small measurement errors in these intervals-times will throw off force-curve calculations by presenting themselves as peaks.
+A default Raspian install does quite a decent job in extracting metrics, but the standard 32-bit kernel isn't optimised for IoT applications with low-latency requirements, like a rowing machine. The low latency (or more precise, less fluctuating latency) is essential to measure the time between impulses, as small measurement errors in these intervals will throw off force-curve calculations by presenting themselves as peaks.
 
 Currently, the algorithms can handle a significant level of noise at the cost of the precission of the peaks, but the data might become more reliable and accurate when the noise is removed from the source.
 
