@@ -60,7 +60,7 @@ RowingEngine.js could report distance incrementally to RowingStatistics.js. Howe
 
 Adittionally benefit of this approach is that it makes transitions in intervals more smooth: RowingStatistics.js can intersect stroke without causing any pause in metrics (as RowingEngine.js keeps reporting absolutes, intervals and laps become a view on the same data).
 
-## Open Issues, Known problems and Regrettable design decissions
+## Open issues, Known problems and Regrettable design decissions
 
 ### Use of Raspbian
 
@@ -70,6 +70,8 @@ Currently, the algorithms can handle a significant level of noise at the cost of
 
 An alternative is Ubuntu Core, which has a leaner 64-bit kernel, and where a low-latency kernel can be added later on quite easily. The IoT approach of Ubuntu, which heavily depends on Snap as main application deployment vehicle, is a change from the current architecture as it would require a containered application. From an install perspective, it would make much more sense to depend on a backend (i.e the hardware measurement and webserver) to be in one Snap, and the Frontend to be in another container (as Ubuntu-Frame provides this out of the box). There especially are issues with storing settings, which need to be retained even when the Snap gets updated. Therefore, this is a far from trivial approach.
 
-### use of Node.js
+### Use of Node.js
 
-The choice for a runtime interpreted language is at odds with the low latency requirements that is close to actual hardware. In practive, we haven't run into any situations where CPU-load has proven to be too much, even when using experimental full quadratic Theil-Senn estimations. However, migrating the interrupt handler to C++ might reduce latency variations and thus improve results.
+The choice for a runtime interpreted language is at odds with the low latency requirements that is close to actual hardware. In theory, the performance of the app would heavily depend on the performance of NPM, which isn't optimized for low-latency and high frequency environments. In practice, we haven't run into any situations where CPU-load has proven to be too much, even when using experimental full quadratic Theil-Senn estimations. However, migrating the interrupt handler to C++ might reduce latency variations and thus improve results.
+
+Switching from JavaScript/NPM to a precompiled C++ app completely would be doable, as the codebase is quite compact, but it would add a lot of complexity in deploying Open Rowing Monitor as the C++ code needs to be compiled for the target platform by the end user. In combination with the above, where Snap would do a lot of the heavy lifting to mitigate both platform dependence and application deployment, it might be an interesting approach to investigate.
