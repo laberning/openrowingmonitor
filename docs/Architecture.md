@@ -64,10 +64,12 @@ Adittionally benefit of this approach is that it makes transitions in intervals 
 
 ### Use of Raspbian
 
-A default Raspian install does a decent job in extracting metrics, but its 32-bit kernel isn't optimised for IoT applications with low-latency requirements, like a rowing machine. This is essential as small measurement errors in the impulse-times will throw off force-curve calculations by presenting themselves as peaks.
+A default Raspian install does quite a decent job in extracting metrics, but the standard 32-bit kernel isn't optimised for IoT applications with low-latency requirements, like a rowing machine. The low latency (or more precise, less fluctuationg latency) is essential to measure the time between impulses, as small measurement errors in these intervals-times will throw off force-curve calculations by presenting themselves as peaks.
 
-An alternative is Ubuntu Core, which has a leaner 64-bit kernel, and where a low-latency kernel can be added later on. The IoT approach of Ubuntu, with Snap as main application vehicle, is a change from the current architecture as it would require a containered application. From an install perspective, it would make much more sense to depend on a backend (i.e the hardware measurement and webserver) to be in one Snap, and the Frontend to be in another container (as Ubuntu-Frame provides this out of the box).
+Currently, the algorithms can handle a significant level of noise at the cost of the precission of the peaks, but the data might become more reliable and accurate when the noise is removed from the source.
+
+An alternative is Ubuntu Core, which has a leaner 64-bit kernel, and where a low-latency kernel can be added later on quite easily. The IoT approach of Ubuntu, which heavily depends on Snap as main application deployment vehicle, is a change from the current architecture as it would require a containered application. From an install perspective, it would make much more sense to depend on a backend (i.e the hardware measurement and webserver) to be in one Snap, and the Frontend to be in another container (as Ubuntu-Frame provides this out of the box). There especially are issues with storing settings, which need to be retained even when the Snap gets updated. Therefore, this is a far from trivial approach.
 
 ### use of Node.js
 
-The choice for a runtime interpreted language is at odds with the low latency requirements that is close to actual hardware, although we haven't run into any situations where CPU-load has proven to be too much, even when using experimental full quadratic Theil-Senn estimations. However, migrating the interrupt handler to C++ might reduce latency variations.
+The choice for a runtime interpreted language is at odds with the low latency requirements that is close to actual hardware. In practive, we haven't run into any situations where CPU-load has proven to be too much, even when using experimental full quadratic Theil-Senn estimations. However, migrating the interrupt handler to C++ might reduce latency variations and thus improve results.
