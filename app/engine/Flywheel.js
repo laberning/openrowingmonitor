@@ -141,7 +141,7 @@ function createFlywheel (rowerSettings) {
     inRecoveryPhase = false
 
     // Calculation of the drag-factor
-    if (rowerSettings.autoAdjustDragFactor && recoveryDeltaTime.length() > minimumDragFactorSamples && recoveryDeltaTime.goodnessOfFit() >= rowerSettings.minimumDragQuality && recoveryDeltaTime.slope() > 0) {
+    if (rowerSettings.autoAdjustDragFactor && recoveryDeltaTime.length() > minimumDragFactorSamples && recoveryDeltaTime.slope() > 0 && (!drag.reliable() || recoveryDeltaTime.goodnessOfFit() >= rowerSettings.minimumDragQuality)) {
       drag.push(slopeToDrag(recoveryDeltaTime.slope()))
       log.debug(`*** Calculated drag factor: ${(slopeToDrag(recoveryDeltaTime.slope()) * 1000000).toFixed(4)}, no. samples: ${recoveryDeltaTime.length()}, Goodness of Fit: ${recoveryDeltaTime.goodnessOfFit().toFixed(4)}`)
       if (rowerSettings.autoAdjustRecoverySlope) {
