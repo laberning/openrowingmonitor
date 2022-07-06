@@ -6,7 +6,6 @@
 */
 import { EventEmitter } from 'events'
 import { createRower } from './Rower.js'
-import { createSeries } from './utils/Series.js'
 import { createOLSLinearSeries } from './utils/OLSLinearSeries.js'
 import { createStreamFilter } from './utils/StreamFilter.js'
 import { createCurveAligner } from './utils/CurveAligner.js'
@@ -38,17 +37,16 @@ function createRowingStatistics (config, session) {
   const driveLength = createStreamFilter(numOfDataPointsForAveraging, 1.1)
   const driveDistance = createStreamFilter(numOfDataPointsForAveraging, 3)
   const recoveryDuration = createStreamFilter(numOfDataPointsForAveraging, config.rowerSettings.minimumRecoveryTime)
-  let driveAverageHandleForce  = createStreamFilter(numOfDataPointsForAveraging, 0.0)
-  let drivePeakHandleForce = createStreamFilter(numOfDataPointsForAveraging, 0.0)
-  let driveHandleForceCurve = createCurveAligner(config.rowerSettings.minumumForceBeforeStroke)
-  let driveHandleVelocityCurve = createCurveAligner(1.0)
-  let driveHandlePowerCurve = createCurveAligner(50)
+  const driveAverageHandleForce = createStreamFilter(numOfDataPointsForAveraging, 0.0)
+  const drivePeakHandleForce = createStreamFilter(numOfDataPointsForAveraging, 0.0)
+  const driveHandleForceCurve = createCurveAligner(config.rowerSettings.minumumForceBeforeStroke)
+  const driveHandleVelocityCurve = createCurveAligner(1.0)
+  const driveHandlePowerCurve = createCurveAligner(50)
   let dragFactor = config.rowerSettings.dragFactor
   let heartrate = 0
   let heartrateBatteryLevel = 0
   let instantPower = 0.0
   let lastStrokeState = 'WaitingForDrive'
-  let lastMetrics = {}
 
   // send metrics to the clients periodically, even if the data hasn't changed as the servers and clients might miss updates
   setInterval(emitMetrics, screenUpdateInterval)
@@ -59,13 +57,13 @@ function createRowingStatistics (config, session) {
 
     // This is the core of the finite state machine that defines all state transitions
     switch (true) {
-      case (sessionStatus === 'Paused' && rower.strokeState() === "Drive"):
+      case (sessionStatus === 'Paused' && rower.strokeState() === 'Drive'):
         sessionStatus = 'Rowing'
         resumeTraining()
         updateContinousMetrics()
         emitMetrics('recoveryFinished')
         break
-      case (sessionStatus !== 'Rowing' && rower.strokeState() === "Drive"):
+      case (sessionStatus !== 'Rowing' && rower.strokeState() === 'Drive'):
         sessionStatus = 'Rowing'
         startTraining()
         updateContinousMetrics()
@@ -75,7 +73,7 @@ function createRowingStatistics (config, session) {
         sessionStatus = 'Stopped'
         stopTraining()
         break
-      case (sessionStatus === 'Rowing' && rower.strokeState() === "WaitingForDrive"):
+      case (sessionStatus === 'Rowing' && rower.strokeState() === 'WaitingForDrive'):
         sessionStatus = 'Paused'
         pauseTraining()
         break
@@ -198,23 +196,23 @@ function createRowingStatistics (config, session) {
       sessionStatus,
       strokeState: rower.strokeState(),
       totalMovingTime: totalMovingTime > 0 ? totalMovingTime : 0,
-      totalMovingTimeFormatted: session.targetTime > 0 ? secondsToTimeString(Math.round(Math.max(session.targetTime - totalMovingTime),0)) : secondsToTimeString(Math.round(totalMovingTime)),
+      totalMovingTimeFormatted: session.targetTime > 0 ? secondsToTimeString(Math.round(Math.max(session.targetTime - totalMovingTime), 0)) : secondsToTimeString(Math.round(totalMovingTime)),
       totalNumberOfStrokes: totalNumberOfStrokes > 0 ? totalNumberOfStrokes : 0,
       totalLinearDistance: totalLinearDistance > 0 ? totalLinearDistance : 0, // meters
-      totalLinearDistanceFormatted: session.targetDistance > 0 ? Math.max(session.targetDistance - totalLinearDistance,0) : totalLinearDistance,
+      totalLinearDistanceFormatted: session.targetDistance > 0 ? Math.max(session.targetDistance - totalLinearDistance, 0) : totalLinearDistance,
       strokeCalories: strokeCalories > 0 ? strokeCalories : 0,
       totalCalories: calories.yAtSeriesEnd() > 0 ? calories.yAtSeriesEnd() : 0, // kcal
       totalCaloriesPerMinute: totalMovingTime > 60 ? caloriesPerPeriod(totalMovingTime - 60, totalMovingTime) : caloriesPerPeriod(0, 60),
       totalCaloriesPerHour: totalMovingTime > 3600 ? caloriesPerPeriod(totalMovingTime - 3600, totalMovingTime) : caloriesPerPeriod(0, 3600),
       cycleDuration: cycleDuration.clean() > minimumStrokeTime && cycleDuration.clean() < maximumStrokeTime && cycleLinearVelocity.raw() > 0 && sessionStatus === 'Rowing' ? cycleDuration.clean() : NaN, // seconds
-      cycleStrokeRate: cycleDuration.clean() > minimumStrokeTime && cycleLinearVelocity.raw() > 0 && sessionStatus === 'Rowing' ? (60.0 / cycleDuration.clean()) : 0,  // strokeRate
+      cycleStrokeRate: cycleDuration.clean() > minimumStrokeTime && cycleLinearVelocity.raw() > 0 && sessionStatus === 'Rowing' ? (60.0 / cycleDuration.clean()) : 0,
       cycleDistance: cycleDistance.raw() > 0 && cycleLinearVelocity.raw() > 0 && sessionStatus === 'Rowing' ? cycleDistance.clean() : 0, // meters
       cycleLinearVelocity: cycleLinearVelocity.clean() > 0 && cycleLinearVelocity.raw() > 0 && sessionStatus === 'Rowing' ? cycleLinearVelocity.clean() : 0, // m/s
       cyclePace: cycleLinearVelocity.raw() > 0 ? cyclePace : Infinity, // seconds/500m
       cyclePaceFormatted: cycleLinearVelocity.raw() > 0 ? secondsToTimeString(Math.round(cyclePace)) : Infinity,
       cyclePower: cyclePower.clean() > 0 && cycleLinearVelocity.raw() > 0 && sessionStatus === 'Rowing' ? cyclePower.clean() : 0, // watts
       driveDuration: driveDuration.clean() >= config.rowerSettings.minimumDriveTime && totalNumberOfStrokes > 0 && sessionStatus === 'Rowing' ? driveDuration.clean() : NaN, // seconds
-      driveLength: driveLength.clean() > 0 && sessionStatus === 'Rowing' ? driveLength.clean() : NaN, //meters of chain movement
+      driveLength: driveLength.clean() > 0 && sessionStatus === 'Rowing' ? driveLength.clean() : NaN, // meters of chain movement
       driveDistance: driveDistance.clean() >= 0 && sessionStatus === 'Rowing' ? driveDistance.clean() : NaN, // meters
       driveAverageHandleForce: driveAverageHandleForce.clean() > 0 && sessionStatus === 'Rowing' ? driveAverageHandleForce.clean() : NaN,
       drivePeakHandleForce: drivePeakHandleForce.clean() > 0 && sessionStatus === 'Rowing' ? drivePeakHandleForce.clean() : NaN,
@@ -247,10 +245,9 @@ function createRowingStatistics (config, session) {
     stopTraining()
     rower.reset()
     rower.allowMovement()
-    totalMovingTime = 0
+    calories.reset()
     totalLinearDistance = 0.0
     totalNumberOfStrokes = -1
-    totalCalories = 0.0
     driveDuration.reset()
     cycleDuration.reset()
     cycleDistance.reset()
@@ -263,7 +260,7 @@ function createRowingStatistics (config, session) {
 
   // clear the metrics in case the user pauses rowing
   function pauseTraining () {
-    log.debug(`*** Paused rowing ***`)
+    log.debug('*** Paused rowing ***')
     rower.stopMoving()
     cycleDuration.reset()
     cycleDistance.reset()
