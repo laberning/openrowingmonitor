@@ -28,16 +28,10 @@ const createWorkoutEvaluator = function () {
   function getNumOfStrokes () {
     return strokes.length
   }
-  function getMaxStrokePower () {
+  function getTotalTime () {
     return strokes.map((stroke) => stroke.power).reduce((acc, power) => Math.max(acc, power))
   }
-  function getMinStrokePower () {
-    return strokes.map((stroke) => stroke.power).reduce((acc, power) => Math.max(acc, power))
-  }
-  function getDistanceSum () {
-    return strokes.map((stroke) => stroke.strokeDistance).reduce((acc, strokeDistance) => acc + strokeDistance)
-  }
-  function getDistanceTotal () {
+  function getTotalDistance () {
     return strokes[strokes.length - 1].distance
   }
 
