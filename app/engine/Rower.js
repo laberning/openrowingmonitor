@@ -7,17 +7,20 @@
   parameters such as energy, stroke rates and movement.
 
   This implementation uses concepts that are described here:
-  https://github.com/JaapvanEkris/openrowingmonitor/blob/main/docs/physics_openrowingmonitor.md
+  Physics of Rowing by Anu Dudhia: http://eodg.atm.ox.ac.uk/user/dudhia/rowing/physics
+  Also Dave Vernooy has some good explanations here: https://dvernooy.github.io/projects/ergware
 */
+import fs from 'fs' // REMOVE ME!!!
 
 import loglevel from 'loglevel'
 import { createFlywheel } from './Flywheel.js'
-import { createCurveMetrics } from './utils/CurveMetrics.js'
+import { createCurveMetrics } from './utils/curveMetrics.js'
 
 const log = loglevel.getLogger('RowingEngine')
 
 function createRower (rowerSettings) {
   const flywheel = createFlywheel(rowerSettings)
+  const sprocketRadius = rowerSettings.sprocketRadius / 100
   const driveHandleForce = createCurveMetrics(2)
   const driveHandleVelocity = createCurveMetrics(3)
   const driveHandlePower = createCurveMetrics(1)
@@ -113,10 +116,10 @@ function createRower (rowerSettings) {
     drivePhaseStartTime = flywheel.spinningTime()
     drivePhaseStartAngularPosition = flywheel.angularPosition()
     driveHandleForce.reset()
-    const forceOnHandle = flywheel.torque() / (rowerSettings.sprocketRadius / 100)
+    const forceOnHandle = flywheel.torque() / sprocketRadius
     driveHandleForce.push(flywheel.deltaTime(), forceOnHandle)
     driveHandleVelocity.reset()
-    const velocityOfHandle = flywheel.angularVelocity() * (rowerSettings.sprocketRadius / 100)
+    const velocityOfHandle = flywheel.angularVelocity() * sprocketRadius
     driveHandleVelocity.push(flywheel.deltaTime(), velocityOfHandle)
     driveHandlePower.reset()
     const powerOnHandle = flywheel.torque() * flywheel.angularVelocity()
@@ -128,9 +131,9 @@ function createRower (rowerSettings) {
     drivePhaseAngularDisplacement = flywheel.angularPosition() - drivePhaseStartAngularPosition
     _driveLinearDistance = calculateLinearDistance(drivePhaseAngularDisplacement, (flywheel.spinningTime() - drivePhaseStartTime))
     preliminaryTotalLinearDistance = totalLinearDistance + _driveLinearDistance
-    const forceOnHandle = flywheel.torque() / (rowerSettings.sprocketRadius / 100)
+    const forceOnHandle = flywheel.torque() / sprocketRadius
     driveHandleForce.push(flywheel.deltaTime(), forceOnHandle)
-    const velocityOfHandle = flywheel.angularVelocity() * (rowerSettings.sprocketRadius / 100)
+    const velocityOfHandle = flywheel.angularVelocity() * sprocketRadius
     driveHandleVelocity.push(flywheel.deltaTime(), velocityOfHandle)
     const powerOnHandle = flywheel.torque() * flywheel.angularVelocity()
     driveHandlePower.push(flywheel.deltaTime(), powerOnHandle)
@@ -142,11 +145,12 @@ function createRower (rowerSettings) {
     _driveDuration = flywheel.spinningTime() - drivePhaseStartTime
     _cycleDuration = _recoveryDuration + _driveDuration
     drivePhaseAngularDisplacement = flywheel.angularPosition() - drivePhaseStartAngularPosition
-    _driveLength = drivePhaseAngularDisplacement * (rowerSettings.sprocketRadius / 100)
+    _driveLength = drivePhaseAngularDisplacement * sprocketRadius
     _driveLinearDistance = calculateLinearDistance(drivePhaseAngularDisplacement, _driveDuration)
     totalLinearDistance += _driveLinearDistance
     _cyclePower = calculateCyclePower()
     _cycleLinearVelocity = calculateLinearVelocity(drivePhaseAngularDisplacement + recoveryPhaseAngularDisplacement, _cycleDuration)
+    //fs.appendFile('exports/DistanceData.csv', `${_totalNumberOfStrokes};Drive;${drivePhaseAngularDisplacement};${_driveDuration};${flywheel.dragFactor()};${_driveLinearDistance};${_cycleLinearVelocity};${((_driveLinearDistance + _recoveryLinearDistance)/_cycleDuration)}\n`, (err) => { if (err) log.error(err) })  // REMOVE ME!!!!
     preliminaryTotalLinearDistance = totalLinearDistance
   }
 
@@ -175,6 +179,8 @@ function createRower (rowerSettings) {
     preliminaryTotalLinearDistance = totalLinearDistance
     _cycleLinearVelocity = calculateLinearVelocity(drivePhaseAngularDisplacement + recoveryPhaseAngularDisplacement, _cycleDuration)
     _cyclePower = calculateCyclePower()
+    //fs.appendFile('exports/DistanceData.csv', `${_totalNumberOfStrokes};Recovery;${recoveryPhaseAngularDisplacement};${_recoveryDuration};${flywheel.dragFactor()};${_recoveryLinearDistance};${_cycleLinearVelocity};${((_driveLinearDistance + _recoveryLinearDistance)/_cycleDuration)}\n`, (err) => { if (err) log.error(err) })  // REMOVE ME!!!!
+    //fs.appendFile('exports/PowerData.csv', `${_cyclePower};${driveHandlePower.average()};${_driveDuration};${_recoveryDuration};${(driveHandlePower.average() * _driveDuration)/_cycleDuration}\n`, (err) => { if (err) log.error(err) })  // REMOVE ME!!!!
     flywheel.markRecoveryPhaseCompleted()
   }
 
