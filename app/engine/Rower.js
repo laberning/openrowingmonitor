@@ -10,8 +10,6 @@
   Physics of Rowing by Anu Dudhia: http://eodg.atm.ox.ac.uk/user/dudhia/rowing/physics
   Also Dave Vernooy has some good explanations here: https://dvernooy.github.io/projects/ergware
 */
-import fs from 'fs' // REMOVE ME!!!
-
 import loglevel from 'loglevel'
 import { createFlywheel } from './Flywheel.js'
 import { createCurveMetrics } from './utils/curveMetrics.js'
@@ -150,7 +148,6 @@ function createRower (rowerSettings) {
     totalLinearDistance += _driveLinearDistance
     _cyclePower = calculateCyclePower()
     _cycleLinearVelocity = calculateLinearVelocity(drivePhaseAngularDisplacement + recoveryPhaseAngularDisplacement, _cycleDuration)
-    //fs.appendFile('exports/DistanceData.csv', `${_totalNumberOfStrokes};Drive;${drivePhaseAngularDisplacement};${_driveDuration};${flywheel.dragFactor()};${_driveLinearDistance};${_cycleLinearVelocity};${((_driveLinearDistance + _recoveryLinearDistance)/_cycleDuration)}\n`, (err) => { if (err) log.error(err) })  // REMOVE ME!!!!
     preliminaryTotalLinearDistance = totalLinearDistance
   }
 
@@ -179,8 +176,6 @@ function createRower (rowerSettings) {
     preliminaryTotalLinearDistance = totalLinearDistance
     _cycleLinearVelocity = calculateLinearVelocity(drivePhaseAngularDisplacement + recoveryPhaseAngularDisplacement, _cycleDuration)
     _cyclePower = calculateCyclePower()
-    //fs.appendFile('exports/DistanceData.csv', `${_totalNumberOfStrokes};Recovery;${recoveryPhaseAngularDisplacement};${_recoveryDuration};${flywheel.dragFactor()};${_recoveryLinearDistance};${_cycleLinearVelocity};${((_driveLinearDistance + _recoveryLinearDistance)/_cycleDuration)}\n`, (err) => { if (err) log.error(err) })  // REMOVE ME!!!!
-    //fs.appendFile('exports/PowerData.csv', `${_cyclePower};${driveHandlePower.average()};${_driveDuration};${_recoveryDuration};${(driveHandlePower.average() * _driveDuration)/_cycleDuration}\n`, (err) => { if (err) log.error(err) })  // REMOVE ME!!!!
     flywheel.markRecoveryPhaseCompleted()
   }
 
