@@ -1,7 +1,7 @@
 'use strict'
 /*
   Open Rowing Monitor, https://github.com/laberning/openrowingmonitor
-  
+
   This effectively is an integration test of the total Physics/Rowing Engine. It includes the combination with all possible known
   rowers, as the across stroke smoothing settings have a significant effect on the presented outcome to the user.
 */
