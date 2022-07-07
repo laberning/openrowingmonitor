@@ -10,7 +10,7 @@ import * as assert from 'uvu/assert'
 import loglevel from 'loglevel'
 
 import rowerProfiles from '../../config/rowerProfiles.js'
-import { ceateRowingStatistics } from './RowingStatistics .js'
+import { ceateRowingStatistics } from './RowingStatistics.js'
 import { replayRowingSession } from '../tools/RowingRecorder.js'
 import { deepMerge } from '../tools/Helper.js'
 
