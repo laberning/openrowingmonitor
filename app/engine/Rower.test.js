@@ -30,7 +30,7 @@ const createWorkoutEvaluator = function () {
   function updateKeyMetrics () {}
   function handleRecoveryEnd () {}
   function handlePause () {}
-  /* 
+  /*
   function getNumOfStrokes () {
     return strokes.length
   }
@@ -45,7 +45,7 @@ const createWorkoutEvaluator = function () {
     handleDriveEnd,
     handleRecoveryEnd,
     updateKeyMetrics,
-    handlePause,
+    handlePause
     /*
     getNumOfStrokes,
     getMaxStrokePower,
