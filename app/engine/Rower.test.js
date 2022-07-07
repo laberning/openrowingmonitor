@@ -1,6 +1,11 @@
 'use strict'
 /*
   Open Rowing Monitor, https://github.com/laberning/openrowingmonitor
+  
+  This test is a test of the Rower object, that tests wether this object fills all fields correctly, given one validated rower, (the
+  Concept2 RowErg) using a validated cycle of strokes. This thoroughly tests the raw physics of the translation of Angular physics
+  to Linear physics. The combination with all possible known rowers is tested when testing the above function RowingStatistics, as
+  these statistics are dependent on these settings as well.
 */
 import { test } from 'uvu'
 import * as assert from 'uvu/assert'
@@ -48,29 +53,7 @@ const createWorkoutEvaluator = function () {
   }
 }
 
-test('sample data for WRX700 should produce plausible results with rower profile', async () => {
-  const rowingEngine = createRower(deepMerge(rowerProfiles.DEFAULT, rowerProfiles.WRX700))
-  const workoutEvaluator = createWorkoutEvaluator()
-  rowingEngine.notify(workoutEvaluator)
-  await replayRowingSession(rowingEngine.handleRotationImpulse, { filename: 'recordings/WRX700_2magnets.csv' })
-  assert.is(workoutEvaluator.getNumOfStrokes(), 16, 'number of strokes does not meet expectation')
-  assertPowerRange(workoutEvaluator, 50, 220)
-  assertDistanceRange(workoutEvaluator, 165, 168)
-  assertStrokeDistanceSumMatchesTotal(workoutEvaluator)
-})
-
-test('sample data for DKNR320 should produce plausible results with rower profile', async () => {
-  const rowingEngine = createRower(deepMerge(rowerProfiles.DEFAULT, rowerProfiles.DKNR320))
-  const workoutEvaluator = createWorkoutEvaluator()
-  rowingEngine.notify(workoutEvaluator)
-  await replayRowingSession(rowingEngine.handleRotationImpulse, { filename: 'recordings/DKNR320.csv' })
-  assert.is(workoutEvaluator.getNumOfStrokes(), 10, 'number of strokes does not meet expectation')
-  assertPowerRange(workoutEvaluator, 75, 200)
-  assertDistanceRange(workoutEvaluator, 71, 73)
-  assertStrokeDistanceSumMatchesTotal(workoutEvaluator)
-})
-
-test('sample data for RX800 should produce plausible results with rower profile', async () => {
+test('Rower function should deliver results close to the validation machine (Concept2 RowErg)', async () => {
   const rowingEngine = createRower(deepMerge(rowerProfiles.DEFAULT, rowerProfiles.RX800))
   const workoutEvaluator = createWorkoutEvaluator()
   rowingEngine.notify(workoutEvaluator)
