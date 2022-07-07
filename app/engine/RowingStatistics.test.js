@@ -10,7 +10,7 @@ import * as assert from 'uvu/assert'
 import loglevel from 'loglevel'
 
 import rowerProfiles from '../../config/rowerProfiles.js'
-import { ceateRowingStatistics } from './RowingStatistics.js'
+import { createRowingStatistics } from './RowingStatistics.js'
 import { replayRowingSession } from '../tools/RowingRecorder.js'
 import { deepMerge } from '../tools/Helper.js'
 
@@ -58,7 +58,7 @@ const createWorkoutEvaluator = function () {
 }
 
 test('sample data for WRX700 should produce plausible results with rower profile', async () => {
-  const rowingEngine = ceateRowingStatistics(deepMerge(rowerProfiles.DEFAULT, rowerProfiles.WRX700))
+  const rowingEngine = createRowingStatistics(deepMerge(rowerProfiles.DEFAULT, rowerProfiles.WRX700))
   const workoutEvaluator = createWorkoutEvaluator()
   rowingEngine.notify(workoutEvaluator)
   await replayRowingSession(rowingEngine.handleRotationImpulse, { filename: 'recordings/WRX700_2magnets.csv' })
@@ -69,7 +69,7 @@ test('sample data for WRX700 should produce plausible results with rower profile
 })
 
 test('sample data for DKNR320 should produce plausible results with rower profile', async () => {
-  const rowingEngine = ceateRowingStatistics(deepMerge(rowerProfiles.DEFAULT, rowerProfiles.DKNR320))
+  const rowingEngine = createRowingStatistics(deepMerge(rowerProfiles.DEFAULT, rowerProfiles.DKNR320))
   const workoutEvaluator = createWorkoutEvaluator()
   rowingEngine.notify(workoutEvaluator)
   await replayRowingSession(rowingEngine.handleRotationImpulse, { filename: 'recordings/DKNR320.csv' })
@@ -80,7 +80,7 @@ test('sample data for DKNR320 should produce plausible results with rower profil
 })
 
 test('sample data for RX800 should produce plausible results with rower profile', async () => {
-  const rowingEngine = ceateRowingStatistics(deepMerge(rowerProfiles.DEFAULT, rowerProfiles.RX800))
+  const rowingEngine = createRowingStatistics(deepMerge(rowerProfiles.DEFAULT, rowerProfiles.RX800))
   const workoutEvaluator = createWorkoutEvaluator()
   rowingEngine.notify(workoutEvaluator)
   await replayRowingSession(rowingEngine.handleRotationImpulse, { filename: 'recordings/RX800.csv' })
