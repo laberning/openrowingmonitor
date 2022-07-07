@@ -9,7 +9,7 @@
 */
 
 function createCurveAligner (minimumValue) {
-  let _lastCompleteCurve = new Array()
+  let _lastCompleteCurve = []
 
   function push (curve) {
     // First, remove all unneccessary leading zero's
