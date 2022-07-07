@@ -1,7 +1,7 @@
 'use strict'
 /*
   Open Rowing Monitor, https://github.com/laberning/openrowingmonitor
-  
+
   This test is a test of the Rower object, that tests wether this object fills all fields correctly, given one validated rower, (the
   Concept2 RowErg) using a validated cycle of strokes. This thoroughly tests the raw physics of the translation of Angular physics
   to Linear physics. The combination with all possible known rowers is tested when testing the above function RowingStatistics, as
@@ -30,7 +30,7 @@ const createWorkoutEvaluator = function () {
   function updateKeyMetrics () {}
   function handleRecoveryEnd () {}
   function handlePause () {}
-/*
+  /* 
   function getNumOfStrokes () {
     return strokes.length
   }
@@ -40,17 +40,19 @@ const createWorkoutEvaluator = function () {
   function getTotalDistance () {
     return strokes[strokes.length - 1].distance
   }
-*/
+  */
   return {
     handleDriveEnd,
     handleRecoveryEnd,
     updateKeyMetrics,
     handlePause,
+    /*
     getNumOfStrokes,
     getMaxStrokePower,
     getMinStrokePower,
     getDistanceSum,
     getDistanceTotal
+    */
   }
 }
 
