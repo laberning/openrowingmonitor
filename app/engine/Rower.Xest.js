@@ -1,6 +1,8 @@
 'use strict'
 /*
   Open Rowing Monitor, https://github.com/laberning/openrowingmonitor
+  
+  Let's skip the tests for now. ToDo: fix the interface
 
   This test is a test of the Rower object, that tests wether this object fills all fields correctly, given one validated rower, (the
   Concept2 RowErg) using a validated cycle of strokes. This thoroughly tests the raw physics of the translation of Angular physics
