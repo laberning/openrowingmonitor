@@ -1,6 +1,8 @@
 'use strict'
 /*
-  Open Rowing Monitor, https://github.com/laberning/openrowingmonitor
+  Open Rowing Monitor, https://github.com/jaapvanekris/openrowingmonitor
+
+  Let's skip the tests for now. ToDo: fix the interface and prevent the endless spin
 
   This effectively is an integration test of the total Physics/Rowing Engine. It includes the combination with all possible known
   rowers, as the across stroke smoothing settings have a significant effect on the presented outcome to the user.
@@ -68,8 +70,6 @@ const createWorkoutEvaluator = function () {
   }
 }
 
-/* Let's skip the tests for now. ToDo: fix the interface and prevent the endless spin
-
 test('sample data for WRX700 should produce plausible results with rower profile', async () => {
   const WRX700Config = {
     numOfPhasesForAveragingScreenData: 1,
@@ -117,8 +117,6 @@ test('sample data for RX800 should produce plausible results with rower profile'
   assertDistanceRange(workoutEvaluator, 70, 80)
   assertStrokeDistanceSumMatchesTotal(workoutEvaluator)
 })
-
-*/
 
 function assertPowerRange (evaluator, minPower, maxPower) {
   assert.ok(evaluator.getMinStrokePower() > minPower, `minimum stroke power should be above ${minPower}w, but is ${evaluator.getMinStrokePower()}w`)
