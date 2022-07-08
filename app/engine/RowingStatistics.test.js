@@ -25,7 +25,7 @@ const defaultConfig = {
 
 const createWorkoutEvaluator = function () {
   const strokes = []
-  
+
   function handleDriveEnd (stroke) {
     strokes.push(stroke)
     log.info(`stroke: ${strokes.length}, power: ${Math.round(stroke.power)}w, duration: ${stroke.duration.toFixed(2)}s, ` +
