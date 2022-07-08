@@ -1,7 +1,7 @@
 'use strict'
 /*
   Open Rowing Monitor, https://github.com/laberning/openrowingmonitor
-  
+
   Let's skip the tests for now. ToDo: fix the interface
 
   This test is a test of the Rower object, that tests wether this object fills all fields correctly, given one validated rower, (the
