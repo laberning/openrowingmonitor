@@ -369,6 +369,16 @@ test('numberOfValuesEqualOrBelow(0) should be 1 after fifth push', () => {
   assert.is(dataSeries.numberOfValuesEqualOrBelow(0), 1)
 })
 
+test('numberOfValuesAbove(10) should be 1 after fifth push', () => {
+  const dataSeries = createSeries(3)
+  dataSeries.push(9)
+  dataSeries.push(3)
+  dataSeries.push(6)
+  dataSeries.push(12)
+  dataSeries.push(-3)
+  assert.is(dataSeries.numberOfValuesAbove(10), 1)
+})
+
 test('numberOfValuesEqualOrBelow(10) should remain 2 after fifth push', () => {
   const dataSeries = createSeries(3)
   dataSeries.push(9)
