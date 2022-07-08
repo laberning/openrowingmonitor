@@ -62,7 +62,7 @@ test('atSeriesBegin should be 9 after single push(9)', () => {
 test('atSeriesEnd should be 9 after single push(9)', () => {
   const dataSeries = createSeries(3)
   dataSeries.push(9)
-  assert.is(dataSeries.atSeriesEnd(), 0)
+  assert.is(dataSeries.atSeriesEnd(), 9)
 })
 
 test('numberOfValuesAbove(0) should be 1 after single push(9)', () => {
@@ -217,7 +217,7 @@ test('sum should be 18 after third push', () => {
   dataSeries.push(9)
   dataSeries.push(3)
   dataSeries.push(6)
-  assert.is(dataSeries.sum(), 6)
+  assert.is(dataSeries.sum(), 18)
 })
 
 test('average should be 6 after third push', () => {
@@ -405,6 +405,105 @@ test('median should remain 6 after fifth push', () => {
   dataSeries.push(12)
   dataSeries.push(-3)
   assert.is(dataSeries.median(), 6)
+})
+
+test('Length should be 0 after reset', () => {
+  const dataSeries = createSeries(3)
+  dataSeries.push(9)
+  dataSeries.push(3)
+  dataSeries.push(6)
+  dataSeries.push(12)
+  dataSeries.push(-3)
+  dataSeries.reset()
+  assert.is(dataSeries.length(), 0)
+})
+
+test('atSeriesBegin should be 0 after reset', () => {
+  const dataSeries = createSeries(3)
+  dataSeries.push(9)
+  dataSeries.push(3)
+  dataSeries.push(6)
+  dataSeries.push(12)
+  dataSeries.push(-3)
+  dataSeries.reset()
+  assert.is(dataSeries.atSeriesBegin(), 0)
+})
+
+test('atSeriesEnd should be 0 after reset', () => {
+  const dataSeries = createSeries(3)
+  dataSeries.push(9)
+  dataSeries.push(3)
+  dataSeries.push(6)
+  dataSeries.push(12)
+  dataSeries.push(-3)
+  dataSeries.reset()
+  assert.is(dataSeries.atSeriesEnd(), 0)
+})
+
+test('numberOfValuesAbove(0) should be 0 after reset', () => {
+  const dataSeries = createSeries(3)
+  dataSeries.push(9)
+  dataSeries.push(3)
+  dataSeries.push(6)
+  dataSeries.push(12)
+  dataSeries.push(-3)
+  dataSeries.reset()
+  assert.is(dataSeries.numberOfValuesAbove(0), 0)
+})
+
+test('numberOfValuesEqualOrBelow(0) should be 0 after reset', () => {
+  const dataSeries = createSeries(3)
+  dataSeries.push(9)
+  dataSeries.push(3)
+  dataSeries.push(6)
+  dataSeries.push(12)
+  dataSeries.push(-3)
+  dataSeries.reset()
+  assert.is(dataSeries.numberOfValuesEqualOrBelow(0), 0)
+})
+
+test('numberOfValuesEqualOrBelow(10) should be 0 after reset', () => {
+  const dataSeries = createSeries(3)
+  dataSeries.push(9)
+  dataSeries.push(3)
+  dataSeries.push(6)
+  dataSeries.push(12)
+  dataSeries.push(-3)
+  dataSeries.reset()
+  assert.is(dataSeries.numberOfValuesEqualOrBelow(10), 0)
+})
+
+test('sum should be 0 after reset', () => {
+  const dataSeries = createSeries(3)
+  dataSeries.push(9)
+  dataSeries.push(3)
+  dataSeries.push(6)
+  dataSeries.push(12)
+  dataSeries.push(-3)
+  dataSeries.reset()
+  assert.is(dataSeries.sum(), 0)
+})
+
+test('average should be 0 after reset', () => {
+  const dataSeries = createSeries(3)
+  dataSeries.push(9)
+  dataSeries.push(3)
+  dataSeries.push(6)
+  dataSeries.push(12)
+  dataSeries.push(-3)
+  dataSeries.reset()
+  assert.is(dataSeries.average(), 0)
+})
+
+test('median should be 0 after reset', () => {
+  const dataSeries = createSeries(3)
+  dataSeries.push(9)
+  dataSeries.push(3)
+  dataSeries.push(6)
+  dataSeries.push(12)
+  dataSeries.push(-3)
+  dataSeries.reset()
+  assert.is(dataSeries.median(), 0)
 })
 
 test.run()
