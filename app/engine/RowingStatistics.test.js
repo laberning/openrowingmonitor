@@ -20,6 +20,12 @@ log.setLevel('warn')
 const createWorkoutEvaluator = function () {
   const strokes = []
 
+const defaultConfig = {
+    numOfPhasesForAveragingScreenData: 1,
+    screenUpdateInterval: 1000,
+    rowerSettings: rowerProfiles.DEFAULT
+  }
+  
   function handleDriveEnd (stroke) {
     strokes.push(stroke)
     log.info(`stroke: ${strokes.length}, power: ${Math.round(stroke.power)}w, duration: ${stroke.duration.toFixed(2)}s, ` +
@@ -58,7 +64,13 @@ const createWorkoutEvaluator = function () {
 }
 
 test('sample data for WRX700 should produce plausible results with rower profile', async () => {
-  const rowingEngine = createRowingStatistics(deepMerge(rowerProfiles.DEFAULT, rowerProfiles.WRX700))
+  WRX700config = {
+    numOfPhasesForAveragingScreenData: 1,
+    screenUpdateInterval: 1000,
+    rowerSettings: rowerProfiles.WRX700
+  }
+  //const rowingEngine = createRowingStatistics(deepMerge(rowerProfiles.DEFAULT, rowerProfiles.WRX700))
+  const rowingEngine = createRowingStatistics(deepMerge(defaultConfig, WRX700config))
   const workoutEvaluator = createWorkoutEvaluator()
   rowingEngine.notify(workoutEvaluator)
   await replayRowingSession(rowingEngine.handleRotationImpulse, { filename: 'recordings/WRX700_2magnets.csv' })
