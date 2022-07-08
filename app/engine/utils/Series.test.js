@@ -1,6 +1,8 @@
 'use strict'
 /*
-  Open Rowing Monitor, https://github.com/laberning/openrowingmonitor
+  Open Rowing Monitor, https://github.com/jaapvanekris/openrowingmonitor
+  
+  As this object is fundamental for most other utility objects, we must test its behaviour quite thoroughly
 */
 import { test } from 'uvu'
 import * as assert from 'uvu/assert'
