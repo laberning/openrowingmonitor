@@ -890,7 +890,7 @@ test('Series with 5 elements, with 2 noisy datapoints', () => {
   dataSeries.push(6, 12)
   dataSeries.push(1, -3)
   assert.ok(dataSeries.slope() > 3.1, `Slope should be below 3.1, is ${dataSeries.slope()}`)
-  assert.ok(dataSeries.slope() < 2.9, `Slope should be above 2.9, is ${dataSeries.slope()}``)
+  assert.ok(dataSeries.slope() < 2.9, `Slope should be above 2.9, is ${dataSeries.slope()}`)
   assert.ok(dataSeries.intercept() > -5.8, `Intercept should be below -5.7, is ${dataSeries.intercept()}`)
   assert.ok(dataSeries.intercept() < -5.8, `Intercept should be above -6.3, is ${dataSeries.intercept()}`)
   assert.ok(dataSeries.goodnessOfFit() > 0.9, `Intercept should be above 0.9, was ${dataSeries.goodnessOfFit()}`)
