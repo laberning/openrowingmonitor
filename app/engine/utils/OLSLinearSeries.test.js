@@ -52,14 +52,14 @@ test('numberOfYValuesEqualOrBelow(0) should be 0 on empty dataset', () => {
   assert.is(dataSeries.numberOfYValuesEqualOrBelow(0), 0)
 })
 
-test('sumX should be 0 on empty dataset', () => {
+test('xSum should be 0 on empty dataset', () => {
   const dataSeries = createOLSLinearSeries(3)
-  assert.is(dataSeries.sumX(), 0)
+  assert.is(dataSeries.xSum(), 0)
 })
 
-test('sumY should be 0 on empty dataset', () => {
+test('ySum should be 0 on empty dataset', () => {
   const dataSeries = createOLSLinearSeries(3)
-  assert.is(dataSeries.sumY(), 0)
+  assert.is(dataSeries.ySum(), 0)
 })
 
 test('slope should be 0 on empty dataset', () => {
@@ -295,7 +295,7 @@ test('yAtSeriesBegin should remain 9 after third push', () => {
   dataSeries.push(5, 9)
   dataSeries.push(3, 3)
   dataSeries.push(4, 6)
-  assert.is(dataSeries.yatSeriesBegin(), 9)
+  assert.is(dataSeries.yAtSeriesBegin(), 9)
 })
 
 test('xAtSeriesEnd should be 4 after third push', () => {
