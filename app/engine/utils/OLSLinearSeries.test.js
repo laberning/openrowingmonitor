@@ -882,37 +882,19 @@ test('goodnessOfFit should be 0 after reset', () => {
   assert.is(dataSeries.goodnessOfFit(), 0)
 })
 
-test('slope should be 3 after fifth push with noise', () => {
+test('Series with 5 elements, with 2 noisy datapoints', () => {
   const dataSeries = createOLSLinearSeries(5)
   dataSeries.push(5, 9)
   dataSeries.push(3, 2)
   dataSeries.push(4, 7)
   dataSeries.push(6, 12)
   dataSeries.push(1, -3)
-  assert.ok(dataSeries.slope() > 3.1, 'Slope should be below 3.1')
-  assert.ok(dataSeries.slope() < 2.9, 'Slope should be above 2.9')
-})
-
-test('intercept should be -6 after fifth push with noise', () => {
-  const dataSeries = createOLSLinearSeries(3)
-  dataSeries.push(5, 9)
-  dataSeries.push(3, 2)
-  dataSeries.push(4, 7)
-  dataSeries.push(6, 12)
-  dataSeries.push(1, -3)
-  assert.ok(dataSeries.intercept() > -5.8, 'Intercept should be below -5.7')
-  assert.ok(dataSeries.intercept() < -5.8, 'Intercept should be above -6.3')
-})
-
-test('goodnessOfFit should be 1 after fifth push with noise', () => {
-  const dataSeries = createOLSLinearSeries(3)
-  dataSeries.push(5, 9)
-  dataSeries.push(3, 2)
-  dataSeries.push(4, 7)
-  dataSeries.push(6, 12)
-  dataSeries.push(1, -3)
-  assert.ok(dataSeries.goodnessOfFit() > 0.9, 'Intercept should be above 0.9')
-  assert.ok(dataSeries.goodnessOfFit() < 1.0, 'Intercept should stay below 1.0')
+  assert.ok(dataSeries.slope() > 3.1, `Slope should be below 3.1, is ${dataSeries.slope()}`)
+  assert.ok(dataSeries.slope() < 2.9, `Slope should be above 2.9, is ${dataSeries.slope()}``)
+  assert.ok(dataSeries.intercept() > -5.8, `Intercept should be below -5.7, is ${dataSeries.intercept()}`)
+  assert.ok(dataSeries.intercept() < -5.8, `Intercept should be above -6.3, is ${dataSeries.intercept()}`)
+  assert.ok(dataSeries.goodnessOfFit() > 0.9, `Intercept should be above 0.9, was ${dataSeries.goodnessOfFit()}`)
+  assert.ok(dataSeries.goodnessOfFit() < 1.0, `Intercept should stay below 1.0, was ${dataSeries.goodnessOfFit()}`)
 })
 
 test.run()
