@@ -7,546 +7,117 @@ import * as assert from 'uvu/assert'
 
 import { createOLSLinearSeries } from './OLSLinearSeries.js'
 
-test('Length should be 0 on empty dataset', () => {
+test('Correct behaviour with an empty dataset', () => {
   const dataSeries = createOLSLinearSeries(3)
-  assert.is(dataSeries.length(), 0)
+  assert.ok(dataSeries.length() === 0, `Length should be 0, is ${dataSeries.length()}`)
+  assert.ok(dataSeries.xAtSeriesBegin() === 0, `xAtSeriesBegin should be 0, is ${dataSeries.xAtSeriesBegin()}`)
+  assert.ok(dataSeries.yAtSeriesBegin() === 0, `yAtSeriesBegin should be 0, is ${dataSeries.yAtSeriesBegin()}`)
+  assert.ok(dataSeries.xAtSeriesEnd() === 0, `xAtSeriesEnd should be 0, is ${dataSeries.xAtSeriesEnd()}`)
+  assert.ok(dataSeries.yAtSeriesEnd() === 0, `yAtSeriesEnd should be 0, is ${dataSeries.yAtSeriesEnd()}`)
+  assert.ok(dataSeries.numberOfXValuesAbove(0) === 0, `numberOfXValuesAbove(0) should be 0, is ${dataSeries.numberOfXValuesAbove(0)}`)
+  assert.ok(dataSeries.numberOfYValuesAbove(0) === 0, `numberOfYValuesAbove(0) should be 0, is ${dataSeries.numberOfYValuesAbove(0)}`)
+  assert.ok(dataSeries.numberOfXValuesEqualOrBelow(0) === 0, `numberOfXValuesEqualOrBelow(0) should be 0, is ${dataSeries.numberOfXValuesEqualOrBelow(0)}`)
+  assert.ok(dataSeries.numberOfYValuesEqualOrBelow(0) === 0, `numberOfYValuesEqualOrBelow(0) should be 0, is ${dataSeries.numberOfYValuesEqualOrBelow(0)}`)
+  assert.ok(dataSeries.numberOfYValuesAbove(10) === 0, `numberOfYValuesAbove(10) should be 0, is ${dataSeries.numberOfYValuesAbove(10)}`)
+  assert.ok(dataSeries.numberOfYValuesEqualOrBelow(10) === 0, `numberOfYValuesEqualOrBelow(10) should be 0, is ${dataSeries.numberOfYValuesEqualOrBelow(10)}`)
+  assert.ok(dataSeries.xSum() === 0, `xSum should be 0, is ${dataSeries.xSum()}`)
+  assert.ok(dataSeries.ySum() === 0, `ySum should be 0, is ${dataSeries.ySum()}`)
+  assert.ok(dataSeries.slope() === 0, `slope should be 0, is ${dataSeries.slope()}`)
+  assert.ok(dataSeries.intercept() === 0, `intercept should be 0, is ${dataSeries.intercept()}`)
+  assert.ok(dataSeries.goodnessOfFit() === 0, `goodnessOfFit should be 0, is ${dataSeries.goodnessOfFit()}`)
 })
 
-test('xAtSeriesBegin should be 0 on empty dataset', () => {
-  const dataSeries = createOLSLinearSeries(3)
-  assert.is(dataSeries.xAtSeriesBegin(), 0)
-})
-
-test('yAtSeriesBegin should be 0 on empty dataset', () => {
-  const dataSeries = createOLSLinearSeries(3)
-  assert.is(dataSeries.yAtSeriesBegin(), 0)
-})
-
-test('xAtSeriesEnd should be 0 on empty dataset', () => {
-  const dataSeries = createOLSLinearSeries(3)
-  assert.is(dataSeries.xAtSeriesEnd(), 0)
-})
-
-test('yAtSeriesEnd should be 0 on empty dataset', () => {
-  const dataSeries = createOLSLinearSeries(3)
-  assert.is(dataSeries.yAtSeriesEnd(), 0)
-})
-
-test('numberOfXValuesAbove(0) should be 0 on empty dataset', () => {
-  const dataSeries = createOLSLinearSeries(3)
-  assert.is(dataSeries.numberOfXValuesAbove(0), 0)
-})
-
-test('numberOfYValuesAbove(0) should be 0 on empty dataset', () => {
-  const dataSeries = createOLSLinearSeries(3)
-  assert.is(dataSeries.numberOfYValuesAbove(0), 0)
-})
-
-test('numberOfXValuesEqualOrBelow(0) should be 0 on empty dataset', () => {
-  const dataSeries = createOLSLinearSeries(3)
-  assert.is(dataSeries.numberOfXValuesEqualOrBelow(0), 0)
-})
-
-test('numberOfYValuesEqualOrBelow(0) should be 0 on empty dataset', () => {
-  const dataSeries = createOLSLinearSeries(3)
-  assert.is(dataSeries.numberOfYValuesEqualOrBelow(0), 0)
-})
-
-test('xSum should be 0 on empty dataset', () => {
-  const dataSeries = createOLSLinearSeries(3)
-  assert.is(dataSeries.xSum(), 0)
-})
-
-test('ySum should be 0 on empty dataset', () => {
-  const dataSeries = createOLSLinearSeries(3)
-  assert.is(dataSeries.ySum(), 0)
-})
-
-test('slope should be 0 on empty dataset', () => {
-  const dataSeries = createOLSLinearSeries(3)
-  assert.is(dataSeries.slope(), 0)
-})
-
-test('intercept should be 0 on empty dataset', () => {
-  const dataSeries = createOLSLinearSeries(3)
-  assert.is(dataSeries.intercept(), 0)
-})
-
-test('Length should be 1 after single push', () => {
+test('Behaviour on a series after single push', () => {
   const dataSeries = createOLSLinearSeries(3)
   dataSeries.push(5, 9)
-  assert.is(dataSeries.length(), 1)
+  assert.ok(dataSeries.length() === 1, `Length should be 1, is ${dataSeries.length()}`)
+  assert.ok(dataSeries.xAtSeriesBegin() === 5, `xAtSeriesBegin should be 5, is ${dataSeries.xAtSeriesBegin()}`)
+  assert.ok(dataSeries.yAtSeriesBegin() === 9, `yAtSeriesBegin should be 9, is ${dataSeries.yAtSeriesBegin()}`)
+  assert.ok(dataSeries.xAtSeriesEnd() === 5, `xAtSeriesEnd should be 5, is ${dataSeries.xAtSeriesEnd()}`)
+  assert.ok(dataSeries.yAtSeriesEnd() === 9, `yAtSeriesEnd should be 9, is ${dataSeries.yAtSeriesEnd()}`)
+  assert.ok(dataSeries.numberOfXValuesAbove(0) === 1, `numberOfXValuesAbove(0) should be 1, is ${dataSeries.numberOfXValuesAbove(0)}`)
+  assert.ok(dataSeries.numberOfYValuesAbove(0) === 1, `numberOfYValuesAbove(0) should be 1, is ${dataSeries.numberOfYValuesAbove(0)}`)
+  assert.ok(dataSeries.numberOfXValuesEqualOrBelow(0) === 0, `numberOfXValuesEqualOrBelow(0) should be 0, is ${dataSeries.numberOfXValuesEqualOrBelow(0)}`)
+  assert.ok(dataSeries.numberOfYValuesEqualOrBelow(0) === 0, `numberOfYValuesEqualOrBelow(0) should be 0, is ${dataSeries.numberOfYValuesEqualOrBelow(0)}`)
+  assert.ok(dataSeries.numberOfYValuesAbove(10) === 0, `numberOfYValuesAbove(10) should be 0, is ${dataSeries.numberOfYValuesAbove(10)}`)
+  assert.ok(dataSeries.numberOfYValuesEqualOrBelow(10) === 1, `numberOfYValuesEqualOrBelow(10) should be 1, is ${dataSeries.numberOfYValuesEqualOrBelow(10)}`)
+  assert.ok(dataSeries.xSum() === 5, `xSum should be 5, is ${dataSeries.xSum()}`)
+  assert.ok(dataSeries.ySum() === 9, `ySum should be 9, is ${dataSeries.ySum()}`)
+  assert.ok(dataSeries.slope() === 0, `slope should be 0, is ${dataSeries.slope()}`)
+  assert.ok(dataSeries.intercept() === 0, `intercept should be 0, is ${dataSeries.intercept()}`)
+  assert.ok(dataSeries.goodnessOfFit() === 0, `goodnessOfFit should be 0, is ${dataSeries.goodnessOfFit()}`)
 })
 
-test('xAtSeriesBegin should be 5 after single push(5, 9)', () => {
-  const dataSeries = createOLSLinearSeries(3)
-  dataSeries.push(5, 9)
-  assert.is(dataSeries.xAtSeriesBegin(), 5)
-})
-
-test('yAtSeriesBegin should be 9 after single push(5, 9)', () => {
-  const dataSeries = createOLSLinearSeries(3)
-  dataSeries.push(5, 9)
-  assert.is(dataSeries.yAtSeriesBegin(), 9)
-})
-
-test('xAtSeriesEnd should be 5 after single push(5, 9)', () => {
-  const dataSeries = createOLSLinearSeries(3)
-  dataSeries.push(5, 9)
-  assert.is(dataSeries.xAtSeriesEnd(), 5)
-})
-
-test('yAtSeriesEnd should be 9 after single push(5, 9)', () => {
-  const dataSeries = createOLSLinearSeries(3)
-  dataSeries.push(5, 9)
-  assert.is(dataSeries.yAtSeriesEnd(), 9)
-})
-
-test('numberOfXValuesAbove(0) should be 1 after single push(5, 9)', () => {
-  const dataSeries = createOLSLinearSeries(3)
-  dataSeries.push(5, 9)
-  assert.is(dataSeries.numberOfXValuesAbove(0), 1)
-})
-
-test('numberOfYValuesAbove(0) should be 1 after single push(5, 9)', () => {
-  const dataSeries = createOLSLinearSeries(3)
-  dataSeries.push(5, 9)
-  assert.is(dataSeries.numberOfYValuesAbove(0), 1)
-})
-
-test('numberOfXValuesEqualOrBelow(0) should remain 0 after single push(5, 9)', () => {
-  const dataSeries = createOLSLinearSeries(3)
-  dataSeries.push(5, 9)
-  assert.is(dataSeries.numberOfXValuesEqualOrBelow(0), 0)
-})
-
-test('numberOfYValuesEqualOrBelow(0) should remain 0 after single push(5, 9)', () => {
-  const dataSeries = createOLSLinearSeries(3)
-  dataSeries.push(5, 9)
-  assert.is(dataSeries.numberOfYValuesEqualOrBelow(0), 0)
-})
-
-test('numberOfXValuesEqualOrBelow(10) should be 1 after single push(5, 9)', () => {
-  const dataSeries = createOLSLinearSeries(3)
-  dataSeries.push(5, 9)
-  assert.is(dataSeries.numberOfXValuesEqualOrBelow(10), 1)
-})
-
-test('numberOfYValuesEqualOrBelow(10) should be 1 after single push(5, 9)', () => {
-  const dataSeries = createOLSLinearSeries(3)
-  dataSeries.push(5, 9)
-  assert.is(dataSeries.numberOfYValuesEqualOrBelow(10), 1)
-})
-
-test('xSum should be 5 after single push(5, 9)', () => {
-  const dataSeries = createOLSLinearSeries(3)
-  dataSeries.push(5, 9)
-  assert.is(dataSeries.xSum(), 5)
-})
-
-test('ySum should be 9 after single push(5, 9)', () => {
-  const dataSeries = createOLSLinearSeries(3)
-  dataSeries.push(5, 9)
-  assert.is(dataSeries.ySum(), 9)
-})
-
-test('slope should be 0 after single push(5, 9)', () => {
-  const dataSeries = createOLSLinearSeries(3)
-  dataSeries.push(5, 9)
-  assert.is(dataSeries.slope(), 0)
-})
-
-test('intercept should be 0 after single push(5, 9)', () => {
-  const dataSeries = createOLSLinearSeries(3)
-  dataSeries.push(5, 9)
-  assert.is(dataSeries.intercept(), 0)
-})
-
-test('Length should be 2 after second push', () => {
+test('Behaviour after two pushed values', () => {
   const dataSeries = createOLSLinearSeries(3)
   dataSeries.push(5, 9)
   dataSeries.push(3, 3)
-  assert.is(dataSeries.length(), 2)
+  assert.ok(dataSeries.length() === 2, `Length should be 2, is ${dataSeries.length()}`)
+  assert.ok(dataSeries.xAtSeriesBegin() === 5, `xAtSeriesBegin should be 5, is ${dataSeries.xAtSeriesBegin()}`)
+  assert.ok(dataSeries.yAtSeriesBegin() === 9, `yAtSeriesBegin should be 9, is ${dataSeries.yAtSeriesBegin()}`)
+  assert.ok(dataSeries.xAtSeriesEnd() === 3, `xAtSeriesEnd should be 3, is ${dataSeries.xAtSeriesEnd()}`)
+  assert.ok(dataSeries.yAtSeriesEnd() === 3, `yAtSeriesEnd should be 3, is ${dataSeries.yAtSeriesEnd()}`)
+  assert.ok(dataSeries.numberOfXValuesAbove(0) === 2, `numberOfXValuesAbove(0) should be 2, is ${dataSeries.numberOfXValuesAbove(0)}`)
+  assert.ok(dataSeries.numberOfYValuesAbove(0) === 2, `numberOfYValuesAbove(0) should be 2, is ${dataSeries.numberOfYValuesAbove(0)}`)
+  assert.ok(dataSeries.numberOfXValuesEqualOrBelow(0) === 0, `numberOfXValuesEqualOrBelow(0) should be 0, is ${dataSeries.numberOfXValuesEqualOrBelow(0)}`)
+  assert.ok(dataSeries.numberOfYValuesEqualOrBelow(0) === 0, `numberOfYValuesEqualOrBelow(0) should be 0, is ${dataSeries.numberOfYValuesEqualOrBelow(0)}`)
+  assert.ok(dataSeries.numberOfYValuesAbove(10) === 0, `numberOfYValuesAbove(10) should be 0, is ${dataSeries.numberOfYValuesAbove(10)}`)
+  assert.ok(dataSeries.numberOfYValuesEqualOrBelow(10) === 2, `numberOfYValuesEqualOrBelow(10) should be 2, is ${dataSeries.numberOfYValuesEqualOrBelow(10)}`)
+  assert.ok(dataSeries.xSum() === 8, `xSum should be 8, is ${dataSeries.xSum()}`)
+  assert.ok(dataSeries.ySum() === 12, `ySum should be 12, is ${dataSeries.ySum()}`)
+  assert.ok(dataSeries.slope() === 3, `slope should be 3, is ${dataSeries.slope()}`)
+  assert.ok(dataSeries.intercept() === -6, `intercept should be -6, is ${dataSeries.intercept()}`)
+  assert.ok(dataSeries.goodnessOfFit() === 1, `goodnessOfFit should be 1, is ${dataSeries.goodnessOfFit()}`)
 })
 
-test('xAtSeriesBegin should remain 5 after second push', () => {
-  const dataSeries = createOLSLinearSeries(3)
-  dataSeries.push(5, 9)
-  dataSeries.push(3, 3)
-  assert.is(dataSeries.xAtSeriesBegin(), 5)
-})
-
-test('yAtSeriesBegin should remain 9 after second push', () => {
-  const dataSeries = createOLSLinearSeries(3)
-  dataSeries.push(5, 9)
-  dataSeries.push(3, 3)
-  assert.is(dataSeries.yAtSeriesBegin(), 9)
-})
-
-test('xAtSeriesEnd should be 3 after second push', () => {
-  const dataSeries = createOLSLinearSeries(3)
-  dataSeries.push(5, 9)
-  dataSeries.push(3, 3)
-  assert.is(dataSeries.xAtSeriesEnd(), 3)
-})
-
-test('yAtSeriesEnd should be 3 after second push', () => {
-  const dataSeries = createOLSLinearSeries(3)
-  dataSeries.push(5, 9)
-  dataSeries.push(3, 3)
-  assert.is(dataSeries.yAtSeriesEnd(), 3)
-})
-
-test('numberOfXValuesAbove(0) should be 2 after second push', () => {
-  const dataSeries = createOLSLinearSeries(3)
-  dataSeries.push(5, 9)
-  dataSeries.push(3, 3)
-  assert.is(dataSeries.numberOfXValuesAbove(0), 2)
-})
-
-test('numberOfYValuesAbove(0) should be 2 after second push', () => {
-  const dataSeries = createOLSLinearSeries(3)
-  dataSeries.push(5, 9)
-  dataSeries.push(3, 3)
-  assert.is(dataSeries.numberOfYValuesAbove(0), 2)
-})
-
-test('numberOfXValuesEqualOrBelow(0) should remain 0 after second push', () => {
-  const dataSeries = createOLSLinearSeries(3)
-  dataSeries.push(5, 9)
-  dataSeries.push(3, 3)
-  assert.is(dataSeries.numberOfXValuesEqualOrBelow(0), 0)
-})
-
-test('numberOfYValuesEqualOrBelow(0) should remain 0 after second push', () => {
-  const dataSeries = createOLSLinearSeries(3)
-  dataSeries.push(5, 9)
-  dataSeries.push(3, 3)
-  assert.is(dataSeries.numberOfYValuesEqualOrBelow(0), 0)
-})
-
-test('numberOfXValuesEqualOrBelow(10) should be 2 after second push', () => {
-  const dataSeries = createOLSLinearSeries(3)
-  dataSeries.push(5, 9)
-  dataSeries.push(3, 3)
-  assert.is(dataSeries.numberOfXValuesEqualOrBelow(10), 2)
-})
-
-test('numberOfYValuesEqualOrBelow(10) should be 2 after second push', () => {
-  const dataSeries = createOLSLinearSeries(3)
-  dataSeries.push(5, 9)
-  dataSeries.push(3, 3)
-  assert.is(dataSeries.numberOfYValuesEqualOrBelow(10), 2)
-})
-
-test('xSum should be 8 after second push', () => {
-  const dataSeries = createOLSLinearSeries(3)
-  dataSeries.push(5, 9)
-  dataSeries.push(3, 3)
-  assert.is(dataSeries.xSum(), 8)
-})
-
-test('ySum should be 12 after second push', () => {
-  const dataSeries = createOLSLinearSeries(3)
-  dataSeries.push(5, 9)
-  dataSeries.push(3, 3)
-  assert.is(dataSeries.ySum(), 12)
-})
-
-test('slope should be 3 after second push', () => {
-  const dataSeries = createOLSLinearSeries(3)
-  dataSeries.push(5, 9)
-  dataSeries.push(3, 3)
-  assert.is(dataSeries.slope(), 3)
-})
-
-test('intercept should be -6 after second push', () => {
-  const dataSeries = createOLSLinearSeries(3)
-  dataSeries.push(5, 9)
-  dataSeries.push(3, 3)
-  assert.is(dataSeries.intercept(), -6)
-})
-
-test('goodnessOfFit should be 1 after second push', () => {
-  const dataSeries = createOLSLinearSeries(3)
-  dataSeries.push(5, 9)
-  dataSeries.push(3, 3)
-  assert.is(dataSeries.goodnessOfFit(), 1)
-})
-
-test('Length should be 3 after third push', () => {
+test('Behaviour after three pushed values, filling the series', () => {
   const dataSeries = createOLSLinearSeries(3)
   dataSeries.push(5, 9)
   dataSeries.push(3, 3)
   dataSeries.push(4, 6)
-  assert.is(dataSeries.length(), 3)
+  assert.ok(dataSeries.length() === 3, `Length should be 3, is ${dataSeries.length()}`)
+  assert.ok(dataSeries.xAtSeriesBegin() === 5, `xAtSeriesBegin should be 5, is ${dataSeries.xAtSeriesBegin()}`)
+  assert.ok(dataSeries.yAtSeriesBegin() === 9, `yAtSeriesBegin should be 9, is ${dataSeries.yAtSeriesBegin()}`)
+  assert.ok(dataSeries.xAtSeriesEnd() === 4, `xAtSeriesEnd should be 4, is ${dataSeries.xAtSeriesEnd()}`)
+  assert.ok(dataSeries.yAtSeriesEnd() === 6, `yAtSeriesEnd should be 6, is ${dataSeries.yAtSeriesEnd()}`)
+  assert.ok(dataSeries.numberOfXValuesAbove(0) === 3, `numberOfXValuesAbove(0) should be 3, is ${dataSeries.numberOfXValuesAbove(0)}`)
+  assert.ok(dataSeries.numberOfYValuesAbove(0) === 3, `numberOfYValuesAbove(0) should be 3, is ${dataSeries.numberOfYValuesAbove(0)}`)
+  assert.ok(dataSeries.numberOfXValuesEqualOrBelow(0) === 0, `numberOfXValuesEqualOrBelow(0) should be 0, is ${dataSeries.numberOfXValuesEqualOrBelow(0)}`)
+  assert.ok(dataSeries.numberOfYValuesEqualOrBelow(0) === 0, `numberOfYValuesEqualOrBelow(0) should be 0, is ${dataSeries.numberOfYValuesEqualOrBelow(0)}`)
+  assert.ok(dataSeries.numberOfYValuesAbove(10) === 0, `numberOfYValuesAbove(10) should be 0, is ${dataSeries.numberOfYValuesAbove(10)}`)
+  assert.ok(dataSeries.numberOfYValuesEqualOrBelow(10) === 3, `numberOfYValuesEqualOrBelow(10) should be 3, is ${dataSeries.numberOfYValuesEqualOrBelow(10)}`)
+  assert.ok(dataSeries.xSum() === 12, `xSum should be 12, is ${dataSeries.xSum()}`)
+  assert.ok(dataSeries.ySum() === 18, `ySum should be 18, is ${dataSeries.ySum()}`)
+  assert.ok(dataSeries.slope() === 3, `slope should be 3, is ${dataSeries.slope()}`)
+  assert.ok(dataSeries.intercept() === -6, `intercept should be -6, is ${dataSeries.intercept()}`)
+  assert.ok(dataSeries.goodnessOfFit() === 1, `goodnessOfFit should be 1, is ${dataSeries.goodnessOfFit()}`)
 })
 
-test('xAtSeriesBegin should remain 5 after third push', () => {
-  const dataSeries = createOLSLinearSeries(3)
-  dataSeries.push(5, 9)
-  dataSeries.push(3, 3)
-  dataSeries.push(4, 6)
-  assert.is(dataSeries.xAtSeriesBegin(), 5)
-})
-
-test('yAtSeriesBegin should remain 9 after third push', () => {
-  const dataSeries = createOLSLinearSeries(3)
-  dataSeries.push(5, 9)
-  dataSeries.push(3, 3)
-  dataSeries.push(4, 6)
-  assert.is(dataSeries.yAtSeriesBegin(), 9)
-})
-
-test('xAtSeriesEnd should be 4 after third push', () => {
-  const dataSeries = createOLSLinearSeries(3)
-  dataSeries.push(5, 9)
-  dataSeries.push(3, 3)
-  dataSeries.push(4, 6)
-  assert.is(dataSeries.xAtSeriesEnd(), 4)
-})
-
-test('yAtSeriesEnd should be 6 after third push', () => {
-  const dataSeries = createOLSLinearSeries(3)
-  dataSeries.push(5, 9)
-  dataSeries.push(3, 3)
-  dataSeries.push(4, 6)
-  assert.is(dataSeries.yAtSeriesEnd(), 6)
-})
-
-test('numberOfXValuesAbove(0) should be 3 after third push', () => {
-  const dataSeries = createOLSLinearSeries(3)
-  dataSeries.push(5, 9)
-  dataSeries.push(3, 3)
-  dataSeries.push(4, 6)
-  assert.is(dataSeries.numberOfXValuesAbove(0), 3)
-})
-
-test('numberOfYValuesAbove(0) should be 3 after third push', () => {
-  const dataSeries = createOLSLinearSeries(3)
-  dataSeries.push(5, 9)
-  dataSeries.push(3, 3)
-  dataSeries.push(4, 6)
-  assert.is(dataSeries.numberOfYValuesAbove(0), 3)
-})
-
-test('numberOfXValuesEqualOrBelow(0) should remain 0 after third push', () => {
-  const dataSeries = createOLSLinearSeries(3)
-  dataSeries.push(5, 9)
-  dataSeries.push(3, 3)
-  dataSeries.push(4, 6)
-  assert.is(dataSeries.numberOfXValuesEqualOrBelow(0), 0)
-})
-
-test('numberOfYValuesEqualOrBelow(0) should remain 0 after third push', () => {
-  const dataSeries = createOLSLinearSeries(3)
-  dataSeries.push(5, 9)
-  dataSeries.push(3, 3)
-  dataSeries.push(4, 6)
-  assert.is(dataSeries.numberOfYValuesEqualOrBelow(0), 0)
-})
-
-test('numberOfXValuesEqualOrBelow(10) should be 3 after third push', () => {
-  const dataSeries = createOLSLinearSeries(3)
-  dataSeries.push(5, 9)
-  dataSeries.push(3, 3)
-  dataSeries.push(4, 6)
-  assert.is(dataSeries.numberOfXValuesEqualOrBelow(10), 3)
-})
-
-test('numberOfYValuesEqualOrBelow(10) should be 3 after third push', () => {
-  const dataSeries = createOLSLinearSeries(3)
-  dataSeries.push(5, 9)
-  dataSeries.push(3, 3)
-  dataSeries.push(4, 6)
-  assert.is(dataSeries.numberOfYValuesEqualOrBelow(10), 3)
-})
-
-test('xSum should be 12 after third push', () => {
-  const dataSeries = createOLSLinearSeries(3)
-  dataSeries.push(5, 9)
-  dataSeries.push(3, 3)
-  dataSeries.push(4, 6)
-  assert.is(dataSeries.xSum(), 12)
-})
-
-test('ySum should be 18 after third push', () => {
-  const dataSeries = createOLSLinearSeries(3)
-  dataSeries.push(5, 9)
-  dataSeries.push(3, 3)
-  dataSeries.push(4, 6)
-  assert.is(dataSeries.ySum(), 18)
-})
-
-test('slope should be 3 after third push', () => {
-  const dataSeries = createOLSLinearSeries(3)
-  dataSeries.push(5, 9)
-  dataSeries.push(3, 3)
-  dataSeries.push(4, 6)
-  assert.is(dataSeries.slope(), 3)
-})
-
-test('intercept should be -6 after third push', () => {
-  const dataSeries = createOLSLinearSeries(3)
-  dataSeries.push(5, 9)
-  dataSeries.push(3, 3)
-  dataSeries.push(4, 6)
-  assert.is(dataSeries.intercept(), -6)
-})
-
-test('goodnessOfFit should be 1 after third push', () => {
-  const dataSeries = createOLSLinearSeries(3)
-  dataSeries.push(5, 9)
-  dataSeries.push(3, 3)
-  dataSeries.push(4, 6)
-  assert.is(dataSeries.goodnessOfFit(), 1)
-})
-
-test('Length should remain 3 after fourth push', () => {
+test('Behaviour after four pushed values, filling the series, but pushing the first out again', () => {
   const dataSeries = createOLSLinearSeries(3)
   dataSeries.push(5, 9)
   dataSeries.push(3, 3)
   dataSeries.push(4, 6)
   dataSeries.push(6, 12)
-  assert.is(dataSeries.length(), 3)
+  assert.ok(dataSeries.length() === 3, `Length should be 3, is ${dataSeries.length()}`)
+  assert.ok(dataSeries.xAtSeriesBegin() === 3, `xAtSeriesBegin should be 3, is ${dataSeries.xAtSeriesBegin()}`)
+  assert.ok(dataSeries.yAtSeriesBegin() === 3, `yAtSeriesBegin should be 3, is ${dataSeries.yAtSeriesBegin()}`)
+  assert.ok(dataSeries.xAtSeriesEnd() === 6, `xAtSeriesEnd should be 6, is ${dataSeries.xAtSeriesEnd()}`)
+  assert.ok(dataSeries.yAtSeriesEnd() === 12, `yAtSeriesEnd should be 12, is ${dataSeries.yAtSeriesEnd()}`)
+  assert.ok(dataSeries.numberOfXValuesAbove(0) === 3, `numberOfXValuesAbove(0) should be 3, is ${dataSeries.numberOfXValuesAbove(0)}`)
+  assert.ok(dataSeries.numberOfYValuesAbove(0) === 3, `numberOfYValuesAbove(0) should be 3, is ${dataSeries.numberOfYValuesAbove(0)}`)
+  assert.ok(dataSeries.numberOfXValuesEqualOrBelow(0) === 0, `numberOfXValuesEqualOrBelow(0) should be 0, is ${dataSeries.numberOfXValuesEqualOrBelow(0)}`)
+  assert.ok(dataSeries.numberOfYValuesEqualOrBelow(0) === 0, `numberOfYValuesEqualOrBelow(0) should be 0, is ${dataSeries.numberOfYValuesEqualOrBelow(0)}`)
+  assert.ok(dataSeries.numberOfYValuesAbove(10) === 1, `numberOfYValuesAbove(10) should be 1, is ${dataSeries.numberOfYValuesAbove(10)}`)
+  assert.ok(dataSeries.numberOfYValuesEqualOrBelow(10) === 2, `numberOfYValuesEqualOrBelow(10) should be 2, is ${dataSeries.numberOfYValuesEqualOrBelow(10)}`)
+  assert.ok(dataSeries.xSum() === 13, `xSum should be 12, is ${dataSeries.xSum()}`)
+  assert.ok(dataSeries.ySum() === 21, `ySum should be 18, is ${dataSeries.ySum()}`)
+  assert.ok(dataSeries.slope() === 3, `slope should be 3, is ${dataSeries.slope()}`)
+  assert.ok(dataSeries.intercept() === -6, `intercept should be -6, is ${dataSeries.intercept()}`)
+  assert.ok(dataSeries.goodnessOfFit() === 1, `goodnessOfFit should be 1, is ${dataSeries.goodnessOfFit()}`)
 })
 
-test('xAtSeriesBegin should turn to 3 after fourth push', () => {
-  const dataSeries = createOLSLinearSeries(3)
-  dataSeries.push(5, 9)
-  dataSeries.push(3, 3)
-  dataSeries.push(4, 6)
-  dataSeries.push(6, 12)
-  assert.is(dataSeries.xAtSeriesBegin(), 3)
-})
-
-test('yAtSeriesBegin should turn to 3 after fourth push', () => {
-  const dataSeries = createOLSLinearSeries(3)
-  dataSeries.push(5, 9)
-  dataSeries.push(3, 3)
-  dataSeries.push(4, 6)
-  dataSeries.push(6, 12)
-  assert.is(dataSeries.yAtSeriesBegin(), 3)
-})
-
-test('xAtSeriesEnd should be 6 after fourth push', () => {
-  const dataSeries = createOLSLinearSeries(3)
-  dataSeries.push(5, 9)
-  dataSeries.push(3, 3)
-  dataSeries.push(4, 6)
-  dataSeries.push(6, 12)
-  assert.is(dataSeries.xAtSeriesEnd(), 6)
-})
-
-test('yAtSeriesEnd should be 12 after fourth push', () => {
-  const dataSeries = createOLSLinearSeries(3)
-  dataSeries.push(5, 9)
-  dataSeries.push(3, 3)
-  dataSeries.push(4, 6)
-  dataSeries.push(6, 12)
-  assert.is(dataSeries.yAtSeriesEnd(), 12)
-})
-
-test('numberOfXValuesAbove(0) should be 3 after fourth push', () => {
-  const dataSeries = createOLSLinearSeries(3)
-  dataSeries.push(5, 9)
-  dataSeries.push(3, 3)
-  dataSeries.push(4, 6)
-  dataSeries.push(6, 12)
-  assert.is(dataSeries.numberOfXValuesAbove(0), 3)
-})
-
-test('numberOfYValuesAbove(0) should be 3 after fourth push', () => {
-  const dataSeries = createOLSLinearSeries(3)
-  dataSeries.push(5, 9)
-  dataSeries.push(3, 3)
-  dataSeries.push(4, 6)
-  dataSeries.push(6, 12)
-  assert.is(dataSeries.numberOfYValuesAbove(0), 3)
-})
-
-test('numberOfXValuesEqualOrBelow(0) should remain 0 after fourth push', () => {
-  const dataSeries = createOLSLinearSeries(3)
-  dataSeries.push(5, 9)
-  dataSeries.push(3, 3)
-  dataSeries.push(4, 6)
-  dataSeries.push(6, 12)
-  assert.is(dataSeries.numberOfXValuesEqualOrBelow(0), 0)
-})
-
-test('numberOfYValuesEqualOrBelow(0) should remain 0 after fourth push', () => {
-  const dataSeries = createOLSLinearSeries(3)
-  dataSeries.push(5, 9)
-  dataSeries.push(3, 3)
-  dataSeries.push(4, 6)
-  dataSeries.push(6, 12)
-  assert.is(dataSeries.numberOfYValuesEqualOrBelow(0), 0)
-})
-
-test('numberOfXValuesEqualOrBelow(10) should be 3 after fourth push', () => {
-  const dataSeries = createOLSLinearSeries(3)
-  dataSeries.push(5, 9)
-  dataSeries.push(3, 3)
-  dataSeries.push(4, 6)
-  dataSeries.push(6, 12)
-  assert.is(dataSeries.numberOfXValuesEqualOrBelow(10), 3)
-})
-
-test('numberOfYValuesEqualOrBelow(10) should be 2 after fourth push', () => {
-  const dataSeries = createOLSLinearSeries(3)
-  dataSeries.push(5, 9)
-  dataSeries.push(3, 3)
-  dataSeries.push(4, 6)
-  dataSeries.push(6, 12)
-  assert.is(dataSeries.numberOfYValuesEqualOrBelow(10), 2)
-})
-
-test('xSum should be 13 after fourth push', () => {
-  const dataSeries = createOLSLinearSeries(3)
-  dataSeries.push(5, 9)
-  dataSeries.push(3, 3)
-  dataSeries.push(4, 6)
-  dataSeries.push(6, 12)
-  assert.is(dataSeries.xSum(), 13)
-})
-
-test('ySum should be 21 after fourth push', () => {
-  const dataSeries = createOLSLinearSeries(3)
-  dataSeries.push(5, 9)
-  dataSeries.push(3, 3)
-  dataSeries.push(4, 6)
-  dataSeries.push(6, 12)
-  assert.is(dataSeries.ySum(), 21)
-})
-
-test('slope should be 3 after fourth push', () => {
-  const dataSeries = createOLSLinearSeries(3)
-  dataSeries.push(5, 9)
-  dataSeries.push(3, 3)
-  dataSeries.push(4, 6)
-  dataSeries.push(6, 12)
-  assert.is(dataSeries.slope(), 3)
-})
-
-test('intercept should be -6 after fourth push', () => {
-  const dataSeries = createOLSLinearSeries(3)
-  dataSeries.push(5, 9)
-  dataSeries.push(3, 3)
-  dataSeries.push(4, 6)
-  dataSeries.push(6, 12)
-  assert.is(dataSeries.intercept(), -6)
-})
-
-test('goodnessOfFit should be 1 after fourth push', () => {
-  const dataSeries = createOLSLinearSeries(3)
-  dataSeries.push(5, 9)
-  dataSeries.push(3, 3)
-  dataSeries.push(4, 6)
-  dataSeries.push(6, 12)
-  assert.is(dataSeries.goodnessOfFit(), 1)
-})
-
-test('Length should remain 3 after fifth push', () => {
+test('Behaviour after five pushed values, filling the series, but pushing the first two out again', () => {
   const dataSeries = createOLSLinearSeries(3)
   dataSeries.push(5, 9)
   dataSeries.push(3, 3)
@@ -571,7 +142,7 @@ test('Length should remain 3 after fifth push', () => {
   assert.ok(dataSeries.goodnessOfFit() === 1, `goodnessOfFit should be 1, is ${dataSeries.goodnessOfFit()}`)
 })
 
-test('Test of the reset behaviour of the OLSLinearSeries', () => {
+test('Behaviour after five pushed values, filling the series, and resetting it', () => {
   const dataSeries = createOLSLinearSeries(3)
   dataSeries.push(5, 9)
   dataSeries.push(3, 3)
