@@ -882,7 +882,6 @@ test('goodnessOfFit should be 0 after reset', () => {
   assert.is(dataSeries.goodnessOfFit(), 0)
 })
 
-
 test('slope should be 3 after fifth push with noise', () => {
   const dataSeries = createOLSLinearSeries(5)
   dataSeries.push(5, 9)
