@@ -23,6 +23,11 @@ const defaultConfig = {
   rowerSettings: rowerProfiles.DEFAULT
 }
 
+const defaultSession = {
+  targetDistance: 10000,
+  targetTime: 3600
+}
+
 const createWorkoutEvaluator = function () {
   const strokes = []
 
@@ -69,8 +74,7 @@ test('sample data for WRX700 should produce plausible results with rower profile
     screenUpdateInterval: 1000,
     rowerSettings: rowerProfiles.WRX700
   }
-  // const rowingEngine = createRowingStatistics(deepMerge(rowerProfiles.DEFAULT, rowerProfiles.WRX700))
-  const rowingEngine = createRowingStatistics(deepMerge(defaultConfig, WRX700Config))
+  const rowingEngine = createRowingStatistics(deepMerge(defaultConfig, WRX700Config), defaultSession)
   const workoutEvaluator = createWorkoutEvaluator()
   rowingEngine.notify(workoutEvaluator)
   await replayRowingSession(rowingEngine.handleRotationImpulse, { filename: 'recordings/WRX700_2magnets.csv' })
@@ -81,7 +85,13 @@ test('sample data for WRX700 should produce plausible results with rower profile
 })
 
 test('sample data for DKNR320 should produce plausible results with rower profile', async () => {
-  const rowingEngine = createRowingStatistics(deepMerge(rowerProfiles.DEFAULT, rowerProfiles.DKNR320))
+  const DKNR320Config = {
+    numOfPhasesForAveragingScreenData: 1,
+    screenUpdateInterval: 1000,
+    rowerSettings: rowerProfiles.DKNR320
+  }
+  const rowingEngine = createRowingStatistics(deepMerge(defaultConfig, DKNR320Config), defaultSession)
+  //const rowingEngine = createRowingStatistics(deepMerge(rowerProfiles.DEFAULT, rowerProfiles.DKNR320))
   const workoutEvaluator = createWorkoutEvaluator()
   rowingEngine.notify(workoutEvaluator)
   await replayRowingSession(rowingEngine.handleRotationImpulse, { filename: 'recordings/DKNR320.csv' })
@@ -92,7 +102,13 @@ test('sample data for DKNR320 should produce plausible results with rower profil
 })
 
 test('sample data for RX800 should produce plausible results with rower profile', async () => {
-  const rowingEngine = createRowingStatistics(deepMerge(rowerProfiles.DEFAULT, rowerProfiles.RX800))
+  const RX800Config = {
+    numOfPhasesForAveragingScreenData: 1,
+    screenUpdateInterval: 1000,
+    rowerSettings: rowerProfiles.RX800
+  }
+  const rowingEngine = createRowingStatistics(deepMerge(defaultConfig, RX800Config), defaultSession)
+  //const rowingEngine = createRowingStatistics(deepMerge(rowerProfiles.DEFAULT, rowerProfiles.RX800))
   const workoutEvaluator = createWorkoutEvaluator()
   rowingEngine.notify(workoutEvaluator)
   await replayRowingSession(rowingEngine.handleRotationImpulse, { filename: 'recordings/RX800.csv' })
