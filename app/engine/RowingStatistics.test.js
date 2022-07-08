@@ -17,14 +17,14 @@ import { deepMerge } from '../tools/Helper.js'
 const log = loglevel.getLogger('RowingEngine.test')
 log.setLevel('warn')
 
+const defaultConfig = {
+  numOfPhasesForAveragingScreenData: 1,
+  screenUpdateInterval: 1000,
+  rowerSettings: rowerProfiles.DEFAULT
+}
+
 const createWorkoutEvaluator = function () {
   const strokes = []
-
-const defaultConfig = {
-    numOfPhasesForAveragingScreenData: 1,
-    screenUpdateInterval: 1000,
-    rowerSettings: rowerProfiles.DEFAULT
-  }
   
   function handleDriveEnd (stroke) {
     strokes.push(stroke)
@@ -64,13 +64,13 @@ const defaultConfig = {
 }
 
 test('sample data for WRX700 should produce plausible results with rower profile', async () => {
-  WRX700config = {
+  const WRX700Config = {
     numOfPhasesForAveragingScreenData: 1,
     screenUpdateInterval: 1000,
     rowerSettings: rowerProfiles.WRX700
   }
-  //const rowingEngine = createRowingStatistics(deepMerge(rowerProfiles.DEFAULT, rowerProfiles.WRX700))
-  const rowingEngine = createRowingStatistics(deepMerge(defaultConfig, WRX700config))
+  // const rowingEngine = createRowingStatistics(deepMerge(rowerProfiles.DEFAULT, rowerProfiles.WRX700))
+  const rowingEngine = createRowingStatistics(deepMerge(defaultConfig, WRX700Config))
   const workoutEvaluator = createWorkoutEvaluator()
   rowingEngine.notify(workoutEvaluator)
   await replayRowingSession(rowingEngine.handleRotationImpulse, { filename: 'recordings/WRX700_2magnets.csv' })
