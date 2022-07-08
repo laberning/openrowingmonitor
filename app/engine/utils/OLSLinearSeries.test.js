@@ -447,15 +447,6 @@ test('yAtSeriesEnd should be 12 after fourth push', () => {
   assert.is(dataSeries.yAtSeriesEnd(), 12)
 })
 
-test('numberOfYValuesAbove(0) should be 3 after fourth push', () => {
-  const dataSeries = createOLSLinearSeries(3)
-  dataSeries.push(5, 9)
-  dataSeries.push(3, 3)
-  dataSeries.push(4, 6)
-  dataSeries.push(6, 12)
-  assert.is(dataSeries.numberOfYValuesAbove(0), 3)
-})
-
 test('numberOfXValuesAbove(0) should be 3 after fourth push', () => {
   const dataSeries = createOLSLinearSeries(3)
   dataSeries.push(5, 9)
@@ -465,21 +456,30 @@ test('numberOfXValuesAbove(0) should be 3 after fourth push', () => {
   assert.is(dataSeries.numberOfXValuesAbove(0), 3)
 })
 
+test('numberOfYValuesAbove(0) should be 3 after fourth push', () => {
+  const dataSeries = createOLSLinearSeries(3)
+  dataSeries.push(5, 9)
+  dataSeries.push(3, 3)
+  dataSeries.push(4, 6)
+  dataSeries.push(6, 12)
+  assert.is(dataSeries.numberOfYValuesAbove(0), 3)
+})
+
 test('numberOfXValuesEqualOrBelow(0) should remain 0 after fourth push', () => {
   const dataSeries = createOLSLinearSeries(3)
-  dataSeries.push(9)
-  dataSeries.push(3)
-  dataSeries.push(6)
-  dataSeries.push(12)
+  dataSeries.push(5, 9)
+  dataSeries.push(3, 3)
+  dataSeries.push(4, 6)
+  dataSeries.push(6, 12)
   assert.is(dataSeries.numberOfXValuesEqualOrBelow(0), 0)
 })
 
 test('numberOfYValuesEqualOrBelow(0) should remain 0 after fourth push', () => {
   const dataSeries = createOLSLinearSeries(3)
-  dataSeries.push(9)
-  dataSeries.push(3)
-  dataSeries.push(6)
-  dataSeries.push(12)
+  dataSeries.push(5, 9)
+  dataSeries.push(3, 3)
+  dataSeries.push(4, 6)
+  dataSeries.push(6, 12)
   assert.is(dataSeries.numberOfYValuesEqualOrBelow(0), 0)
 })
 
@@ -890,6 +890,8 @@ test('slope should be 3 after fifth push with noise', () => {
   dataSeries.push(6, 12)
   dataSeries.push(1, -3)
   assert.is(dataSeries.slope(), 3)
+  assert.ok(dataSeries.slope() < 3.1, 'Slope should be below 3.1')
+  assert.ok(dataSeries.slope() > 2.9, 'Slope should be above 2.9')
 })
 
 test('intercept should be -6 after fifth push with noise', () => {
@@ -899,7 +901,8 @@ test('intercept should be -6 after fifth push with noise', () => {
   dataSeries.push(4, 7)
   dataSeries.push(6, 12)
   dataSeries.push(1, -3)
-  assert.is(dataSeries.intercept(), -6)
+  assert.ok(dataSeries.intercept() > -5.8, 'Intercept should be below -5.7')
+  assert.ok(dataSeries.intercept() < -5.8, 'Intercept should be above -6.3')
 })
 
 test('goodnessOfFit should be 1 after fifth push with noise', () => {
@@ -909,7 +912,8 @@ test('goodnessOfFit should be 1 after fifth push with noise', () => {
   dataSeries.push(4, 7)
   dataSeries.push(6, 12)
   dataSeries.push(1, -3)
-  assert.is(dataSeries.goodnessOfFit(), 1)
+  assert.ok(dataSeries.goodnessOfFit() > 0.9, 'Intercept should be above 0.9')
+  assert.ok(dataSeries.goodnessOfFit() < 1.0, 'Intercept should stay below 1.0')
 })
 
 test.run()
