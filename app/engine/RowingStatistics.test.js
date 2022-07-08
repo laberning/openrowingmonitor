@@ -91,7 +91,6 @@ test('sample data for DKNR320 should produce plausible results with rower profil
     rowerSettings: rowerProfiles.DKNR320
   }
   const rowingEngine = createRowingStatistics(deepMerge(defaultConfig, DKNR320Config), defaultSession)
-  //const rowingEngine = createRowingStatistics(deepMerge(rowerProfiles.DEFAULT, rowerProfiles.DKNR320))
   const workoutEvaluator = createWorkoutEvaluator()
   rowingEngine.notify(workoutEvaluator)
   await replayRowingSession(rowingEngine.handleRotationImpulse, { filename: 'recordings/DKNR320.csv' })
@@ -108,7 +107,6 @@ test('sample data for RX800 should produce plausible results with rower profile'
     rowerSettings: rowerProfiles.RX800
   }
   const rowingEngine = createRowingStatistics(deepMerge(defaultConfig, RX800Config), defaultSession)
-  //const rowingEngine = createRowingStatistics(deepMerge(rowerProfiles.DEFAULT, rowerProfiles.RX800))
   const workoutEvaluator = createWorkoutEvaluator()
   rowingEngine.notify(workoutEvaluator)
   await replayRowingSession(rowingEngine.handleRotationImpulse, { filename: 'recordings/RX800.csv' })
