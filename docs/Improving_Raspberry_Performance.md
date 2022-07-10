@@ -23,7 +23,7 @@ Typically, Raspbian is configured to reduce energy consumption. Thus it uses the
 First, Raspbian will interfere with settings, so we need to kill that functionality:
 
 ```zsh
-systemctl disable raspi-config
+sudo systemctl disable raspi-config
 ```
 
 Install cpufrequtils:
