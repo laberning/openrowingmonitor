@@ -22,15 +22,21 @@ Typically, Raspbian is configured to reduce energy consumption. Thus it uses the
 
 First, Raspbian will interfere with settings, so we need to kill that functionality:
 
-> `systemctl disable raspi-config`
+```zsh
+systemctl disable raspi-config
+```
 
 Install cpufrequtils:
 
-> `sudo apt-get install cpufrequtils`
+```zsh
+sudo apt-get install cpufrequtils`
+```
 
 Now, you can set the default governor by editing `/etc/default/cpufrequtils` so that it reads:
 
-> `GOVERNOR="performance"`
+```zsh
+GOVERNOR="performance"`
+```
 
 ### Services you can disable safely
 
