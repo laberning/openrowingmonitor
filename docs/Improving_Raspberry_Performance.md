@@ -1,10 +1,16 @@
 # Improving the performance of the Raspberry Pi
 
+Out of the box, Raspbian is configured to provide a decent experience while conserving energy. However, responding instantly to incoming measurements tends to be so deviating, that we need to do some extra work to get a system working well.
+
 ## Signs your performance is insufficient
+
+Much noise in the readings, as typiclly the signals are handled too late.
 
 ## Things you can do at the OS
 
 ### Selecting the right kernel
+
+Normally, a Linux kernel is configured to do non-real-time work, and focusses on doing one task well for a prolonged period of time, reducing overhead. This is great for normal applications that process a lot of data. However, Open Rowing Monitor does not process much data, but does has to respond quickly to incoming signals (especially the impulses from the flywheel). The time it takes to respond to an incoming interrupt is called **latency**. For reducing noise in the readings, it is important that the latency does not vary too much.
 
 Use a low latency or real time kernel. Currently, the Raspbian 64Bit kernel is a Preempt kernel, which aims at low latency.
 
