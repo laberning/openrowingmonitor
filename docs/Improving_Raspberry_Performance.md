@@ -29,13 +29,13 @@ systemctl disable raspi-config
 Install cpufrequtils:
 
 ```zsh
-sudo apt-get install cpufrequtils`
+sudo apt-get install cpufrequtils
 ```
 
 Now, you can set the default governor by editing `/etc/default/cpufrequtils` so that it reads:
 
 ```zsh
-GOVERNOR="performance"`
+GOVERNOR="performance"
 ```
 
 ### Services you can disable safely
