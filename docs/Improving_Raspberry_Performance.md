@@ -12,7 +12,7 @@ Much noise in the readings, as typiclly the signals are handled too late.
 
 Normally, a Linux kernel is configured to do non-real-time work, and focusses on doing one task well for a prolonged period of time, reducing overhead. This is great for normal applications that process a lot of data. However, Open Rowing Monitor does not process much data, but does has to respond quickly to incoming signals (especially the impulses from the flywheel). The time it takes to respond to an incoming interrupt is called **latency**. For reducing noise in the readings, it is important that the latency does not vary too much.
 
-Use a low latency or real time kernel. Currently, the Raspbian 64Bit kernel is a Preempt kernel, which aims at low latency.
+Use a low latency or real time kernel. Currently, the Raspbian 64Bit Lite kernel is a Preempt kernel, which aims at low latency. So selectng this is a great choice.
 
 Alternative is Ubuntu Core, which also provides a 64 bit kernel out of the box.
 
