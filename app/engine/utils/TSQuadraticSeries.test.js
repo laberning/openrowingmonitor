@@ -1,8 +1,8 @@
 'use strict'
 /*
   Open Rowing Monitor, https://github.com/jaapvanekris/openrowingmonitor
-  
-  This tests the Quadratic Regression
+
+  This tests the Quadratic Regression algorithm. As the tested Theil-Senn estimator is an approximation, we have to accept some slack
 */
 import { test } from 'uvu'
 import * as assert from 'uvu/assert'
