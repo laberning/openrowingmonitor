@@ -33,9 +33,9 @@ test('Quadratic Approximation should be decent for standard example 1', () => {
   dataSeries.push(58, 244.2)
   dataSeries.push(60, 231.4)
   dataSeries.push(64, 180.4)
-  assert.ok(dataSeries.coefficientA() === -0.17623095238095238, `coefficientA should be -0.1737141137, is ${dataSeries.coefficientA()}`) // In the example, the TI084 uses -0.1737141137, which we consider acceptably close
-  assert.ok(dataSeries.coefficientB() === 14.52117133, `coefficientB should be 14.52117133, is ${dataSeries.coefficientB()}`)
-  assert.ok(dataSeries.coefficientC() === -21.89774466, `coefficientC should be -21.89774466, is ${dataSeries.coefficientC()}`)
+  assert.ok(dataSeries.coefficientA() === -0.17623095238095238, `coefficientA should be -0.17623095238095238, is ${dataSeries.coefficientA()}`) // In the example, the TI084 results in -0.1737141137, which we consider acceptably close
+  assert.ok(dataSeries.coefficientB() === 15.008079945054945, `coefficientB should be 15.008079945054945, is ${dataSeries.coefficientB()}`) // In the example, the TI084 results in 14.52117133, which we consider acceptably close
+  assert.ok(dataSeries.coefficientC() === -21.89774466, `coefficientC should be -21.89774466, is ${dataSeries.coefficientC()}`) // In the example, the TI084 results in -0.1737141137, which we consider acceptably close
 })
 
 test.run()
