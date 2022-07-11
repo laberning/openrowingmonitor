@@ -1,23 +1,44 @@
 'use strict'
 /*
   Open Rowing Monitor, https://github.com/jaapvanekris/openrowingmonitor
-
-  This keeps an array, which we can ask for an moving average
-
-  Please note: The array contains maxLenght values
-  They are arranged that dataPoints[0] is the oldest, and dataPoints[currentLength] the youngest
-*/
-
-'use strict'
-/*
-  Open Rowing Monitor, https://github.com/laberning/openrowingmonitor
+  
+  This tests the Quadratic Regression
 */
 import { test } from 'uvu'
 import * as assert from 'uvu/assert'
 
 import { createTSQuadraticSeries } from './TSQuadraticSeries.js'
 
-test('Quadratic Approximation should be decent for standard example 1', () => {
+test('Quadratic Approximation on a perfect noisefree function', () => {
+  // Data based on 2 x^2 + 2 x + 2
+  const dataSeries = createTSQuadraticSeries(21)
+  dataSeries.push(-10, 182)
+  dataSeries.push(-9, 146)
+  dataSeries.push(-8, 114)
+  dataSeries.push(-7, 86)
+  dataSeries.push(-6, 62)
+  dataSeries.push(-5, 42)
+  dataSeries.push(-4, 26)
+  dataSeries.push(-3, 14) // Pi ;)
+  dataSeries.push(-2, 6)
+  dataSeries.push(-1, 2)
+  dataSeries.push(0, 2)
+  dataSeries.push(1, 6)
+  dataSeries.push(2, 14)
+  dataSeries.push(3, 26)
+  dataSeries.push(4, 42)
+  dataSeries.push(5, 62)
+  dataSeries.push(6, 86)
+  dataSeries.push(7, 114)
+  dataSeries.push(8, 146)
+  dataSeries.push(9, 182)
+  dataSeries.push(10, 222)
+  assert.ok(dataSeries.coefficientA() === 2, `coefficientA should be 2, is ${dataSeries.coefficientA()}`)
+  assert.ok(dataSeries.coefficientB() === 2, `coefficientB should be 2, is ${dataSeries.coefficientB()}`)
+  assert.ok(dataSeries.coefficientC() === 2, `coefficientC should be 2, is ${dataSeries.coefficientC()}`)
+})
+
+test('Quadratic Approximation should be decent for standard example 1 with some noise', () => {
   // Data based on https://mathbits.com/MathBits/TISection/Statistics2/quadratic.html
   const dataSeries = createTSQuadraticSeries(13)
   dataSeries.push(10, 115.6)
