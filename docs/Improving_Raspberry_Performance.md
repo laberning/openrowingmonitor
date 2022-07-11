@@ -41,6 +41,7 @@ GOVERNOR="performance"
 ### Services you can disable safely
 
 triggerhappy
+
 ```zsh
 sudo systemctl disable triggerhappy.service
 ```
