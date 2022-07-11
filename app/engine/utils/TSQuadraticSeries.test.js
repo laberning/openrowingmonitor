@@ -8,7 +8,6 @@
   They are arranged that dataPoints[0] is the oldest, and dataPoints[currentLength] the youngest
 */
 
-
 'use strict'
 /*
   Open Rowing Monitor, https://github.com/laberning/openrowingmonitor
