@@ -10,7 +10,6 @@ import child_process from 'child_process'
 import { promisify } from 'util'
 import log from 'loglevel'
 import config from './tools/ConfigManager.js'
-import { createRowingEngine } from './engine/RowingEngine.js'
 import { createRowingStatistics } from './engine/RowingStatistics.js'
 import { createWebServer } from './WebServer.js'
 import { createPeripheralManager } from './ble/PeripheralManager.js'
@@ -30,6 +29,23 @@ for (const [loggerName, logLevel] of Object.entries(config.loglevel)) {
 }
 
 log.info(`==== Open Rowing Monitor ${process.env.npm_package_version || ''} ====\n`)
+
+const session = { // a hook for setting session parameters that the rower has to obey
+//  targetDistance: 15000,
+//  targetDistance: 10000,
+//  targetDistance: 6000,
+  targetDistance: 5000,
+//  targetDistance: 4000,
+//  targetDistance: 2000,
+//  targetDistance: 1000,
+//  targetDistance: 500,
+//  targetDistance: 0,
+  targetTime: 0
+//  targetTime: 1800
+//  targetTime: 3600
+}
+
+log.info(`Session settings: distance limit ${(session.targetDistance > 0 ? session.targetDistance : 'none')} meters, time limit ${(session.targetTime > 0 ? session.targetTime : 'none')} secondss\n`)
 
 const peripheralManager = createPeripheralManager()
 
@@ -63,7 +79,6 @@ peripheralManager.on('control', (event) => {
 
 function resetWorkout () {
   workoutRecorder.reset()
-  rowingEngine.reset()
   rowingStatistics.reset()
   peripheralManager.notifyStatus({ name: 'reset' })
 }
@@ -73,12 +88,10 @@ gpioTimerService.on('message', handleRotationImpulse)
 
 function handleRotationImpulse (dataPoint) {
   workoutRecorder.recordRotationImpulse(dataPoint)
-  rowingEngine.handleRotationImpulse(dataPoint)
+  rowingStatistics.handleRotationImpulse(dataPoint)
 }
 
-const rowingEngine = createRowingEngine(config.rowerSettings)
-const rowingStatistics = createRowingStatistics(config)
-rowingEngine.notify(rowingStatistics)
+const rowingStatistics = createRowingStatistics(config, session)
 const workoutRecorder = createWorkoutRecorder()
 const workoutUploader = createWorkoutUploader(workoutRecorder)
 
@@ -108,6 +121,7 @@ rowingStatistics.on('peripheralMetricsUpdate', (metrics) => {
 })
 
 rowingStatistics.on('rowingPaused', () => {
+  // ToDo: add metrics!
   workoutRecorder.handlePause()
 })
 
