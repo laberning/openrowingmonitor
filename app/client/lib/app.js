@@ -80,7 +80,7 @@ export function createApp (app) {
             if (data.totalNumberOfStrokes < 1) {
               if (data.totalLinearDistanceFormatted > 0) {
                 activeFields = ['totalLinearDistanceFormatted', 'heartrate', 'heartrateBatteryLevel']
-              } else if (data.totalMovingTimeFormatted != '00:00') {
+              } else if (data.totalMovingTimeFormatted !== '00:00') {
                 activeFields = ['totalMovingTimeFormatted', 'heartrate', 'heartrateBatteryLevel']
               } else {
                 activeFields = ['heartrate', 'heartrateBatteryLevel']
