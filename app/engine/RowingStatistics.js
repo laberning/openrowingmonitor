@@ -13,13 +13,11 @@ import { createCurveAligner } from './utils/CurveAligner.js'
 import loglevel from 'loglevel'
 const log = loglevel.getLogger('RowingEngine')
 
-// ToDo: Logica inbrengen van starten, pauzeren en stoppen van de RowingEngine
-
 function createRowingStatistics (config, session) {
+  const numOfDataPointsForAveraging = config.numOfPhasesForAveragingScreenData
+  const webUpdateInterval = config.webUpdateInterval
   const emitter = new EventEmitter()
   const rower = createRower(config.rowerSettings)
-  const numOfDataPointsForAveraging = config.numOfPhasesForAveragingScreenData
-  const screenUpdateInterval = config.screenUpdateInterval
   const minimumStrokeTime = config.rowerSettings.minimumRecoveryTime + config.rowerSettings.minimumDriveTime
   const maximumStrokeTime = config.rowerSettings.maximumStrokeTimeBeforePause
   const cycleDuration = createStreamFilter(numOfDataPointsForAveraging, (minimumStrokeTime + maximumStrokeTime) / 2)
@@ -48,11 +46,16 @@ function createRowingStatistics (config, session) {
   let instantPower = 0.0
   let lastStrokeState = 'WaitingForDrive'
 
-  // send metrics to the clients periodically, even if the data hasn't changed as the servers and clients might miss updates
-  setInterval(emitMetrics, screenUpdateInterval)
+  // send metrics to the web clients periodically
+  setInterval(emitWebMetrics, webUpdateInterval)
+
+  // notify bluetooth peripherall each second (even if data did not change)
+  // todo: the FTMS protocol also supports that peripherals deliver a preferred update interval
+  // we could respect this and set the update rate accordingly
+  setInterval(emitPeripheralMetrics, 1000)
 
   function handleRotationImpulse (currentDt) {
-    // Provide the flywheel with new data
+    // Provide the rower with new data
     rower.handleRotationImpulse(currentDt)
 
     // This is the core of the finite state machine that defines all state transitions
@@ -82,6 +85,7 @@ function createRowingStatistics (config, session) {
         updateCycleMetrics()
         handleRecoveryEnd()
         emitMetrics('intervalTargetReached')
+        //emitter.emit('recoveryFinished', getMetrics()) // REMOVE ME !!
         break
       case (sessionStatus === 'Rowing' && lastStrokeState === 'Recovery' && rower.strokeState() === 'Drive'):
         updateContinousMetrics()
@@ -94,6 +98,7 @@ function createRowingStatistics (config, session) {
         updateCycleMetrics()
         handleDriveEnd()
         emitMetrics('intervalTargetReached')
+        //emitter.emit('driveFinished', getMetrics()) // REMOVE ME!!
         break
       case (sessionStatus === 'Rowing' && lastStrokeState === 'Drive' && rower.strokeState() === 'Recovery'):
         updateContinousMetrics()
@@ -108,6 +113,9 @@ function createRowingStatistics (config, session) {
       case (sessionStatus === 'Rowing'):
         updateContinousMetrics()
         break
+      case (sessionStatus === 'Rowing'):
+        updateContinousMetrics()
+        break
       case (sessionStatus === 'Paused'):
         // We are in a paused state, we won't update any metrics
         break
@@ -118,10 +126,57 @@ function createRowingStatistics (config, session) {
         // We are in a stopped state, so we won't update any metrics
         break
       default:
-        log.error(`Time: ${rower.totalTimeSinceStart()}, state ${rower.strokeState()} found in the Rowing Statistics, which is not captured by Finite State Machine`)
+        log.error(`Time: ${rower.totalMovingTimeSinceStart()}, state ${rower.strokeState()} found in the Rowing Statistics, which is not captured by Finite State Machine`)
     }
-
     lastStrokeState = rower.strokeState()
+  }
+
+  function startTraining () {
+  }
+
+  function resumeTraining () {
+    rower.allowMovement()
+    sessionStatus = 'WaitingForStart'
+  }
+
+  function stopTraining () {
+    rower.stopMoving()
+    lastStrokeState = 'Stopped'
+    // We need to emit the metrics BEFORE the sessionstatus changes to anything other than "Rowing", as it forces most merics to zero
+    emitMetrics('rowingStopped')
+    sessionStatus = 'Stopped'
+  }
+
+  // clear the metrics in case the user pauses rowing
+  function pauseTraining () {
+    log.debug('*** Paused rowing ***')
+    rower.stopMoving()
+    cycleDuration.reset()
+    cycleDistance.reset()
+    cyclePower.reset()
+    cycleLinearVelocity.reset()
+    lastStrokeState = 'WaitingForDrive'
+    // We need to emit the metrics BEFORE the sessionstatus changes to anything other than "Rowing", as it forces most merics to zero
+    emitMetrics('rowingPaused')
+    sessionStatus = 'Paused'
+  }
+
+  function resetTraining () {
+    stopTraining()
+    rower.reset()
+    calories.reset()
+    rower.allowMovement()
+    totalMovingTime = 0
+    totalLinearDistance = 0.0
+    totalNumberOfStrokes = -1
+    driveDuration.reset()
+    cycleDuration.reset()
+    cycleDistance.reset()
+    cyclePower.reset()
+    cycleLinearVelocity.reset()
+    lastStrokeState = 'WaitingForDrive'
+    emitMetrics('rowingPaused')
+    sessionStatus = 'WaitingForStart'
   }
 
   // initiated when updating key statistics
@@ -154,7 +209,16 @@ function createRowingStatistics (config, session) {
     driveHandlePowerCurve.push(rower.driveHandlePowerCurve())
   }
 
-  // Initiated at the end of the Recovery Phase, which also signale a complete stroke
+  // initiated by the rowing engine in case an impulse was not considered
+  // because it was too large
+  function handlePause (duration) {
+    sessionStatus = 'paused'
+    caloriesAveragerMinute.pushValue(0, duration)
+    caloriesAveragerHour.pushValue(0, duration)
+    emitter.emit('rowingPaused')
+  }
+
+  // initiated when the stroke state changes
   function handleRecoveryEnd () {
     totalNumberOfStrokes = rower.totalNumberOfStrokes()
     recoveryDuration.push(rower.recoveryDuration())
@@ -166,17 +230,9 @@ function createRowingStatistics (config, session) {
     calories.push(totalMovingTime, totalCalories)
   }
 
-  function intervalTargetReached () {
-    if ((session.targetDistance > 0 && rower.totalLinearDistanceSinceStart() >= session.targetDistance) || (session.targetTime > 0 && rower.totalMovingTimeSinceStart() >= session.targetTime)) {
-      return true
-    } else {
-      return false
-    }
-  }
-
-  // initiated when new heart rate value is received from heart rate sensor
+  // initiated when a new heart rate value is received from heart rate sensor
   function handleHeartrateMeasurement (value) {
-    // set the heart rate to zero, if we did not receive a value for some time
+    // set the heart rate to zero if we did not receive a value for some time
     if (heartrateResetTimer)clearInterval(heartrateResetTimer)
     heartrateResetTimer = setTimeout(() => {
       heartrate = 0
@@ -186,7 +242,23 @@ function createRowingStatistics (config, session) {
     heartrateBatteryLevel = value.batteryLevel
   }
 
-  function emitMetrics (emitType = 'metricsUpdate') {
+  function intervalTargetReached () {
+    if ((session.targetDistance > 0 && rower.totalLinearDistanceSinceStart() >= session.targetDistance) || (session.targetTime > 0 && rower.totalMovingTimeSinceStart() >= session.targetTime)) {
+      return true
+    } else {
+      return false
+    }
+  }
+
+ function emitWebMetrics () {
+    emitMetrics('webMetricsUpdate')
+  }
+
+  function emitPeripheralMetrics () {
+    emitMetrics('peripheralMetricsUpdate')
+  }
+
+  function emitMetrics (emitType = 'webMetricsUpdate') {
     emitter.emit(emitType, getMetrics())
   }
 
@@ -205,7 +277,7 @@ function createRowingStatistics (config, session) {
       totalCaloriesPerMinute: totalMovingTime > 60 ? caloriesPerPeriod(totalMovingTime - 60, totalMovingTime) : caloriesPerPeriod(0, 60),
       totalCaloriesPerHour: totalMovingTime > 3600 ? caloriesPerPeriod(totalMovingTime - 3600, totalMovingTime) : caloriesPerPeriod(0, 3600),
       cycleDuration: cycleDuration.clean() > minimumStrokeTime && cycleDuration.clean() < maximumStrokeTime && cycleLinearVelocity.raw() > 0 && sessionStatus === 'Rowing' ? cycleDuration.clean() : NaN, // seconds
-      cycleStrokeRate: cycleDuration.clean() > minimumStrokeTime && cycleLinearVelocity.raw() > 0 && sessionStatus === 'Rowing' ? (60.0 / cycleDuration.clean()) : 0,
+      cycleStrokeRate: cycleDuration.clean() > minimumStrokeTime && cycleLinearVelocity.raw() > 0 && sessionStatus === 'Rowing' ? (60.0 / cycleDuration.clean()) : 0, // strokeRate in SPM
       cycleDistance: cycleDistance.raw() > 0 && cycleLinearVelocity.raw() > 0 && sessionStatus === 'Rowing' ? cycleDistance.clean() : 0, // meters
       cycleLinearVelocity: cycleLinearVelocity.clean() > 0 && cycleLinearVelocity.raw() > 0 && sessionStatus === 'Rowing' ? cycleLinearVelocity.clean() : 0, // m/s
       cyclePace: cycleLinearVelocity.raw() > 0 ? cyclePace : Infinity, // seconds/500m
@@ -222,53 +294,9 @@ function createRowingStatistics (config, session) {
       recoveryDuration: recoveryDuration.clean() >= config.rowerSettings.minimumRecoveryTime && totalNumberOfStrokes > 0 && sessionStatus === 'Rowing' ? recoveryDuration.clean() : NaN, // seconds
       dragFactor: dragFactor > 0 ? dragFactor : config.rowerSettings.dragFactor, // Dragfactor
       instantPower: instantPower > 0 && rower.strokeState() === 'Drive' ? instantPower : 0,
-      heartrate: heartrate > 30 ? heartrate : NaN,
-      heartrateBatteryLevel: heartrateBatteryLevel > 0 ? heartrateBatteryLevel : NaN
+      heartrate: heartrate > 30 ? heartrate : undefined,
+      heartrateBatteryLevel: heartrateBatteryLevel > 0 ? heartrateBatteryLevel : undefined, // BE AWARE, changing undefined to NaN kills the GUI!!!
     }
-  }
-
-  function startTraining () {
-  }
-
-  function resumeTraining () {
-    rower.allowMovement()
-  }
-
-  function stopTraining () {
-    rower.stopMoving()
-    sessionStatus = 'Stopped'
-    lastStrokeState = 'Stopped'
-    emitMetrics('rowingStopped')
-  }
-
-  function resetTraining () {
-    stopTraining()
-    rower.reset()
-    rower.allowMovement()
-    calories.reset()
-    totalLinearDistance = 0.0
-    totalNumberOfStrokes = -1
-    driveDuration.reset()
-    cycleDuration.reset()
-    cycleDistance.reset()
-    cyclePower.reset()
-    cycleLinearVelocity.reset()
-    lastStrokeState = 'WaitingForDrive'
-    sessionStatus = 'WaitingForStart'
-    emitMetrics('rowingPaused')
-  }
-
-  // clear the metrics in case the user pauses rowing
-  function pauseTraining () {
-    log.debug('*** Paused rowing ***')
-    rower.stopMoving()
-    cycleDuration.reset()
-    cycleDistance.reset()
-    cyclePower.reset()
-    cycleLinearVelocity.reset()
-    lastStrokeState = 'WaitingForDrive'
-    sessionStatus = 'Paused'
-    emitMetrics('rowingPaused')
   }
 
   // converts a timeStamp in seconds to a human readable hh:mm:ss format
@@ -291,9 +319,11 @@ function createRowingStatistics (config, session) {
   }
 
   return Object.assign(emitter, {
-    handleRotationImpulse,
+    handleDriveEnd,
+    handlePause,
     handleHeartrateMeasurement,
-    pause: pauseTraining,
+    handleRecoveryEnd,
+    handleRotationImpulse,
     stop: stopTraining,
     reset: resetTraining
   })
