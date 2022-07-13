@@ -1,6 +1,6 @@
 'use strict'
 /*
-  Open Rowing Monitor, https://github.com/laberning/openrowingmonitor
+  Open Rowing Monitor, https://github.com/jaapvanekris/openrowingmonitor
 
   The Rowing Engine models the physics of a real rowing boat.
   It takes impulses from the flywheel of a rowing machine and estimates
