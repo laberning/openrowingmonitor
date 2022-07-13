@@ -20,8 +20,6 @@ import { createWorkoutRecorder } from './engine/WorkoutRecorder.js'
 import { createWorkoutUploader } from './engine/WorkoutUploader.js'
 const exec = promisify(child_process.exec)
 
-import fs from 'fs' // REMOVE ME!!!
-
 // set the log levels
 log.setLevel(config.loglevel.default)
 for (const [loggerName, logLevel] of Object.entries(config.loglevel)) {
