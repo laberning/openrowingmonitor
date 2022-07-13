@@ -85,7 +85,6 @@ function createRowingStatistics (config, session) {
         updateCycleMetrics()
         handleRecoveryEnd()
         emitMetrics('intervalTargetReached')
-        //emitter.emit('recoveryFinished', getMetrics()) // REMOVE ME !!
         break
       case (sessionStatus === 'Rowing' && lastStrokeState === 'Recovery' && rower.strokeState() === 'Drive'):
         updateContinousMetrics()
@@ -98,7 +97,6 @@ function createRowingStatistics (config, session) {
         updateCycleMetrics()
         handleDriveEnd()
         emitMetrics('intervalTargetReached')
-        //emitter.emit('driveFinished', getMetrics()) // REMOVE ME!!
         break
       case (sessionStatus === 'Rowing' && lastStrokeState === 'Drive' && rower.strokeState() === 'Recovery'):
         updateContinousMetrics()
@@ -109,9 +107,6 @@ function createRowingStatistics (config, session) {
       case (sessionStatus === 'Rowing' && intervalTargetReached()):
         updateContinousMetrics()
         emitMetrics('intervalTargetReached')
-        break
-      case (sessionStatus === 'Rowing'):
-        updateContinousMetrics()
         break
       case (sessionStatus === 'Rowing'):
         updateContinousMetrics()
@@ -207,15 +202,6 @@ function createRowingStatistics (config, session) {
     driveHandleForceCurve.push(rower.driveHandleForceCurve())
     driveHandleVelocityCurve.push(rower.driveHandleVelocityCurve())
     driveHandlePowerCurve.push(rower.driveHandlePowerCurve())
-  }
-
-  // initiated by the rowing engine in case an impulse was not considered
-  // because it was too large
-  function handlePause (duration) {
-    sessionStatus = 'paused'
-    caloriesAveragerMinute.pushValue(0, duration)
-    caloriesAveragerHour.pushValue(0, duration)
-    emitter.emit('rowingPaused')
   }
 
   // initiated when the stroke state changes
@@ -320,7 +306,6 @@ function createRowingStatistics (config, session) {
 
   return Object.assign(emitter, {
     handleDriveEnd,
-    handlePause,
     handleHeartrateMeasurement,
     handleRecoveryEnd,
     handleRotationImpulse,
