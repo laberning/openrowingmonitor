@@ -43,7 +43,7 @@ export default class RowerDataCharacteristic extends bleno.Characteristic {
 
   notify (data) {
     // ignore events without the mandatory fields
-    if (!('strokesPerMinute' in data && 'strokesTotal' in data)) {
+    if (!('cycleStrokeRate' in data && 'totalNumberOfStrokes' in data)) {
       return this.RESULT_SUCCESS
     }
 
@@ -62,32 +62,32 @@ export default class RowerDataCharacteristic extends bleno.Characteristic {
       // see https://www.bluetooth.com/specifications/specs/gatt-specification-supplement-3/
       // for some of the data types
       // Stroke Rate in stroke/minute, value is multiplied by 2 to have a .5 precision
-      bufferBuilder.writeUInt8(Math.round(data.strokesPerMinute * 2))
+      bufferBuilder.writeUInt8(Math.round(data.cycleStrokeRate * 2))
       // Stroke Count
-      bufferBuilder.writeUInt16LE(Math.round(data.strokesTotal))
+      bufferBuilder.writeUInt16LE(Math.round(data.totalNumberOfStrokes))
       // Total Distance in meters
-      bufferBuilder.writeUInt24LE(Math.round(data.distanceTotal))
+      bufferBuilder.writeUInt24LE(Math.round(data.totalLinearDistance))
       // Instantaneous Pace in seconds/500m
       // if split is infinite (i.e. while pausing), should use the highest possible number (0xFFFF)
       // todo: eventhough mathematically correct, setting 0xFFFF (65535s) causes some ugly spikes
       // in some applications which could shift the axis (i.e. workout diagrams in MyHomeFit)
       // so instead for now we use 0 here
-      bufferBuilder.writeUInt16LE(data.split !== Infinity ? Math.round(data.split) : 0)
+      bufferBuilder.writeUInt16LE(data.cyclePace !== Infinity ? Math.round(data.cyclePace) : 0xFFFF)
       // Instantaneous Power in watts
-      bufferBuilder.writeUInt16LE(Math.round(data.power))
+      bufferBuilder.writeUInt16LE(Math.round(data.cyclePower))
       // Energy in kcal
       // Total energy in kcal
-      bufferBuilder.writeUInt16LE(Math.round(data.caloriesTotal))
+      bufferBuilder.writeUInt16LE(Math.round(data.totalCalories))
       // Energy per hour
       // The Energy per Hour field represents the average expended energy of a user during a
       // period of one hour.
-      bufferBuilder.writeUInt16LE(Math.round(data.caloriesPerHour))
+      bufferBuilder.writeUInt16LE(Math.round(data.totalCaloriesPerHour))
       // Energy per minute
-      bufferBuilder.writeUInt8(Math.round(data.caloriesPerMinute))
+      bufferBuilder.writeUInt8(Math.round(data.totalCaloriesPerMinute))
       // Heart Rate: Beats per minute with a resolution of 1
       bufferBuilder.writeUInt8(Math.round(data.heartrate))
       // Elapsed Time: Seconds with a resolution of 1
-      bufferBuilder.writeUInt16LE(Math.round(data.durationTotal))
+      bufferBuilder.writeUInt16LE(Math.round(data.totalMovingTime))
 
       const buffer = bufferBuilder.getBuffer()
       if (buffer.length > this._subscriberMaxValueSize) {
