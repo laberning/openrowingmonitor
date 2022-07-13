@@ -38,27 +38,27 @@ export default class GeneralStatus extends bleno.Characteristic {
     if (this._updateValueCallback || this._multiplexedCharacteristic.centralSubscribed()) {
       const bufferBuilder = new BufferBuilder()
       // elapsedTime: UInt24LE in 0.01 sec
-      bufferBuilder.writeUInt24LE(Math.round(data.durationTotal * 100))
+      bufferBuilder.writeUInt24LE(Math.round(data.totalMovingTime * 100))
       // distance: UInt24LE in 0.1 m
-      bufferBuilder.writeUInt24LE(Math.round(data.distanceTotal * 10))
+      bufferBuilder.writeUInt24LE(Math.round(data.totalLinearDistance * 10))
       // workoutType: UInt8 will always use 0 (WORKOUTTYPE_JUSTROW_NOSPLITS)
       bufferBuilder.writeUInt8(0)
       // intervalType: UInt8 will always use 255 (NONE)
       bufferBuilder.writeUInt8(255)
       // workoutState: UInt8 0 WAITTOBEGIN, 1 WORKOUTROW, 10 WORKOUTEND
-      bufferBuilder.writeUInt8(data.sessionState === 'rowing' ? 1 : (data.sessionState === 'waitingForStart' ? 0 : 10))
+      bufferBuilder.writeUInt8(data.sessionStatus === 'Rowing' ? 1 : (data.sessionStatus === 'WaitingForStart' ? 0 : 10))
       // rowingState: UInt8 0 INACTIVE, 1 ACTIVE
-      bufferBuilder.writeUInt8(data.sessionState === 'rowing' ? 1 : 0)
+      bufferBuilder.writeUInt8(data.sessionStatus === 'Rowing' ? 1 : 0)
       // strokeState: UInt8 2 DRIVING, 4 RECOVERY
-      bufferBuilder.writeUInt8(data.strokeState === 'DRIVING' ? 2 : 4)
+      bufferBuilder.writeUInt8(data.strokeState === 'WaitingForDrive' ? 0 : (data.strokeState === 'Drive' ? 2 : 4))
       // totalWorkDistance: UInt24LE in 1 m
-      bufferBuilder.writeUInt24LE(Math.round(data.distanceTotal))
+      bufferBuilder.writeUInt24LE(Math.round(data.totalLinearDistance))
       // workoutDuration: UInt24LE in 0.01 sec (if type TIME)
-      bufferBuilder.writeUInt24LE(0 * 100)
+      bufferBuilder.writeUInt24LE(Math.round(data.totalMovingTime * 100))
       // workoutDurationType: UInt8 0 TIME, 1 CALORIES, 2 DISTANCE, 3 WATTS
       bufferBuilder.writeUInt8(0)
       // dragFactor: UInt8
-      bufferBuilder.writeUInt8(0)
+      bufferBuilder.writeUInt8(Math.round(data.dragFactor))
 
       if (this._updateValueCallback) {
         this._updateValueCallback(bufferBuilder.getBuffer())
