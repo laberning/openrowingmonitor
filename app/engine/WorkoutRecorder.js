@@ -11,6 +11,7 @@ import zlib from 'zlib'
 import fs from 'fs/promises'
 import xml2js from 'xml2js'
 import config from '../tools/ConfigManager.js'
+import { createVoMax } from './VO2Max.js'
 import { promisify } from 'util'
 const gzip = promisify(zlib.gzip)
 
@@ -53,6 +54,42 @@ function createWorkoutRecorder () {
     await createFile(rotationImpulses.join('\n'), filename, config.gzipRawDataFiles)
   }
 
+  async function createRowingDataFile () {
+    const stringifiedStartTime = startTime.toISOString().replace(/T/, '_').replace(/:/g, '-').replace(/\..+/, '')
+    const directory = `${config.dataDirectory}/recordings/${startTime.getFullYear()}/${(startTime.getMonth() + 1).toString().padStart(2, '0')}`
+    const filename = `${directory}/${stringifiedStartTime}_rowingData.csv`
+    let currentstroke
+    let trackPointTime
+    let timestamp
+    let i
+
+    log.info(`saving session as RowingData file ${filename}...`)
+
+    // Required file header, please note this includes a typo and odd spaces as the specification demands it!
+    let RowingData = ',index, Stroke Number,TimeStamp (sec), ElapsedTime (sec), HRCur (bpm),DistanceMeters, Cadence (stokes/min), Stroke500mPace (sec/500m), Power (watts), StrokeDistance (meters),' +
+    ' DriveTime (ms), DriveLength (meters), StrokeRecoveryTime (ms),Speed, Horizontal (meters), Calories (kCal), DragFactor, PeakDriveForce (N), AverageDriveForce (N),' +
+    'Handle_Force_(N),Handle_Velocity_(m/s),Handle_Power_(W)\n'
+
+    // Add the strokes
+    i = 0
+    while (i < strokes.length) {
+      currentstroke = strokes[i]
+      trackPointTime = new Date(startTime.getTime() + currentstroke.totalMovingTime * 1000)
+      timestamp = trackPointTime / 1000
+
+      RowingData += `${currentstroke.totalNumberOfStrokes.toFixed(0)},${currentstroke.totalNumberOfStrokes.toFixed(0)},${currentstroke.totalNumberOfStrokes.toFixed(0)},${timestamp.toFixed(0)},` +
+      `${currentstroke.totalMovingTime.toFixed(2)},${(currentstroke.heartrate > 30 ? currentstroke.heartrate.toFixed(0) : NaN)},${currentstroke.totalLinearDistance.toFixed(1)},` +
+      `${currentstroke.cycleStrokeRate.toFixed(1)},${(currentstroke.totalNumberOfStrokes > 0 ? currentstroke.cyclePace.toFixed(2) : NaN)},${(currentstroke.totalNumberOfStrokes > 0 ? currentstroke.cyclePower.toFixed(0) : NaN)},` +
+      `${currentstroke.cycleDistance.toFixed(2)},${(currentstroke.driveDuration * 1000).toFixed(0)},${(currentstroke.totalNumberOfStrokes > 0 ? currentstroke.driveLength.toFixed(2) : NaN)},${(currentstroke.recoveryDuration * 1000).toFixed(0)},` +
+      `${(currentstroke.totalNumberOfStrokes > 0 ? currentstroke.cycleLinearVelocity.toFixed(2) : 0)},${currentstroke.totalLinearDistance.toFixed(1)},${currentstroke.totalCalories.toFixed(1)},${currentstroke.dragFactor.toFixed(1)},` +
+      `${(currentstroke.totalNumberOfStrokes > 0 ? currentstroke.drivePeakHandleForce.toFixed(1) : NaN)},${(currentstroke.totalNumberOfStrokes > 0 ? currentstroke.driveAverageHandleForce.toFixed(1) : 0)},"${currentstroke.driveHandleForceCurve}",` +
+      `"${currentstroke.driveHandleVelocityCurve}","${currentstroke.driveHandlePowerCurve}"\n`
+      i++
+    }
+    await createFile(RowingData, `${filename}`, false)
+    return
+  }
+
   async function createTcxFile () {
     const tcxRecord = await activeWorkoutToTcx()
     if (tcxRecord === undefined) {
@@ -76,7 +113,7 @@ function createWorkoutRecorder () {
 
   async function activeWorkoutToTcx () {
     // we need at least two strokes to generate a valid tcx file
-    if (strokes.length < 2) return
+    if (strokes.length < 5) return
     const stringifiedStartTime = startTime.toISOString().replace(/T/, '_').replace(/:/g, '-').replace(/\..+/, '')
     const filename = `${stringifiedStartTime}_rowing.tcx`
 
@@ -96,6 +133,14 @@ function createWorkoutRecorder () {
     let versionArray = process.env.npm_package_version.split('.')
     if (versionArray.length < 3) versionArray = [0, 0, 0]
     const lastStroke = workout.strokes[strokes.length - 1]
+    const drag = workout.strokes.reduce((sum, s) => sum + s.dragFactor, 0) / strokes.length
+
+    let vomaxoutput = 'UNDEFINED'
+    const VOMax = createVoMax(config)
+    const VOMaxResult = VOMax.calculateVOMax(strokes)
+    if (VOMaxResult > 10 && VOMaxResult < 60) {
+      vomaxoutput = `${VOMaxResult.toFixed(1)} mL/(kg*min)`
+    }
 
     const tcxObject = {
       TrainingCenterDatabase: {
@@ -107,38 +152,36 @@ function createWorkoutRecorder () {
             Lap: [
               {
                 $: { StartTime: workout.startTime.toISOString() },
-                TotalTimeSeconds: workout.strokes.reduce((acc, stroke) => acc + stroke.strokeTime, 0).toFixed(1),
-                DistanceMeters: lastStroke.distanceTotal.toFixed(1),
+                TotalTimeSeconds: lastStroke.totalMovingTime.toFixed(1),
+                DistanceMeters: lastStroke.totalLinearDistance.toFixed(1),
                 // tcx uses meters per second as unit for speed
-                MaximumSpeed: (workout.strokes.map((stroke) => stroke.speed).reduce((acc, speed) => Math.max(acc, speed)) / 3.6).toFixed(2),
-                Calories: Math.round(lastStroke.caloriesTotal),
-                /* todo: calculate heart rate metrics...
-                AverageHeartRateBpm: { Value: 76 },
-                MaximumHeartRateBpm: { Value: 76 },
+                MaximumSpeed: (workout.strokes.map((stroke) => stroke.cycleLinearVelocity).reduce((acc, cycleLinearVelocity) => Math.max(acc, cycleLinearVelocity))).toFixed(2),
+                Calories: Math.round(lastStroke.totalCalories),
+                /* ToDo Fix issue with undefined heartrate
+                if (lastStroke.heartrate !== undefined) {
+                  AverageHeartRateBpm: { Value: (workout.strokes.reduce((sum, s) => sum + s.heartrate, 0) / workout.strokes.length).toFixed(2) },  //COPY ME TO NEW FILE
+                  MaximumHeartRateBpm: { Value: Math.round(workout.strokes.map((stroke) => stroke.power).reduce((acc, heartrate) => Math.max(acc, heartrate))) },  //COPY ME TO NEW FILE
+                }
                 */
                 Intensity: 'Active',
-                // todo: calculate average SPM
-                // Cadence: 20,
+                Cadence: Math.round(workout.strokes.reduce((sum, s) => sum + s.cycleStrokeRate, 0) / workout.strokes.length),
                 TriggerMethod: 'Manual',
                 Track: {
                   Trackpoint: (() => {
-                    let trackPointTime = workout.startTime
-
                     return workout.strokes.map((stroke) => {
-                      trackPointTime = new Date(trackPointTime.getTime() + stroke.strokeTime * 1000)
+                      let trackPointTime = new Date(workout.startTime.getTime() + stroke.totalMovingTime * 1000)
                       const trackpoint = {
                         Time: trackPointTime.toISOString(),
-                        DistanceMeters: stroke.distanceTotal.toFixed(2),
-                        Cadence: Math.round(stroke.strokesPerMinute),
+                        DistanceMeters: stroke.totalLinearDistance.toFixed(2),
+                        Cadence: Math.round(stroke.cycleStrokeRate),
                         Extensions: {
                           'ns2:TPX': {
-                            // tcx uses meters per second as unit for speed
-                            'ns2:Speed': (stroke.speed / 3.6).toFixed(2),
-                            'ns2:Watts': Math.round(stroke.power)
+                            'ns2:Speed': stroke.cycleLinearVelocity.toFixed(2),
+                            'ns2:Watts': Math.round(stroke.cyclePower)
                           }
                         }
                       }
-                      if (stroke.heartrate !== undefined) {
+                      if (stroke.heartrate !== undefined && stroke.heartrate > 30) {
                         trackpoint.HeartRateBpm = { Value: stroke.heartrate }
                       }
                       return trackpoint
@@ -147,16 +190,16 @@ function createWorkoutRecorder () {
                 },
                 Extensions: {
                   'ns2:LX': {
-                    /* todo: calculate these metrics...
-                    'ns2:AvgSpeed': 12,
-                    'ns2:AvgWatts': 133,
-                    */
-                    'ns2:MaxWatts': Math.round(workout.strokes.map((stroke) => stroke.power).reduce((acc, power) => Math.max(acc, power)))
+                    'ns2:Steps': lastStroke.totalNumberOfStrokes.toFixed(0),
+                     // please note, the -1 is needed as we added a stroke 0, with a speed and power of 0. The - 1 corrects this.
+                    'ns2:AvgSpeed': (workout.strokes.reduce((sum, s) => sum + s.cycleLinearVelocity, 0) / (workout.strokes.length - 1)).toFixed(2),
+                    'ns2:AvgWatts': (workout.strokes.reduce((sum, s) => sum + s.cyclePower, 0) / (workout.strokes.length - 1)).toFixed(0),
+                    'ns2:MaxWatts': Math.round(workout.strokes.map((stroke) => stroke.cyclePower).reduce((acc, cyclePower) => Math.max(acc, cyclePower)))
                   }
                 }
               }
             ],
-            Notes: 'Rowing Session'
+            Notes: `Indoor Rowing, Drag factor: ${drag.toFixed(1)} 10-6 N*m*s2, Estimated VO2Max: ${vomaxoutput}`
           }
         },
         Author: {
@@ -218,13 +261,16 @@ function createWorkoutRecorder () {
     if (config.createTcxFiles) {
       parallelCalls.push(createTcxFile())
     }
+    if (config.createRowingDataFiles) {
+      parallelCalls.push(createRowingDataFile())
+    }
     await Promise.all(parallelCalls)
   }
 
   function minimumRecordingTimeHasPassed () {
     const minimumRecordingTimeInSeconds = 10
     const rotationImpulseTimeTotal = rotationImpulses.reduce((acc, impulse) => acc + impulse, 0)
-    const strokeTimeTotal = strokes.reduce((acc, stroke) => acc + stroke.strokeTime, 0)
+    const strokeTimeTotal = strokes[strokes.length -1].totalMovingTime
     return (Math.max(rotationImpulseTimeTotal, strokeTimeTotal) > minimumRecordingTimeInSeconds)
   }
 
@@ -233,6 +279,7 @@ function createWorkoutRecorder () {
     recordRotationImpulse,
     handlePause,
     activeWorkoutToTcx,
+    writeRecordings: createRecordings,
     reset
   }
 }
