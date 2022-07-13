@@ -236,7 +236,7 @@ function createRowingStatistics (config, session) {
     }
   }
 
- function emitWebMetrics () {
+  function emitWebMetrics () {
     emitMetrics('webMetricsUpdate')
   }
 
@@ -281,7 +281,7 @@ function createRowingStatistics (config, session) {
       dragFactor: dragFactor > 0 ? dragFactor : config.rowerSettings.dragFactor, // Dragfactor
       instantPower: instantPower > 0 && rower.strokeState() === 'Drive' ? instantPower : 0,
       heartrate: heartrate > 30 ? heartrate : undefined,
-      heartrateBatteryLevel: heartrateBatteryLevel > 0 ? heartrateBatteryLevel : undefined, // BE AWARE, changing undefined to NaN kills the GUI!!!
+      heartrateBatteryLevel: heartrateBatteryLevel > 0 ? heartrateBatteryLevel : undefined // BE AWARE, changing undefined to NaN kills the GUI!!!
     }
   }
 
