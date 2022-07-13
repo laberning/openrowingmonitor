@@ -39,28 +39,28 @@ export default class StrokeData extends bleno.Characteristic {
     if (this._updateValueCallback || this._multiplexedCharacteristic.centralSubscribed()) {
       const bufferBuilder = new BufferBuilder()
       // elapsedTime: UInt24LE in 0.01 sec
-      bufferBuilder.writeUInt24LE(Math.round(data.durationTotal * 100))
+      bufferBuilder.writeUInt24LE(Math.round(data.totalMovingTime * 100))
       // distance: UInt24LE in 0.1 m
-      bufferBuilder.writeUInt24LE(Math.round(data.distanceTotal * 10))
+      bufferBuilder.writeUInt24LE(Math.round(data.totalLinearDistance * 10))
       // driveLength: UInt8 in 0.01 m
-      bufferBuilder.writeUInt8(0 * 100)
+      bufferBuilder.writeUInt8(Math.round(data.driveLength * 100))
       // driveTime: UInt8 in 0.01 s
-      bufferBuilder.writeUInt8(0 * 100)
+      bufferBuilder.writeUInt8(Math.round(data.driveDuration * 100))
       // strokeRecoveryTime: UInt16LE in 0.01 s
-      bufferBuilder.writeUInt16LE(0 * 100)
+      bufferBuilder.writeUInt16LE(Math.round(data.recoveryDuration * 100))
       // strokeDistance: UInt16LE in 0.01 s
-      bufferBuilder.writeUInt16LE(0 * 100)
+      bufferBuilder.writeUInt16LE(Math.round(data.cycleDistance * 100))
       // peakDriveForce: UInt16LE in 0.1 watts
-      bufferBuilder.writeUInt16LE(0 * 10)
+      bufferBuilder.writeUInt16LE(Math.round(data.drivePeakHandleForce * 10))
       // averageDriveForce: UInt16LE in 0.1 watts
-      bufferBuilder.writeUInt16LE(0 * 10)
+      bufferBuilder.writeUInt16LE(Math.round(data.driveAverageHandleForce * 10))
       if (this._updateValueCallback) {
         // workPerStroke is only added if data is not send via multiplexer
         // workPerStroke: UInt16LE
         bufferBuilder.writeUInt16LE(0)
       }
       // strokeCount: UInt16LE
-      bufferBuilder.writeUInt16LE(data.strokesTotal)
+      bufferBuilder.writeUInt16LE(data.totalNumberOfStrokes)
       if (this._updateValueCallback) {
         this._updateValueCallback(bufferBuilder.getBuffer())
       } else {
