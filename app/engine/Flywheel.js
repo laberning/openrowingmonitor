@@ -1,6 +1,6 @@
 'use strict'
 /*
-    Open Rowing Monitor, https://github.com/jaapvanekris/openrowingmonitor
+  Open Rowing Monitor, https://github.com/jaapvanekris/openrowingmonitor
 
   This models the flywheel with all of its attributes, which we can also test for being powered
 
@@ -19,7 +19,6 @@
   which is intended for simple linear motion, but the formula are identical when applied to angular distances, velocities and
   accelerations.
 */
-import fs from 'fs' // REMOVE ME!!!
 
 import loglevel from 'loglevel'
 import { createStreamFilter } from './utils/StreamFilter.js'
@@ -124,8 +123,6 @@ function createFlywheel (rowerSettings) {
 
     // And finally calculate the torque
     _torqueAtBeginFlank = (rowerSettings.flywheelInertia * _angularAccelerationAtBeginFlank + drag.clean() * Math.pow(_angularVelocityAtBeginFlank, 2))
-
-    //fs.appendFile('exports/RegressionData.csv', `${totalTimeSpinning};${_deltaTimeBeforeFlank};${_angularVelocityBeforeFlank};${_angularAccelerationBeforeFlank};${expAngAcc.median()};${_torqueBeforeFlank}\n`, (err) => { if (err) log.error(err) })  // REMOVE ME!!!!
   }
 
   function maintainStateOnly () {
@@ -146,7 +143,7 @@ function createFlywheel (rowerSettings) {
     inRecoveryPhase = false
 
     // Calculation of the drag-factor
-    if (rowerSettings.autoAdjustDragFactor && recoveryDeltaTime.length() > minimumDragFactorSamples && recoveryDeltaTime.slope() > 0  && (!drag.reliable() || recoveryDeltaTime.goodnessOfFit() >= rowerSettings.minimumDragQuality)) {
+    if (rowerSettings.autoAdjustDragFactor && recoveryDeltaTime.length() > minimumDragFactorSamples && recoveryDeltaTime.slope() > 0 && (!drag.reliable() || recoveryDeltaTime.goodnessOfFit() >= rowerSettings.minimumDragQuality)) {
       drag.push(slopeToDrag(recoveryDeltaTime.slope()))
       log.debug(`*** Calculated drag factor: ${(slopeToDrag(recoveryDeltaTime.slope()) * 1000000).toFixed(4)}, no. samples: ${recoveryDeltaTime.length()}, Goodness of Fit: ${recoveryDeltaTime.goodnessOfFit().toFixed(4)}`)
       if (rowerSettings.autoAdjustRecoverySlope) {
