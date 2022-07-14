@@ -53,10 +53,11 @@ sequenceDiagram
 
 Server.js orchestrates all information flows and starts/stops processes when needed. It will orchestrate:
 
-* GPIO timing signals to the RowingStatistics.js
-* Handle the signals from RowingStatistics.js (like the updates on metrics and the signals that the interval has ended)
-* Broadcast metics-updates to webclients and blutooth periphials
-* Handle use input and instruct RowingStatistics.js accordingly
+* Send GPIO timing signals to the RowingStatistics.js
+* Send Heartrate signals to the RowingStatistics.js
+* Handle the metrics update from RowingStatistics.js (like the time-based updates on metrics and the state changes of both session and stroke)
+* Broadcast metrics-updates to webclients and blutooth periphials
+* Handle user input and instruct RowingStatistics.js accordingly
 
 ### RowingStatistics.js
 
