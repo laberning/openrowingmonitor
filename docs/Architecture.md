@@ -40,7 +40,6 @@ sequenceDiagram
   participant RowingStatistics.js
   heartrateMonitor-)server.js: heartrate data (interrupt based)
   server.js-)RowingStatistics.js: heartrate data (interrupt based)
-  RowingStatistics.js->>Rower.js: heartrate data (interrupt based)
   RowingStatistics.js-)server.js: Updates (State/Time based)
   server.js-)clients: Updates (State/Time based)
 ```
