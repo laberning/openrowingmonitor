@@ -105,6 +105,8 @@ A default Raspian install does quite a decent job in extracting metrics, but the
 
 Currently, the algorithms can handle a significant level of noise at the cost of the precission of the peaks, but the data might become more reliable and accurate when the noise is removed from the source.
 
+The 64Bit Raspian lite install seemingly provides a PREEMPT kernel which is optimised for IoT applications with low-latency requirements. Installation of OpenRowingMonitor is possible and even tested, awaiting results.
+
 An alternative is Ubuntu Core, which has a leaner 64-bit kernel, and where a low-latency kernel can be added later on quite easily. The IoT approach of Ubuntu, which heavily depends on Snap as main application deployment vehicle, is a change from the current architecture as it would require a containered application. From an install perspective, it would make much more sense to depend on a backend (i.e the hardware measurement and webserver) to be in one Snap, and the Frontend to be in another Snap (as Ubuntu-Frame provides this front-end functionality out of the box, and thus only needs to be configured). There especially are issues with storing settings, which need to be retained even when the Snap gets updated. Therefore, this is a far from trivial approach.
 
 ### Use of Node.js
