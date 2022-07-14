@@ -20,14 +20,14 @@ sequenceDiagram
   participant RowingStatistics.js
   participant Rower.js
   participant Flywheel.js
-  gpio.js->>server.js: currentDt (interrupt based)
+  gpio.js-)server.js: currentDt (interrupt based)
   server.js->>RowingStatistics.js: currentDt (interrupt based)
   RowingStatistics.js->>Rower.js: currentDt (interrupt based)
   Rower.js->>Flywheel.js: currentDt (interrupt based)
-  Flywheel.js->>Rower.js: Angular metrics, Flywheel state (interrupt based)
-  Rower.js->>RowingStatistics.js: Strokes, Linear metrics (interrupt based)
-  RowingStatistics.js->>server.js: Updates (State/Time based)
-  server.js->>clients: Updates (State/Time based)
+  Flywheel.js-->>Rower.js: Angular metrics, Flywheel state (interrupt based)
+  Rower.js-->>RowingStatistics.js: Strokes, Linear metrics (interrupt based)
+  RowingStatistics.js-)server.js: Updates (State/Time based)
+  server.js-)clients: Updates (State/Time based)
 ```
 
 ### Server.js
