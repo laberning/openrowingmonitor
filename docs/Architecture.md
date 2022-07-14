@@ -12,6 +12,7 @@ The choice has been made to use JavaScript to build te application, as many comp
 
 ## Main functional components
 
+Data flow for the flywheel data
 ```mermaid
 sequenceDiagram
   participant clients
@@ -26,6 +27,20 @@ sequenceDiagram
   Rower.js->>Flywheel.js: currentDt (interrupt based)
   Flywheel.js-->>Rower.js: Angular metrics, Flywheel state (interrupt based)
   Rower.js-->>RowingStatistics.js: Strokes, Linear metrics (interrupt based)
+  RowingStatistics.js-)server.js: Updates (State/Time based)
+  server.js-)clients: Updates (State/Time based)
+```
+
+Dataflow for the heartrate data
+```mermaid
+sequenceDiagram
+  participant clients
+  participant heartrateMonitor
+  participant server.js
+  participant RowingStatistics.js
+  heartrateMonitor-)server.js: heartrate data (interrupt based)
+  server.js-)RowingStatistics.js: heartrate data (interrupt based)
+  RowingStatistics.js->>Rower.js: heartrate data (interrupt based)
   RowingStatistics.js-)server.js: Updates (State/Time based)
   server.js-)clients: Updates (State/Time based)
 ```
