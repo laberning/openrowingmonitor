@@ -31,7 +31,10 @@ sequenceDiagram
   server.js-)clients: Updates (State/Time based)
 ```
 
+Please note that the clients are both webbased screens and periphal bluetooth devices. Both are updated based on both a set interval and when the stroke or session state changes. OpenRowingMonitor therefore consists out of two subsystems: an solely interruptdriven part that processes flywheel and heartrate interrupts, and the time/state based needs of the clients. It is the responsibility of RowingStatistics to manage this: it monitors the timers, session state and guarantees that it can present the clients with the freshest data availble.
+
 Dataflow for the heartrate data
+
 ```mermaid
 sequenceDiagram
   participant clients
@@ -43,8 +46,6 @@ sequenceDiagram
   RowingStatistics.js-)server.js: Updates (State/Time based)
   server.js-)clients: Updates (State/Time based)
 ```
-
-Please note that the clients are both webbased screens and periphal bluetooth devices. Both are updated based on both a set interval and when the stroke or session state changes. OpenRowingMonitor therefore consists out of two subsystems: an solely interruptdriven part that processes flywheel and heartrate interrupts, and the time/state based needs of the clients. It is the responsibility of RowingStatistics to manage this: it monitors the timers, session state and guarantees that it can present the clients with the freshest data availble.
 
 ### gpio.js
 
