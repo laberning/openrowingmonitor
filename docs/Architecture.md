@@ -53,21 +53,22 @@ sequenceDiagram
 
 Server.js orchestrates all information flows and starts/stops processes when needed. It will orchestrate:
 
-* Send GPIO timing signals to the RowingStatistics.js
-* Send Heartrate signals to the RowingStatistics.js
-* Handle the metrics update from RowingStatistics.js (like the time-based updates on metrics and the state changes of both session and stroke)
-* Broadcast metrics-updates to webclients and blutooth periphials
-* Handle user input and instruct RowingStatistics.js accordingly
+* Recieve (interrupt based) GPIO timing signals and send them to the `RowingStatistics.js`
+* Recieve (interrupt based) Heartrate measurements and sent them to the `RowingStatistics.js`
+* Recieve the metrics update messages from `RowingStatistics.js` (like the time-based updates on metrics and the state changes of both session and stroke) and send them to the webclients and blutooth periphials
+* Handle user input (through webinterface and periphials) and instruct `RowingStatistics.js` accordingly
 
 ### RowingStatistics.js
 
-`RowingStatistics.js` inspects `engine/Rower.js` each impuls for state and metrics, and translates that into meaningful information for the consumers of data. `Rower.js` reports limited absolute metrics for the entire session (updates to absolute times, distances and instant velocities, etc., but only when they can be updated). RowingStatistics.js will consume this data, combines it with other datasources like the heartrate and transform it into a consistent set of more stable set of metrics useable for presentation. Typically, smoothing out eratic behaviour of metrics is stopped here as well.
+`RowingStatistics.js` recieves currentDt updates, forwards them to `engine/Rower.js` and subsequently inspects `engine/Rower.js` for state and metrics. Based on this inspection, it translates that into meaningful information for the consumers of data updating both session state and the underlying metrics. As `Rower.js` can only provide a limited set of absolute metrics (as most are stroke state dependent) and is unaware of previous strokes and the context of the interval, `RowingStatistics.js` will consume this data, combine it with other datasources like the heartrate and transform it into a consistent set of more stable set of metrics useable for presentation. Typically, smoothing across strokes to remove eratic behaviour of metrics takes place here as well.
 
 In a nutshell:
 
-* RowingStatistics.js applies a moving median filter to make metrics less volatile and thus better suited for presentation,
-* RowingStatistics.js calculates derived metrics (like Calories),
-* RowingStatistics.js gaurds interval and session boundaries, and will chop up the metrics-stream accordingly, where Rower.js will just move on without looking at these artifical boundaries.
+* `RowingStatistics.js` is the bridge/buffer between the interrupt-drive processing of data and the time/state based reporting of the metrics,
+* `RowingStatistics.js` maintains the session state, thus determines whether the rowing machine is 'Rowing', or 'WaitingForDrive', etc.,
+* `RowingStatistics.js` applies a moving median filter to make metrics less volatile and thus better suited for presentation,
+* `RowingStatistics.js` calculates derived metrics (like Calories),
+* `RowingStatistics.js` gaurds interval and session boundaries, and will chop up the metrics-stream accordingly, where Rower.js will just move on without looking at these artifical boundaries.
 
 In total, this takes full control of the displayed metrics in a specific interval.
 
