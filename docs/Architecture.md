@@ -98,12 +98,10 @@ In total, this takes full control of the displayed metrics in a specific interva
 stateDiagram-v2
   [*] --> WaitingForDrive
   WaitingForDrive --> Drive: Flywheel<br>is powered
-  state Operational {
-    Drive --> Recovery: Flywheel<br>is unpowered
-    Drive --> Drive: Flywheel<br>is powered
-    Recovery --> Drive: Flywheel<br>is powered
-    Recovery --> Recovery: Flywheel<br>is unpowered
-  }
+  Drive --> Recovery: Flywheel<br>is unpowered
+  Drive --> Drive: Flywheel<br>is powered
+  Recovery --> Drive: Flywheel<br>is powered
+  Recovery --> Recovery: Flywheel<br>is unpowered
   Recovery --> WaitingForDrive: Last drive too<br>long ago
   Drive --> Stopped
   Recovery --> Stopped
