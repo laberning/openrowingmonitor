@@ -92,8 +92,6 @@ In total, this takes full control of the displayed metrics in a specific interva
 ```mermaid
 stateDiagram-v2
     [*] --> WaitingForDrive
-    Still --> [*]
-
     WaitingForDrive --> Drive
     Drive --> Recovery
     Recovery --> Drive
