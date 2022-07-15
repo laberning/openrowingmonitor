@@ -87,7 +87,6 @@ function createWorkoutRecorder () {
       i++
     }
     await createFile(RowingData, `${filename}`, false)
-    return
   }
 
   async function createTcxFile () {
@@ -169,7 +168,7 @@ function createWorkoutRecorder () {
                 Track: {
                   Trackpoint: (() => {
                     return workout.strokes.map((stroke) => {
-                      let trackPointTime = new Date(workout.startTime.getTime() + stroke.totalMovingTime * 1000)
+                      const trackPointTime = new Date(workout.startTime.getTime() + stroke.totalMovingTime * 1000)
                       const trackpoint = {
                         Time: trackPointTime.toISOString(),
                         DistanceMeters: stroke.totalLinearDistance.toFixed(2),
@@ -191,7 +190,7 @@ function createWorkoutRecorder () {
                 Extensions: {
                   'ns2:LX': {
                     'ns2:Steps': lastStroke.totalNumberOfStrokes.toFixed(0),
-                     // please note, the -1 is needed as we added a stroke 0, with a speed and power of 0. The - 1 corrects this.
+                    // please note, the -1 is needed as we have a stroke 0, with a speed and power of 0. The - 1 corrects this.
                     'ns2:AvgSpeed': (workout.strokes.reduce((sum, s) => sum + s.cycleLinearVelocity, 0) / (workout.strokes.length - 1)).toFixed(2),
                     'ns2:AvgWatts': (workout.strokes.reduce((sum, s) => sum + s.cyclePower, 0) / (workout.strokes.length - 1)).toFixed(0),
                     'ns2:MaxWatts': Math.round(workout.strokes.map((stroke) => stroke.cyclePower).reduce((acc, cyclePower) => Math.max(acc, cyclePower)))
@@ -270,7 +269,7 @@ function createWorkoutRecorder () {
   function minimumRecordingTimeHasPassed () {
     const minimumRecordingTimeInSeconds = 10
     const rotationImpulseTimeTotal = rotationImpulses.reduce((acc, impulse) => acc + impulse, 0)
-    const strokeTimeTotal = strokes[strokes.length -1].totalMovingTime
+    const strokeTimeTotal = strokes[strokes.length - 1].totalMovingTime
     return (Math.max(rotationImpulseTimeTotal, strokeTimeTotal) > minimumRecordingTimeInSeconds)
   }
 
