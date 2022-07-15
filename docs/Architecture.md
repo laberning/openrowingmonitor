@@ -102,7 +102,7 @@ stateDiagram-v2
   Drive --> Drive: Flywheel<br>is powered
   Recovery --> Drive: Flywheel<br>is powered
   Recovery --> Recovery: Flywheel<br>is unpowered
-  Recovery --> WaitingForDrive: maximumStrokeTimeBeforePause<br>after last drive
+  Recovery --> WaitingForDrive: Last drive too<br>long ago
   Drive --> Stopped
   Recovery --> Stopped
   Stopped --> [*]
