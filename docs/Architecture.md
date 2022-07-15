@@ -21,14 +21,14 @@ sequenceDiagram
   participant RowingStatistics.js
   participant Rower.js
   participant Flywheel.js
-  gpio.js-)server.js: currentDt (interrupt based)
-  server.js-)RowingStatistics.js: currentDt (interrupt based)
-  RowingStatistics.js->>Rower.js: currentDt (interrupt based)
-  Rower.js->>Flywheel.js: currentDt (interrupt based)
-  Flywheel.js-->>Rower.js: Angular metrics, Flywheel state (interrupt based)
-  Rower.js-->>RowingStatistics.js: Strokes, Linear metrics (interrupt based)
-  RowingStatistics.js-)server.js: Updates (State/Time based)
-  server.js-)clients: Updates (State/Time based)
+  gpio.js-)server.js: currentDt<br>(interrupt based)
+  server.js-)RowingStatistics.js: currentDt<br>(interrupt based)
+  RowingStatistics.js->>Rower.js: currentDt<br>(interrupt based)
+  Rower.js->>Flywheel.js: currentDt<br>(interrupt based)
+  Flywheel.js-->>Rower.js: Angular metrics, Flywheel state<br>(interrupt based)
+  Rower.js-->>RowingStatistics.js: Strokes, Linear metrics<br>(interrupt based)
+  RowingStatistics.js-)server.js: Metrics Updates<br>(State/Time based)
+  server.js-)clients: Metrics Updates<br>(State/Time based)
 ```
 
 Please note that the clients are both webbased screens and periphal bluetooth devices. Both are updated based on both a set interval and when the stroke or session state changes. OpenRowingMonitor therefore consists out of two subsystems: an solely interruptdriven part that processes flywheel and heartrate interrupts, and the time/state based needs of the clients. It is the responsibility of RowingStatistics to manage this: it monitors the timers, session state and guarantees that it can present the clients with the freshest data availble.
@@ -41,10 +41,10 @@ sequenceDiagram
   participant heartrateMonitor
   participant server.js
   participant RowingStatistics.js
-  heartrateMonitor-)server.js: heartrate data (interrupt based)
-  server.js-)RowingStatistics.js: heartrate data (interrupt based)
-  RowingStatistics.js-)server.js: Updates (State/Time based)
-  server.js-)clients: Updates (State/Time based)
+  heartrateMonitor-)server.js: heartrate data<br>(interrupt based)
+  server.js-)RowingStatistics.js: heartrate data<br>(interrupt based)
+  RowingStatistics.js-)server.js: Metrics Updates<br>(State/Time based)
+  server.js-)clients: Metrics Updates<br>(State/Time based)
 ```
 
 ### gpio.js
@@ -96,7 +96,7 @@ stateDiagram-v2
     WaitingForDrive --> Drive: Flywheel is<br>powered and not dwelling
     Drive --> Recovery: Flywheel<br>is unpowered
     Recovery --> Drive: Flywheel<br>is powered
-    Recovery --> WaitingForDrive: maximumStrokeTimeBeforePause<br>after last drive, Flywheel is Dwelling
+    Recovery --> WaitingForDrive: maximumStrokeTimeBeforePause after<br>last drive, Flywheel is Dwelling
     Drive --> Stopped
     Recovery --> Stopped
     Stopped --> [*]
