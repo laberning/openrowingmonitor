@@ -66,10 +66,11 @@ Server.js orchestrates all information flows and starts/stops processes when nee
 stateDiagram-v2
     [*] --> WaitingForStart
 
-    WaitingForStart --> Rowing
-    Rowing --> Paused
-    Paused --> Rowing
-    Rowing --> Stopped
+    WaitingForStart --> Rowing: stroke state is 'Drive'
+    Rowing --> Rowing: stroke state is 'Drive' or 'Recovery'
+    Rowing --> Paused: stroke state is 'WaitingForDrive'
+    Paused --> Rowing: stroke state is 'Drive'
+    Rowing --> Stopped: session target reached
     Stopped --> [*]
 ```
 
@@ -92,10 +93,10 @@ In total, this takes full control of the displayed metrics in a specific interva
 ```mermaid
 stateDiagram-v2
     [*] --> WaitingForDrive
-    WaitingForDrive --> Drive
-    Drive --> Recovery
-    Recovery --> Drive
-    Recovery --> WaitingForDrive
+    WaitingForDrive --> Drive: Flywheel is not dwelling and powered
+    Drive --> Recovery: Flywheel is unpowered
+    Recovery --> Drive: Flywheel is powered
+    Recovery --> WaitingForDrive: maximumStrokeTimeBeforePause after last drive, Flywheel is Dwelling
     Drive --> Stopped
     Recovery --> Stopped
     Stopped --> [*]
