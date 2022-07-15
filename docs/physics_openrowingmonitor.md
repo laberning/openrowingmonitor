@@ -205,6 +205,8 @@ stateDiagram-v2
   Recovery --> Drive: Flywheel<br>is powered
   Recovery --> Recovery: Flywheel<br>isn't powered
 ```
+
+<!-- markdownlint-disable-next-line no-emphasis-as-header -->
 *Finite state machine of rowing cycle*
 
 ### Basic stroke detection
