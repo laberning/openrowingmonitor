@@ -60,7 +60,20 @@ Server.js orchestrates all information flows and starts/stops processes when nee
 
 ### RowingStatistics.js
 
-`RowingStatistics.js` recieves currentDt updates, forwards them to `Rower.js` and subsequently inspects `Rower.js` for the resulting state and metrics. Based on this inspection, the finite state machine of the session state and the associated metrics are updated (i.e. linear velocity, linear distance, power, etc.). The goals is to translate these metrics into meaningful information for the consumers of data updating both session state and the underlying metrics. As `Rower.js` can only provide a limited set of absolute metrics (as most are stroke state dependent) and is unaware of previous strokes and the context of the interval, `RowingStatistics.js` will consume this data, combine it with other datasources like the heartrate and transform it into a consistent and more stable set of metrics useable for presentation. As `RowingStatistics.js` also is the bridge between the interrupt-driven and time/state driven part of the application, it buffers data as well, providing a complete set of metrics regardless of stroke state. Adittionally, `RowingStatistics.js` also smoothens data across strokes to remove eratic behaviour of metrics due to small measurement errors.
+`RowingStatistics.js` recieves currentDt updates, forwards them to `Rower.js` and subsequently inspects `Rower.js` for the resulting state and metrics. Based on this inspection, the finite state machine of the session state and the associated metrics are updated (i.e. linear velocity, linear distance, power, etc.). It maintains the following states:
+
+```mermaid
+stateDiagram-v2
+    [*] --> Still
+    Still --> [*]
+
+    Still --> Moving
+    Moving --> Still
+    Moving --> Crash
+    Crash --> [*]
+```
+
+The goals is to translate these metrics into meaningful information for the consumers of data updating both session state and the underlying metrics. As `Rower.js` can only provide a limited set of absolute metrics (as most are stroke state dependent) and is unaware of previous strokes and the context of the interval, `RowingStatistics.js` will consume this data, combine it with other datasources like the heartrate and transform it into a consistent and more stable set of metrics useable for presentation. As `RowingStatistics.js` also is the bridge between the interrupt-driven and time/state driven part of the application, it buffers data as well, providing a complete set of metrics regardless of stroke state. Adittionally, `RowingStatistics.js` also smoothens data across strokes to remove eratic behaviour of metrics due to small measurement errors.
 
 In a nutshell:
 
@@ -75,6 +88,7 @@ In total, this takes full control of the displayed metrics in a specific interva
 ### Rower.js
 
 `Rower.js` recieves currentDt updates, forwards them to `Flywheel.js` and subsequently inspects `Flywheel.js` for the resulting state and metrics. `Rower.js` inspects the flywheel behaviour on each impuls and translates it into the rower's state (i.e. 'WaitingForDrive', 'Drive', 'Recovery', 'Stopped') through a finite state machine and calculates the updated associated metrics (i.e. linear velocity, linear distance, power, etc.) for that specific phase transition. Aside temporal metrics (Linear Velocity, Power, etc.) it also maintains several absolute metrics (like total total linear distance travelled). It only updates metrics that can be updated meaningful, and it will not resend (potentially stale) data that isn't updated.
+
 
 ### Flywheel.js
 
