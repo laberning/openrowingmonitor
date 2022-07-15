@@ -67,10 +67,10 @@ stateDiagram-v2
     [*] --> WaitingForStart
     WaitingForStart --> Rowing: strokeState<br>is 'Drive'
     state Rowing {
-        strokeState Drive --> strokeState Recovery
-        strokeState Drive --> strokeState Drive
-        strokeState Recovery --> strokeState Drive
-        strokeState Recovery --> strokeState Recovery
+        strokeState=Drive --> strokeState=Recovery
+        strokeState=Drive --> strokeState=Drive
+        strokeState=Recovery --> strokeState=Drive
+        strokeState=Recovery --> strokeState=Recovery
     }
     Rowing --> Paused: strokeState<br>is 'WaitingForDrive'
     Paused --> Rowing: strokeState<br>is 'Drive'
