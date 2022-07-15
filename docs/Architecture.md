@@ -74,7 +74,7 @@ stateDiagram-v2
     }
     Rowing --> Paused: strokeState<br>is 'WaitingForDrive'
     Paused --> Rowing: strokeState<br>is 'Drive'
-    Rowing --> Stopped: session target<br>reached
+    Rowing --> Stopped
     Stopped --> [*]
 ```
 
