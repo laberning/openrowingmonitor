@@ -205,7 +205,6 @@ stateDiagram-v2
     Recovery --> Recovery: Flywheel<br>isn't powered
 ```
 
-![Finite state machine of rowing cycle](img/physics/finitestatemachine.png)
 *Finite state machine of rowing cycle*
 
 ### Basic stroke detection
