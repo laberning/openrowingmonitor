@@ -197,6 +197,14 @@ Here we plot the *currentDt* (time between impulses) against its sequence number
 
 As the rowing cycle always follows this fixed schema, Open Rowing Monitor models it as a finite state machine (implemented in `handleRotationImpulse` in `engine/Rower.js`).
 
+```mermaid
+stateDiagram-v2
+    Drive --> Recovery: Flywheel<br>isn't powered
+    Drive --> Drive: Flywheel<br>is powered
+    Recovery --> Drive: Flywheel<br>is powered
+    Recovery --> Recovery: Flywheel<br>isn't powered
+```
+
 ![Finite state machine of rowing cycle](img/physics/finitestatemachine.png)
 *Finite state machine of rowing cycle*
 
