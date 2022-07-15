@@ -98,7 +98,7 @@ In total, this takes full control of the displayed metrics in a specific interva
 stateDiagram-v2
     [*] --> WaitingForDrive
     WaitingForDrive --> Drive: Flywheel is<br>powered and not dwelling
-    {
+    state x {
       direction LR
       Drive --> Recovery: Flywheel<br>is unpowered
       Drive --> Drive: Flywheel<br>is powered
