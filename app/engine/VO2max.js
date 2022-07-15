@@ -96,7 +96,7 @@ function createVoMax (config) {
     // Thisis  based on research done by concept2, https://www.concept2.com/indoor-rowers/training/calculators/vo2max-calculator,
     // which determines the VO2Max based on the 2K speed
     const distance = metrics[metrics.length - 1].totalLinearDistance
-    const time = metrics[metrics.length -1 ].totalMovingTime
+    const time = metrics[metrics.length - 1].totalMovingTime
     const projectedTwoKPace = interpolatePace(time, distance, 2000)
     const projectedTwoKTimeInMinutes = (4 * projectedTwoKPace) / 60
     let Y = 0
