@@ -199,10 +199,11 @@ As the rowing cycle always follows this fixed schema, Open Rowing Monitor models
 
 ```mermaid
 stateDiagram-v2
-    Drive --> Recovery: Flywheel<br>isn't powered
-    Drive --> Drive: Flywheel<br>is powered
-    Recovery --> Drive: Flywheel<br>is powered
-    Recovery --> Recovery: Flywheel<br>isn't powered
+  direction LR
+  Drive --> Recovery: Flywheel<br>isn't powered
+  Drive --> Drive: Flywheel<br>is powered
+  Recovery --> Drive: Flywheel<br>is powered
+  Recovery --> Recovery: Flywheel<br>isn't powered
 ```
 
 *Finite state machine of rowing cycle*
