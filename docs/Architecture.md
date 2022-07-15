@@ -96,19 +96,16 @@ In total, this takes full control of the displayed metrics in a specific interva
 
 ```mermaid
 stateDiagram-v2
-    [*] --> WaitingForDrive
-    WaitingForDrive --> Drive: Flywheel is<br>powered and not dwelling
-    state x {
-      direction LR
-      Drive --> Recovery: Flywheel<br>is unpowered
-      Drive --> Drive: Flywheel<br>is powered
-      Recovery --> Drive: Flywheel<br>is powered
-      Recovery --> Recovery: Flywheel<br>is unpowered
-    }
-    Recovery --> WaitingForDrive: maximumStrokeTimeBeforePause after<br>last drive, Flywheel is Dwelling
-    Drive --> Stopped
-    Recovery --> Stopped
-    Stopped --> [*]
+  [*] --> WaitingForDrive
+  WaitingForDrive --> Drive: Flywheel<br>is powered
+  Drive --> Recovery: Flywheel<br>is unpowered
+  Drive --> Drive: Flywheel<br>is powered
+  Recovery --> Drive: Flywheel<br>is powered
+  Recovery --> Recovery: Flywheel<br>is unpowered
+  Recovery --> WaitingForDrive: maximumStrokeTimeBeforePause<br>after last drive
+  Drive --> Stopped
+  Recovery --> Stopped
+  Stopped --> [*]
 ```
 
 
