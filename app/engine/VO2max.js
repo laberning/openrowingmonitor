@@ -22,10 +22,6 @@ function createVoMax (config) {
   const highlyTrained = false
   const offset = 90
 
-  let maxCrediblePower = 0.0
-  let maxProjectedPower = 0.0
-  let VOMax = 0.0
-
   function calculateVOMax (metrics) {
     let projectedVOTwoMax = 0
     let interpolatedVOTwoMax = 0
@@ -36,13 +32,13 @@ function createVoMax (config) {
 
     interpolatedVOTwoMax = interpolatedVOMax(metrics)
 
-    if (projectedVOTwoMax >= 10 && projectedVOTwoMax <= 60 && interpolatedVOTwoMax >= 10 && interpolatedVOTwoMax <= 60 ) {
+    if (projectedVOTwoMax >= 10 && projectedVOTwoMax <= 60 && interpolatedVOTwoMax >= 10 && interpolatedVOTwoMax <= 60) {
       // Both VO2Max calculations have delivered a valid and credible result
       log.debug(`--- VO2Max calculation delivered two credible results Extrapolated VO2Max: ${projectedVOTwoMax.toFixed(1)} and Interpolated VO2Max: ${interpolatedVOTwoMax.toFixed(1)}`)
       return ((projectedVOTwoMax + interpolatedVOTwoMax) / 2)
     } else {
       // One of the calculations has delivered an invalid result
-      if (interpolatedVOTwoMax >= 10 && interpolatedVOTwoMax <= 60 ) {
+      if (interpolatedVOTwoMax >= 10 && interpolatedVOTwoMax <= 60) {
         // Interpolation has delivered a credible result
         log.debug(`--- VO2Max calculation delivered one credible result, the Interpolated VO2Max: ${interpolatedVOTwoMax.toFixed(1)}. The Extrapolated VO2Max: ${projectedVOTwoMax.toFixed(1)} was unreliable`)
         return interpolatedVOTwoMax
@@ -99,17 +95,17 @@ function createVoMax (config) {
   function interpolatedVOMax (metrics) {
     // Thisis  based on research done by concept2, https://www.concept2.com/indoor-rowers/training/calculators/vo2max-calculator,
     // which determines the VO2Max based on the 2K speed
-    const distance = metrics[metrics.length -1].totalLinearDistance
-    const time = metrics[metrics.length -1].totalMovingTime
+    const distance = metrics[metrics.length - 1].totalLinearDistance
+    const time = metrics[metrics.length -1 ].totalMovingTime
     const projectedTwoKPace = interpolatePace(time, distance, 2000)
-    const projectedTwoKTimeInMinutes = ( 4 * projectedTwoKPace) / 60
+    const projectedTwoKTimeInMinutes = (4 * projectedTwoKPace) / 60
     let Y = 0
 
-    log.debug(`--- VO2Max Interpolated 2K pace: ${Math.floor(projectedTwoKPace/60)}:${(projectedTwoKPace % 60).toFixed(1)}`)
+    log.debug(`--- VO2Max Interpolated 2K pace: ${Math.floor(projectedTwoKPace / 60)}:${(projectedTwoKPace % 60).toFixed(1)}`)
     // This implements the table with formulas found at https://www.concept2.com/indoor-rowers/training/calculators/vo2max-calculator
     if (highlyTrained) {
       // Highly trained
-      if (sex == 'male') {
+      if (sex === 'male') {
         // Highly trained male
         if (weight > 75) {
           // Highly trained male, above 75 Kg
@@ -130,7 +126,7 @@ function createVoMax (config) {
       }
     } else {
       // Not highly trained
-      if (sex == 'male') {
+      if (sex === 'male') {
         // Not highly trained male
         Y = 10.7 - (0.9 * projectedTwoKTimeInMinutes)
       } else {
@@ -138,7 +134,7 @@ function createVoMax (config) {
         Y = 10.26 - (0.93 * projectedTwoKTimeInMinutes)
       }
     }
-  return (Y * 1000) / weight
+    return (Y * 1000) / weight
   }
 
   function interpolatePace (origintime, origindistance, targetdistance) {
@@ -151,22 +147,11 @@ function createVoMax (config) {
     } else {
       return 0
     }
-
   }
 
   function reset () {
     // Nothing to do yet
-    linearRegressor.resetDataset()
-    powerBracketStart = 0.0
-    powerBracketEnd = 0.0
-    HRBracketStart = 0.0
-    HRBracketEnd = 0.0
-    powerTotal = 0.0
-    hrTotal = 0.0
-    numberOfValues = 0.0
-    maxCrediblePower = 0.0
-    maxProjectedPower = 0.0
-    VOMax = 0.0
+    bucketedLinearSeries.reset()
   }
 
   return {
