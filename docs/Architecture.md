@@ -13,6 +13,7 @@ The choice has been made to use JavaScript to build te application, as many comp
 ## Main functional components
 
 Data flow for the flywheel data
+
 ```mermaid
 sequenceDiagram
   participant clients
@@ -108,9 +109,7 @@ stateDiagram-v2
   Stopped --> [*]
 ```
 
-
 `Rower.js` inspects the flywheel behaviour on each impuls and translates it into the rower's state (i.e. 'WaitingForDrive', 'Drive', 'Recovery', 'Stopped') through a finite state machine and calculates the updated associated metrics (i.e. linear velocity, linear distance, power, etc.) for that specific phase transition. Aside temporal metrics (Linear Velocity, Power, etc.) it also maintains several absolute metrics (like total total linear distance travelled). It only updates metrics that can be updated meaningful, and it will not resend (potentially stale) data that isn't updated.
-
 
 ### Flywheel.js
 
