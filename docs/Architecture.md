@@ -66,7 +66,12 @@ Server.js orchestrates all information flows and starts/stops processes when nee
 stateDiagram-v2
     [*] --> WaitingForStart
     WaitingForStart --> Rowing: strokeState<br>is 'Drive'
-    Rowing --> Rowing: strokeState<br>is 'Drive' or 'Recovery'
+    state Rowing {
+        strokeState Drive --> strokeState Recovery
+        strokeState Drive --> strokeState Drive
+        strokeState Recovery --> strokeState Drive
+        strokeState Recovery --> strokeState Recovery
+    }
     Rowing --> Paused: strokeState<br>is 'WaitingForDrive'
     Paused --> Rowing: strokeState<br>is 'Drive'
     Rowing --> Stopped: session target<br>reached
