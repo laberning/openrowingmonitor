@@ -5,7 +5,23 @@
 import { test } from 'uvu'
 import * as assert from 'uvu/assert'
 
-import { createOLSLinearSeries } from './OLSLinearSeries.js'
+import { createFlywheel } from './Flywheel.js'
+
+// Test behaviour for no datapoints
+
+// Test behaviour for one datapoint
+
+// Test behaviour for perfect upgoing flank
+
+// Test behaviour for perfect downgoing flank
+
+// Test behaviour for perfect stroke
+
+// Test behaviour for noisy upgoing flank
+
+// Test behaviour for noisy downgoing flank
+
+// Test behaviour for noisy stroke
 
 test('Correct behaviour with an empty dataset', () => {
   const dataSeries = createOLSLinearSeries(3)
