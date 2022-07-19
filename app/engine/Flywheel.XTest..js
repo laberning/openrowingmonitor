@@ -23,8 +23,10 @@ import { createFlywheel } from './Flywheel.js'
 
 // Test behaviour for noisy stroke
 
+// Test behaviour after reset
+
 test('Correct behaviour with an empty dataset', () => {
-  const dataSeries = createOLSLinearSeries(3)
+  const dataSeries = createFlywheel(3)
   assert.ok(dataSeries.length() === 0, `Length should be 0, is ${dataSeries.length()}`)
   assert.ok(dataSeries.xAtSeriesBegin() === 0, `xAtSeriesBegin should be 0, is ${dataSeries.xAtSeriesBegin()}`)
   assert.ok(dataSeries.yAtSeriesBegin() === 0, `yAtSeriesBegin should be 0, is ${dataSeries.yAtSeriesBegin()}`)
@@ -44,7 +46,7 @@ test('Correct behaviour with an empty dataset', () => {
 })
 
 test('Behaviour on a series after single push', () => {
-  const dataSeries = createOLSLinearSeries(3)
+  const dataSeries = createFlywheel(3)
   dataSeries.push(5, 9)
   assert.ok(dataSeries.length() === 1, `Length should be 1, is ${dataSeries.length()}`)
   assert.ok(dataSeries.xAtSeriesBegin() === 5, `xAtSeriesBegin should be 5, is ${dataSeries.xAtSeriesBegin()}`)
@@ -65,7 +67,7 @@ test('Behaviour on a series after single push', () => {
 })
 
 test('Behaviour after two pushed values', () => {
-  const dataSeries = createOLSLinearSeries(3)
+  const dataSeries = createFlywheel(3)
   dataSeries.push(5, 9)
   dataSeries.push(3, 3)
   assert.ok(dataSeries.length() === 2, `Length should be 2, is ${dataSeries.length()}`)
@@ -87,7 +89,7 @@ test('Behaviour after two pushed values', () => {
 })
 
 test('Behaviour after three pushed values, filling the series', () => {
-  const dataSeries = createOLSLinearSeries(3)
+  const dataSeries = createFlywheel(3)
   dataSeries.push(5, 9)
   dataSeries.push(3, 3)
   dataSeries.push(4, 6)
@@ -110,7 +112,7 @@ test('Behaviour after three pushed values, filling the series', () => {
 })
 
 test('Behaviour after four pushed values, filling the series, but pushing the first out again', () => {
-  const dataSeries = createOLSLinearSeries(3)
+  const dataSeries = createFlywheel(3)
   dataSeries.push(5, 9)
   dataSeries.push(3, 3)
   dataSeries.push(4, 6)
@@ -134,7 +136,7 @@ test('Behaviour after four pushed values, filling the series, but pushing the fi
 })
 
 test('Behaviour after five pushed values, filling the series, but pushing the first two out again', () => {
-  const dataSeries = createOLSLinearSeries(3)
+  const dataSeries = createFlywheel(3)
   dataSeries.push(5, 9)
   dataSeries.push(3, 3)
   dataSeries.push(4, 6)
@@ -159,7 +161,7 @@ test('Behaviour after five pushed values, filling the series, but pushing the fi
 })
 
 test('Behaviour after five pushed values, filling the series, and resetting it', () => {
-  const dataSeries = createOLSLinearSeries(3)
+  const dataSeries = createFlywheel(3)
   dataSeries.push(5, 9)
   dataSeries.push(3, 3)
   dataSeries.push(4, 6)
@@ -185,7 +187,7 @@ test('Behaviour after five pushed values, filling the series, and resetting it',
 })
 
 test('Series with 5 elements, with 2 noisy datapoints', () => {
-  const dataSeries = createOLSLinearSeries(5)
+  const dataSeries = createFlywheel(5)
   dataSeries.push(5, 9)
   dataSeries.push(3, 2)
   dataSeries.push(4, 7)
