@@ -225,6 +225,7 @@ test('Rower function should deliver results close to the validation machine (Con
   // assertStrokeDistanceSumMatchesTotal(workoutEvaluator)
 })
 
+/*
 function assertPowerRange (evaluator, minPower, maxPower) {
   assert.ok(evaluator.getMinStrokePower() > minPower, `minimum stroke power should be above ${minPower}w, but is ${evaluator.getMinStrokePower()}w`)
   assert.ok(evaluator.getMaxStrokePower() < maxPower, `maximum stroke power should be below ${maxPower}w, but is ${evaluator.getMaxStrokePower()}w`)
@@ -237,5 +238,6 @@ function assertDistanceRange (evaluator, minDistance, maxDistance) {
 function assertStrokeDistanceSumMatchesTotal (evaluator) {
   assert.ok(evaluator.getDistanceSum().toFixed(2) === evaluator.getDistanceTotal().toFixed(2), `sum of distance of all strokes is ${evaluator.getDistanceSum().toFixed(2)}m, but total in last stroke is ${evaluator.getDistanceTotal().toFixed(2)}m`)
 }
+*/
 
 test.run()
