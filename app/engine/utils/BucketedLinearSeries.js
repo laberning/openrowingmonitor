@@ -30,7 +30,7 @@ function createBucketedLinearSeries (config) {
   function push (x, y) {
     maxX = Math.max(maxX, x)
     maxY = Math.max(maxY, y)
-    if ( (yBracketStart <= y) && (y <= yBracketEnd) && (xBracketStart <= x) && (x <= xBracketEnd) ) {
+    if ((yBracketStart <= y) && (y <= yBracketEnd) && (xBracketStart <= x) && (x <= xBracketEnd)) {
       // We are still in the same <x * y> bracket
       xTotal += x
       yTotal += y
