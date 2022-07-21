@@ -152,11 +152,11 @@ function createVoMax (config) {
   function averageObservedHR () {
     bucketedLinearSeries.averageEncounteredX()
   }
-  
+
   function maxObservedHR () {
     bucketedLinearSeries.maxEncounteredX()
   }
-  
+
   function reset () {
     bucketedLinearSeries.reset()
   }
