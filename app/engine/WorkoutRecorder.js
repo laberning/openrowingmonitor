@@ -156,12 +156,12 @@ function createWorkoutRecorder () {
                 // tcx uses meters per second as unit for speed
                 MaximumSpeed: (workout.strokes.map((stroke) => stroke.cycleLinearVelocity).reduce((acc, cycleLinearVelocity) => Math.max(acc, cycleLinearVelocity))).toFixed(2),
                 Calories: Math.round(lastStroke.totalCalories),
-                // ToDo Fix issue with undefined heartrate
+                /* ToDo Fix issue with conditional statement
                 if (lastStroke.heartrate !== undefined && lastStroke.heartrate > 30) {
-                  AverageHeartRateBpm: VOMax.averageHR(),
-                  MaximumHeartRateBpm: VOMax.maxHR(),
+                  AverageHeartRateBpm: VOMax.averageObservedHR(),
+                  MaximumHeartRateBpm: VOMax.maxObservedHR,
                 }
-                //
+                */
                 Intensity: 'Active',
                 Cadence: Math.round(workout.strokes.reduce((sum, s) => sum + s.cycleStrokeRate, 0) / (workout.strokes.length - 1)),
                 TriggerMethod: 'Manual',
