@@ -6,6 +6,7 @@
   everything together while figuring out the physics and model of the application.
   todo: refactor this as we progress
 */
+import os from 'os'
 import child_process from 'child_process'
 import { promisify } from 'util'
 import log from 'loglevel'
@@ -29,6 +30,18 @@ for (const [loggerName, logLevel] of Object.entries(config.loglevel)) {
 }
 
 log.info(`==== Open Rowing Monitor ${process.env.npm_package_version || ''} ====\n`)
+
+if (config.gpioPriority) {
+  // setting a higher (near-real-time?) priority for the main process, as we don't want to block the GPIO thread
+  const mainPriority = Math.min((config.gpioPriority + 2), 0)
+  log.debug(`Setting priority for the main server thread to ${mainPriority}`)
+  try {
+    // setting priority of current process
+    os.setPriority(mainPriority)
+  } catch (err) {
+    log.debug('need root permission to set priority of main server thread')
+  }
+}
 
 const session = { // a hook for setting session parameters that the rower has to obey
   targetDistance: 0,
