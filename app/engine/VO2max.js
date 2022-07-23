@@ -13,20 +13,13 @@ const log = loglevel.getLogger('RowingEngine')
 function createVoMax (config) {
   const bucketedLinearSeries = createBucketedLinearSeries(config)
   const minimumValidBrackets = 5.0
-  const minHR = 40
-  const maxHR = 186
-  const minPower = 90
-  const maxPower = 300
-  const weight = 97.4
-  const sex = 'male'
-  const highlyTrained = false
   const offset = 90
 
   function calculateVOMax (metrics) {
     let projectedVOTwoMax = 0
     let interpolatedVOTwoMax = 0
 
-    if (metrics[0].heartrate !== undefined && metrics[metrics.length - 1].heartrate !== undefined && metrics[metrics.length - 1].heartrate >= minHR) {
+    if (metrics[0].heartrate !== undefined && metrics[metrics.length - 1].heartrate !== undefined && metrics[metrics.length - 1].heartrate >= config.userSettings.restingHR) {
       projectedVOTwoMax = extrapolatedVOMax(metrics)
     }
 
@@ -68,7 +61,7 @@ function createVoMax (config) {
       i++
     }
     while (i < metrics.length) {
-      if (metrics[i].heartrate !== undefined && metrics[i].heartrate >= minHR && metrics[i].heartrate <= maxHR && metrics[i].cyclePower !== undefined && metrics[i].cyclePower >= minPower && metrics[i].cyclePower <= maxPower) {
+      if (metrics[i].heartrate !== undefined && metrics[i].heartrate >= config.userSettings.restingHR && metrics[i].heartrate <= config.userSettings.maxHR && metrics[i].cyclePower !== undefined && metrics[i].cyclePower >= config.userSettings.minPower && metrics[i].cyclePower <= config.userSettings.maxPower) {
         // The data looks credible, lets add it
         bucketedLinearSeries.push(metrics[i].heartrate, metrics[i].cyclePower)
       }
@@ -77,12 +70,12 @@ function createVoMax (config) {
 
     // All Datapoints have been added, now we determine the projected power
     if (bucketedLinearSeries.numberOfSamples() >= minimumValidBrackets) {
-      const projectedPower = bucketedLinearSeries.projectX(maxHR)
-      if (projectedPower <= maxPower && projectedPower >= bucketedLinearSeries.maxEncounteredY()) {
-        ProjectedVOTwoMax = ((14.72 * projectedPower) + 250.39) / weight
+      const projectedPower = bucketedLinearSeries.projectX(config.userSettings.maxHR)
+      if (projectedPower <= config.userSettings.maxPower && projectedPower >= bucketedLinearSeries.maxEncounteredY()) {
+        ProjectedVOTwoMax = ((14.72 * projectedPower) + 250.39) / config.userSettings.weight
         log.debug(`--- VO2Max Goodness of Fit: ${bucketedLinearSeries.goodnessOfFit().toFixed(6)}, projected power ${projectedPower.toFixed(1)} Watt, extrapolated VO2Max: ${ProjectedVOTwoMax.toFixed(1)}`)
       } else {
-        ProjectedVOTwoMax = ((14.72 * bucketedLinearSeries.maxEncounteredY()) + 250.39) / weight
+        ProjectedVOTwoMax = ((14.72 * bucketedLinearSeries.maxEncounteredY()) + 250.39) / config.userSettings.weight
         log.debug(`--- VO2Max maximum encountered power: ${bucketedLinearSeries.maxEncounteredY().toFixed(1)} Watt, extrapolated VO2Max: ${ProjectedVOTwoMax.toFixed(1)}`)
       }
     } else {
@@ -93,7 +86,7 @@ function createVoMax (config) {
   }
 
   function interpolatedVOMax (metrics) {
-    // This is  based on research done by concept2, https://www.concept2.com/indoor-rowers/training/calculators/vo2max-calculator,
+    // Thisis  based on research done by concept2, https://www.concept2.com/indoor-rowers/training/calculators/vo2max-calculator,
     // which determines the VO2Max based on the 2K speed
     const distance = metrics[metrics.length - 1].totalLinearDistance
     const time = metrics[metrics.length - 1].totalMovingTime
@@ -103,11 +96,11 @@ function createVoMax (config) {
 
     log.debug(`--- VO2Max Interpolated 2K pace: ${Math.floor(projectedTwoKPace / 60)}:${(projectedTwoKPace % 60).toFixed(1)}`)
     // This implements the table with formulas found at https://www.concept2.com/indoor-rowers/training/calculators/vo2max-calculator
-    if (highlyTrained) {
+    if (config.userSettings.highlyTrained) {
       // Highly trained
-      if (sex === 'male') {
+      if (config.userSettings.sex === 'male') {
         // Highly trained male
-        if (weight > 75) {
+        if (config.userSettings.weight > 75) {
           // Highly trained male, above 75 Kg
           Y = 15.7 - (1.5 * projectedTwoKTimeInMinutes)
         } else {
@@ -116,7 +109,7 @@ function createVoMax (config) {
         }
       } else {
         // Highly trained female
-        if (weight > 61.36) {
+        if (config.userSettings.weight > 61.36) {
           // Highly trained female, above 61.36 Kg
           Y = 14.9 - (1.5 * projectedTwoKTimeInMinutes)
         } else {
@@ -126,7 +119,7 @@ function createVoMax (config) {
       }
     } else {
       // Not highly trained
-      if (sex === 'male') {
+      if (config.userSettings.sex === 'male') {
         // Not highly trained male
         Y = 10.7 - (0.9 * projectedTwoKTimeInMinutes)
       } else {
@@ -134,7 +127,7 @@ function createVoMax (config) {
         Y = 10.26 - (0.93 * projectedTwoKTimeInMinutes)
       }
     }
-    return (Y * 1000) / weight
+    return (Y * 1000) / config.userSettings.weight
   }
 
   function interpolatePace (origintime, origindistance, targetdistance) {
@@ -149,7 +142,7 @@ function createVoMax (config) {
     }
   }
 
-  function averageObservedHR () {
+ function averageObservedHR () {
     bucketedLinearSeries.averageEncounteredX()
   }
 
