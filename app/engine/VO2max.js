@@ -78,12 +78,12 @@ function createVoMax (config) {
     // All Datapoints have been added, now we determine the projected power
     if (bucketedLinearSeries.numberOfSamples() >= minimumValidBrackets) {
       const projectedPower = bucketedLinearSeries.projectX(maxHR)
-      if (projectedPower <= maxPower && projectedPower < bucketedLinearSeries.maxEncounteredY()) {
+      if (projectedPower <= maxPower && projectedPower >= bucketedLinearSeries.maxEncounteredY()) {
         ProjectedVOTwoMax = ((14.72 * projectedPower) + 250.39) / weight
         log.debug(`--- VO2Max Goodness of Fit: ${bucketedLinearSeries.goodnessOfFit().toFixed(6)}, projected power ${projectedPower.toFixed(1)} Watt, extrapolated VO2Max: ${ProjectedVOTwoMax.toFixed(1)}`)
       } else {
         ProjectedVOTwoMax = ((14.72 * bucketedLinearSeries.maxEncounteredY()) + 250.39) / weight
-        log.debug(`--- VO2Max Goodness of Fit: ${bucketedLinearSeries.goodnessOfFit().toFixed(6)}, projected power ${projectedPower.toFixed(1)} Watt, extrapolated VO2Max: ${ProjectedVOTwoMax.toFixed(1)}`)
+        log.debug(`--- VO2Max maximum encountered power: ${bucketedLinearSeries.maxEncounteredY().toFixed(1)} Watt, extrapolated VO2Max: ${ProjectedVOTwoMax.toFixed(1)}`)
       }
     } else {
       log.debug(`--- VO2Max extrapolation failed as there were not enough valid brackets: ${bucketedLinearSeries.numberOfSamples()}`)
@@ -93,7 +93,7 @@ function createVoMax (config) {
   }
 
   function interpolatedVOMax (metrics) {
-    // Thisis  based on research done by concept2, https://www.concept2.com/indoor-rowers/training/calculators/vo2max-calculator,
+    // This is  based on research done by concept2, https://www.concept2.com/indoor-rowers/training/calculators/vo2max-calculator,
     // which determines the VO2Max based on the 2K speed
     const distance = metrics[metrics.length - 1].totalLinearDistance
     const time = metrics[metrics.length - 1].totalMovingTime
