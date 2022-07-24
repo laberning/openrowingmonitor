@@ -242,7 +242,7 @@ function createRowingStatistics (config, session) {
   function measureRecoveryHR () {
     // This function is called when the rowing session is stopped. postExerciseHR[0] is the last measured excercise HR
     // Thus postExerciseHR[1] is Recovery HR after 1 min, etc..
-    if (heartrate != undefined && heartrate > config.userSettings.restingHR && sessionStatus != 'Rowing') {
+    if (heartrate !== undefined && heartrate > config.userSettings.restingHR && sessionStatus !== 'Rowing') {
       log.debug(`*** HRR$${postExerciseHR.length}: ${heartrate}`)
       postExerciseHR.push(heartrate)
       if ((postExerciseHR.length > 1) && (postExerciseHR.length <= 4)) {
