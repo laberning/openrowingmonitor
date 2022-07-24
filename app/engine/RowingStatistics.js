@@ -43,6 +43,7 @@ function createRowingStatistics (config, session) {
   let dragFactor = config.rowerSettings.dragFactor
   let heartrate = 0
   let heartrateBatteryLevel = 0
+  let postExerciseHR = []
   let instantPower = 0.0
   let lastStrokeState = 'WaitingForDrive'
 
@@ -140,6 +141,7 @@ function createRowingStatistics (config, session) {
     // We need to emit the metrics BEFORE the sessionstatus changes to anything other than "Rowing", as it forces most merics to zero
     emitMetrics('rowingStopped')
     sessionStatus = 'Stopped'
+    measureRecoveryHR()
   }
 
   // clear the metrics in case the user pauses rowing
@@ -168,6 +170,7 @@ function createRowingStatistics (config, session) {
     cycleDuration.reset()
     cycleDistance.reset()
     cyclePower.reset()
+    postExerciseHR = []
     cycleLinearVelocity.reset()
     lastStrokeState = 'WaitingForDrive'
     emitMetrics('rowingPaused')
@@ -233,6 +236,23 @@ function createRowingStatistics (config, session) {
       return true
     } else {
       return false
+    }
+  }
+
+  function measureRecoveryHR () {
+    // This function is called when the rowing session is stopped. postExerciseHR[0] is the last measured excercise HR
+    // Thus postExerciseHR[1] is Recovery HR after 1 min, etc..
+    if (heartrate != undefined && heartrate > config.userSettings.restingHR && sessionStatus != 'Rowing') {
+      log.debug(`*** HRR$${postExerciseHR.length}: ${heartrate}`)
+      postExerciseHR.push(heartrate)
+      if ((postExerciseHR.length > 1) && (postExerciseHR.length <= 4)) {
+        // We skip reporting postExerciseHR[0] and only report measuring postExerciseHR[1], postExerciseHR[2], postExerciseHR[3]
+        emitter.emit('HRRecoveryUpdate', postExerciseHR)
+      }
+      if (postExerciseHR.length < 4) {
+        // We haven't got three post-exercise HR measurements yet, let's schedule the next measurement
+        setTimeout(measureRecoveryHR, 60000)
+      }
     }
   }
 
