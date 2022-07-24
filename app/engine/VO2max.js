@@ -142,7 +142,7 @@ function createVoMax (config) {
     }
   }
 
- function averageObservedHR () {
+  function averageObservedHR () {
     bucketedLinearSeries.averageEncounteredX()
   }
 
