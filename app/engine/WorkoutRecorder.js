@@ -18,6 +18,7 @@ const gzip = promisify(zlib.gzip)
 function createWorkoutRecorder () {
   let strokes = []
   let rotationImpulses = []
+  let postExerciseHR = []
   let startTime
 
   function recordRotationImpulse (impulse) {
@@ -134,11 +135,27 @@ function createWorkoutRecorder () {
     const lastStroke = workout.strokes[strokes.length - 1]
     const drag = workout.strokes.reduce((sum, s) => sum + s.dragFactor, 0) / strokes.length
 
+    // VO2Max calculation for the remarks section
     let vomaxoutput = 'UNDEFINED'
     const VOMax = createVoMax(config)
     const VOMaxResult = VOMax.calculateVOMax(strokes)
     if (VOMaxResult > 10 && VOMaxResult < 60) {
       vomaxoutput = `${VOMaxResult.toFixed(1)} mL/(kg*min)`
+    }
+
+    // Addition of HRR data
+    let hrrAdittion = ''
+    if (postExerciseHR.length > 1 && (postExerciseHR[0] > (0.7 * config.userSettings.maxHR))) {
+      // Recovery Heartrate is only defined when the last excercise HR is above 70% of the maximum Heartrate
+      if (postExerciseHR.length === 2) {
+        hrrAdittion = `, HRR1: ${postExerciseHR[1]} BPM (${postExerciseHR[1] - postExerciseHR[0]})`
+      }
+      if (postExerciseHR.length === 3) {
+        hrrAdittion = `, HRR1: ${postExerciseHR[1]} BPM (${postExerciseHR[1] - postExerciseHR[0]}), HRR2: ${postExerciseHR[2]} BPM (${postExerciseHR[2] - postExerciseHR[1]})`
+      }
+      if (postExerciseHR.length >= 4) {
+        hrrAdittion = `, HRR1: ${postExerciseHR[1]} BPM (${postExerciseHR[1] - postExerciseHR[0]}), HRR2: ${postExerciseHR[2]} BPM (${postExerciseHR[2] - postExerciseHR[1]}), HRR3: ${postExerciseHR[3]} BPM (${postExerciseHR[3] - postExerciseHR[2]})`
+      }
     }
 
     const tcxObject = {
@@ -153,13 +170,14 @@ function createWorkoutRecorder () {
                 $: { StartTime: workout.startTime.toISOString() },
                 TotalTimeSeconds: lastStroke.totalMovingTime.toFixed(1),
                 DistanceMeters: lastStroke.totalLinearDistance.toFixed(1),
-                // tcx uses meters per second as unit for speed
                 MaximumSpeed: (workout.strokes.map((stroke) => stroke.cycleLinearVelocity).reduce((acc, cycleLinearVelocity) => Math.max(acc, cycleLinearVelocity))).toFixed(2),
                 Calories: Math.round(lastStroke.totalCalories),
-                /* ToDo Fix issue with conditional statement
+                /* ToDo Fix issue with IF-statement not being accepted here?
                 if (lastStroke.heartrate !== undefined && lastStroke.heartrate > 30) {
                   AverageHeartRateBpm: VOMax.averageObservedHR(),
                   MaximumHeartRateBpm: VOMax.maxObservedHR,
+                  //AverageHeartRateBpm: { Value: (workout.strokes.reduce((sum, s) => sum + s.heartrate, 0) / workout.strokes.length).toFixed(2) },
+                  //MaximumHeartRateBpm: { Value: Math.round(workout.strokes.map((stroke) => stroke.power).reduce((acc, heartrate) => Math.max(acc, heartrate))) },
                 }
                 */
                 Intensity: 'Active',
@@ -198,7 +216,7 @@ function createWorkoutRecorder () {
                 }
               }
             ],
-            Notes: `Indoor Rowing, Drag factor: ${drag.toFixed(1)} 10-6 N*m*s2, Estimated VO2Max: ${vomaxoutput}`
+            Notes: `Indoor Rowing, Drag factor: ${drag.toFixed(1)} 10-6 N*m*s2, Estimated VO2Max: ${vomaxoutput}${hrrAdittion}`
           }
         },
         Author: {
@@ -226,6 +244,7 @@ function createWorkoutRecorder () {
     await createRecordings()
     strokes = []
     rotationImpulses = []
+    postExerciseHR = []
     startTime = undefined
   }
 
@@ -266,6 +285,11 @@ function createWorkoutRecorder () {
     await Promise.all(parallelCalls)
   }
 
+  async function updateHRRecovery (hrmetrics) {
+    postExerciseHR = hrmetrics
+    createTcxFile()
+  }
+
   function minimumRecordingTimeHasPassed () {
     const minimumRecordingTimeInSeconds = 10
     const rotationImpulseTimeTotal = rotationImpulses.reduce((acc, impulse) => acc + impulse, 0)
@@ -279,6 +303,7 @@ function createWorkoutRecorder () {
     handlePause,
     activeWorkoutToTcx,
     writeRecordings: createRecordings,
+    updateHRRecovery,
     reset
   }
 }
