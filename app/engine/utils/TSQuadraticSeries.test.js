@@ -9,6 +9,8 @@ import * as assert from 'uvu/assert'
 
 import { createTSQuadraticSeries } from './TSQuadraticSeries.js'
 
+// ToDo: Test startup behaviour
+
 test('Quadratic Approximation on a perfect noisefree function', () => {
   // Data based on 2 x^2 + 2 x + 2
   const dataSeries = createTSQuadraticSeries(21)
@@ -36,6 +38,7 @@ test('Quadratic Approximation on a perfect noisefree function', () => {
   assert.ok(dataSeries.coefficientA() === 2, `coefficientA should be 2, is ${dataSeries.coefficientA()}`)
   assert.ok(dataSeries.coefficientB() === 2, `coefficientB should be 2, is ${dataSeries.coefficientB()}`)
   assert.ok(dataSeries.coefficientC() === 2, `coefficientC should be 2, is ${dataSeries.coefficientC()}`)
+  // ToDo: Test after moving several points
 })
 
 test('Quadratic Approximation on a perfect noisefree function', () => {
@@ -119,8 +122,10 @@ test('Quadratic TS Estimation should be decent for standard real-life example wi
   assert.ok(dataSeries.coefficientC() === -35.802545604395675, `coefficientC should be -35.802545604395675, is ${dataSeries.coefficientC()}`) // In the example, the TI084 results in -21.89774466, which we consider acceptably close
 })
 
-// Test based on https://www.varsitytutors.com/hotmath/hotmath_help/topics/quadratic-regression
+// ToDo: Test based on https://www.varsitytutors.com/hotmath/hotmath_help/topics/quadratic-regression
 
-// Test based on https://www.thedatascientists.com/polynomial-regression/
+// ToDo: Test based on https://www.thedatascientists.com/polynomial-regression/
+
+// ToDo: Test after reset
 
 test.run()
