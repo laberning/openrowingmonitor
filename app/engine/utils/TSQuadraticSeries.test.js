@@ -119,4 +119,8 @@ test('Quadratic TS Estimation should be decent for standard real-life example wi
   assert.ok(dataSeries.coefficientC() === -35.802545604395675, `coefficientC should be -35.802545604395675, is ${dataSeries.coefficientC()}`) // In the example, the TI084 results in -21.89774466, which we consider acceptably close
 })
 
+// Test based on https://www.varsitytutors.com/hotmath/hotmath_help/topics/quadratic-regression
+
+// Test based on https://www.thedatascientists.com/polynomial-regression/
+
 test.run()
