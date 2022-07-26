@@ -148,13 +148,13 @@ function createWorkoutRecorder () {
     if (postExerciseHR.length > 1 && (postExerciseHR[0] > (0.7 * config.userSettings.maxHR))) {
       // Recovery Heartrate is only defined when the last excercise HR is above 70% of the maximum Heartrate
       if (postExerciseHR.length === 2) {
-        hrrAdittion = `, HRR1: ${postExerciseHR[1]} BPM (${postExerciseHR[1] - postExerciseHR[0]})`
+        hrrAdittion = `, HRR1: ${postExerciseHR[1] - postExerciseHR[0]} (${postExerciseHR[1]} BPM)`
       }
       if (postExerciseHR.length === 3) {
-        hrrAdittion = `, HRR1: ${postExerciseHR[1]} BPM (${postExerciseHR[1] - postExerciseHR[0]}), HRR2: ${postExerciseHR[2]} BPM (${postExerciseHR[2] - postExerciseHR[1]})`
+        hrrAdittion = `, HRR1: ${postExerciseHR[1] - postExerciseHR[0]} (${postExerciseHR[1]} BPM), HRR2: ${postExerciseHR[2] - postExerciseHR[1]} (${postExerciseHR[2]} BPM)`
       }
       if (postExerciseHR.length >= 4) {
-        hrrAdittion = `, HRR1: ${postExerciseHR[1]} BPM (${postExerciseHR[1] - postExerciseHR[0]}), HRR2: ${postExerciseHR[2]} BPM (${postExerciseHR[2] - postExerciseHR[1]}), HRR3: ${postExerciseHR[3]} BPM (${postExerciseHR[3] - postExerciseHR[2]})`
+        hrrAdittion = `, HRR1: ${postExerciseHR[1] - postExerciseHR[0]} (${postExerciseHR[1]} BPM), HRR2: ${postExerciseHR[2] - postExerciseHR[1]} (${postExerciseHR[2]} BPM), HRR3: ${postExerciseHR[3] - postExerciseHR[2]} (${postExerciseHR[3]} BPM)`
       }
     }
 
