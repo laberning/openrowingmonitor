@@ -15,7 +15,8 @@ const log = loglevel.getLogger('RowingEngine')
 
 function createRowingStatistics (config, session) {
   const numOfDataPointsForAveraging = config.numOfPhasesForAveragingScreenData
-  const webUpdateInterval = config.webUpdateInterval
+  const webUpdateInterval = Math.min(config.webUpdateInterval, 2000)
+  const peripheralUpdateInterval = Math.min(config.peripheralUpdateInterval, 1000)
   const emitter = new EventEmitter()
   const rower = createRower(config.rowerSettings)
   const minimumStrokeTime = config.rowerSettings.minimumRecoveryTime + config.rowerSettings.minimumDriveTime
@@ -53,7 +54,7 @@ function createRowingStatistics (config, session) {
   // notify bluetooth peripherall each second (even if data did not change)
   // todo: the FTMS protocol also supports that peripherals deliver a preferred update interval
   // we could respect this and set the update rate accordingly
-  setInterval(emitPeripheralMetrics, 1000)
+  setInterval(emitPeripheralMetrics, peripheralUpdateInterval)
 
   function handleRotationImpulse (currentDt) {
     // Provide the rower with new data
@@ -307,7 +308,7 @@ function createRowingStatistics (config, session) {
 
   // converts a timeStamp in seconds to a human readable hh:mm:ss format
   function secondsToTimeString (secondsTimeStamp) {
-    if (secondsTimeStamp === Infinity) return 'âˆž'
+    if (secondsTimeStamp === Infinity) return '∞'
     const hours = Math.floor(secondsTimeStamp / 60 / 60)
     const minutes = Math.floor(secondsTimeStamp / 60) - (hours * 60)
     const seconds = Math.floor(secondsTimeStamp % 60)
