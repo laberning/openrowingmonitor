@@ -35,7 +35,7 @@ function createTSQuadraticSeries (maxSeriesLength = 0) {
   function push (x, y) {
     X.push(x)
     Y.push(y)
-    A.push(Mat.pow(x, 2), y)
+    A.push(Math.pow(x, 2), y)
 
     // Invariant: the indices of the X and Y array now match up with the
     // row numbers of the A array. So, the A of (X[0],Y[0]) and (X[1],Y[1]
@@ -183,37 +183,8 @@ function createTSQuadraticSeries (maxSeriesLength = 0) {
     A.shift()
   }
 
-  function calculateA (pointOne, pointTwo, pointThree) {
-    if (pointOne < pointTwo && pointTwo < pointThree && X.get(pointOne) !== X.get(pointTwo) && X.get(pointTwo) !== X.get(pointThree) && X.get(pointOne) !== X.get(pointThree)) {
-      return (X.get(pointThree) * (Y.get(pointTwo) - Y.get(pointOne)) + X.get(pointTwo) * (Y.get(pointOne) - Y.get(pointThree)) + X.get(pointOne) * (Y.get(pointThree) - Y.get(pointTwo))) / ((X.get(pointOne) - X.get(pointTwo)) * (X.get(pointOne) - X.get(pointThree)) * (X.get(pointTwo) - X.get(pointThree)))
-    } else {
-      log.error('TS Quadratic Regressor, Division by zero prevented in CalculateA!')
-      return 0
-    }
-  }
-
-  function calculateB (pointOne, pointTwo) {
-    if (pointOne < pointTwo && X.get(pointOne) !== X.get(pointTwo)) {
-      return ((Y.get(pointTwo) - _A * Math.pow(X.get(pointTwo), 2)) - (Y.get(pointOne) - _A * Math.pow(X.get(pointOne), 2))) / (X.get(pointTwo) - X.get(pointOne))
-    } else {
-      log.error('TS Quadratic Regressor, Division by zero prevented in CalculateB!')
-      return 0
-    }
-  }
-
   function calculateC (pointOne) {
     return Y.get(pointOne) - _A * Math.pow(X.get(pointOne), 2) - _B * X.get(pointOne)
-  }
-
-  function Amedian () {
-    if (A.length > 1) {
-      const sortedArray = [...A.flat()].sort((a, b) => a - b)
-      const mid = Math.floor(sortedArray.length / 2)
-      return (sortedArray.length % 2 !== 0 ? sortedArray[mid] : ((sortedArray[mid - 1] + sortedArray[mid]) / 2))
-    } else {
-      log.error('TS Quadratic Regressor, Median calculation on empty dataset attempted!')
-      return 0
-    }
   }
 
   function reset () {
