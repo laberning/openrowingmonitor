@@ -19,6 +19,7 @@
 */
 
 import { createSeries } from './Series.js'
+import { createTSLinearSeries } from './TSLinearSeries.js'
 
 import loglevel from 'loglevel'
 const log = loglevel.getLogger('RowingEngine')
@@ -26,61 +27,36 @@ const log = loglevel.getLogger('RowingEngine')
 function createTSQuadraticSeries (maxSeriesLength = 0) {
   const X = createSeries(maxSeriesLength)
   const Y = createSeries(maxSeriesLength)
-  const A = []
-  const B = createSeries()
+  const A = createTSLinearSeries(maxSeriesLength)
+  const B = createTSLinearSeries(maxSeriesLength)
   let _A = 0
   let _B = 0
 
   function push (x, y) {
     X.push(x)
     Y.push(y)
-
-    if (maxSeriesLength > 0 && A.length >= maxSeriesLength) {
-      // The maximum of the array has been reached, we have to create room
-      // in the 2D array by removing the first row from the table
-      removeFirstRow()
-    }
+    A.push(Mat.pow(x, 2), y)
 
     // Invariant: the indices of the X and Y array now match up with the
     // row numbers of the A array. So, the A of (X[0],Y[0]) and (X[1],Y[1]
     // will be stored in A[0][.].
 
-    // Calculate the slopes of this new point
+    // Calculate the quadratic element of this new point
     if (X.length() > 2) {
-      // There are at least two points in the X and Y arrays, so let's add the new datapoint
-      let i = 0
-      let result = 0
-      let mid = 0
-      while (i < X.length() - 2) {
-        mid = Math.floor((i + A.length) / 2)
-        result = calculateA(i, mid, A.length)
-        A[i].push(result)
-        i++
-      }
-      _A = Amedian()
+      _A = A.slope()
     } else {
       _A = 0
     }
-
-    // Add an empty array at the end to store futurs results for the most recent points
-    A.push([])
 
     B.reset()
     if (X.length() > 2) {
       // There are at least two points in the X and Y arrays, so let's add the new datapoint
       let i = 0
-      let j = 0
-      let result = 0
-      while (i < X.length() - 1) {
-        j = i + 1
-        while (j < X.length() - 1) {
-          result = calculateB(i, j)
-          B.push(result)
-          j++
-        }
+      while (i <= X.length() - 1) {
+        B.push(x, y - (_A * Math.pow(x, 2)))
         i++
       }
-      _B = B.median()
+      _B = B.slope()
     } else {
       _B = 0
     }
