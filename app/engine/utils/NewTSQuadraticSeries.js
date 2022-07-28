@@ -21,9 +21,6 @@
 import { createSeries } from './Series.js'
 import { createTSLinearSeries } from './TSLinearSeries.js'
 
-import loglevel from 'loglevel'
-const log = loglevel.getLogger('RowingEngine')
-
 function createTSQuadraticSeries (maxSeriesLength = 0) {
   const X = createSeries(maxSeriesLength)
   const Y = createSeries(maxSeriesLength)
@@ -177,10 +174,6 @@ function createTSQuadraticSeries (maxSeriesLength = 0) {
 
   function ySeries () {
     return Y.series()
-  }
-
-  function removeFirstRow () {
-    A.shift()
   }
 
   function calculateC (pointOne) {
