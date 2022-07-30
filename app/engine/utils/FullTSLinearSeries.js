@@ -23,7 +23,7 @@ import { createSeries } from './Series.js'
 import loglevel from 'loglevel'
 const log = loglevel.getLogger('RowingEngine')
 
-function createTSLinearSeries (maxSeriesLength = 0) {
+function createFullTSLinearSeries (maxSeriesLength = 0) {
   const X = createSeries(maxSeriesLength)
   const Y = createSeries(maxSeriesLength)
   const slopes = new Array()
@@ -212,4 +212,4 @@ function createTSLinearSeries (maxSeriesLength = 0) {
   }
 }
 
-export { createTSLinearSeries }
+export { createFullTSLinearSeries }
