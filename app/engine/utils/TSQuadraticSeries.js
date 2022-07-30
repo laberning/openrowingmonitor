@@ -13,7 +13,9 @@
   array based curve fitting), which might be performed on a Pi zero
 
   This implementation uses concepts that are described here:
-  https://stats.stackexchange.com/questions/317777/theil-sen-estimator-for-polynomial
+  https://stats.stackexchange.com/questions/317777/theil-sen-estimator-for-polynomial,
+  https://math.stackexchange.com/questions/710750/find-a-second-degree-polynomial-that-goes-through-3-points
+  https://www.physicsforums.com/threads/quadratic-equation-from-3-points.404174/
 
   The array is ordered such that x[0] is the oldest, and x[x.length-1] is the youngest
 */
