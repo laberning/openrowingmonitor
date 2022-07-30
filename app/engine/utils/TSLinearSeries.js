@@ -4,7 +4,7 @@
 
   The TSLinearSeries is a datatype that represents a Linear Series. It allows
   values to be retrieved (like a FiFo buffer, or Queue) but it also includes
-  a Theilâ€“Sen estimator Linear Regressor to determine the slope of this timeseries.
+  an incomplete Theil-Sen Linear Regression estimator to determine the slope of this timeseries.
 
   At creation its length is determined. After it is filled, the oldest will be pushed
   out of the queue) automatically.
