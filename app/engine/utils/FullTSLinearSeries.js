@@ -26,7 +26,7 @@ const log = loglevel.getLogger('RowingEngine')
 function createFullTSLinearSeries (maxSeriesLength = 0) {
   const X = createSeries(maxSeriesLength)
   const Y = createSeries(maxSeriesLength)
-  const slopes = new Array()
+  const slopes = []
 
   let _slope = 0
   let _intercept = 0
@@ -154,16 +154,14 @@ function createFullTSLinearSeries (maxSeriesLength = 0) {
   }
 
   function removeFirstRow () {
-    //slopes[0].splice(0, slopes[0].length)
     slopes.shift()
   }
 
-  function calculateSlope(pointOne, pointTwo) {
+  function calculateSlope (pointOne, pointTwo) {
     if (pointOne !== pointTwo && X.get(pointOne) !== X.get(pointTwo)) {
-      //log.debug(`>>> ${pointOne}, ${pointTwo}`)
       return ((Y.get(pointTwo) - Y.get(pointOne)) / (X.get(pointTwo) - X.get(pointOne)))
     } else {
-      log.error(`TS Linear Regressor, Division by zero prevented!`)
+      log.error('TS Linear Regressor, Division by zero prevented!')
       return 0
     }
   }
@@ -174,12 +172,12 @@ function createFullTSLinearSeries (maxSeriesLength = 0) {
       const mid = Math.floor(sortedArray.length / 2)
       return (sortedArray.length % 2 !== 0 ? sortedArray[mid] : ((sortedArray[mid - 1] + sortedArray[mid]) / 2))
     } else {
-      log.eror(`TS Linear Regressor, Median calculation on empty dataset attempted!`)
+      log.eror('TS Linear Regressor, Median calculation on empty dataset attempted!')
       return 0
     }
   }
 
-  function reset() {
+  function reset () {
     X.reset()
     Y.reset()
     slopes.splice(0, slopes.length)
