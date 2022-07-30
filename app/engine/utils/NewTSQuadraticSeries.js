@@ -2,9 +2,9 @@
 /*
   Open Rowing Monitor, https://github.com/jaapvanekris/openrowingmonitor
 
-  The TSLinearSeries is a datatype that represents a Linear Series. It allows
-  values to be retrieved (like a FiFo buffer, or Queue) but it also includes
-  a Theil-Sen estimator Linear Regressor to determine the slope of this timeseries.
+  The TSQuadraticSeries is a datatype that represents a 2nd polynomial (quadratic) Series.
+  It allows values to be retrieved (like a FiFo buffer, or Queue) but it also includes
+  a Quadratic Theil-Sen estimator (Regression method) to determine the slope of this timeseries.
 
   At creation its length is determined. After it is filled, the oldest will be pushed
   out of the queue) automatically.
