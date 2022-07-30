@@ -19,13 +19,13 @@
 */
 
 import { createSeries } from './Series.js'
-import { createTSLinearSeries } from './TSLinearSeries.js'
+import { createFullTSLinearSeries } from './FullTSLinearSeries.js'
 
 function createTSQuadraticSeries (maxSeriesLength = 0) {
   const X = createSeries(maxSeriesLength)
   const Y = createSeries(maxSeriesLength)
-  const A = createTSLinearSeries(maxSeriesLength)
-  const B = createTSLinearSeries(maxSeriesLength)
+  const A = createFullTSLinearSeries(maxSeriesLength)
+  const B = createFullTSLinearSeries(maxSeriesLength)
   let _A = 0
   let _B = 0
 
