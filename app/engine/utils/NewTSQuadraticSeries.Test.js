@@ -170,7 +170,7 @@ test('Quadratic TS Estimation should be decent for standard real-life example fr
   assert.ok(dataSeries.coefficientC() === 0.39999999999999947, `coefficientC should be 0.39999999999999947, is ${dataSeries.coefficientC()}`) // The example results in 0.5714 for OLS, which we consider acceptably close
 })
 
-test('Quadratic TS Estimation should be decent for standard real-life example from TheDataScientist with some noise without the vertex being part of the dataset', () => {
+test('Quadratic TS Estimation should be decent for standard real-life example from Unii Berlin with some noise without the vertex being part of the dataset', () => {
   // Test based on https://www.geo.fu-berlin.de/en/v/soga/Basics-of-statistics/Linear-Regression/Polynomial-Regression/Polynomial-Regression---An-example/index.html
   const dataSeries = createTSQuadraticSeries(25)
   dataSeries.push(0.001399613, -0.23436656)
