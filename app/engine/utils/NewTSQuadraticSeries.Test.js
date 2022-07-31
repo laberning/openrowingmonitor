@@ -101,7 +101,7 @@ test('Quadratic Approximation on a function with some noise (+/- 1)', () => {
   assert.ok(dataSeries.coefficientC() === 3, `coefficientC should be 3, is ${dataSeries.coefficientC()}`) // We get a 3 instead of 4, which is quite acceptable (especially since ORM ignores the C)
 })
 
-test('Quadratic TS Estimation should be decent for standard real-life example with some noise', () => {
+test('Quadratic TS Estimation should be decent for standard real-life example from MathBits with some noise', () => {
   // Data based on https://mathbits.com/MathBits/TISection/Statistics2/quadratic.html
   const dataSeries = createTSQuadraticSeries(13)
   dataSeries.push(10, 115.6)
@@ -122,9 +122,33 @@ test('Quadratic TS Estimation should be decent for standard real-life example wi
   assert.ok(dataSeries.coefficientC() === -35.802545604395675, `coefficientC should be -35.802545604395675, is ${dataSeries.coefficientC()}`) // In the example, the TI084 results in -21.89774466, which we consider acceptably close
 })
 
-// ToDo: Test based on https://www.varsitytutors.com/hotmath/hotmath_help/topics/quadratic-regression
+test('Quadratic TS Estimation should be decent for standard real-life example from VarsityTutors with some noise', () => {
+  // Test based on https://www.varsitytutors.com/hotmath/hotmath_help/topics/quadratic-regression
+  const dataSeries = createTSQuadraticSeries(7)
+  dataSeries.push(-3, 7.5)
+  dataSeries.push(-2, 3)
+  dataSeries.push(-1, 0.5)
+  dataSeries.push(0, 1)
+  dataSeries.push(1, 3)
+  dataSeries.push(2, 6)
+  dataSeries.push(3, 14)
+  assert.ok(dataSeries.coefficientA() === 1.1071, `coefficientA should be 1.1071, is ${dataSeries.coefficientA()}`) // The example results in 1.1071, which we consider acceptably close
+  assert.ok(dataSeries.coefficientB() === 1, `coefficientB should be 1, is ${dataSeries.coefficientB()}`) // The example results in 1, which we consider acceptably close
+  assert.ok(dataSeries.coefficientC() === 0.5714, `coefficientC should be 0.5714, is ${dataSeries.coefficientC()}`) // The example results in 0.5714, which we consider acceptably close
+})
 
-// ToDo: Test based on https://www.thedatascientists.com/polynomial-regression/
+test('Quadratic TS Estimation should be decent for standard real-life example from TheDataScientist with some noise without the vertex being part of the dataset', () => {
+  // Test based on Test based on https://www.thedatascientists.com/polynomial-regression/
+  const dataSeries = createTSQuadraticSeries(5)
+  dataSeries.push(1, -7.5)
+  dataSeries.push(2, -15.6)
+  dataSeries.push(3.5, -40.5)
+  dataSeries.push(5, -80.7)
+  dataSeries.push(6.2, -123.876)
+  assert.ok(dataSeries.coefficientA() === 0, `coefficientA should be 1.1071, is ${dataSeries.coefficientA()}`) // The example results in 0, which we consider acceptably close
+  assert.ok(dataSeries.coefficientB() === 0, `coefficientB should be 1, is ${dataSeries.coefficientB()}`) // The example results in , which we consider acceptably close
+  assert.ok(dataSeries.coefficientC() === 0, `coefficientC should be 0.5714, is ${dataSeries.coefficientC()}`) // The example results in 0.5714, which we consider acceptably close
+})
 
 // ToDo: Test after reset
 
