@@ -213,7 +213,7 @@ function createTSQuadraticSeries (maxSeriesLength = 0) {
     // For the underlying math, see https://math.stackexchange.com/questions/710750/find-a-second-degree-polynomial-that-goes-through-3-points
     // and https://www.physicsforums.com/threads/quadratic-equation-from-3-points.404174/
     if (pointOne < pointTwo && pointTwo < pointThree && X.get(pointOne) !== X.get(pointTwo) && X.get(pointTwo) !== X.get(pointThree) && X.get(pointOne) !== X.get(pointThree)) {
-      return (X.get(pointThree) * (Y.get(pointTwo) - Y.get(pointOne)) + X.get(pointTwo) * (Y.get(pointOne) - Y.get(pointThree)) + X.get(pointOne) * (Y.get(pointThree) - Y.get(pointTwo))) / ((X.get(pointOne) - X.get(pointTwo)) * (X.get(pointOne) - X.get(pointThree)) * (X.get(pointTwo) - X.get(pointThree)))
+      return (X.get(pointOne) * (Y.get(pointTwo) - Y.get(pointThree)) + X.get(pointThree) * (Y.get(pointOne) - Y.get(pointTwo)) + X.get(pointTwo) * (Y.get(pointThree) - Y.get(pointOne)) / ((X.get(pointThree) - X.get(pointTwo)) * Math.pow(X.get(pointOne), 2) + X.get(pointOne) * (Math.pow(X.get(pointTwo), 2) - Math.pow(X.get(pointThree), 2))  + (X.get(pointTwo) * Math.pow(X.get(pointThree), 2) - X.get(pointThree) * Math.pow(X.get(pointTwo), 2)))
     } else {
       log.error('TS Quadratic Regressor, Division by zero prevented in CalculateA!')
       return 0
