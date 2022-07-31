@@ -203,6 +203,21 @@ test('Quadratic TS Estimation should be decent for standard real-life example fr
   assert.ok(dataSeries.coefficientC() === 0.11864001198418168, `coefficientC should be 0.11864001198418168, is ${dataSeries.coefficientC()}`)
 })
 
+test('Quadratic TS Estimation should result in a line for y = x (edge case!)', () => {
+  // As ORM might encounter straight lines, we need to test this as well
+  const dataSeries = createTSQuadraticSeries(7)
+  dataSeries.push(0, 0)
+  dataSeries.push(1, 1)
+  dataSeries.push(2, 2)
+  dataSeries.push(3, 3)
+  dataSeries.push(4, 4)
+  dataSeries.push(5, 5)
+  dataSeries.push(6, 6)
+  assert.ok(dataSeries.coefficientA() === 0, `coefficientA should be 0, is ${dataSeries.coefficientA()}`)
+  assert.ok(dataSeries.coefficientB() === 1, `coefficientB should be 1, is ${dataSeries.coefficientB()}`)
+  assert.ok(dataSeries.coefficientC() === 0, `coefficientC should be 0, is ${dataSeries.coefficientC()}`)
+})
+
 // ToDo: Test after reset
 
 test.run()
