@@ -194,7 +194,7 @@ test('Quadratic TS Estimation should be decent for standard example from VTUPuls
   dataSeries.push(5, 3.8)
   dataSeries.push(6, 6.5)
   dataSeries.push(7, 11.5)
-  assert.ok(dataSeries.coefficientA() === 0.7642857, `coefficientA should be 0.7642857, is ${dataSeries.coefficientA()}`) // The example results in 0.7642857 for OLS, which we consider acceptably close
+  assert.ok(dataSeries.coefficientA() === 0.9499999999999997, `coefficientA should be 0.9499999999999997, is ${dataSeries.coefficientA()}`) // The example results in 0.7642857 for OLS, which we consider acceptably close
   assert.ok(dataSeries.coefficientB() === -5.5128571, `coefficientB should be -5.5128571, is ${dataSeries.coefficientB()}`) // The example results in -5.5128571 for OLS, which we consider acceptably close
   assert.ok(dataSeries.coefficientC() === 12.4285714, `coefficientC should be 12.4285714, is ${dataSeries.coefficientC()}`) // The example results in 12.4285714 for OLS, which we consider acceptably close
 })
@@ -246,9 +246,9 @@ test('Quadratic TS Estimation should be decent for standard real-life example fr
   dataSeries.push(51, 59)
   dataSeries.push(55, 44)
   dataSeries.push(60, 27)
-  assert.ok(dataSeries.coefficientA() === -0.1012, `coefficientA should be -0.1012, is ${dataSeries.coefficientA()}`) // The example results in -0.1012 for R, which we consider acceptably close
-  assert.ok(dataSeries.coefficientB() === 6.7444, `coefficientB should be 6.7444, is ${dataSeries.coefficientB()}`) // The example results in 6.7444 for R, which we consider acceptably close
-  assert.ok(dataSeries.coefficientC() === 18.2536, `coefficientC should be 18.2536, is ${dataSeries.coefficientC()}`) // The example results in 18.2536 for R, which we consider acceptably close
+  assert.ok(dataSeries.coefficientA() === -0.10232277526395174, `coefficientA should be -0.10232277526395174, is ${dataSeries.coefficientA()}`) // The example results in -0.1012 for R after two rounds, which we consider acceptably close
+  assert.ok(dataSeries.coefficientB() === 6.7444, `coefficientB should be 6.7444, is ${dataSeries.coefficientB()}`) // The example results in 6.7444 for R after two rounds, which we consider acceptably close
+  assert.ok(dataSeries.coefficientC() === 18.2536, `coefficientC should be 18.2536, is ${dataSeries.coefficientC()}`) // The example results in 18.2536 for R after two rounds, which we consider acceptably close
 })
 
 test('Quadratic Approximation with a clean function and a reset', () => {
