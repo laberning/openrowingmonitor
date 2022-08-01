@@ -118,19 +118,22 @@ function createTSQuadraticSeries (maxSeriesLength = 0) {
 
   function coefficientC () {
     const C = createSeries()
-    let i = 0
-    let result = 0
-    while (i < X.length() - 1) {
-      result = calculateC(i)
-      C.push(result)
-      i++
+    if (X.length() > 2) {
+      let i = 0
+      let result = 0
+      while (i < X.length() - 1) {
+        result = calculateC(i)
+        C.push(result)
+        i++
+      }
+      return C.median()
+    } else {
+      return 0
     }
-    return C.median()
   }
 
   function intercept () {
-    return 0
-    // ToDo: calculate y-intercept
+    return coefficientC()
   }
 
   function length () {
