@@ -151,7 +151,6 @@ test('Quadratic Approximation on a function with some noise (+/- 1)', () => {
   assert.ok(dataSeries.coefficientC() === 3, `coefficientC should be 3, is ${dataSeries.coefficientC()}`) // We get a 3 instead of 4, which is quite acceptable (especially since ORM ignores the C)
 })
 
-
 test('Quadratic Approximation on a function with some noise (+/- 1) and spikes (+/- 10)', () => {
   // Data based on 4 x^2 + 4 x + 4
   const dataSeries = createTSQuadraticSeries(11)
