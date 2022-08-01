@@ -150,6 +150,78 @@ test('Quadratic Approximation on a function with some noise (+/- 1)', () => {
   assert.ok(dataSeries.coefficientC() === 3, `coefficientC should be 3, is ${dataSeries.coefficientC()}`) // We get a 3 instead of 4, which is quite acceptable (especially since ORM ignores the C)
 })
 
+test('Quadratic Approximation on a function with some noise (+/- 1) and spikes (+/- 10)', () => {
+  // Data based on 4 x^2 + 4 x + 4
+  const dataSeries = createTSQuadraticSeries(11)
+  dataSeries.push(-11, 443)
+  dataSeries.push(-10, 365)
+  dataSeries.push(-9, 291)
+  dataSeries.push(-8, 229)
+  dataSeries.push(-7, 171)
+  dataSeries.push(-6, 125)
+  dataSeries.push(-5, 83)
+  dataSeries.push(-4, 53)
+  assert.ok(dataSeries.coefficientA() === 4, `coefficientA should be 4 after 8 datapoints, is ${dataSeries.coefficientA()}`)
+  assert.ok(dataSeries.coefficientB() === 4, `coefficientB should be 4 after 8 datapoints, is ${dataSeries.coefficientB()}`)
+  assert.ok(dataSeries.coefficientC() === 3, `coefficientC should be 3 after 8 datapoints, is ${dataSeries.coefficientC()}`) // We get a 3 instead of 4, which is quite acceptable (especially since ORM ignores the C)
+  dataSeries.push(-3, 37)
+  assert.ok(dataSeries.coefficientA() === 4.133333333333334, `coefficientA should be 4.133333333333334 after 9 datapoints (first spike), is ${dataSeries.coefficientA()}`) // Coefficient A seems to take a hit anyway
+  assert.ok(dataSeries.coefficientB() === 6.133333333333337, `coefficientB should be 6.133333333333337 after 9 datapoints (first spike), is ${dataSeries.coefficientB()}`) // Coefficient B seems to take a hit anyway
+  assert.ok(dataSeries.coefficientC() === 11.400000000000018, `coefficientC should remain 11.400000000000018 after 9 datapoints (first spike), is ${dataSeries.coefficientC()}`) // We get a 11.4 instead of 4, which is quite acceptable (especially since ORM ignores the C)
+  dataSeries.push(-2, 3)
+  assert.ok(dataSeries.coefficientA() === 4, `coefficientA should remain 4 after 10 datapoints (second spike), is ${dataSeries.coefficientA()}`)
+  assert.ok(dataSeries.coefficientB() === 4.142857142857142, `coefficientB should be 4.142857142857142 after 10 datapoints (second spike), is ${dataSeries.coefficientB()}`) // Coefficient B seems to take a hit anyway
+  assert.ok(dataSeries.coefficientC() === 5.571428571428569, `coefficientC should be 5.571428571428569 after 10 datapoints (second spike), is ${dataSeries.coefficientC()}`) // We get 5.571428571428569 instead of 4, which is quite acceptable (especially since ORM ignores the C)
+  dataSeries.push(-1, 3)
+  assert.ok(dataSeries.coefficientA() === 3.9555555555555557, `coefficientA should be 3.9555555555555557 after 11 datapoints, is ${dataSeries.coefficientA()}`) // Coefficient A seems to take a hit anyway
+  assert.ok(dataSeries.coefficientB() === 3.37777777777778, `coefficientB should be 3.37777777777778 after 11 datapoints, is ${dataSeries.coefficientB()}`) // Coefficient B seems to take a hit anyway
+  assert.ok(dataSeries.coefficientC() === 2.1999999999999957, `coefficientC should be 2.1999999999999957 after 11 datapoints, is ${dataSeries.coefficientC()}`) // We get a 2.1999999999999957 instead of 4, which is quite acceptable (especially since ORM ignores the C)
+  dataSeries.push(0, 5)
+  assert.ok(dataSeries.coefficientA() === 4, `coefficientA should remain 4 after 12 datapoints, is ${dataSeries.coefficientA()}`)
+  assert.ok(dataSeries.coefficientB() === 4, `coefficientB should remain 4 after 12 datapoints, is ${dataSeries.coefficientB()}`)
+  assert.ok(dataSeries.coefficientC() === 4, `coefficientC should remain 4 after 12 datapoints, is ${dataSeries.coefficientC()}`) // We get a 3 instead of 4, which is quite acceptable (especially since ORM ignores the C)
+  dataSeries.push(1, 11)
+  assert.ok(dataSeries.coefficientA() === 3.92, `coefficientA should be 3.92 after 13 datapoints, is ${dataSeries.coefficientA()}`) // Coefficient A seems to take a hit anyway
+  assert.ok(dataSeries.coefficientB() === 3.3599999999999968, `coefficientB should be 3.3599999999999968 after 13 datapoints, is ${dataSeries.coefficientB()}`) // Coefficient B seems to take a hit anyway
+  assert.ok(dataSeries.coefficientC() === 3.719999999999988, `coefficientC should be 3.719999999999988 after 13 datapoints, is ${dataSeries.coefficientC()}`) // We get a 3.719999999999988 instead of 4, which is quite acceptable (especially since ORM ignores the C)
+  dataSeries.push(2, 29)
+  assert.ok(dataSeries.coefficientA() === 3.9047619047619047, `coefficientA should be 3.9047619047619047 after 14 datapoints, is ${dataSeries.coefficientA()}`) // Coefficient A seems to take a hit anyway
+  assert.ok(dataSeries.coefficientB() === 3.238095238095236, `coefficientB should be 3.238095238095236 after 14 datapoints, is ${dataSeries.coefficientB()}`) // Coefficient B seems to take a hit anyway
+  assert.ok(dataSeries.coefficientC() === 3.6666666666666643, `coefficientC should be 3.6666666666666643 after 14 datapoints, is ${dataSeries.coefficientC()}`) // We get a 3 instead of 4, which is quite acceptable (especially since ORM ignores the C)
+  dataSeries.push(3, 51)
+  assert.ok(dataSeries.coefficientA() === 3.9047619047619047, `coefficientA should be 3.9047619047619047 after 15 datapoints, is ${dataSeries.coefficientA()}`) // Coefficient A still takes a hit
+  assert.ok(dataSeries.coefficientB() === 3.6190476190476164, `coefficientB should be 3.6190476190476164 after 15 datapoints, is ${dataSeries.coefficientB()}`) // Coefficient B still takes a hit
+  assert.ok(dataSeries.coefficientC() === 4.999999999999996, `coefficientC should be 4.999999999999996 after 15 datapoints, is ${dataSeries.coefficientC()}`) // We get a 4.999999999999996 instead of 4, which is quite acceptable (especially since ORM ignores the C)
+  dataSeries.push(4, 85)
+  assert.ok(dataSeries.coefficientA() === 4.044444444444444, `coefficientA should remain 4.044444444444444 after 16 datapoints, is ${dataSeries.coefficientA()}`) // Coefficient A still takes a hit
+  assert.ok(dataSeries.coefficientB() === 4, `coefficientB should remain 4 after 16 datapoints, is ${dataSeries.coefficientB()}`)
+  assert.ok(dataSeries.coefficientC() === 3.1777777777777807, `coefficientC should remain 3.1777777777777807 after 16 datapoints, is ${dataSeries.coefficientC()}`) // We get a 3.1777777777777807 instead of 4, which is quite acceptable (especially since ORM ignores the C)
+  dataSeries.push(5, 123)
+  assert.ok(dataSeries.coefficientA() === 4, `coefficientA should remain 4 after 17 datapoints, is ${dataSeries.coefficientA()}`)
+  assert.ok(dataSeries.coefficientB() === 4, `coefficientB should remain 4 after 17 datapoints, is ${dataSeries.coefficientB()}`)
+  assert.ok(dataSeries.coefficientC() === 4, `coefficientC should remain 4 after 17 datapoints, is ${dataSeries.coefficientC()}`)
+  dataSeries.push(6, 173)
+  assert.ok(dataSeries.coefficientA() === 4, `coefficientA should remain 4 after 18 datapoints, is ${dataSeries.coefficientA()}`)
+  assert.ok(dataSeries.coefficientB() === 4, `coefficientB should remain 4 after 18 datapoints, is ${dataSeries.coefficientB()}`)
+  assert.ok(dataSeries.coefficientC() === 4, `coefficientC should remain 4 after 18 datapoints, is ${dataSeries.coefficientC()}`)
+  dataSeries.push(7, 227)
+  assert.ok(dataSeries.coefficientA() === 4, `coefficientA should remain 4 after 19 datapoints, is ${dataSeries.coefficientA()}`)
+  assert.ok(dataSeries.coefficientB() === 4, `coefficientB should remain 4 after 19 datapoints, is ${dataSeries.coefficientB()}`)
+  assert.ok(dataSeries.coefficientC() === 4, `coefficientC should remain 4 after 19 datapoints, is ${dataSeries.coefficientC()}`)
+  dataSeries.push(8, 293)
+  assert.ok(dataSeries.coefficientA() === 3.9047619047619047, `coefficientA should be 3.9047619047619047 after 20 datapoints, is ${dataSeries.coefficientA()}`) // Coefficient A takes a hit again
+  assert.ok(dataSeries.coefficientB() === 4.761904761904762, `coefficientB should be 4.761904761904762 after 20 datapoints, is ${dataSeries.coefficientB()}`) // Coefficient B takes a hit again
+  assert.ok(dataSeries.coefficientC() === 2.904761904761914, `coefficientC should be 2.904761904761914 after 20 datapoints, is ${dataSeries.coefficientC()}`) // We get a 2.904761904761914 instead of 4, which is quite acceptable (especially since ORM ignores the C)
+  dataSeries.push(9, 363)
+  assert.ok(dataSeries.coefficientA() === 4, `coefficientA should remain 4 after 21 datapoints, is ${dataSeries.coefficientA()}`)
+  assert.ok(dataSeries.coefficientB() === 4, `coefficientB should remain 4 after 21 datapoints, is ${dataSeries.coefficientB()}`)
+  assert.ok(dataSeries.coefficientC() === 4, `coefficientC should remain 4 after 21 datapoints, is ${dataSeries.coefficientC()}`) // We get a 3 instead of 4, which is quite acceptable (especially since ORM ignores the C)
+  dataSeries.push(10, 444)
+  assert.ok(dataSeries.coefficientA() === 4, `coefficientA should remain 4 after 22 datapoints, is ${dataSeries.coefficientA()}`)
+  assert.ok(dataSeries.coefficientB() === 4, `coefficientB should remain 4 after 22 datapoints, is ${dataSeries.coefficientB()}`)
+  assert.ok(dataSeries.coefficientC() === 4, `coefficientC should remain 4 after 22 datapoints, is ${dataSeries.coefficientC()}`) // We get a 3 instead of 4, which is quite acceptable (especially since ORM ignores the C)
+})
+
 test('Quadratic TS Estimation should be decent for standard real-life example from MathBits with some noise', () => {
   // Data based on https://mathbits.com/MathBits/TISection/Statistics2/quadratic.html
   const dataSeries = createTSQuadraticSeries(13)
