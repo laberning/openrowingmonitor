@@ -189,8 +189,8 @@ test('Quadratic Approximation on a function with some noise (+/- 1) and spikes (
   assert.ok(dataSeries.coefficientB() === 3.238095238095236, `coefficientB should be 3.238095238095236 after 14 datapoints, is ${dataSeries.coefficientB()}`) // Coefficient B seems to take a hit anyway
   assert.ok(dataSeries.coefficientC() === 3.6666666666666643, `coefficientC should be 3.6666666666666643 after 14 datapoints, is ${dataSeries.coefficientC()}`) // We get a 3 instead of 4, which is quite acceptable (especially since ORM ignores the C)
   dataSeries.push(3, 51)
-  assert.ok(dataSeries.coefficientA() === 4, `coefficientA should remain 4 after 15 datapoints, is ${dataSeries.coefficientA()}`)
-  assert.ok(dataSeries.coefficientB() === 4, `coefficientB should remain 4 after 15 datapoints, is ${dataSeries.coefficientB()}`)
+  assert.ok(dataSeries.coefficientA() === 3.9047619047619047, `coefficientA should remain 3.9047619047619047 after 15 datapoints, is ${dataSeries.coefficientA()}`) // Coefficient A still takes a hit
+  assert.ok(dataSeries.coefficientB() === 4, `coefficientB should remain 4 after 15 datapoints, is ${dataSeries.coefficientB()}`) // Coefficient B still takes a hit
   assert.ok(dataSeries.coefficientC() === 4, `coefficientC should remain 4 after 15 datapoints, is ${dataSeries.coefficientC()}`) // We get a 3 instead of 4, which is quite acceptable (especially since ORM ignores the C)
   dataSeries.push(4, 85)
   assert.ok(dataSeries.coefficientA() === 4, `coefficientA should remain 4 after 16 datapoints, is ${dataSeries.coefficientA()}`)
