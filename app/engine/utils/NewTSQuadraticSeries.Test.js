@@ -152,7 +152,7 @@ test('Quadratic Approximation on a function with some noise (+/- 1)', () => {
 
 test('Quadratic Approximation on a function with some noise (+/- 1) and spikes (+/- 10)', () => {
   // Data based on 4 x^2 + 4 x + 4
-  const dataSeries = createTSQuadraticSeries(5)
+  const dataSeries = createTSQuadraticSeries(8)
   dataSeries.push(-11, 443)
   dataSeries.push(-10, 365)
   dataSeries.push(-9, 291)
