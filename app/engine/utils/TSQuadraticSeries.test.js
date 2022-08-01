@@ -197,7 +197,7 @@ test('Quadratic TS Estimation should be decent for standard example from VTUPuls
   dataSeries.push(7, 11.5)
   assert.ok(dataSeries.coefficientA() === 0.95, `coefficientA should be 0.9499999999999997, is ${dataSeries.coefficientA()}`) // The example results in 0.7642857 for OLS, which we consider acceptably close
   assert.ok(dataSeries.coefficientB() === -7.483333333333331, `coefficientB should be -7.483333333333331, is ${dataSeries.coefficientB()}`) // The example results in -5.5128571 for OLS, which we consider acceptably close
-  assert.ok(dataSeries.coefficientC() === 17.33333333333333, `coefficientC should be 17.33333333333333, is ${dataSeries.coefficientC()}`) // The example results in 12.4285714 for OLS, which we consider acceptably close
+  assert.ok(dataSeries.coefficientC() === 17.33333333333332, `coefficientC should be 17.33333333333332, is ${dataSeries.coefficientC()}`) // The example results in 12.4285714 for OLS, which we consider acceptably close
 })
 
 test('Quadratic TS Estimation should be decent for standard real-life example from Uni Berlin with some noise without the vertex being part of the dataset', () => {
