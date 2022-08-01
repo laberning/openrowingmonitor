@@ -195,7 +195,7 @@ test('Quadratic TS Estimation should be decent for standard example from VTUPuls
   dataSeries.push(6, 6.5)
   dataSeries.push(7, 11.5)
   assert.ok(dataSeries.coefficientA() === 0.9499999999999997, `coefficientA should be 0.9499999999999997, is ${dataSeries.coefficientA()}`) // The example results in 0.7642857 for OLS, which we consider acceptably close
-  assert.ok(dataSeries.coefficientB() === -5.5128571, `coefficientB should be -5.5128571, is ${dataSeries.coefficientB()}`) // The example results in -5.5128571 for OLS, which we consider acceptably close
+  assert.ok(dataSeries.coefficientB() === -7.483333333333331, `coefficientB should be -7.483333333333331, is ${dataSeries.coefficientB()}`) // The example results in -5.5128571 for OLS, which we consider acceptably close
   assert.ok(dataSeries.coefficientC() === 12.4285714, `coefficientC should be 12.4285714, is ${dataSeries.coefficientC()}`) // The example results in 12.4285714 for OLS, which we consider acceptably close
 })
 
@@ -247,7 +247,7 @@ test('Quadratic TS Estimation should be decent for standard real-life example fr
   dataSeries.push(55, 44)
   dataSeries.push(60, 27)
   assert.ok(dataSeries.coefficientA() === -0.10232277526395174, `coefficientA should be -0.10232277526395174, is ${dataSeries.coefficientA()}`) // The example results in -0.1012 for R after two rounds, which we consider acceptably close
-  assert.ok(dataSeries.coefficientB() === 6.7444, `coefficientB should be 6.7444, is ${dataSeries.coefficientB()}`) // The example results in 6.7444 for R after two rounds, which we consider acceptably close
+  assert.ok(dataSeries.coefficientB() === 6.832398190045248, `coefficientB should be 6.832398190045248, is ${dataSeries.coefficientB()}`) // The example results in 6.7444 for R after two rounds, which we consider acceptably close
   assert.ok(dataSeries.coefficientC() === 18.2536, `coefficientC should be 18.2536, is ${dataSeries.coefficientC()}`) // The example results in 18.2536 for R after two rounds, which we consider acceptably close
 })
 
