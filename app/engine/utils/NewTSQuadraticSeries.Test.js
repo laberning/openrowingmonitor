@@ -9,7 +9,24 @@ import * as assert from 'uvu/assert'
 
 import { createTSQuadraticSeries } from './NewTSQuadraticSeries.js'
 
-// ToDo: Test startup behaviour
+test('Quadratic Approximation startup behaviour', () => {
+  const dataSeries = createTSQuadraticSeries(10)
+  assert.ok(dataSeries.coefficientA() === 0, `coefficientA should be 0 at initialisation, is ${dataSeries.coefficientA()}`)
+  assert.ok(dataSeries.coefficientB() === 0, `coefficientB should be 0 at initialisation, is ${dataSeries.coefficientB()}`)
+  assert.ok(dataSeries.coefficientC() === 0, `coefficientC should be 0 at initialisation, is ${dataSeries.coefficientC()}`)
+  dataSeries.push(-1, 2)
+  assert.ok(dataSeries.coefficientA() === 0, `coefficientA should remain 0 with one datapoint, is ${dataSeries.coefficientA()}`)
+  assert.ok(dataSeries.coefficientB() === 0, `coefficientB should remain 0 with one datapoint, is ${dataSeries.coefficientB()}`)
+  assert.ok(dataSeries.coefficientC() === 0, `coefficientC should remain 0 with one datapoint, is ${dataSeries.coefficientC()}`)
+  dataSeries.push(0, 2)
+  assert.ok(dataSeries.coefficientA() === 0, `coefficientA should remain 0 with two datapoint, is ${dataSeries.coefficientA()}`)
+  assert.ok(dataSeries.coefficientB() === 0, `coefficientB should remain 0 with two datapoint, is ${dataSeries.coefficientB()}`)
+  assert.ok(dataSeries.coefficientC() === 0, `coefficientC should remain 0 with two datapoint, is ${dataSeries.coefficientC()}`)
+  dataSeries.push(1, 6)
+  assert.ok(dataSeries.coefficientA() === 2, `coefficientA should be 2, is ${dataSeries.coefficientA()}`)
+  assert.ok(dataSeries.coefficientB() === 2, `coefficientB should be 2, is ${dataSeries.coefficientB()}`)
+  assert.ok(dataSeries.coefficientC() === 2, `coefficientC should be 2, is ${dataSeries.coefficientC()}`)
+})
 
 test('Quadratic Approximation on a perfect noisefree function y = 2 * Math.pow(x, 2) + 2 * x + 2, 21 datapoints', () => {
   // Data based on 2 x^2 + 2 x + 2
@@ -38,7 +55,6 @@ test('Quadratic Approximation on a perfect noisefree function y = 2 * Math.pow(x
   assert.ok(dataSeries.coefficientA() === 2, `coefficientA should be 2, is ${dataSeries.coefficientA()}`)
   assert.ok(dataSeries.coefficientB() === 2, `coefficientB should be 2, is ${dataSeries.coefficientB()}`)
   assert.ok(dataSeries.coefficientC() === 2, `coefficientC should be 2, is ${dataSeries.coefficientC()}`)
-  // ToDo: Test after moving several points
 })
 
 test('Quadratic Approximation on a perfect noisefree function y = 2 * Math.pow(x, 2) + 2 * x + 2, with 10 datapoints andsome data shifting', () => {
@@ -55,9 +71,9 @@ test('Quadratic Approximation on a perfect noisefree function y = 2 * Math.pow(x
   dataSeries.push(-2, 6)
   dataSeries.push(-1, 2)
   dataSeries.push(0, 2)
-  assert.ok(dataSeries.coefficientA() === 2, `coefficientA should be 2, is ${dataSeries.coefficientA()}`)
-  assert.ok(dataSeries.coefficientB() === 2, `coefficientB should be 2, is ${dataSeries.coefficientB()}`)
-  assert.ok(dataSeries.coefficientC() === 2, `coefficientC should be 2, is ${dataSeries.coefficientC()}`)
+  assert.ok(dataSeries.coefficientA() === 2, `coefficientA should be 2 after 11 datapoints, is ${dataSeries.coefficientA()}`)
+  assert.ok(dataSeries.coefficientB() === 2, `coefficientB should be 2 after 11 datapoints, is ${dataSeries.coefficientB()}`)
+  assert.ok(dataSeries.coefficientC() === 2, `coefficientC should be 2 after 11 datapoints, is ${dataSeries.coefficientC()}`)
   dataSeries.push(1, 6)
   dataSeries.push(2, 14)
   dataSeries.push(3, 26)
@@ -68,9 +84,9 @@ test('Quadratic Approximation on a perfect noisefree function y = 2 * Math.pow(x
   dataSeries.push(8, 146)
   dataSeries.push(9, 182)
   dataSeries.push(10, 222)
-  assert.ok(dataSeries.coefficientA() === 2, `coefficientA should be 2, is ${dataSeries.coefficientA()}`)
-  assert.ok(dataSeries.coefficientB() === 2, `coefficientB should be 2, is ${dataSeries.coefficientB()}`)
-  assert.ok(dataSeries.coefficientC() === 2, `coefficientC should be 2, is ${dataSeries.coefficientC()}`)
+  assert.ok(dataSeries.coefficientA() === 2, `coefficientA should be 2 after 21 datapoints, is ${dataSeries.coefficientA()}`)
+  assert.ok(dataSeries.coefficientB() === 2, `coefficientB should be 2 after 21 datapoints, is ${dataSeries.coefficientB()}`)
+  assert.ok(dataSeries.coefficientC() === 2, `coefficientC should be 2 after 21 datapoints, is ${dataSeries.coefficientC()}`)
   // ToDo: Test after moving several points
 })
 
@@ -203,6 +219,57 @@ test('Quadratic TS Estimation should be decent for standard real-life example fr
   assert.ok(dataSeries.coefficientC() === 0.11864001198418168, `coefficientC should be 0.11864001198418168, is ${dataSeries.coefficientC()}`)
 })
 
+test('Quadratic Approximation with a clean function and a reset', () => {
+  // Data based on 2 x^2 + 2 x + 2
+  const dataSeries = createTSQuadraticSeries(10)
+  dataSeries.push(-10, 182)
+  dataSeries.push(-9, 146)
+  dataSeries.push(-8, 114)
+  dataSeries.push(-7, 86)
+  dataSeries.push(-6, 62)
+  dataSeries.push(-5, 42)
+  assert.ok(dataSeries.coefficientA() === 2, `coefficientA should be 2 after 6 datapoints, is ${dataSeries.coefficientA()}`)
+  assert.ok(dataSeries.coefficientB() === 2, `coefficientB should be 2 after 6 datapoints, is ${dataSeries.coefficientB()}`)
+  assert.ok(dataSeries.coefficientC() === 2, `coefficientC should be 2 after 6 datapoints, is ${dataSeries.coefficientC()}`)
+  dataSeries.push(-4, 26)
+  dataSeries.push(-3, 14) // Pi ;)
+  dataSeries.push(-2, 6)
+  dataSeries.push(-1, 2)
+  dataSeries.push(0, 2)
+  dataSeries.push(1, 6)
+  dataSeries.push(2, 14)
+  assert.ok(dataSeries.coefficientA() === 2, `coefficientA should be 2 after 13 datapoints, is ${dataSeries.coefficientA()}`)
+  assert.ok(dataSeries.coefficientB() === 2, `coefficientB should be 2 after 13 datapoints, is ${dataSeries.coefficientB()}`)
+  assert.ok(dataSeries.coefficientC() === 2, `coefficientC should be 2 after 13 datapoints, is ${dataSeries.coefficientC()}`)
+  dataSeries.push(3, 26)
+  dataSeries.push(4, 42)
+  dataSeries.push(5, 62)
+  dataSeries.push(6, 86)
+  dataSeries.push(7, 114)
+  dataSeries.push(8, 146)
+  dataSeries.push(9, 182)
+  dataSeries.push(10, 222)
+  assert.ok(dataSeries.coefficientA() === 2, `coefficientA should be 2 after 21 datapoints, is ${dataSeries.coefficientA()}`)
+  assert.ok(dataSeries.coefficientB() === 2, `coefficientB should be 2 after 21 datapoints, is ${dataSeries.coefficientB()}`)
+  assert.ok(dataSeries.coefficientC() === 2, `coefficientC should be 2 after 21 datapoints, is ${dataSeries.coefficientC()}`)
+  dataSeries.reset()
+  assert.ok(dataSeries.coefficientA() === 0, `coefficientA should be 0 after reset, is ${dataSeries.coefficientA()}`)
+  assert.ok(dataSeries.coefficientB() === 0, `coefficientB should be 0 after reset, is ${dataSeries.coefficientB()}`)
+  assert.ok(dataSeries.coefficientC() === 0, `coefficientC should be 0 after reset, is ${dataSeries.coefficientC()}`)
+  dataSeries.push(-1, 2)
+  assert.ok(dataSeries.coefficientA() === 0, `coefficientA should remain 0 with one datapoint, is ${dataSeries.coefficientA()}`)
+  assert.ok(dataSeries.coefficientB() === 0, `coefficientB should remain 0 with one datapoint, is ${dataSeries.coefficientB()}`)
+  assert.ok(dataSeries.coefficientC() === 0, `coefficientC should remain 0 with one datapoint, is ${dataSeries.coefficientC()}`)
+  dataSeries.push(0, 2)
+  assert.ok(dataSeries.coefficientA() === 0, `coefficientA should remain 0 with two datapoint, is ${dataSeries.coefficientA()}`)
+  assert.ok(dataSeries.coefficientB() === 0, `coefficientB should remain 0 with two datapoint, is ${dataSeries.coefficientB()}`)
+  assert.ok(dataSeries.coefficientC() === 0, `coefficientC should remain 0 with two datapoint, is ${dataSeries.coefficientC()}`)
+  dataSeries.push(1, 6)
+  assert.ok(dataSeries.coefficientA() === 2, `coefficientA should be 2, is ${dataSeries.coefficientA()}`)
+  assert.ok(dataSeries.coefficientB() === 2, `coefficientB should be 2, is ${dataSeries.coefficientB()}`)
+  assert.ok(dataSeries.coefficientC() === 2, `coefficientC should be 2, is ${dataSeries.coefficientC()}`)
+})
+
 test('Quadratic TS Estimation should result in a line for y = x (edge case!)', () => {
   // As ORM might encounter straight lines, we need to test this as well
   const dataSeries = createTSQuadraticSeries(7)
@@ -217,7 +284,5 @@ test('Quadratic TS Estimation should result in a line for y = x (edge case!)', (
   assert.ok(dataSeries.coefficientB() === 1, `coefficientB should be 1, is ${dataSeries.coefficientB()}`)
   assert.ok(dataSeries.coefficientC() === 0, `coefficientC should be 0, is ${dataSeries.coefficientC()}`)
 })
-
-// ToDo: Test after reset
 
 test.run()
