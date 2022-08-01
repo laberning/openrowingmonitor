@@ -29,7 +29,7 @@ function createTSQuadraticSeries (maxSeriesLength = 0) {
   const X = createSeries(maxSeriesLength)
   const Y = createSeries(maxSeriesLength)
   const A = []
-  const B = createSeries()
+  const B = []
   let _A = 0
   let _B = 0
 
@@ -55,37 +55,21 @@ function createTSQuadraticSeries (maxSeriesLength = 0) {
       let mid = 0
       while (i < X.length() - 2) {
         mid = Math.floor((i + A.length) / 2)
-        result = calculateA(i, mid, A.length)
-        A[i].push(result)
+        result = 
+        A[i].push(calculateA(i, mid, A.length))
+        B[i].push(calculateB(i, mid, B.length))
         i++
       }
       _A = Amedian()
+      _B = Bmedian()
     } else {
       _A = 0
+      _B = 0
     }
 
     // Add an empty array at the end to store futurs results for the most recent points
     A.push([])
-
-    B.reset()
-    if (X.length() > 2) {
-      // There are at least two points in the X and Y arrays, so let's add the new datapoint
-      let i = 0
-      let j = 0
-      let result = 0
-      while (i < X.length() - 1) {
-        j = i + 1
-        while (j < X.length() - 1) {
-          result = calculateB(i, j)
-          B.push(result)
-          j++
-        }
-        i++
-      }
-      _B = B.median()
-    } else {
-      _B = 0
-    }
+    B.push([])
   }
 
   function slope (index) {
@@ -223,11 +207,11 @@ function createTSQuadraticSeries (maxSeriesLength = 0) {
     }
   }
 
-  function calculateB (pointOne, pointTwo) {
+  function calculateB (pointOne, pointTwo, pointThree) {
     // For the underlying math, see https://math.stackexchange.com/questions/710750/find-a-second-degree-polynomial-that-goes-through-3-points
     // and https://www.physicsforums.com/threads/quadratic-equation-from-3-points.404174/
-    if (pointOne < pointTwo && X.get(pointOne) !== X.get(pointTwo)) {
-      return ((Y.get(pointTwo) - _A * Math.pow(X.get(pointTwo), 2)) - (Y.get(pointOne) - _A * Math.pow(X.get(pointOne), 2))) / (X.get(pointTwo) - X.get(pointOne))
+    if (pointOne < pointTwo && pointTwo < pointThree && X.get(pointOne) !== X.get(pointTwo) && X.get(pointTwo) !== X.get(pointThree) && X.get(pointOne) !== X.get(pointThree)) {
+      return (Math.pow(X.get(pointOne), 2)) * (Y.get(pointThree) - Y.get(pointTwo)) + X.get(pointOne) * (Y.get(pointOne) * X.get(pointTwo) - Y.get(pointOne) * X.get(pointThree)) + Math.pow(X.get(pointThree), 2)) * (Y.get(pointTwo) - Y.get(pointOne)) + X.get(pointTwo) * (Y.get(pointOne) * X.get(pointThree) - Y.get(pointThree) * X.get(pointTwo))) / ( Math.pow(X.get(pointOne), 2)) * (X.get(pointThree) - X.get(pointTwo)) + X.get(pointOne) * (Math.pow(X.get(pointTwo), 2)) - Math.pow(X.get(pointThree), 2))) + X.get(pointTwo) * X.get(pointThree) * (X.get(pointThree) - X.get(pointTwo)))
     } else {
       log.error('TS Quadratic Regressor, Division by zero prevented in CalculateB!')
       return 0
@@ -251,6 +235,17 @@ function createTSQuadraticSeries (maxSeriesLength = 0) {
     }
   }
 
+  function Bmedian () {
+    if (B.length > 1) {
+      const sortedArray = [...B.flat()].sort((a, b) => a - b)
+      const mid = Math.floor(sortedArray.length / 2)
+      return (sortedArray.length % 2 !== 0 ? sortedArray[mid] : ((sortedArray[mid - 1] + sortedArray[mid]) / 2))
+    } else {
+      log.error('TS Quadratic Regressor, Median calculation on empty dataset attempted!')
+      return 0
+    }
+  }
+  
   function reset () {
     X.reset()
     Y.reset()
