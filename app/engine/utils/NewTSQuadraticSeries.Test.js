@@ -194,7 +194,7 @@ test('Quadratic Approximation on a function with some noise (+/- 1) and spikes (
   // assert.ok(dataSeries.coefficientC() === 4, `coefficientC should remain 4 after 15 datapoints, is ${dataSeries.coefficientC()}`) // We get a 3 instead of 4, which is quite acceptable (especially since ORM ignores the C)
   dataSeries.push(4, 85)
   assert.ok(dataSeries.coefficientA() === 4.044444444444444, `coefficientA should remain 4.044444444444444 after 16 datapoints, is ${dataSeries.coefficientA()}`) // Coefficient A still takes a hit
-  assert.ok(dataSeries.coefficientB() === 4, `coefficientB should remain 4 after 16 datapoints, is ${dataSeries.coefficientB()}`) // Coefficient B still takes a hit
+  assert.ok(dataSeries.coefficientB() === 4, `coefficientB should remain 4 after 16 datapoints, is ${dataSeries.coefficientB()}`)
   // assert.ok(dataSeries.coefficientC() === 4, `coefficientC should remain 4 after 16 datapoints, is ${dataSeries.coefficientC()}`) // We get a 3 instead of 4, which is quite acceptable (especially since ORM ignores the C)
   dataSeries.push(5, 123)
   assert.ok(dataSeries.coefficientA() === 4, `coefficientA should remain 4 after 17 datapoints, is ${dataSeries.coefficientA()}`)
@@ -209,7 +209,7 @@ test('Quadratic Approximation on a function with some noise (+/- 1) and spikes (
   assert.ok(dataSeries.coefficientB() === 4, `coefficientB should remain 4 after 19 datapoints, is ${dataSeries.coefficientB()}`)
   // assert.ok(dataSeries.coefficientC() === 4, `coefficientC should remain 4 after 19 datapoints, is ${dataSeries.coefficientC()}`) // We get a 3 instead of 4, which is quite acceptable (especially since ORM ignores the C)
   dataSeries.push(8, 293)
-  assert.ok(dataSeries.coefficientA() === 4, `coefficientA should remain 4 after 20 datapoints, is ${dataSeries.coefficientA()}`)
+  assert.ok(dataSeries.coefficientA() === 3.9047619047619047, `coefficientA should remain 3.9047619047619047 after 20 datapoints, is ${dataSeries.coefficientA()}`)
   assert.ok(dataSeries.coefficientB() === 4, `coefficientB should remain 4 after 20 datapoints, is ${dataSeries.coefficientB()}`)
   // assert.ok(dataSeries.coefficientC() === 4, `coefficientC should remain 4 after 20 datapoints, is ${dataSeries.coefficientC()}`) // We get a 3 instead of 4, which is quite acceptable (especially since ORM ignores the C)
   dataSeries.push(9, 363)
