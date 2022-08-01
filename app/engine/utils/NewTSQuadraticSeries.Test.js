@@ -19,9 +19,9 @@ test('Quadratic Approximation startup behaviour', () => {
   assert.ok(dataSeries.coefficientB() === 0, `coefficientB should remain 0 with one datapoint, is ${dataSeries.coefficientB()}`)
   assert.ok(dataSeries.coefficientC() === 0, `coefficientC should remain 0 with one datapoint, is ${dataSeries.coefficientC()}`)
   dataSeries.push(0, 2)
-  assert.ok(dataSeries.coefficientA() === 0, `coefficientA should remain 0 with two datapoint, is ${dataSeries.coefficientA()}`)
-  assert.ok(dataSeries.coefficientB() === 0, `coefficientB should remain 0 with two datapoint, is ${dataSeries.coefficientB()}`)
-  assert.ok(dataSeries.coefficientC() === 0, `coefficientC should remain 0 with two datapoint, is ${dataSeries.coefficientC()}`)
+  assert.ok(dataSeries.coefficientA() === 0, `coefficientA should remain 0 with two datapoints, is ${dataSeries.coefficientA()}`)
+  assert.ok(dataSeries.coefficientB() === 0, `coefficientB should remain 0 with two datapoints, is ${dataSeries.coefficientB()}`)
+  assert.ok(dataSeries.coefficientC() === 0, `coefficientC should remain 0 with two datapoints, is ${dataSeries.coefficientC()}`)
   dataSeries.push(1, 6)
   assert.ok(dataSeries.coefficientA() === 2, `coefficientA should be 2, is ${dataSeries.coefficientA()}`)
   assert.ok(dataSeries.coefficientB() === 2, `coefficientB should be 2, is ${dataSeries.coefficientB()}`)
@@ -186,6 +186,19 @@ test('Quadratic TS Estimation should be decent for standard real-life example fr
   assert.ok(dataSeries.coefficientC() === 0.39999999999999947, `coefficientC should be 0.39999999999999947, is ${dataSeries.coefficientC()}`) // The example results in 0.5714 for OLS, which we consider acceptably close
 })
 
+test('Quadratic TS Estimation should be decent for standard example from VTUPulse with some noise, without the vertex being part of the dataset', () => {
+  // Test based on https://www.vtupulse.com/machine-learning/quadratic-polynomial-regression-model-solved-example/
+  const dataSeries = createTSQuadraticSeries(5)
+  dataSeries.push(3, 2.5)
+  dataSeries.push(4, 3.3)
+  dataSeries.push(5, 3.8)
+  dataSeries.push(6, 6.5)
+  dataSeries.push(7, 11.5)
+  assert.ok(dataSeries.coefficientA() === 0.7642857, `coefficientA should be 0.7642857, is ${dataSeries.coefficientA()}`) // The example results in 0.7642857 for OLS, which we consider acceptably close
+  assert.ok(dataSeries.coefficientB() === -5.5128571, `coefficientB should be -5.5128571, is ${dataSeries.coefficientB()}`) // The example results in -5.5128571 for OLS, which we consider acceptably close
+  assert.ok(dataSeries.coefficientC() === 12.4285714, `coefficientC should be 12.4285714, is ${dataSeries.coefficientC()}`) // The example results in 12.4285714 for OLS, which we consider acceptably close
+})
+
 test('Quadratic TS Estimation should be decent for standard real-life example from Uni Berlin with some noise without the vertex being part of the dataset', () => {
   // Test based on https://www.geo.fu-berlin.de/en/v/soga/Basics-of-statistics/Linear-Regression/Polynomial-Regression/Polynomial-Regression---An-example/index.html
   const dataSeries = createTSQuadraticSeries(25)
@@ -217,6 +230,25 @@ test('Quadratic TS Estimation should be decent for standard real-life example fr
   assert.ok(dataSeries.coefficientA() === -3.1827927919154013, `coefficientA should be -3.1827927919154013, is ${dataSeries.coefficientA()}`)
   assert.ok(dataSeries.coefficientB() === 1.634722701306206, `coefficientB should be 1.634722701306206, is ${dataSeries.coefficientB()}`)
   assert.ok(dataSeries.coefficientC() === 0.11864001198418168, `coefficientC should be 0.11864001198418168, is ${dataSeries.coefficientC()}`)
+})
+
+test('Quadratic TS Estimation should be decent for standard real-life example from Statology.org with some noise and chaotic X values', () => {
+  // Test based on https://www.statology.org/quadratic-regression-r/
+  const dataSeries = createTSQuadraticSeries(11)
+  dataSeries.push(6, 14)
+  dataSeries.push(9, 28)
+  dataSeries.push(12, 50)
+  dataSeries.push(14, 70)
+  dataSeries.push(30, 89)
+  dataSeries.push(35, 94)
+  dataSeries.push(40, 90)
+  dataSeries.push(47, 75)
+  dataSeries.push(51, 59)
+  dataSeries.push(55, 44)
+  dataSeries.push(60, 27)
+  assert.ok(dataSeries.coefficientA() === -0.1012, `coefficientA should be -0.1012, is ${dataSeries.coefficientA()}`) // The example results in -0.1012 for R, which we consider acceptably close
+  assert.ok(dataSeries.coefficientB() === 6.7444, `coefficientB should be 6.7444, is ${dataSeries.coefficientB()}`) // The example results in 6.7444 for R, which we consider acceptably close
+  assert.ok(dataSeries.coefficientC() === 18.2536, `coefficientC should be 18.2536, is ${dataSeries.coefficientC()}`) // The example results in 18.2536 for R, which we consider acceptably close
 })
 
 test('Quadratic Approximation with a clean function and a reset', () => {
