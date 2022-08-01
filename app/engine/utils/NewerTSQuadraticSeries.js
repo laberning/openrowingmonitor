@@ -51,11 +51,9 @@ function createTSQuadraticSeries (maxSeriesLength = 0) {
     if (X.length() > 2) {
       // There are at least two points in the X and Y arrays, so let's add the new datapoint
       let i = 0
-      let result = 0
       let mid = 0
       while (i < X.length() - 2) {
         mid = Math.floor((i + A.length) / 2)
-        result = 
         A[i].push(calculateA(i, mid, A.length))
         B[i].push(calculateB(i, mid, B.length))
         i++
@@ -211,7 +209,7 @@ function createTSQuadraticSeries (maxSeriesLength = 0) {
     // For the underlying math, see https://math.stackexchange.com/questions/710750/find-a-second-degree-polynomial-that-goes-through-3-points
     // and https://www.physicsforums.com/threads/quadratic-equation-from-3-points.404174/
     if (pointOne < pointTwo && pointTwo < pointThree && X.get(pointOne) !== X.get(pointTwo) && X.get(pointTwo) !== X.get(pointThree) && X.get(pointOne) !== X.get(pointThree)) {
-      return (Math.pow(X.get(pointOne), 2) * (Y.get(pointThree) - Y.get(pointTwo)) + X.get(pointOne) * (Y.get(pointOne) * X.get(pointTwo) - Y.get(pointOne) * X.get(pointThree)) + Math.pow(X.get(pointThree), 2) * (Y.get(pointTwo) - Y.get(pointOne)) + X.get(pointTwo) * (Y.get(pointOne) * X.get(pointThree) - Y.get(pointThree) * X.get(pointTwo))) / ( Math.pow(X.get(pointOne), 2) * (X.get(pointThree) - X.get(pointTwo)) + X.get(pointOne) * (Math.pow(X.get(pointTwo), 2) - Math.pow(X.get(pointThree), 2)) + X.get(pointTwo) * X.get(pointThree) * (X.get(pointThree) - X.get(pointTwo)))
+      return (Math.pow(X.get(pointOne), 2) * (Y.get(pointThree) - Y.get(pointTwo)) + X.get(pointOne) * (Y.get(pointOne) * X.get(pointTwo) - Y.get(pointOne) * X.get(pointThree)) + Math.pow(X.get(pointThree), 2) * (Y.get(pointTwo) - Y.get(pointOne)) + X.get(pointTwo) * (Y.get(pointOne) * X.get(pointThree) - Y.get(pointThree) * X.get(pointTwo))) / (Math.pow(X.get(pointOne), 2) * (X.get(pointThree) - X.get(pointTwo)) + X.get(pointOne) * (Math.pow(X.get(pointTwo), 2) - Math.pow(X.get(pointThree), 2)) + X.get(pointTwo) * X.get(pointThree) * (X.get(pointThree) - X.get(pointTwo)))
     } else {
       log.error('TS Quadratic Regressor, Division by zero prevented in CalculateB!')
       return 0
@@ -245,7 +243,7 @@ function createTSQuadraticSeries (maxSeriesLength = 0) {
       return 0
     }
   }
-  
+
   function reset () {
     X.reset()
     Y.reset()
