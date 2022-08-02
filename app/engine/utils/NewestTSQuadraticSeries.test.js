@@ -178,7 +178,7 @@ test('Quadratic Approximation on function y = 4 * Math.pow(x, 2) + 4 * x + 4, wi
   assert.ok(dataSeries.coefficientC() === 2.3333333333333357, `coefficientC should be 2.3333333333333357 after 11 datapoints, is ${dataSeries.coefficientC()}`) // We get a 2.1999999999999957 instead of 4, which is quite acceptable (especially since ORM ignores the C)
   dataSeries.push(0, 5)
   assert.ok(dataSeries.coefficientA() === 3.977777777777778, `coefficientA should be 3.977777777777778 after 12 datapoints, is ${dataSeries.coefficientA()}`)
-  assert.ok(dataSeries.coefficientB() === 3.6888888888888878, `coefficientB should be 3.6888888888888878 after 12 datapoints, is ${dataSeries.coefficientB()}`)
+  assert.ok(dataSeries.coefficientB() === 3.809523809523808, `coefficientB should be 3.809523809523808 after 12 datapoints, is ${dataSeries.coefficientB()}`)
   assert.ok(dataSeries.coefficientC() === 3.322222222222215, `coefficientC should be 3.322222222222215 after 12 datapoints, is ${dataSeries.coefficientC()}`) // We get a 3 instead of 4, which is quite acceptable (especially since ORM ignores the C)
   dataSeries.push(1, 11)
   assert.ok(dataSeries.coefficientA() === 3.9555555555555557, `coefficientA should be 3.9555555555555557 after 13 datapoints, is ${dataSeries.coefficientA()}`) // Coefficient A seems to take a hit anyway
