@@ -150,7 +150,7 @@ test('Quadratic Approximation on function y = 4 * Math.pow(x, 2) + 4 * x + 4, wi
   assert.ok(dataSeries.coefficientC() === 3.9333333333333322, `coefficientC should be 3.9333333333333322, is ${dataSeries.coefficientC()}`) // We get a 3 instead of 4, which is quite acceptable (especially since ORM ignores the C)
 })
 
-test('Quadratic Approximation on a function with some noise (+/- 1) and spikes (+/- 9)', () => {
+test('Quadratic Approximation on function y = 4 * Math.pow(x, 2) + 4 * x + 4, with some noise (+/- 1) and spikes (+/- 9)', () => {
   // Data based on 4 x^2 + 4 x + 4
   const dataSeries = createTSQuadraticSeries(11)
   dataSeries.push(-11, 443)
@@ -175,7 +175,7 @@ test('Quadratic Approximation on a function with some noise (+/- 1) and spikes (
   dataSeries.push(-1, 3)
   assert.ok(dataSeries.coefficientA() === 3.9555555555555557, `coefficientA should be 3.9555555555555557 after 11 datapoints, is ${dataSeries.coefficientA()}`) // Coefficient A seems to take a hit anyway
   assert.ok(dataSeries.coefficientB() === 3.288888888888895, `coefficientB should be 3.288888888888895 after 11 datapoints, is ${dataSeries.coefficientB()}`) // Coefficient B seems to take a hit anyway
-  assert.ok(dataSeries.coefficientC() === 2.1999999999999957, `coefficientC should be 2.1999999999999957 after 11 datapoints, is ${dataSeries.coefficientC()}`) // We get a 2.1999999999999957 instead of 4, which is quite acceptable (especially since ORM ignores the C)
+  assert.ok(dataSeries.coefficientC() === 2.3333333333333357, `coefficientC should be 2.3333333333333357 after 11 datapoints, is ${dataSeries.coefficientC()}`) // We get a 2.1999999999999957 instead of 4, which is quite acceptable (especially since ORM ignores the C)
   dataSeries.push(0, 5)
   assert.ok(dataSeries.coefficientA() === 3.977777777777778, `coefficientA should be 3.977777777777778 after 12 datapoints, is ${dataSeries.coefficientA()}`)
   assert.ok(dataSeries.coefficientB() === 3.6888888888888878, `coefficientB should be 3.6888888888888878 after 12 datapoints, is ${dataSeries.coefficientB()}`)
