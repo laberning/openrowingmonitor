@@ -222,7 +222,7 @@ test('Quadratic Approximation on function y = 4 * Math.pow(x, 2) + 4 * x + 4, wi
   dataSeries.push(0, 5)
   assert.ok(dataSeries.coefficientA() === 4, `coefficientA should be 4 after 12 datapoints, is ${dataSeries.coefficientA()}`)
   assert.ok(dataSeries.coefficientB() === 4, `coefficientB should be 4 after 12 datapoints, is ${dataSeries.coefficientB()}`)
-  assert.ok(dataSeries.coefficientC() === 4, `coefficientC should be 4 after 12 datapoints, is ${dataSeries.coefficientC()}`)
+  assert.ok(dataSeries.coefficientC() === 5, `coefficientC should be 5 after 12 datapoints, is ${dataSeries.coefficientC()}`)
   dataSeries.push(1, 11)
   assert.ok(dataSeries.coefficientA() === 4, `coefficientA should be 4 after 13 datapoints, is ${dataSeries.coefficientA()}`)
   assert.ok(dataSeries.coefficientB() === 4, `coefficientB should be 4 after 13 datapoints, is ${dataSeries.coefficientB()}`)
