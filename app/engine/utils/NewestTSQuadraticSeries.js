@@ -30,8 +30,10 @@ function createTSQuadraticSeries (maxSeriesLength = 0) {
   const Y = createSeries(maxSeriesLength)
   const A = []
   const B = []
+  const C = []
   let _A = 0
   let _B = 0
+  let _C = 0
 
   function push (x, y) {
     X.push(x)
@@ -50,6 +52,7 @@ function createTSQuadraticSeries (maxSeriesLength = 0) {
     // Add an empty array at the end to store futurs results for the most recent points
     A.push([])
     B.push([])
+    C.push([])
 
     // Calculate the slopes of this new point
     if (X.length() > 2) {
@@ -58,13 +61,16 @@ function createTSQuadraticSeries (maxSeriesLength = 0) {
       while (i < X.length() - 2) {
         A[X.length() - 1].push(calculateA(i, X.length() - 1))
         B[X.length() - 1].push(calculateB(i, X.length() - 1))
+        C[X.length() - 1].push(calculateC(i, X.length() - 1))
         i++
       }
       _A = matrixMedian(A)
       _B = matrixMedian(B)
+      _C = matrixMedian(C)
     } else {
       _A = 0
       _B = 0
+      _C = 0
     }
   }
 
@@ -97,19 +103,7 @@ function createTSQuadraticSeries (maxSeriesLength = 0) {
   }
 
   function coefficientC () {
-    const C = createSeries()
-    if (X.length() > 2) {
-      let i = 0
-      let result = 0
-      while (i < X.length() - 1) {
-        result = calculateC(i)
-        C.push(result)
-        i++
-      }
-      return C.median()
-    } else {
-      return 0
-    }
+    return _C
   }
 
   function intercept () {
@@ -191,6 +185,7 @@ function createTSQuadraticSeries (maxSeriesLength = 0) {
   function removeFirstRow () {
     A.shift()
     B.shift()
+    C.shift()
   }
 
   function calculateA (pointOne, pointThree) {
@@ -212,8 +207,8 @@ function createTSQuadraticSeries (maxSeriesLength = 0) {
 
   function calculateB (pointOne, pointThree) {
     const pointTwo = Math.floor((pointOne + pointThree) / 2)
-    // For the underlying math, see https://math.stackexchange.com/questions/710750/find-a-second-degree-polynomial-that-goes-through-3-points
     if (pointOne < pointTwo && X.get(pointOne) !== X.get(pointTwo)) {
+      // For the underlying math, see https://math.stackexchange.com/questions/710750/find-a-second-degree-polynomial-that-goes-through-3-points
       return ((X.get(pointTwo) * Y.get(pointOne)) / (X.get(pointOne) * X.get(pointTwo) + X.get(pointOne) * X.get(pointThree) - Math.pow(X.get(pointOne), 2) - X.get(pointTwo) * X.get(pointThree)) + (X.get(pointThree) * Y.get(pointOne)) / (X.get(pointOne) * X.get(pointTwo) + X.get(pointOne) * X.get(pointThree) - Math.pow(X.get(pointOne), 2) - X.get(pointTwo) * X.get(pointThree)) + (X.get(pointOne) * Y.get(pointTwo)) / (X.get(pointOne) * X.get(pointTwo) - X.get(pointOne) * X.get(pointThree) - Math.pow(X.get(pointTwo), 2) + X.get(pointTwo) * X.get(pointThree)) + (X.get(pointThree) * Y.get(pointTwo)) / (X.get(pointOne) * X.get(pointTwo) - X.get(pointOne) * X.get(pointThree) - Math.pow(X.get(pointTwo), 2) + X.get(pointTwo) * X.get(pointThree)) + (X.get(pointOne) * Y.get(pointThree)) / (X.get(pointOne) * X.get(pointThree) + X.get(pointTwo) * X.get(pointThree) - X.get(pointOne) * X.get(pointTwo) - Math.pow(X.get(pointThree), 2)) + (X.get(pointTwo) * Y.get(pointThree)) / (X.get(pointOne) * X.get(pointThree) + X.get(pointTwo) * X.get(pointThree) - X.get(pointOne) * X.get(pointTwo) - Math.pow(X.get(pointThree), 2)))
     } else {
       log.error('TS Quadratic Regressor, Division by zero prevented in CalculateB!')
@@ -221,10 +216,10 @@ function createTSQuadraticSeries (maxSeriesLength = 0) {
     }
   }
 
-  function calculateC (pointOne) {
+  function calculateC (pointOne, pointThree) {
+    const pointTwo = Math.floor((pointOne + pointThree) / 2)
     // For the underlying math, see https://math.stackexchange.com/questions/710750/find-a-second-degree-polynomial-that-goes-through-3-points
-    // and https://www.physicsforums.com/threads/quadratic-equation-from-3-points.404174/
-    return Y.get(pointOne) - _A * Math.pow(X.get(pointOne), 2) - _B * X.get(pointOne)
+    return ((X.get(pointTwo) * X.get(pointThree) * Y.get(pointThree))/(Math.pow(X.get(pointOne), 2) - X.get(pointOne) * X.get(pointTwo) - X.get(pointOne) * X.get(pointThree) + X.get(pointTwo) * X.get(pointThree)) + (X.get(pointOne) * X.get(pointThree) * Y.get(pointTwo))/(X.get(pointOne) * X.get(pointThree) - X.get(pointOne) * X.get(pointTwo) + Math.pow(X.get(pointTwo), 2) - X.get(pointTwo) * X.get(pointThree)) + (X.get(pointOne) * X.get(pointTwo) * Y.get(pointThree))/(X.get(pointOne) * X.get(pointTwo) - X.get(pointOne) * X.get(pointThree) - X.get(pointTwo) * X.get(pointThree) + Math.pow(X.get(pointThree), 2)))
   }
 
   function matrixMedian (inputMatrix) {
@@ -242,9 +237,11 @@ function createTSQuadraticSeries (maxSeriesLength = 0) {
     X.reset()
     Y.reset()
     A.splice(0, A.length)
-    B.splice(0, A.length)
+    B.splice(0, B.length)
+    C.splice(0, C.length)
     _A = 0
     _B = 0
+    _C = 0
   }
 
   return {
