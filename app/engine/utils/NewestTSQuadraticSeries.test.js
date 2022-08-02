@@ -23,9 +23,9 @@ test('Quadratic Approximation startup behaviour', () => {
   assert.ok(dataSeries.coefficientB() === 0, `coefficientB should remain 0 with two datapoints, is ${dataSeries.coefficientB()}`)
   assert.ok(dataSeries.coefficientC() === 0, `coefficientC should remain 0 with two datapoints, is ${dataSeries.coefficientC()}`)
   dataSeries.push(1, 6)
-  assert.ok(dataSeries.coefficientA() === 2, `coefficientA should be 2, is ${dataSeries.coefficientA()}`)
-  assert.ok(dataSeries.coefficientB() === 2, `coefficientB should be 2, is ${dataSeries.coefficientB()}`)
-  assert.ok(dataSeries.coefficientC() === 2, `coefficientC should be 2, is ${dataSeries.coefficientC()}`)
+  assert.ok(dataSeries.coefficientA() === 2, `coefficientA should be 2 with three datapoints, is ${dataSeries.coefficientA()}`)
+  assert.ok(dataSeries.coefficientB() === 2, `coefficientB should be 2 with three datapoints, is ${dataSeries.coefficientB()}`)
+  assert.ok(dataSeries.coefficientC() === 2, `coefficientC should be 2 with three datapoints, is ${dataSeries.coefficientC()}`)
 })
 
 test('Quadratic Approximation on a perfect noisefree function y = 2 * Math.pow(x, 2) + 2 * x + 2, 21 datapoints', () => {
