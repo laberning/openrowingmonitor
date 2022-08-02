@@ -47,23 +47,23 @@ function createTSQuadraticSeries (maxSeriesLength = 0) {
     // row numbers of the A array. So, the A of (X[0],Y[0]) and (X[1],Y[1]
     // will be stored in A[0][.].
 
+    // Add an empty array at the end to store futurs results for the most recent points
+    A.push([])
+    
     // Calculate the slopes of this new point
     if (X.length() > 2) {
-      // There are at least two points in the X and Y arrays, so let's add the new datapoint
+      // There are at least two points in the X and Y arrays, so let's add the new datapoint  
       let i = 0
       let result = 0
       while (i < X.length() - 2) {
-        result = calculateA(i, A.length)
-        A[i].push(result)
+        result = calculateA(i, X.length() - 1)
+        A[X.length() - 1].push(result)
         i++
       }
       _A = Amedian()
     } else {
       _A = 0
     }
-
-    // Add an empty array at the end to store futurs results for the most recent points
-    A.push([])
 
     B.reset()
     if (X.length() > 2) {
