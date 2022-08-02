@@ -49,10 +49,10 @@ function createTSQuadraticSeries (maxSeriesLength = 0) {
 
     // Add an empty array at the end to store futurs results for the most recent points
     A.push([])
-    
+
     // Calculate the slopes of this new point
     if (X.length() > 2) {
-      // There are at least two points in the X and Y arrays, so let's add the new datapoint  
+      // There are at least two points in the X and Y arrays, so let's add the new datapoint
       let i = 0
       let result = 0
       while (i < X.length() - 2) {
