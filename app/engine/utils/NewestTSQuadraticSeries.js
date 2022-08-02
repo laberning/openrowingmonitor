@@ -29,7 +29,7 @@ function createTSQuadraticSeries (maxSeriesLength = 0) {
   const X = createSeries(maxSeriesLength)
   const Y = createSeries(maxSeriesLength)
   const A = []
-  const B = createSeries()
+  const B = []
   let _A = 0
   let _B = 0
 
@@ -49,39 +49,21 @@ function createTSQuadraticSeries (maxSeriesLength = 0) {
 
     // Add an empty array at the end to store futurs results for the most recent points
     A.push([])
+    B.push([])
 
     // Calculate the slopes of this new point
     if (X.length() > 2) {
       // There are at least two points in the X and Y arrays, so let's add the new datapoint
       let i = 0
-      let result = 0
       while (i < X.length() - 2) {
-        result = calculateA(i, X.length() - 1)
-        A[X.length() - 1].push(result)
+        A[X.length() - 1].push(calculateA(i, X.length() - 1))
+        B[X.length() - 1].push(calculateB(i, X.length() - 1))
         i++
       }
       _A = Amedian()
+      _B = Bmedian()
     } else {
       _A = 0
-    }
-
-    B.reset()
-    if (X.length() > 2) {
-      // There are at least two points in the X and Y arrays, so let's add the new datapoint
-      let i = 0
-      let j = 0
-      let result = 0
-      while (i < X.length() - 1) {
-        j = i + 1
-        while (j < X.length() - 1) {
-          result = calculateB(i, j)
-          B.push(result)
-          j++
-        }
-        i++
-      }
-      _B = B.median()
-    } else {
       _B = 0
     }
   }
@@ -255,6 +237,17 @@ function createTSQuadraticSeries (maxSeriesLength = 0) {
     }
   }
 
+  function Bmedian () {
+    if (B.length > 1) {
+      const sortedArray = [...B.flat()].sort((a, b) => a - b)
+      const mid = Math.floor(sortedArray.length / 2)
+      return (sortedArray.length % 2 !== 0 ? sortedArray[mid] : ((sortedArray[mid - 1] + sortedArray[mid]) / 2))
+    } else {
+      log.error('TS Quadratic Regressor, Median calculation on empty dataset attempted!')
+      return 0
+    }
+  }
+  
   function reset () {
     X.reset()
     Y.reset()
