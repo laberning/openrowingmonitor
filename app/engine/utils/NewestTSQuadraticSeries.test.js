@@ -174,7 +174,7 @@ test('Quadratic Approximation on a function with some noise (+/- 1) and spikes (
   assert.ok(dataSeries.coefficientC() === 3, `coefficientC should be 3 after 10 datapoints (second spike, -9), is ${dataSeries.coefficientC()}`) // We get 5.571428571428569 instead of 4, which is quite acceptable (especially since ORM ignores the C)
   dataSeries.push(-1, 3)
   assert.ok(dataSeries.coefficientA() === 3.9555555555555557, `coefficientA should be 3.9555555555555557 after 11 datapoints, is ${dataSeries.coefficientA()}`) // Coefficient A seems to take a hit anyway
-  assert.ok(dataSeries.coefficientB() === 3.37777777777778, `coefficientB should be 3.37777777777778 after 11 datapoints, is ${dataSeries.coefficientB()}`) // Coefficient B seems to take a hit anyway
+  assert.ok(dataSeries.coefficientB() === 3.288888888888895, `coefficientB should be 3.288888888888895 after 11 datapoints, is ${dataSeries.coefficientB()}`) // Coefficient B seems to take a hit anyway
   assert.ok(dataSeries.coefficientC() === 2.1999999999999957, `coefficientC should be 2.1999999999999957 after 11 datapoints, is ${dataSeries.coefficientC()}`) // We get a 2.1999999999999957 instead of 4, which is quite acceptable (especially since ORM ignores the C)
   dataSeries.push(0, 5)
   assert.ok(dataSeries.coefficientA() === 3.977777777777778, `coefficientA should be 3.977777777777778 after 12 datapoints, is ${dataSeries.coefficientA()}`)
