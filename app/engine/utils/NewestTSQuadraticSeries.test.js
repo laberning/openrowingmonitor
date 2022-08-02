@@ -2,7 +2,8 @@
 /*
   Open Rowing Monitor, https://github.com/jaapvanekris/openrowingmonitor
 
-  This tests the Quadratic Regression algorithm. As the tested Theil-Senn estimator is an approximation, we have to accept some slack
+  This tests the Theil-Senn estimator Quadratic Regression algorithm. As linear regression is an estimation and methods have biasses, we need
+  to accept some slack with respect to real-life examples
 */
 import { test } from 'uvu'
 import * as assert from 'uvu/assert'
@@ -189,7 +190,7 @@ test('Quadratic Approximation on function y = 4 * Math.pow(x, 2) + 4 * x + 4, wi
   dataSeries.push(-8, 229)
   assert.ok(dataSeries.coefficientA() === 3.3333333333333335, `coefficientA should be 3.3333333333333335 after 4 datapoints, is ${dataSeries.coefficientA()}`)
   assert.ok(dataSeries.coefficientB() === -8, `coefficientB should be -8 after 4 datapoints, is ${dataSeries.coefficientB()}`)
-  assert.ok(dataSeries.coefficientC() === 4, `coefficientC should be 4 after 4 datapoints, is ${dataSeries.coefficientC()}`)
+  assert.ok(dataSeries.coefficientC() === -48.33333333333303, `coefficientC should be -48.33333333333303 after 4 datapoints, is ${dataSeries.coefficientC()}`)
   dataSeries.push(-7, 171)
   assert.ok(dataSeries.coefficientA() === 4, `coefficientA should be 4 after 5 datapoints, is ${dataSeries.coefficientA()}`)
   assert.ok(dataSeries.coefficientB() === 4, `coefficientB should be 4 after 5 datapoints, is ${dataSeries.coefficientB()}`)
