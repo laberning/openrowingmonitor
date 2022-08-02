@@ -183,7 +183,7 @@ test('Quadratic Approximation on function y = 4 * Math.pow(x, 2) + 4 * x + 4, wi
   dataSeries.push(-11, 443)
   dataSeries.push(-10, 365)
   dataSeries.push(-9, 291)
-  assert.ok(dataSeries.coefficientA() === 4, `coefficientA should be 2 after 3 datapoints, is ${dataSeries.coefficientA()}`)
+  assert.ok(dataSeries.coefficientA() === 2, `coefficientA should be 2 after 3 datapoints, is ${dataSeries.coefficientA()}`)
   assert.ok(dataSeries.coefficientB() === 4, `coefficientB should be 4 after 3 datapoints, is ${dataSeries.coefficientB()}`)
   assert.ok(dataSeries.coefficientC() === 4, `coefficientC should be 4 after 3 datapoints, is ${dataSeries.coefficientC()}`)
   dataSeries.push(-8, 229)
@@ -325,7 +325,7 @@ test('Quadratic Approximation on function y = 4 * Math.pow(x, 2) + 4 * x + 4, wi
   dataSeries.push(8, 293)
   assert.ok(dataSeries.coefficientA() === 4, `coefficientA should remain 4 after 20 datapoints, is ${dataSeries.coefficientA()}`)
   assert.ok(dataSeries.coefficientB() === 4, `coefficientB should remain 4 after 20 datapoints, is ${dataSeries.coefficientB()}`)
-  assert.ok(dataSeries.coefficientC() === 3, `coefficientC should remain 4 after 20 datapoints, is ${dataSeries.coefficientC()}`) // This is quite acceptable as ORM ignores the C
+  assert.ok(dataSeries.coefficientC() === 3.4380952380952388, `coefficientC should be 3.4380952380952388 after 20 datapoints, is ${dataSeries.coefficientC()}`) // This is quite acceptable as ORM ignores the C
   dataSeries.push(9, 363)
   assert.ok(dataSeries.coefficientA() === 4, `coefficientA should remain 4 after 21 datapoints, is ${dataSeries.coefficientA()}`)
   assert.ok(dataSeries.coefficientB() === 4, `coefficientB should remain 4 after 21 datapoints, is ${dataSeries.coefficientB()}`)
