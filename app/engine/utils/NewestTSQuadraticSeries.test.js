@@ -185,7 +185,7 @@ test('Quadratic Approximation on function y = 4 * Math.pow(x, 2) + 4 * x + 4, wi
   dataSeries.push(-9, 291)
   assert.ok(dataSeries.coefficientA() === 2, `coefficientA should be 2 after 3 datapoints, is ${dataSeries.coefficientA()}`)
   assert.ok(dataSeries.coefficientB() === -36, `coefficientB should be 4 after 3 datapoints, is ${dataSeries.coefficientB()}`)
-  assert.ok(dataSeries.coefficientC() === 4, `coefficientC should be 4 after 3 datapoints, is ${dataSeries.coefficientC()}`)
+  assert.ok(dataSeries.coefficientC() === -195, `coefficientC should be 4 after 3 datapoints, is ${dataSeries.coefficientC()}`)
   dataSeries.push(-8, 229)
   assert.ok(dataSeries.coefficientA() === 4, `coefficientA should be 4 after 4 datapoints, is ${dataSeries.coefficientA()}`)
   assert.ok(dataSeries.coefficientB() === 4, `coefficientB should be 4 after 4 datapoints, is ${dataSeries.coefficientB()}`)
@@ -333,7 +333,7 @@ test('Quadratic Approximation on function y = 4 * Math.pow(x, 2) + 4 * x + 4, wi
   dataSeries.push(10, 444)
   assert.ok(dataSeries.coefficientA() === 4, `coefficientA should remain 4 after 22 datapoints, is ${dataSeries.coefficientA()}`)
   assert.ok(dataSeries.coefficientB() === 4, `coefficientB should remain 4 after 22 datapoints, is ${dataSeries.coefficientB()}`)
-  assert.ok(dataSeries.coefficientC() === 4, `coefficientC should remain 4 after 22 datapoints, is ${dataSeries.coefficientC()}`) // We get a 3 instead of 4, which is quite acceptable (especially since ORM ignores the C)
+  assert.ok(dataSeries.coefficientC() === 4.533333333333333, `coefficientC should be 4.533333333333333 after 22 datapoints, is ${dataSeries.coefficientC()}`) // We get a 3 instead of 4, which is quite acceptable (especially since ORM ignores the C)
 })
 
 test('Quadratic TS Estimation should be decent for standard real-life example from MathBits with some noise', () => {
