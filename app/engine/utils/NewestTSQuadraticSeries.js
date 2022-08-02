@@ -218,7 +218,7 @@ function createTSQuadraticSeries (maxSeriesLength = 0) {
 
   function calculateC (pointOne, pointThree) {
     const pointTwo = Math.floor((pointOne + pointThree) / 2)
-    // For the underlying math, see https://www.quora.com/How-do-I-find-a-quadratic-equation-from-points
+    // For the underlying math, see https://math.stackexchange.com/questions/710750/find-a-second-degree-polynomial-that-goes-through-3-points
     return ((X.get(pointTwo) * X.get(pointThree) * Y.get(pointOne)) / (Math.pow(X.get(pointOne), 2) - X.get(pointOne) * X.get(pointTwo) - X.get(pointOne) * X.get(pointThree) + X.get(pointTwo) * X.get(pointThree)) + (X.get(pointOne) * X.get(pointThree) * Y.get(pointTwo)) / (X.get(pointOne) * X.get(pointThree) - X.get(pointOne) * X.get(pointTwo) + Math.pow(X.get(pointTwo), 2) - X.get(pointTwo) * X.get(pointThree)) + (X.get(pointOne) * X.get(pointTwo) * Y.get(pointThree)) / (X.get(pointOne) * X.get(pointTwo) - X.get(pointOne) * X.get(pointThree) - X.get(pointTwo) * X.get(pointThree) + Math.pow(X.get(pointThree), 2)))
   }
 
