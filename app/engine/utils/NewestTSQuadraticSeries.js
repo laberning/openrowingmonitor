@@ -190,6 +190,7 @@ function createTSQuadraticSeries (maxSeriesLength = 0) {
 
   function removeFirstRow () {
     A.shift()
+    B.shift()
   }
 
   function calculateA (pointOne, pointThree) {
@@ -241,7 +242,7 @@ function createTSQuadraticSeries (maxSeriesLength = 0) {
     X.reset()
     Y.reset()
     A.splice(0, A.length)
-    B.reset()
+    B.splice(0, A.length)
     _A = 0
     _B = 0
   }
