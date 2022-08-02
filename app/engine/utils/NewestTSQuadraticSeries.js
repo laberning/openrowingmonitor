@@ -60,8 +60,8 @@ function createTSQuadraticSeries (maxSeriesLength = 0) {
         B[X.length() - 1].push(calculateB(i, X.length() - 1))
         i++
       }
-      _A = Amedian()
-      _B = Bmedian()
+      _A = matrixMedian(A)
+      _B = matrixMedian(B)
     } else {
       _A = 0
       _B = 0
@@ -226,28 +226,17 @@ function createTSQuadraticSeries (maxSeriesLength = 0) {
     return Y.get(pointOne) - _A * Math.pow(X.get(pointOne), 2) - _B * X.get(pointOne)
   }
 
-  function Amedian () {
-    if (A.length > 1) {
-      const sortedArray = [...A.flat()].sort((a, b) => a - b)
+  function matrixMedian (inputMatrix) {
+    if (inputMatrix.length > 1) {
+      const sortedArray = [...inputMatrix.flat()].sort((a, b) => a - b)
       const mid = Math.floor(sortedArray.length / 2)
       return (sortedArray.length % 2 !== 0 ? sortedArray[mid] : ((sortedArray[mid - 1] + sortedArray[mid]) / 2))
     } else {
-      log.error('TS Quadratic Regressor, Median calculation on empty dataset attempted!')
+      log.error('TS Quadratic Regressor, Median calculation on empty matrix attempted!')
       return 0
     }
   }
 
-  function Bmedian () {
-    if (B.length > 1) {
-      const sortedArray = [...B.flat()].sort((a, b) => a - b)
-      const mid = Math.floor(sortedArray.length / 2)
-      return (sortedArray.length % 2 !== 0 ? sortedArray[mid] : ((sortedArray[mid - 1] + sortedArray[mid]) / 2))
-    } else {
-      log.error('TS Quadratic Regressor, Median calculation on empty dataset attempted!')
-      return 0
-    }
-  }
-  
   function reset () {
     X.reset()
     Y.reset()
