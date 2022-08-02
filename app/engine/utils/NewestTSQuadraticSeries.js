@@ -206,20 +206,35 @@ function createTSQuadraticSeries (maxSeriesLength = 0) {
   }
 
   function calculateB (pointOne, pointThree) {
-    const pointTwo = Math.floor((pointOne + pointThree) / 2)
-    if (pointOne < pointTwo && X.get(pointOne) !== X.get(pointTwo)) {
-      // For the underlying math, see https://math.stackexchange.com/questions/710750/find-a-second-degree-polynomial-that-goes-through-3-points
-      return ((X.get(pointTwo) * Y.get(pointOne)) / (X.get(pointOne) * X.get(pointTwo) + X.get(pointOne) * X.get(pointThree) - Math.pow(X.get(pointOne), 2) - X.get(pointTwo) * X.get(pointThree)) + (X.get(pointThree) * Y.get(pointOne)) / (X.get(pointOne) * X.get(pointTwo) + X.get(pointOne) * X.get(pointThree) - Math.pow(X.get(pointOne), 2) - X.get(pointTwo) * X.get(pointThree)) + (X.get(pointOne) * Y.get(pointTwo)) / (X.get(pointOne) * X.get(pointTwo) - X.get(pointOne) * X.get(pointThree) - Math.pow(X.get(pointTwo), 2) + X.get(pointTwo) * X.get(pointThree)) + (X.get(pointThree) * Y.get(pointTwo)) / (X.get(pointOne) * X.get(pointTwo) - X.get(pointOne) * X.get(pointThree) - Math.pow(X.get(pointTwo), 2) + X.get(pointTwo) * X.get(pointThree)) + (X.get(pointOne) * Y.get(pointThree)) / (X.get(pointOne) * X.get(pointThree) + X.get(pointTwo) * X.get(pointThree) - X.get(pointOne) * X.get(pointTwo) - Math.pow(X.get(pointThree), 2)) + (X.get(pointTwo) * Y.get(pointThree)) / (X.get(pointOne) * X.get(pointThree) + X.get(pointTwo) * X.get(pointThree) - X.get(pointOne) * X.get(pointTwo) - Math.pow(X.get(pointThree), 2)))
+    if ((pointOne + 1) < pointThree && X.get(pointOne) !== X.get(pointThree)) {
+      const pointTwo = Math.floor((pointOne + pointThree) / 2)
+      if (pointOne < pointTwo && pointTwo < pointThree && X.get(pointOne) !== X.get(pointTwo) && X.get(pointTwo) !== X.get(pointThree)) {
+        // For the underlying math, see https://math.stackexchange.com/questions/710750/find-a-second-degree-polynomial-that-goes-through-3-points
+        return ((X.get(pointTwo) * Y.get(pointOne)) / (X.get(pointOne) * X.get(pointTwo) + X.get(pointOne) * X.get(pointThree) - Math.pow(X.get(pointOne), 2) - X.get(pointTwo) * X.get(pointThree)) + (X.get(pointThree) * Y.get(pointOne)) / (X.get(pointOne) * X.get(pointTwo) + X.get(pointOne) * X.get(pointThree) - Math.pow(X.get(pointOne), 2) - X.get(pointTwo) * X.get(pointThree)) + (X.get(pointOne) * Y.get(pointTwo)) / (X.get(pointOne) * X.get(pointTwo) - X.get(pointOne) * X.get(pointThree) - Math.pow(X.get(pointTwo), 2) + X.get(pointTwo) * X.get(pointThree)) + (X.get(pointThree) * Y.get(pointTwo)) / (X.get(pointOne) * X.get(pointTwo) - X.get(pointOne) * X.get(pointThree) - Math.pow(X.get(pointTwo), 2) + X.get(pointTwo) * X.get(pointThree)) + (X.get(pointOne) * Y.get(pointThree)) / (X.get(pointOne) * X.get(pointThree) + X.get(pointTwo) * X.get(pointThree) - X.get(pointOne) * X.get(pointTwo) - Math.pow(X.get(pointThree), 2)) + (X.get(pointTwo) * Y.get(pointThree)) / (X.get(pointOne) * X.get(pointThree) + X.get(pointTwo) * X.get(pointThree) - X.get(pointOne) * X.get(pointTwo) - Math.pow(X.get(pointThree), 2)))
+      } else {
+        log.error('TS Quadratic Regressor, Division by zero prevented in CalculateB!')
+        return 0
+      }
     } else {
-      log.error('TS Quadratic Regressor, Division by zero prevented in CalculateB!')
+      log.error('TS Quadratic Regressor, Division by zero prevented in CalculateA!')
       return 0
     }
   }
 
   function calculateC (pointOne, pointThree) {
-    const pointTwo = Math.floor((pointOne + pointThree) / 2)
-    // For the underlying math, see https://math.stackexchange.com/questions/710750/find-a-second-degree-polynomial-that-goes-through-3-points
-    return ((X.get(pointTwo) * X.get(pointThree) * Y.get(pointOne)) / (Math.pow(X.get(pointOne), 2) - X.get(pointOne) * X.get(pointTwo) - X.get(pointOne) * X.get(pointThree) + X.get(pointTwo) * X.get(pointThree)) + (X.get(pointOne) * X.get(pointThree) * Y.get(pointTwo)) / (X.get(pointOne) * X.get(pointThree) - X.get(pointOne) * X.get(pointTwo) + Math.pow(X.get(pointTwo), 2) - X.get(pointTwo) * X.get(pointThree)) + (X.get(pointOne) * X.get(pointTwo) * Y.get(pointThree)) / (X.get(pointOne) * X.get(pointTwo) - X.get(pointOne) * X.get(pointThree) - X.get(pointTwo) * X.get(pointThree) + Math.pow(X.get(pointThree), 2)))
+    if ((pointOne + 1) < pointThree && X.get(pointOne) !== X.get(pointThree)) {
+      const pointTwo = Math.floor((pointOne + pointThree) / 2)
+      if (pointOne < pointTwo && pointTwo < pointThree && X.get(pointOne) !== X.get(pointTwo) && X.get(pointTwo) !== X.get(pointThree)) {
+        // For the underlying math, see https://math.stackexchange.com/questions/710750/find-a-second-degree-polynomial-that-goes-through-3-points
+        return ((X.get(pointTwo) * X.get(pointThree) * Y.get(pointOne)) / (Math.pow(X.get(pointOne), 2) - X.get(pointOne) * X.get(pointTwo) - X.get(pointOne) * X.get(pointThree) + X.get(pointTwo) * X.get(pointThree)) + (X.get(pointOne) * X.get(pointThree) * Y.get(pointTwo)) / (X.get(pointOne) * X.get(pointThree) - X.get(pointOne) * X.get(pointTwo) + Math.pow(X.get(pointTwo), 2) - X.get(pointTwo) * X.get(pointThree)) + (X.get(pointOne) * X.get(pointTwo) * Y.get(pointThree)) / (X.get(pointOne) * X.get(pointTwo) - X.get(pointOne) * X.get(pointThree) - X.get(pointTwo) * X.get(pointThree) + Math.pow(X.get(pointThree), 2)))
+      } else {
+        log.error('TS Quadratic Regressor, Division by zero prevented in CalculateB!')
+        return 0
+      }
+    } else {
+      log.error('TS Quadratic Regressor, Division by zero prevented in CalculateA!')
+      return 0
+    }
   }
 
   function matrixMedian (inputMatrix) {
