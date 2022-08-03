@@ -198,7 +198,7 @@ function createTSQuadraticSeries (maxSeriesLength = 0) {
         // For the underlying math, see https://www.quora.com/How-do-I-find-a-quadratic-equation-from-points/answer/Robert-Paxson
         results.push((X.get(pointOne) * (Y.get(pointThree) - Y.get(pointTwo)) + Y.get(pointOne) * (X.get(pointTwo) - X.get(pointThree)) + (X.get(pointThree) * Y.get(pointTwo) - X.get(pointTwo) * Y.get(pointThree))) / ((X.get(pointOne) - X.get(pointTwo)) * (X.get(pointOne) - X.get(pointThree)) * (X.get(pointTwo) - X.get(pointThree))))
         pointTwo += 1
-      } 
+      }
       return results.median()
     } else {
       log.error('TS Quadratic Regressor, Division by zero prevented in CalculateA!')
