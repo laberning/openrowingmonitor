@@ -225,7 +225,7 @@ test('Quadratic Approximation on function y = 4 * Math.pow(x, 2) + 4 * x + 4, wi
   // assert.ok(dataSeries.coefficientC() === 5, `coefficientC should be 5 after 12 datapoints, is ${dataSeries.coefficientC()}`)
   dataSeries.push(1, 11)
   assert.ok(dataSeries.coefficientA() === 4, `coefficientA should be 4 after 13 datapoints, is ${dataSeries.coefficientA()}`)
-  assert.ok(dataSeries.coefficientB() === 4, `coefficientB should be 4 after 13 datapoints, is ${dataSeries.coefficientB()}`)
+  assert.ok(dataSeries.coefficientB() === 3.7777777777777777, `coefficientB should be 3.7777777777777777 after 13 datapoints, is ${dataSeries.coefficientB()}`)
   // assert.ok(dataSeries.coefficientC() === 3.857142857142857, `coefficientC should be 3.857142857142857 after 13 datapoints, is ${dataSeries.coefficientC()}`)
   dataSeries.push(2, 29)
   assert.ok(dataSeries.coefficientA() === 4, `coefficientA should be 4 after 14 datapoints, is ${dataSeries.coefficientA()}`)
@@ -325,7 +325,7 @@ test('Quadratic Approximation on function y = 4 * Math.pow(x, 2) + 4 * x + 4, wi
   // assert.ok(dataSeries.coefficientC() === 3.7885714285714287, `coefficientC should be 3.7885714285714287 after 19 datapoints, is ${dataSeries.coefficientC()}`) // This is quite acceptable as ORM ignores the C
   dataSeries.push(8, 293)
   assert.ok(dataSeries.coefficientA() === 4, `coefficientA should remain 4 after 20 datapoints, is ${dataSeries.coefficientA()}`)
-  assert.ok(dataSeries.coefficientB() === 4, `coefficientB should remain 4 after 20 datapoints, is ${dataSeries.coefficientB()}`)
+  assert.ok(dataSeries.coefficientB() === 3.8666666666666663, `coefficientB should BE 3.8666666666666663 after 20 datapoints, is ${dataSeries.coefficientB()}`)
   // assert.ok(dataSeries.coefficientC() === 3.4380952380952383, `coefficientC should be 3.4380952380952383 after 20 datapoints, is ${dataSeries.coefficientC()}`) // This is quite acceptable as ORM ignores the C
   dataSeries.push(9, 363)
   assert.ok(dataSeries.coefficientA() === 4, `coefficientA should remain 4 after 21 datapoints, is ${dataSeries.coefficientA()}`)
