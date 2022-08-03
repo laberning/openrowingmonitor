@@ -14,7 +14,7 @@
 
   The Theil-Senn implementation uses concepts that are described here:
   https://stats.stackexchange.com/questions/317777/theil-sen-estimator-for-polynomial,
-  
+
   The determination of the coefficients is based on the math descirbed here:
   https://www.quora.com/How-do-I-find-a-quadratic-equation-from-points/answer/Robert-Paxson,
   https://www.physicsforums.com/threads/quadratic-equation-from-3-points.404174/
