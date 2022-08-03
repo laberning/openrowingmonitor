@@ -197,7 +197,7 @@ test('Quadratic Approximation on function y = 4 * Math.pow(x, 2) + 4 * x + 4, wi
   assert.ok(dataSeries.coefficientC() === -25, `coefficientC should be -25 after 5 datapoints, is ${dataSeries.coefficientC()}`)
   dataSeries.push(-6, 125)
   assert.ok(dataSeries.coefficientA() === 4, `coefficientA should be 4 after 6 datapoints, is ${dataSeries.coefficientA()}`)
-  assert.ok(dataSeries.coefficientB() === 4, `coefficientB should be 4 after 6 datapoints, is ${dataSeries.coefficientB()}`)
+  assert.ok(dataSeries.coefficientB() === 4.533333333333333, `coefficientB should be 4.533333333333333 after 6 datapoints, is ${dataSeries.coefficientB()}`)
   assert.ok(dataSeries.coefficientC() === 4, `coefficientC should be 4 after 6 datapoints, is ${dataSeries.coefficientC()}`)
   dataSeries.push(-5, 83)
   assert.ok(dataSeries.coefficientA() === 4, `coefficientA should be 4 after 7 datapoints, is ${dataSeries.coefficientA()}`)
@@ -285,7 +285,7 @@ test('Quadratic Approximation on function y = 4 * Math.pow(x, 2) + 4 * x + 4, wi
   assert.ok(dataSeries.coefficientC() === 9.666666666666666, `coefficientC should remain 9.666666666666666 after 9 datapoints (first spike, +9), is ${dataSeries.coefficientC()}`) // We get a 11.4 instead of 4, which is quite acceptable (especially since ORM ignores the C)
   dataSeries.push(-2, 3)
   assert.ok(dataSeries.coefficientA() === 4, `coefficientA should return to 4 after 10 datapoints (second spike, -9), is ${dataSeries.coefficientA()}`)
-  assert.ok(dataSeries.coefficientB() === 4, `coefficientB should return to 4 after 10 datapoints (second spike, -9), is ${dataSeries.coefficientB()}`)
+  assert.ok(dataSeries.coefficientB() === 4.342857142857143, `coefficientB should be 4.342857142857143 after 10 datapoints (second spike, -9), is ${dataSeries.coefficientB()}`)
   assert.ok(dataSeries.coefficientC() === 3, `coefficientC should be 3 after 10 datapoints (second spike, -9), is ${dataSeries.coefficientC()}`) // We get 3 instead of 4, which is quite acceptable (especially since ORM ignores the C)
   dataSeries.push(-1, 3)
   assert.ok(dataSeries.coefficientA() === 3.9555555555555557, `coefficientA should be 3.9555555555555557 after 11 datapoints, is ${dataSeries.coefficientA()}`) // Coefficient A seems to take a hit anyway
