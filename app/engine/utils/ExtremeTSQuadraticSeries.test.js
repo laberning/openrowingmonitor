@@ -188,7 +188,7 @@ test('Quadratic Approximation on function y = 4 * Math.pow(x, 2) + 4 * x + 4, wi
   assert.ok(dataSeries.coefficientB() === -36, `coefficientB should be 4 after 3 datapoints, is ${dataSeries.coefficientB()}`)
   assert.ok(dataSeries.coefficientC() === -195, `coefficientC should be 4 after 3 datapoints, is ${dataSeries.coefficientC()}`)
   dataSeries.push(-8, 229)
-  assert.ok(dataSeries.coefficientA() === 3.3333333333333335, `coefficientA should be 3.3333333333333335 after 4 datapoints, is ${dataSeries.coefficientA()}`)
+  assert.ok(dataSeries.coefficientA() === 4, `coefficientA should be 4 after 4 datapoints, is ${dataSeries.coefficientA()}`)
   assert.ok(dataSeries.coefficientB() === -8, `coefficientB should be -8 after 4 datapoints, is ${dataSeries.coefficientB()}`)
   assert.ok(dataSeries.coefficientC() === -48.333333333333336, `coefficientC should be -48.333333333333336 after 4 datapoints, is ${dataSeries.coefficientC()}`)
   dataSeries.push(-7, 171)
@@ -277,7 +277,7 @@ test('Quadratic Approximation on function y = 4 * Math.pow(x, 2) + 4 * x + 4, wi
   dataSeries.push(-5, 83)
   dataSeries.push(-4, 53)
   assert.ok(dataSeries.coefficientA() === 4, `coefficientA should be 4 after 8 datapoints, is ${dataSeries.coefficientA()}`)
-  assert.ok(dataSeries.coefficientB() === 4, `coefficientB should be 4 after 8 datapoints, is ${dataSeries.coefficientB()}`)
+  assert.ok(dataSeries.coefficientB() === 4.4, `coefficientB should be 4.4 after 8 datapoints, is ${dataSeries.coefficientB()}`)
   assert.ok(dataSeries.coefficientC() === 3, `coefficientC should be 3 after 8 datapoints, is ${dataSeries.coefficientC()}`) // We get a 3 instead of 4, which is quite acceptable (especially since ORM ignores the C)
   dataSeries.push(-3, 37)
   assert.ok(dataSeries.coefficientA() === 4.133333333333334, `coefficientA should be 4.133333333333334 after 9 datapoints (first spike, +9), is ${dataSeries.coefficientA()}`) // Coefficient A seems to take a hit anyway
@@ -353,7 +353,7 @@ test('Quadratic TS Estimation should be decent for standard real-life example fr
   dataSeries.push(58, 244.2)
   dataSeries.push(60, 231.4)
   dataSeries.push(64, 180.4)
-  assert.ok(dataSeries.coefficientA() === -0.1762309523809523, `coefficientA should be -0.1762309523809523, is ${dataSeries.coefficientA()}`) // In the example, the TI084 results in -0.1737141137, which we consider acceptably close
+  assert.ok(dataSeries.coefficientA() === -0.17785023090944152, `coefficientA should be -0.1762309523809523, is ${dataSeries.coefficientA()}`) // In the example, the TI084 results in -0.1737141137, which we consider acceptably close
   assert.ok(dataSeries.coefficientB() === 14.875000000000004, `coefficientB should be 14.875000000000004, is ${dataSeries.coefficientB()}`) // In the example, the TI084 results in 14.52117133, which we consider acceptably close
   assert.ok(dataSeries.coefficientC() === -32.561632653064834, `coefficientC should be -32.56163265306122, is ${dataSeries.coefficientC()}`) // In the example, the TI084 results in -21.89774466, which we consider acceptably close
 })
@@ -368,7 +368,7 @@ test('Quadratic TS Estimation should be decent for standard real-life example fr
   dataSeries.push(1, 3)
   dataSeries.push(2, 6)
   dataSeries.push(3, 14)
-  assert.ok(dataSeries.coefficientA() === 1.0666666666666667, `coefficientA should be 1.0666666666666667, is ${dataSeries.coefficientA()}`) // The example results in 1.1071 for OLS, which we consider acceptably close
+  assert.ok(dataSeries.coefficientA() === 1.1166666666666667, `coefficientA should be 1.0666666666666667, is ${dataSeries.coefficientA()}`) // The example results in 1.1071 for OLS, which we consider acceptably close
   assert.ok(dataSeries.coefficientB() === 1.1666666666666667, `coefficientB should be 1.1666666666666667, is ${dataSeries.coefficientB()}`) // The example results in 1 for OLS, which we consider acceptably close
   assert.ok(dataSeries.coefficientC() === 1, `coefficientC should be 1, is ${dataSeries.coefficientC()}`) // The example results in 0.5714 for OLS, which we consider acceptably close
 })
@@ -414,7 +414,7 @@ test('Quadratic TS Estimation should be decent for standard real-life example fr
   dataSeries.push(0.102696671, 0.27621694)
   dataSeries.push(0.715372314, -1.20379729)
   dataSeries.push(0.681745393, -0.83059624)
-  assert.ok(dataSeries.coefficientA() === -3.1827927919154, `coefficientA should be -3.1827927919154, is ${dataSeries.coefficientA()}`)
+  assert.ok(dataSeries.coefficientA() === -3.13052236289358, `coefficientA should be -3.13052236289358, is ${dataSeries.coefficientA()}`)
   assert.ok(dataSeries.coefficientB() === 1.4334785345517704, `coefficientB should be 1.4334785345517704, is ${dataSeries.coefficientB()}`)
   assert.ok(dataSeries.coefficientC() === 0.09073933224254299, `coefficientC should be 0.09073933224254299, is ${dataSeries.coefficientC()}`)
 })
