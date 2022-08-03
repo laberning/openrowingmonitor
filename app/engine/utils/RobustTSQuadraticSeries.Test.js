@@ -808,7 +808,7 @@ test('Quadratic TS Estimation should result in a changing coefficientA when the 
   dataSeries.push(2.97, 10.339875)
   dataSeries.push(2.98, 10.3565)
   dataSeries.push(2.99, 10.372875)
-  assert.ok(dataSeries.coefficientA() === -1.2499999999804303, `coefficientA should be -1.2499999999804303, is ${dataSeries.coefficientA()}`) // From data generation, Coef A should be -1.25
+  assert.ok(dataSeries.coefficientA() === -1.2500000000030973, `coefficientA should be -1.2500000000030973, is ${dataSeries.coefficientA()}`) // From data generation, Coef A should be -1.25
   assert.ok(dataSeries.slope(dataSeries.length() - 1) === 1.625, `coefficientB should be 1.625, is ${dataSeries.slope(dataSeries.length() - 1)}`) // From data generation, Coef B should be 6.325
 })
 
