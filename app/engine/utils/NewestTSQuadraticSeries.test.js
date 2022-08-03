@@ -254,7 +254,7 @@ test('Quadratic Approximation on function y = 4 * Math.pow(x, 2) + 4 * x + 4, wi
   dataSeries.push(8, 293)
   assert.ok(dataSeries.coefficientA() === 4, `coefficientA should be 4 after 20 datapoints, is ${dataSeries.coefficientA()}`)
   assert.ok(dataSeries.coefficientB() === 4, `coefficientB should be 4 after 20 datapoints, is ${dataSeries.coefficientB()}`)
-  assert.ok(dataSeries.coefficientC() === 4.1111111111111125, `coefficientC should be 4.1111111111111125 after 20 datapoints, is ${dataSeries.coefficientC()}`)
+  assert.ok(dataSeries.coefficientC() === 4.111111111111111, `coefficientC should be 4.111111111111111 after 20 datapoints, is ${dataSeries.coefficientC()}`)
   dataSeries.push(9, 363)
   assert.ok(dataSeries.coefficientA() === 4, `coefficientA should be 4 after 21 datapoints, is ${dataSeries.coefficientA()}`)
   assert.ok(dataSeries.coefficientB() === 4, `coefficientB should be 4 after 21 datapoints, is ${dataSeries.coefficientB()}`)
@@ -314,7 +314,7 @@ test('Quadratic Approximation on function y = 4 * Math.pow(x, 2) + 4 * x + 4, wi
   dataSeries.push(5, 123)
   assert.ok(dataSeries.coefficientA() === 4, `coefficientA should remain 4 after 17 datapoints, is ${dataSeries.coefficientA()}`)
   assert.ok(dataSeries.coefficientB() === 4, `coefficientB should remain 4 after 17 datapoints, is ${dataSeries.coefficientB()}`)
-  assert.ok(dataSeries.coefficientC() === 3.719999999999997, `coefficientC should be 3.719999999999997 after 17 datapoints, is ${dataSeries.coefficientC()}`) // This is quite acceptable as ORM ignores the C
+  assert.ok(dataSeries.coefficientC() === 3.72, `coefficientC should be 3.72 after 17 datapoints, is ${dataSeries.coefficientC()}`) // This is quite acceptable as ORM ignores the C
   dataSeries.push(6, 173)
   assert.ok(dataSeries.coefficientA() === 4, `coefficientA should remain 4 after 18 datapoints, is ${dataSeries.coefficientA()}`)
   assert.ok(dataSeries.coefficientB() === 4, `coefficientB should remain 4 after 18 datapoints, is ${dataSeries.coefficientB()}`)
