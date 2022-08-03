@@ -205,7 +205,7 @@ test('Quadratic Approximation on function y = 4 * Math.pow(x, 2) + 4 * x + 4, wi
   assert.ok(dataSeries.coefficientC() === -0.3333333333333339, `coefficientC should be -0.3333333333333339 after 7 datapoints, is ${dataSeries.coefficientC()}`)
   dataSeries.push(-4, 53)
   assert.ok(dataSeries.coefficientA() === 4, `coefficientA should be 4 after 8 datapoints, is ${dataSeries.coefficientA()}`)
-  assert.ok(dataSeries.coefficientB() === 4, `coefficientB should be 4 after 8 datapoints, is ${dataSeries.coefficientB()}`)
+  assert.ok(dataSeries.coefficientB() === 4.4, `coefficientB should be 4 after 8 datapoints, is ${dataSeries.coefficientB()}`)
   assert.ok(dataSeries.coefficientC() === 3, `coefficientC should be 3 after 8 datapoints, is ${dataSeries.coefficientC()}`)
   dataSeries.push(-3, 27)
   assert.ok(dataSeries.coefficientA() === 4, `coefficientA should be 4 after 9 datapoints, is ${dataSeries.coefficientA()}`)
@@ -290,7 +290,7 @@ test('Quadratic Approximation on function y = 4 * Math.pow(x, 2) + 4 * x + 4, wi
   dataSeries.push(-1, 3)
   assert.ok(dataSeries.coefficientA() === 4, `coefficientA should remain 4 after 11 datapoints, is ${dataSeries.coefficientA()}`) // Coefficient A seems to take a hit anyway
   assert.ok(dataSeries.coefficientB() === 3.8476190476190473, `coefficientB should be 3.8476190476190473 after 11 datapoints, is ${dataSeries.coefficientB()}`) // Coefficient B seems to take a hit anyway
-  assert.ok(dataSeries.coefficientC() === 2.3333333333333335, `coefficientC should be 2.3333333333333357 after 11 datapoints, is ${dataSeries.coefficientC()}`) // We get a 2.3333333333333357 instead of 4, which is quite acceptable (especially since ORM ignores the C)
+  assert.ok(dataSeries.coefficientC() === 2.8412698412698414, `coefficientC should be 2.8412698412698414 after 11 datapoints, is ${dataSeries.coefficientC()}`) // We get a 2.3333333333333357 instead of 4, which is quite acceptable (especially since ORM ignores the C)
   dataSeries.push(0, 5)
   assert.ok(dataSeries.coefficientA() === 3.977777777777778, `coefficientA should be 3.977777777777778 after 12 datapoints, is ${dataSeries.coefficientA()}`)
   assert.ok(dataSeries.coefficientB() === 3.8095238095238093, `coefficientB should be 3.8095238095238093 after 12 datapoints, is ${dataSeries.coefficientB()}`)
