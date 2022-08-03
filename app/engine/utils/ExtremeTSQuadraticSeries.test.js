@@ -221,7 +221,7 @@ test('Quadratic Approximation on function y = 4 * Math.pow(x, 2) + 4 * x + 4, wi
   // assert.ok(dataSeries.coefficientC() === 3, `coefficientC should be 3 after 11 datapoints, is ${dataSeries.coefficientC()}`)
   dataSeries.push(0, 5)
   assert.ok(dataSeries.coefficientA() === 4, `coefficientA should be 4 after 12 datapoints, is ${dataSeries.coefficientA()}`)
-  assert.ok(dataSeries.coefficientB() === 4, `coefficientB should be 4 after 12 datapoints, is ${dataSeries.coefficientB()}`)
+  assert.ok(dataSeries.coefficientB() === 4.253968253968254, `coefficientB should be 4.253968253968254 after 12 datapoints, is ${dataSeries.coefficientB()}`)
   // assert.ok(dataSeries.coefficientC() === 5, `coefficientC should be 5 after 12 datapoints, is ${dataSeries.coefficientC()}`)
   dataSeries.push(1, 11)
   assert.ok(dataSeries.coefficientA() === 4, `coefficientA should be 4 after 13 datapoints, is ${dataSeries.coefficientA()}`)
@@ -317,7 +317,7 @@ test('Quadratic Approximation on function y = 4 * Math.pow(x, 2) + 4 * x + 4, wi
   // assert.ok(dataSeries.coefficientC() === 3.72, `coefficientC should be 3.72 after 17 datapoints, is ${dataSeries.coefficientC()}`) // This is quite acceptable as ORM ignores the C
   dataSeries.push(6, 173)
   assert.ok(dataSeries.coefficientA() === 4, `coefficientA should remain 4 after 18 datapoints, is ${dataSeries.coefficientA()}`)
-  assert.ok(dataSeries.coefficientB() === 4, `coefficientB should remain 4 after 18 datapoints, is ${dataSeries.coefficientB()}`)
+  assert.ok(dataSeries.coefficientB() === 4.152380952380953, `coefficientB should remain 4.152380952380953 after 18 datapoints, is ${dataSeries.coefficientB()}`)
   // assert.ok(dataSeries.coefficientC() === 4.111111111111111, `coefficientC should be 4.111111111111111 after 18 datapoints, is ${dataSeries.coefficientC()}`) // This is quite acceptable as ORM ignores the C
   dataSeries.push(7, 227)
   assert.ok(dataSeries.coefficientA() === 4, `coefficientA should remain 4 after 19 datapoints, is ${dataSeries.coefficientA()}`)
