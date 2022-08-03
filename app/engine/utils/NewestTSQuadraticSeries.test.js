@@ -258,7 +258,7 @@ test('Quadratic Approximation on function y = 4 * Math.pow(x, 2) + 4 * x + 4, wi
   dataSeries.push(9, 363)
   assert.ok(dataSeries.coefficientA() === 4, `coefficientA should be 4 after 21 datapoints, is ${dataSeries.coefficientA()}`)
   assert.ok(dataSeries.coefficientB() === 4, `coefficientB should be 4 after 21 datapoints, is ${dataSeries.coefficientB()}`)
-  assert.ok(dataSeries.coefficientC() === 3.933333333333323, `coefficientC should be 3.933333333333323 after 21 datapoints, is ${dataSeries.coefficientC()}`)
+  assert.ok(dataSeries.coefficientC() === 3.933333333333333, `coefficientC should be 3.933333333333333 after 21 datapoints, is ${dataSeries.coefficientC()}`)
   dataSeries.push(10, 444)
   assert.ok(dataSeries.coefficientA() === 4, `coefficientA should be 4 after 22 datapoints, is ${dataSeries.coefficientA()}`)
   assert.ok(dataSeries.coefficientB() === 4, `coefficientB should be 4 after 22 datapoints, is ${dataSeries.coefficientB()}`)
@@ -318,7 +318,7 @@ test('Quadratic Approximation on function y = 4 * Math.pow(x, 2) + 4 * x + 4, wi
   dataSeries.push(6, 173)
   assert.ok(dataSeries.coefficientA() === 4, `coefficientA should remain 4 after 18 datapoints, is ${dataSeries.coefficientA()}`)
   assert.ok(dataSeries.coefficientB() === 4, `coefficientB should remain 4 after 18 datapoints, is ${dataSeries.coefficientB()}`)
-  assert.ok(dataSeries.coefficientC() === 4.1111111111111125, `coefficientC should be 4.1111111111111125 after 18 datapoints, is ${dataSeries.coefficientC()}`) // This is quite acceptable as ORM ignores the C
+  assert.ok(dataSeries.coefficientC() === 4.111111111111111, `coefficientC should be 4.111111111111111 after 18 datapoints, is ${dataSeries.coefficientC()}`) // This is quite acceptable as ORM ignores the C
   dataSeries.push(7, 227)
   assert.ok(dataSeries.coefficientA() === 4, `coefficientA should remain 4 after 19 datapoints, is ${dataSeries.coefficientA()}`)
   assert.ok(dataSeries.coefficientB() === 4, `coefficientB should remain 4 after 19 datapoints, is ${dataSeries.coefficientB()}`)
