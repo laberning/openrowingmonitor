@@ -66,9 +66,12 @@ function createTSQuadraticSeries (maxSeriesLength = 0) {
         C[X.length() - 1].push(calculateC(i, X.length() - 1))
         i++
       }
-      _A = matrixMedian(A)
-      _B = matrixMedian(B)
-      _C = matrixMedian(C)
+      // _A = matrixMedian(A)
+      // _B = matrixMedian(B)
+      // _C = matrixMedian(C)
+      _A = trimmedMatrixMedian(A)
+      _B = trimmedMatrixMedian(B)
+      _C = trimmedMatrixMedian(C)
     } else {
       _A = 0
       _B = 0
@@ -249,6 +252,23 @@ function createTSQuadraticSeries (maxSeriesLength = 0) {
     }
   }
 
+  function trimmedMatrixMedian (inputMatrix) {
+    if (inputMatrix.length > 1) {
+      let intermediateMatrix = []
+      let i = 0
+      while (i<inputMatrix.length) {
+        intermediateMatrix.push(inputMatrix[i].splice(0, maxSeriesLength - i))
+        i++
+      }
+      const sortedArray = [...intermediateMatrix.flat()].sort((a, b) => a - b)
+      const mid = Math.floor(sortedArray.length / 2)
+      return (sortedArray.length % 2 !== 0 ? sortedArray[mid] : ((sortedArray[mid - 1] + sortedArray[mid]) / 2))
+    } else {
+      log.error('TS Quadratic Regressor, Median calculation on empty matrix attempted!')
+      return 0
+    }
+  }
+  
   function reset () {
     X.reset()
     Y.reset()
