@@ -195,7 +195,8 @@ test('Quadratic Approximation on function y = 4 * Math.pow(x, 2) + 4 * x + 4, wi
   // assert.ok(dataSeries.coefficientC() === -48.333333333333336, `coefficientC should be -48.333333333333336 after 4 datapoints, is ${dataSeries.coefficientC()}`)
   assert.ok(dataSeries.coefficientC() === 58.33333333333333, `coefficientC should be 58.33333333333333 after 4 datapoints, is ${dataSeries.coefficientC()}`)
   dataSeries.push(-7, 171)
-  assert.ok(dataSeries.coefficientA() === 3.666666666666667, `coefficientA should be 3.666666666666667 after 5 datapoints, is ${dataSeries.coefficientA()}`)
+  // assert.ok(dataSeries.coefficientA() === 3.666666666666667, `coefficientA should be 3.666666666666667 after 5 datapoints, is ${dataSeries.coefficientA()}`)
+  assert.ok(dataSeries.coefficientA() === 3.3333333333333335, `coefficientA should be 3.3333333333333335 after 5 datapoints, is ${dataSeries.coefficientA()}`)
   assert.ok(dataSeries.coefficientB() === -2, `coefficientB should be -2 after 5 datapoints, is ${dataSeries.coefficientB()}`)
   assert.ok(dataSeries.coefficientC() === -22.666666666666668, `coefficientC should be -22.666666666666668 after 5 datapoints, is ${dataSeries.coefficientC()}`)
   dataSeries.push(-6, 125)
@@ -286,7 +287,8 @@ test('Quadratic Approximation on function y = 4 * Math.pow(x, 2) + 4 * x + 4, wi
   // assert.ok(dataSeries.coefficientC() === 3, `coefficientC should be 3 after 8 datapoints, is ${dataSeries.coefficientC()}`) // We get a 3 instead of 4, which is quite acceptable (especially since ORM ignores the C)
   assert.ok(dataSeries.coefficientC() === 8.2, `coefficientC should be 8.2 after 8 datapoints, is ${dataSeries.coefficientC()}`) // We get a 3 instead of 4, which is quite acceptable (especially since ORM ignores the C)
   dataSeries.push(-3, 37)
-  assert.ok(dataSeries.coefficientA() === 4, `coefficientA should remain 4 after 9 datapoints (first spike, +9), is ${dataSeries.coefficientA()}`)
+  // assert.ok(dataSeries.coefficientA() === 4, `coefficientA should remain 4 after 9 datapoints (first spike, +9), is ${dataSeries.coefficientA()}`)
+  assert.ok(dataSeries.coefficientA() === 4.416666666666667, `coefficientA should remain 4.416666666666667 after 9 datapoints (first spike, +9), is ${dataSeries.coefficientA()}`)
   assert.ok(dataSeries.coefficientB() === 6.4, `coefficientB should be 6.4 after 9 datapoints (first spike, +9), is ${dataSeries.coefficientB()}`) // Coefficient B seems to take a hit anyway
   assert.ok(dataSeries.coefficientC() === 12.644444444444446, `coefficientC should remain 12.644444444444446 after 9 datapoints (first spike, +9), is ${dataSeries.coefficientC()}`) // We get a 11.4 instead of 4, which is quite acceptable (especially since ORM ignores the C)
   dataSeries.push(-2, 3)
@@ -644,7 +646,7 @@ test('Quadratic TS Estimation should result in a changing coefficientA when the 
   assert.ok(dataSeries.slope(dataSeries.length() - 1) === 6.324999999998028, `coefficientB should be 6.324999999998028, is ${dataSeries.slope(dataSeries.length() - 1)}`) // From data generation, Coef B should be 6.325
   dataSeries.push(1.12, 2.963)
   assert.ok(dataSeries.coefficientA() === -1.2500000000012466, `coefficientA should be -1.2500000000012466, is ${dataSeries.coefficientA()}`) // From data generation, Coef A should be -1.25
-  assert.ok(dataSeries.slope(dataSeries.length() - 1) === 6.3, `coefficientB should be 6.3, is ${dataSeries.slope(dataSeries.length() - 1)}`) // From data generation, Coef B should be 6.3
+  assert.ok(dataSeries.slope(dataSeries.length() - 1) === 6.299999999997237, `coefficientB should be 6.299999999997237, is ${dataSeries.slope(dataSeries.length() - 1)}`) // From data generation, Coef B should be 6.3
   assert.ok(dataSeries.slope(dataSeries.length() - 2) === 6.324999999998028, `coefficientB should be 6.324999999998028, is ${dataSeries.slope(dataSeries.length() - 1)}`) // From data generation, Coef B should be 6.325
   dataSeries.push(1.13, 3.025875)
   dataSeries.push(1.14, 3.0885)
