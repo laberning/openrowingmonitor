@@ -199,7 +199,8 @@ test('Quadratic Approximation on function y = 4 * Math.pow(x, 2) + 4 * x + 4, wi
   assert.ok(dataSeries.coefficientA() === 3.3333333333333335, `coefficientA should be 3.3333333333333335 after 5 datapoints, is ${dataSeries.coefficientA()}`)
   // assert.ok(dataSeries.coefficientB() === -2, `coefficientB should be -2 after 5 datapoints, is ${dataSeries.coefficientB()}`)
   assert.ok(dataSeries.coefficientB() === 4, `coefficientB should be 4 after 5 datapoints, is ${dataSeries.coefficientB()}`)
-  assert.ok(dataSeries.coefficientC() === -22.666666666666668, `coefficientC should be -22.666666666666668 after 5 datapoints, is ${dataSeries.coefficientC()}`)
+  // assert.ok(dataSeries.coefficientC() === -22.666666666666668, `coefficientC should be -22.666666666666668 after 5 datapoints, is ${dataSeries.coefficientC()}`)
+  assert.ok(dataSeries.coefficientC() === 3, `coefficientC should be 3 after 5 datapoints, is ${dataSeries.coefficientC()}`)
   dataSeries.push(-6, 125)
   assert.ok(dataSeries.coefficientA() === 4, `coefficientA should be 4 after 6 datapoints, is ${dataSeries.coefficientA()}`)
   assert.ok(dataSeries.coefficientB() === 4, `coefficientB should be 4 after 6 datapoints, is ${dataSeries.coefficientB()}`)
@@ -292,7 +293,8 @@ test('Quadratic Approximation on function y = 4 * Math.pow(x, 2) + 4 * x + 4, wi
   assert.ok(dataSeries.coefficientA() === 4.416666666666667, `coefficientA should remain 4.416666666666667 after 9 datapoints (first spike, +9), is ${dataSeries.coefficientA()}`)
   // assert.ok(dataSeries.coefficientB() === 6.4, `coefficientB should be 6.4 after 9 datapoints (first spike, +9), is ${dataSeries.coefficientB()}`) // Coefficient B seems to take a hit anyway
   assert.ok(dataSeries.coefficientB() === 9.666666666666666, `coefficientB should be 9.666666666666666 after 9 datapoints (first spike, +9), is ${dataSeries.coefficientB()}`) // Coefficient B seems to take a hit anyway
-  assert.ok(dataSeries.coefficientC() === 12.644444444444446, `coefficientC should remain 12.644444444444446 after 9 datapoints (first spike, +9), is ${dataSeries.coefficientC()}`) // We get a 11.4 instead of 4, which is quite acceptable (especially since ORM ignores the C)
+  // assert.ok(dataSeries.coefficientC() === 12.644444444444446, `coefficientC should remain 12.644444444444446 after 9 datapoints (first spike, +9), is ${dataSeries.coefficientC()}`) // We get a 11.4 instead of 4, which is quite acceptable (especially since ORM ignores the C)
+  assert.ok(dataSeries.coefficientC() === 27.0625, `coefficientC should remain 27.0625 after 9 datapoints (first spike, +9), is ${dataSeries.coefficientC()}`) // We get a 11.4 instead of 4, which is quite acceptable (especially since ORM ignores the C)
   dataSeries.push(-2, 3)
   assert.ok(dataSeries.coefficientA() === 4, `coefficientA should remain 4 after 10 datapoints (second spike, -9), is ${dataSeries.coefficientA()}`)
   assert.ok(dataSeries.coefficientB() === 4, `coefficientB should return to 4 after 10 datapoints (second spike, -9), is ${dataSeries.coefficientB()}`)
@@ -643,14 +645,14 @@ test('Quadratic TS Estimation should result in a changing coefficientA when the 
   dataSeries.push(1.1, 2.8365)
   dataSeries.push(1.11, 2.899875)
   // assert.ok(dataSeries.coefficientA() === -1.2499999999804303, `coefficientA should be -1.2499999999804303, is ${dataSeries.coefficientA()}`) // From data generation, Coef A should be -1.25
-  assert.ok(dataSeries.coefficientA() === -1.2500000000005613, `coefficientA should be -1.2500000000005613, is ${dataSeries.coefficientA()}`) // From data generation, Coef A should be -1.25
+  assert.ok(dataSeries.coefficientA() === -1.2500000000005613, `coefficientA should be -1.2500000000005613 at 1.11 sec, is ${dataSeries.coefficientA()}`) // From data generation, Coef A should be -1.25
   // assert.ok(dataSeries.slope(dataSeries.length() - 1) === 6.325000000039106, `coefficientB should be 6.325000000039106, is ${dataSeries.slope(dataSeries.length() - 1)}`) // From data generation, Coef B should be 6.325
-  assert.ok(dataSeries.slope(dataSeries.length() - 1) === 6.324999999998028, `coefficientB should be 6.324999999998028, is ${dataSeries.slope(dataSeries.length() - 1)}`) // From data generation, Coef B should be 6.325
+  assert.ok(dataSeries.slope(dataSeries.length() - 1) === 6.324999999998028, `coefficientB should be 6.324999999998028 at 1.11 sec, is ${dataSeries.slope(dataSeries.length() - 1)}`) // From data generation, Coef B should be 6.325
   dataSeries.push(1.12, 2.963)
-  assert.ok(dataSeries.coefficientA() === -1.2500000000012466, `coefficientA should be -1.2500000000012466, is ${dataSeries.coefficientA()}`) // From data generation, Coef A should be -1.25
-  assert.ok(dataSeries.slope(dataSeries.length() - 1) === 6.299999999997237, `coefficientB should be 6.299999999997237, is ${dataSeries.slope(dataSeries.length() - 1)}`) // From data generation, Coef B should be 6.3
+  assert.ok(dataSeries.coefficientA() === -1.2500000000012466, `coefficientA should be -1.2500000000012466 at 1.12, is ${dataSeries.coefficientA()}`) // From data generation, Coef A should be -1.25
+  assert.ok(dataSeries.slope(dataSeries.length() - 1) === 6.299999999997237, `coefficientB should be 6.299999999997237 at 1.12 sec, is ${dataSeries.slope(dataSeries.length() - 1)}`) // From data generation, Coef B should be 6.3
   // assert.ok(dataSeries.slope(dataSeries.length() - 2) === 6.324999999998028, `coefficientB should be 6.324999999998028, is ${dataSeries.slope(dataSeries.length() - 1)}`) // From data generation, Coef B should be 6.325
-  assert.ok(dataSeries.slope(dataSeries.length() - 2) === 6.299999999997237, `coefficientB should be 6.324999999998028, is ${dataSeries.slope(dataSeries.length() - 1)}`) // From data generation, Coef B should be 6.325
+  assert.ok(dataSeries.slope(dataSeries.length() - 2) === 6.299999999997237, `coefficientB should be 6.324999999998028 at 1.12 for 1.11, is ${dataSeries.slope(dataSeries.length() - 1)}`) // From data generation, Coef B should be 6.325
   dataSeries.push(1.13, 3.025875)
   dataSeries.push(1.14, 3.0885)
   dataSeries.push(1.15, 3.150875)
