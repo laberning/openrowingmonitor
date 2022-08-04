@@ -66,12 +66,12 @@ function createTSQuadraticSeries (maxSeriesLength = 0) {
         C[X.length() - 1].push(calculateC(i, X.length() - 1))
         i++
       }
-      // _A = matrixMedian(A)
-      // _B = matrixMedian(B)
-      // _C = matrixMedian(C)
-      _A = trimmedMatrixMedian(A)
-      _B = trimmedMatrixMedian(B)
-      _C = trimmedMatrixMedian(C)
+      _A = matrixMedian(A)
+      _B = matrixMedian(B)
+      _C = matrixMedian(C)
+      // _A = trimmedMatrixMedian(A)
+      // _B = trimmedMatrixMedian(B)
+      // _C = trimmedMatrixMedian(C)
     } else {
       _A = 0
       _B = 0
@@ -241,7 +241,8 @@ function createTSQuadraticSeries (maxSeriesLength = 0) {
     }
   }
 
-  /*
+  // Dit is technische de mindere oplossing omdat deze delen meeneemt waar de opgevraagde mediaan niets mee van doen heeft,
+  // Maar dit lijkt wel de beste oplossing te leveren. Dit moet getest worden met productiedata
   function matrixMedian (inputMatrix) {
     if (inputMatrix.length > 1) {
       const sortedArray = [...inputMatrix.flat()].sort((a, b) => a - b)
@@ -252,8 +253,8 @@ function createTSQuadraticSeries (maxSeriesLength = 0) {
       return 0
     }
   }
-  */
 
+  /* Dit is technisch de beste oplossing, maar de kunstmatige testresultaten lijken er flink op achteruit te gaan
   function trimmedMatrixMedian (inputMatrix) {
     if (inputMatrix.length > 1) {
       const intermediateMatrix = []
@@ -270,6 +271,7 @@ function createTSQuadraticSeries (maxSeriesLength = 0) {
       return 0
     }
   }
+  */
 
   function reset () {
     X.reset()
