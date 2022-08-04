@@ -241,7 +241,7 @@ function createTSQuadraticSeries (maxSeriesLength = 0) {
     }
   }
 
-/*
+  /*
   function matrixMedian (inputMatrix) {
     if (inputMatrix.length > 1) {
       const sortedArray = [...inputMatrix.flat()].sort((a, b) => a - b)
@@ -252,13 +252,13 @@ function createTSQuadraticSeries (maxSeriesLength = 0) {
       return 0
     }
   }
-*/
+  */
 
   function trimmedMatrixMedian (inputMatrix) {
     if (inputMatrix.length > 1) {
-      let intermediateMatrix = []
+      const intermediateMatrix = []
       let i = 0
-      while (i<inputMatrix.length) {
+      while (i < inputMatrix.length) {
         intermediateMatrix.push(inputMatrix[i].splice(0, maxSeriesLength - i))
         i++
       }
