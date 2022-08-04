@@ -370,7 +370,7 @@ test('Quadratic TS Estimation should be decent for standard real-life example fr
   assert.ok(dataSeries.coefficientB() === 14.875000000000004, `coefficientB should be 14.875000000000004, is ${dataSeries.coefficientB()}`) // In the example, the TI084 results in 14.52117133, which we consider acceptably close
   // assert.ok(dataSeries.coefficientB() === 12.836944444444429, `coefficientB should be 12.836944444444429, is ${dataSeries.coefficientB()}`) // In the example, the TI084 results in 14.52117133, which we consider acceptably close
   assert.ok(dataSeries.coefficientC() === -32.561632653064834, `coefficientC should be -32.56163265306122, is ${dataSeries.coefficientC()}`) // In the example, the TI084 results in -21.89774466, which we consider acceptably close
-  assert.ok(dataSeries.coefficientC() === 25.76666666666796, `coefficientC should be 25.76666666666796, is ${dataSeries.coefficientC()}`) // In the example, the TI084 results in -21.89774466, but we don't care about the C
+  // assert.ok(dataSeries.coefficientC() === 25.76666666666796, `coefficientC should be 25.76666666666796, is ${dataSeries.coefficientC()}`) // In the example, the TI084 results in -21.89774466, but we don't care about the C
 })
 
 test('Quadratic TS Estimation should be decent for standard real-life example from VarsityTutors with some noise', () => {
@@ -649,7 +649,7 @@ test('Quadratic TS Estimation should result in a changing coefficientA when the 
   assert.ok(dataSeries.slope(dataSeries.length() - 1) === 6.325000000039106, `coefficientB should be 6.325000000039106, is ${dataSeries.slope(dataSeries.length() - 1)}`) // From data generation, Coef B should be 6.325
   // assert.ok(dataSeries.slope(dataSeries.length() - 1) === 6.324999999998028, `coefficientB should be 6.324999999998028 at 1.11 sec, is ${dataSeries.slope(dataSeries.length() - 1)}`) // From data generation, Coef B should be 6.325
   dataSeries.push(1.12, 2.963)
-  assert.ok(dataSeries.coefficientA() === -1.2500000000012466, `coefficientA should be -1.2500000000012466 at 1.12, is ${dataSeries.coefficientA()}`) // From data generation, Coef A should be -1.25
+  assert.ok(dataSeries.coefficientA() === -1.2499999999943079, `coefficientA should be -1.2499999999943079 at 1.12, is ${dataSeries.coefficientA()}`) // From data generation, Coef A should be -1.25
   // assert.ok(dataSeries.coefficientA() === -1.2500000000012466, `coefficientA should be -1.2500000000012466 at 1.12, is ${dataSeries.coefficientA()}`) // From data generation, Coef A should be -1.25
   assert.ok(dataSeries.slope(dataSeries.length() - 1) === 6.299999999997237, `coefficientB should be 6.299999999997237 at 1.12 sec, is ${dataSeries.slope(dataSeries.length() - 1)}`) // From data generation, Coef B should be 6.3
   // assert.ok(dataSeries.slope(dataSeries.length() - 1) === 6.299999999997237, `coefficientB should be 6.299999999997237 at 1.12 sec, is ${dataSeries.slope(dataSeries.length() - 1)}`) // From data generation, Coef B should be 6.3
