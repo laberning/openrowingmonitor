@@ -270,7 +270,7 @@ function createTSQuadraticSeries (maxSeriesLength = 0) {
       return 0
     }
   }
-  
+
   function reset () {
     X.reset()
     Y.reset()
