@@ -12,21 +12,21 @@ import { createTSQuadraticSeries } from './RobustTSQuadraticSeries.js'
 
 test('Quadratic Approximation startup behaviour', () => {
   const dataSeries = createTSQuadraticSeries(10)
-  assert.ok(dataSeries.coefficientA() === 0, `coefficientA should be 0 at initialisation, is ${dataSeries.coefficientA()}`)
-  assert.ok(dataSeries.coefficientB() === 0, `coefficientB should be 0 at initialisation, is ${dataSeries.coefficientB()}`)
-  assert.ok(dataSeries.coefficientC() === 0, `coefficientC should be 0 at initialisation, is ${dataSeries.coefficientC()}`)
+  testCoefficientA(dataSeries, 0)
+  testCoefficientB(dataSeries, 0)
+  testCoefficientC(dataSeries, 0)
   dataSeries.push(-1, 2)
-  assert.ok(dataSeries.coefficientA() === 0, `coefficientA should remain 0 with one datapoint, is ${dataSeries.coefficientA()}`)
-  assert.ok(dataSeries.coefficientB() === 0, `coefficientB should remain 0 with one datapoint, is ${dataSeries.coefficientB()}`)
-  assert.ok(dataSeries.coefficientC() === 0, `coefficientC should remain 0 with one datapoint, is ${dataSeries.coefficientC()}`)
+  testCoefficientA(dataSeries, 0)
+  testCoefficientB(dataSeries, 0)
+  testCoefficientC(dataSeries, 0)
   dataSeries.push(0, 2)
-  assert.ok(dataSeries.coefficientA() === 0, `coefficientA should remain 0 with two datapoints, is ${dataSeries.coefficientA()}`)
-  assert.ok(dataSeries.coefficientB() === 0, `coefficientB should remain 0 with two datapoints, is ${dataSeries.coefficientB()}`)
-  assert.ok(dataSeries.coefficientC() === 0, `coefficientC should remain 0 with two datapoints, is ${dataSeries.coefficientC()}`)
+  testCoefficientA(dataSeries, 0)
+  testCoefficientB(dataSeries, 0)
+  testCoefficientC(dataSeries, 0)
   dataSeries.push(1, 6)
-  assert.ok(dataSeries.coefficientA() === 2, `coefficientA should be 2 with three datapoints, is ${dataSeries.coefficientA()}`)
-  assert.ok(dataSeries.coefficientB() === 2, `coefficientB should be 2 with three datapoints, is ${dataSeries.coefficientB()}`)
-  assert.ok(dataSeries.coefficientC() === 2, `coefficientC should be 2 with three datapoints, is ${dataSeries.coefficientC()}`)
+  testCoefficientA(dataSeries, 2)
+  testCoefficientB(dataSeries, 2)
+  testCoefficientC(dataSeries, 2)
 })
 
 test('Quadratic Approximation on a perfect noisefree function y = 2 * Math.pow(x, 2) + 2 * x + 2, 21 datapoints', () => {
@@ -53,9 +53,9 @@ test('Quadratic Approximation on a perfect noisefree function y = 2 * Math.pow(x
   dataSeries.push(8, 146)
   dataSeries.push(9, 182)
   dataSeries.push(10, 222)
-  assert.ok(dataSeries.coefficientA() === 2, `coefficientA should be 2, is ${dataSeries.coefficientA()}`)
-  assert.ok(dataSeries.coefficientB() === 2, `coefficientB should be 2, is ${dataSeries.coefficientB()}`)
-  assert.ok(dataSeries.coefficientC() === 2, `coefficientC should be 2, is ${dataSeries.coefficientC()}`)
+  testCoefficientA(dataSeries, 2)
+  testCoefficientB(dataSeries, 2)
+  testCoefficientC(dataSeries, 2)
 })
 
 test('Quadratic Approximation on a perfect noisefree function y = 2 * Math.pow(x, 2) + 2 * x + 2, with 10 datapoints and some shifting in the series', () => {
@@ -72,9 +72,9 @@ test('Quadratic Approximation on a perfect noisefree function y = 2 * Math.pow(x
   dataSeries.push(-2, 6)
   dataSeries.push(-1, 2)
   dataSeries.push(0, 2)
-  assert.ok(dataSeries.coefficientA() === 2, `coefficientA should be 2 after 11 datapoints, is ${dataSeries.coefficientA()}`)
-  assert.ok(dataSeries.coefficientB() === 2, `coefficientB should be 2 after 11 datapoints, is ${dataSeries.coefficientB()}`)
-  assert.ok(dataSeries.coefficientC() === 2, `coefficientC should be 2 after 11 datapoints, is ${dataSeries.coefficientC()}`)
+  testCoefficientA(dataSeries, 2)
+  testCoefficientB(dataSeries, 2)
+  testCoefficientC(dataSeries, 2)
   dataSeries.push(1, 6)
   dataSeries.push(2, 14)
   dataSeries.push(3, 26)
@@ -85,10 +85,9 @@ test('Quadratic Approximation on a perfect noisefree function y = 2 * Math.pow(x
   dataSeries.push(8, 146)
   dataSeries.push(9, 182)
   dataSeries.push(10, 222)
-  assert.ok(dataSeries.coefficientA() === 2, `coefficientA should be 2 after 21 datapoints, is ${dataSeries.coefficientA()}`)
-  assert.ok(dataSeries.coefficientB() === 2, `coefficientB should be 2 after 21 datapoints, is ${dataSeries.coefficientB()}`)
-  assert.ok(dataSeries.coefficientC() === 2, `coefficientC should be 2 after 21 datapoints, is ${dataSeries.coefficientC()}`)
-  // ToDo: Test after moving several points
+  testCoefficientA(dataSeries, 2)
+  testCoefficientB(dataSeries, 2)
+  testCoefficientC(dataSeries, 2)
 })
 
 test('Quadratic Approximation on function y = 4 * Math.pow(x, 2) + 4 * x + 4, noisefree', () => {
@@ -97,85 +96,85 @@ test('Quadratic Approximation on function y = 4 * Math.pow(x, 2) + 4 * x + 4, no
   dataSeries.push(-11, 444)
   dataSeries.push(-10, 364)
   dataSeries.push(-9, 292)
-  assert.ok(dataSeries.coefficientA() === 4, `coefficientA should be 4 after 3 datapoints, is ${dataSeries.coefficientA()}`)
-  assert.ok(dataSeries.coefficientB() === 4, `coefficientB should be 4 after 3 datapoints, is ${dataSeries.coefficientB()}`)
-  assert.ok(dataSeries.coefficientC() === 4, `coefficientC should be 4 after 3 datapoints, is ${dataSeries.coefficientC()}`)
+  testCoefficientA(dataSeries, 4)
+  testCoefficientB(dataSeries, 4)
+  testCoefficientC(dataSeries, 4)
   dataSeries.push(-8, 228)
-  assert.ok(dataSeries.coefficientA() === 4, `coefficientA should be 4 after 4 datapoints, is ${dataSeries.coefficientA()}`)
-  assert.ok(dataSeries.coefficientB() === 4, `coefficientB should be 4 after 4 datapoints, is ${dataSeries.coefficientB()}`)
-  assert.ok(dataSeries.coefficientC() === 4, `coefficientC should be 4 after 4 datapoints, is ${dataSeries.coefficientC()}`)
+  testCoefficientA(dataSeries, 4)
+  testCoefficientB(dataSeries, 4)
+  testCoefficientC(dataSeries, 4)
   dataSeries.push(-7, 172)
-  assert.ok(dataSeries.coefficientA() === 4, `coefficientA should be 4 after 5 datapoints, is ${dataSeries.coefficientA()}`)
-  assert.ok(dataSeries.coefficientB() === 4, `coefficientB should be 4 after 5 datapoints, is ${dataSeries.coefficientB()}`)
-  assert.ok(dataSeries.coefficientC() === 4, `coefficientC should be 4 after 5 datapoints, is ${dataSeries.coefficientC()}`)
+  testCoefficientA(dataSeries, 4)
+  testCoefficientB(dataSeries, 4)
+  testCoefficientC(dataSeries, 4)
   dataSeries.push(-6, 124)
-  assert.ok(dataSeries.coefficientA() === 4, `coefficientA should be 4 after 6 datapoints, is ${dataSeries.coefficientA()}`)
-  assert.ok(dataSeries.coefficientB() === 4, `coefficientB should be 4 after 6 datapoints, is ${dataSeries.coefficientB()}`)
-  assert.ok(dataSeries.coefficientC() === 4, `coefficientC should be 4 after 6 datapoints, is ${dataSeries.coefficientC()}`)
+  testCoefficientA(dataSeries, 4)
+  testCoefficientB(dataSeries, 4)
+  testCoefficientC(dataSeries, 4)
   dataSeries.push(-5, 84)
-  assert.ok(dataSeries.coefficientA() === 4, `coefficientA should be 4 after 7 datapoints, is ${dataSeries.coefficientA()}`)
-  assert.ok(dataSeries.coefficientB() === 4, `coefficientB should be 4 after 7 datapoints, is ${dataSeries.coefficientB()}`)
-  assert.ok(dataSeries.coefficientC() === 4, `coefficientC should be 4 after 7 datapoints, is ${dataSeries.coefficientC()}`)
+  testCoefficientA(dataSeries, 4)
+  testCoefficientB(dataSeries, 4)
+  testCoefficientC(dataSeries, 4)
   dataSeries.push(-4, 52)
-  assert.ok(dataSeries.coefficientA() === 4, `coefficientA should be 4 after 8 datapoints, is ${dataSeries.coefficientA()}`)
-  assert.ok(dataSeries.coefficientB() === 4, `coefficientB should be 4 after 8 datapoints, is ${dataSeries.coefficientB()}`)
-  assert.ok(dataSeries.coefficientC() === 4, `coefficientC should be 4 after 8 datapoints, is ${dataSeries.coefficientC()}`)
+  testCoefficientA(dataSeries, 4)
+  testCoefficientB(dataSeries, 4)
+  testCoefficientC(dataSeries, 4)
   dataSeries.push(-3, 28)
-  assert.ok(dataSeries.coefficientA() === 4, `coefficientA should be 4 after 9 datapoints, is ${dataSeries.coefficientA()}`)
-  assert.ok(dataSeries.coefficientB() === 4, `coefficientB should be 4 after 9 datapoints, is ${dataSeries.coefficientB()}`)
-  assert.ok(dataSeries.coefficientC() === 4, `coefficientC should be 4 after 9 datapoints, is ${dataSeries.coefficientC()}`)
+  testCoefficientA(dataSeries, 4)
+  testCoefficientB(dataSeries, 4)
+  testCoefficientC(dataSeries, 4)
   dataSeries.push(-2, 12)
-  assert.ok(dataSeries.coefficientA() === 4, `coefficientA should be 4 after 10 datapoints, is ${dataSeries.coefficientA()}`)
-  assert.ok(dataSeries.coefficientB() === 4, `coefficientB should be 4 after 10 datapoints, is ${dataSeries.coefficientB()}`)
-  assert.ok(dataSeries.coefficientC() === 4, `coefficientC should be 4 after 10 datapoints, is ${dataSeries.coefficientC()}`)
+  testCoefficientA(dataSeries, 4)
+  testCoefficientB(dataSeries, 4)
+  testCoefficientC(dataSeries, 4)
   dataSeries.push(-1, 4)
-  assert.ok(dataSeries.coefficientA() === 4, `coefficientA should be 4 after 11 datapoints, is ${dataSeries.coefficientA()}`)
-  assert.ok(dataSeries.coefficientB() === 4, `coefficientB should be 4 after 11 datapoints, is ${dataSeries.coefficientB()}`)
-  assert.ok(dataSeries.coefficientC() === 4, `coefficientC should be 4 after 11 datapoints, is ${dataSeries.coefficientC()}`)
+  testCoefficientA(dataSeries, 4)
+  testCoefficientB(dataSeries, 4)
+  testCoefficientC(dataSeries, 4)
   dataSeries.push(0, 4)
-  assert.ok(dataSeries.coefficientA() === 4, `coefficientA should be 4 after 12 datapoints, is ${dataSeries.coefficientA()}`)
-  assert.ok(dataSeries.coefficientB() === 4, `coefficientB should be 4 after 12 datapoints, is ${dataSeries.coefficientB()}`)
-  assert.ok(dataSeries.coefficientC() === 4, `coefficientC should be 4 after 12 datapoints, is ${dataSeries.coefficientC()}`)
+  testCoefficientA(dataSeries, 4)
+  testCoefficientB(dataSeries, 4)
+  testCoefficientC(dataSeries, 4)
   dataSeries.push(1, 12)
-  assert.ok(dataSeries.coefficientA() === 4, `coefficientA should be 4 after 13 datapoints, is ${dataSeries.coefficientA()}`)
-  assert.ok(dataSeries.coefficientB() === 4, `coefficientB should be 4 after 13 datapoints, is ${dataSeries.coefficientB()}`)
-  assert.ok(dataSeries.coefficientC() === 4, `coefficientC should be 4 after 13 datapoints, is ${dataSeries.coefficientC()}`)
+  testCoefficientA(dataSeries, 4)
+  testCoefficientB(dataSeries, 4)
+  testCoefficientC(dataSeries, 4)
   dataSeries.push(2, 28)
-  assert.ok(dataSeries.coefficientA() === 4, `coefficientA should be 4 after 14 datapoints, is ${dataSeries.coefficientA()}`)
-  assert.ok(dataSeries.coefficientB() === 4, `coefficientB should be 4 after 14 datapoints, is ${dataSeries.coefficientB()}`)
-  assert.ok(dataSeries.coefficientC() === 4, `coefficientC should be 4 after 14 datapoints, is ${dataSeries.coefficientC()}`)
+  testCoefficientA(dataSeries, 4)
+  testCoefficientB(dataSeries, 4)
+  testCoefficientC(dataSeries, 4)
   dataSeries.push(3, 52)
-  assert.ok(dataSeries.coefficientA() === 4, `coefficientA should be 4 after 15 datapoints, is ${dataSeries.coefficientA()}`)
-  assert.ok(dataSeries.coefficientB() === 4, `coefficientB should be 4 after 15 datapoints, is ${dataSeries.coefficientB()}`)
-  assert.ok(dataSeries.coefficientC() === 4, `coefficientC should be 4 after 15 datapoints, is ${dataSeries.coefficientC()}`)
+  testCoefficientA(dataSeries, 4)
+  testCoefficientB(dataSeries, 4)
+  testCoefficientC(dataSeries, 4)
   dataSeries.push(4, 84)
-  assert.ok(dataSeries.coefficientA() === 4, `coefficientA should be 4 after 16 datapoints, is ${dataSeries.coefficientA()}`)
-  assert.ok(dataSeries.coefficientB() === 4, `coefficientB should be 4 after 16 datapoints, is ${dataSeries.coefficientB()}`)
-  assert.ok(dataSeries.coefficientC() === 4, `coefficientC should be 4 after 16 datapoints, is ${dataSeries.coefficientC()}`)
+  testCoefficientA(dataSeries, 4)
+  testCoefficientB(dataSeries, 4)
+  testCoefficientC(dataSeries, 4)
   dataSeries.push(5, 124)
-  assert.ok(dataSeries.coefficientA() === 4, `coefficientA should be 4 after 17 datapoints, is ${dataSeries.coefficientA()}`)
-  assert.ok(dataSeries.coefficientB() === 4, `coefficientB should be 4 after 17 datapoints, is ${dataSeries.coefficientB()}`)
-  assert.ok(dataSeries.coefficientC() === 4, `coefficientC should be 4 after 17 datapoints, is ${dataSeries.coefficientC()}`)
+  testCoefficientA(dataSeries, 4)
+  testCoefficientB(dataSeries, 4)
+  testCoefficientC(dataSeries, 4)
   dataSeries.push(6, 172)
-  assert.ok(dataSeries.coefficientA() === 4, `coefficientA should be 4 after 18 datapoints, is ${dataSeries.coefficientA()}`)
-  assert.ok(dataSeries.coefficientB() === 4, `coefficientB should be 4 after 18 datapoints, is ${dataSeries.coefficientB()}`)
-  assert.ok(dataSeries.coefficientC() === 4, `coefficientC should be 4 after 18 datapoints, is ${dataSeries.coefficientC()}`)
+  testCoefficientA(dataSeries, 4)
+  testCoefficientB(dataSeries, 4)
+  testCoefficientC(dataSeries, 4)
   dataSeries.push(7, 228)
-  assert.ok(dataSeries.coefficientA() === 4, `coefficientA should be 4 after 19 datapoints, is ${dataSeries.coefficientA()}`)
-  assert.ok(dataSeries.coefficientB() === 4, `coefficientB should be 4 after 19 datapoints, is ${dataSeries.coefficientB()}`)
-  assert.ok(dataSeries.coefficientC() === 4, `coefficientC should be 4 after 19 datapoints, is ${dataSeries.coefficientC()}`)
+  testCoefficientA(dataSeries, 4)
+  testCoefficientB(dataSeries, 4)
+  testCoefficientC(dataSeries, 4)
   dataSeries.push(8, 292)
-  assert.ok(dataSeries.coefficientA() === 4, `coefficientA should be 4 after 20 datapoints, is ${dataSeries.coefficientA()}`)
-  assert.ok(dataSeries.coefficientB() === 4, `coefficientB should be 4 after 20 datapoints, is ${dataSeries.coefficientB()}`)
-  assert.ok(dataSeries.coefficientC() === 4, `coefficientC should be 4 after 20 datapoints, is ${dataSeries.coefficientC()}`)
+  testCoefficientA(dataSeries, 4)
+  testCoefficientB(dataSeries, 4)
+  testCoefficientC(dataSeries, 4)
   dataSeries.push(9, 364)
-  assert.ok(dataSeries.coefficientA() === 4, `coefficientA should be 4 after 21 datapoints, is ${dataSeries.coefficientA()}`)
-  assert.ok(dataSeries.coefficientB() === 4, `coefficientB should be 4 after 21 datapoints, is ${dataSeries.coefficientB()}`)
-  assert.ok(dataSeries.coefficientC() === 4, `coefficientC should be 4 after 21 datapoints, is ${dataSeries.coefficientC()}`)
+  testCoefficientA(dataSeries, 4)
+  testCoefficientB(dataSeries, 4)
+  testCoefficientC(dataSeries, 4)
   dataSeries.push(10, 444)
-  assert.ok(dataSeries.coefficientA() === 4, `coefficientA should be 4 after 22 datapoints, is ${dataSeries.coefficientA()}`)
-  assert.ok(dataSeries.coefficientB() === 4, `coefficientB should be 4 after 22 datapoints, is ${dataSeries.coefficientB()}`)
-  assert.ok(dataSeries.coefficientC() === 4, `coefficientC should be 4 after 22 datapoints, is ${dataSeries.coefficientC()}`)
+  testCoefficientA(dataSeries, 4)
+  testCoefficientB(dataSeries, 4)
+  testCoefficientC(dataSeries, 7)
 })
 
 test('Quadratic Approximation on function y = 4 * Math.pow(x, 2) + 4 * x + 4, with some noise (+/- 1)', () => {
@@ -184,9 +183,9 @@ test('Quadratic Approximation on function y = 4 * Math.pow(x, 2) + 4 * x + 4, wi
   dataSeries.push(-11, 443)
   dataSeries.push(-10, 365)
   dataSeries.push(-9, 291)
-  assert.ok(dataSeries.coefficientA() === 2, `coefficientA should be 2 after 3 datapoints, is ${dataSeries.coefficientA()}`)
-  assert.ok(dataSeries.coefficientB() === -36, `coefficientB should be 4 after 3 datapoints, is ${dataSeries.coefficientB()}`)
-  assert.ok(dataSeries.coefficientC() === -195, `coefficientC should be 4 after 3 datapoints, is ${dataSeries.coefficientC()}`)
+  testCoefficientA(dataSeries, 2)
+  testCoefficientB(dataSeries, -36)
+  testCoefficientC(dataSeries, -195)
   dataSeries.push(-8, 229)
   assert.ok(dataSeries.coefficientA() === 4, `coefficientA should be 4 after 4 datapoints, is ${dataSeries.coefficientA()}`)
   // assert.ok(dataSeries.coefficientA() === 5, `coefficientA should be 5 after 4 datapoints, is ${dataSeries.coefficientA()}`)
@@ -202,73 +201,73 @@ test('Quadratic Approximation on function y = 4 * Math.pow(x, 2) + 4 * x + 4, wi
   assert.ok(dataSeries.coefficientC() === -22.666666666666668, `coefficientC should be -22.666666666666668 after 5 datapoints, is ${dataSeries.coefficientC()}`)
   // assert.ok(dataSeries.coefficientC() === 3, `coefficientC should be 3 after 5 datapoints, is ${dataSeries.coefficientC()}`)
   dataSeries.push(-6, 125)
-  assert.ok(dataSeries.coefficientA() === 4, `coefficientA should be 4 after 6 datapoints, is ${dataSeries.coefficientA()}`)
-  assert.ok(dataSeries.coefficientB() === 4, `coefficientB should be 4 after 6 datapoints, is ${dataSeries.coefficientB()}`)
-  assert.ok(dataSeries.coefficientC() === 4, `coefficientC should be 4 after 6 datapoints, is ${dataSeries.coefficientC()}`)
+  testCoefficientA(dataSeries, 4)
+  testCoefficientB(dataSeries, 4)
+  testCoefficientC(dataSeries, 4)
   dataSeries.push(-5, 83)
-  assert.ok(dataSeries.coefficientA() === 4, `coefficientA should be 4 after 7 datapoints, is ${dataSeries.coefficientA()}`)
-  assert.ok(dataSeries.coefficientB() === 4, `coefficientB should be 4 after 7 datapoints, is ${dataSeries.coefficientB()}`)
-  assert.ok(dataSeries.coefficientC() === 3, `coefficientC should be 3 after 7 datapoints, is ${dataSeries.coefficientC()}`)
+  testCoefficientA(dataSeries, 4)
+  testCoefficientB(dataSeries, 4)
+  testCoefficientC(dataSeries, 4)
   dataSeries.push(-4, 53)
-  assert.ok(dataSeries.coefficientA() === 4, `coefficientA should be 4 after 8 datapoints, is ${dataSeries.coefficientA()}`)
-  assert.ok(dataSeries.coefficientB() === 4, `coefficientB should be 4 after 8 datapoints, is ${dataSeries.coefficientB()}`)
-  assert.ok(dataSeries.coefficientC() === 3, `coefficientC should be 3 after 8 datapoints, is ${dataSeries.coefficientC()}`)
+  testCoefficientA(dataSeries, 4)
+  testCoefficientB(dataSeries, 4)
+  testCoefficientC(dataSeries, 3)
   dataSeries.push(-3, 27)
-  assert.ok(dataSeries.coefficientA() === 4, `coefficientA should be 4 after 9 datapoints, is ${dataSeries.coefficientA()}`)
-  assert.ok(dataSeries.coefficientB() === 4, `coefficientB should be 4 after 9 datapoints, is ${dataSeries.coefficientB()}`)
-  assert.ok(dataSeries.coefficientC() === 3, `coefficientC should be 3 after 9 datapoints, is ${dataSeries.coefficientC()}`)
+  testCoefficientA(dataSeries, 4)
+  testCoefficientB(dataSeries, 4)
+  testCoefficientC(dataSeries, 3)
   dataSeries.push(-2, 13)
-  assert.ok(dataSeries.coefficientA() === 4, `coefficientA should be 4 after 10 datapoints, is ${dataSeries.coefficientA()}`)
-  assert.ok(dataSeries.coefficientB() === 4, `coefficientB should be 4 after 10 datapoints, is ${dataSeries.coefficientB()}`)
-  assert.ok(dataSeries.coefficientC() === 4.428571428571429, `coefficientC should be 4.428571428571429 after 10 datapoints, is ${dataSeries.coefficientC()}`)
+  testCoefficientA(dataSeries, 4)
+  testCoefficientB(dataSeries, 4)
+  testCoefficientC(dataSeries, 4.428571428571429)
   dataSeries.push(-1, 3)
-  assert.ok(dataSeries.coefficientA() === 4, `coefficientA should be 4 after 11 datapoints, is ${dataSeries.coefficientA()}`)
-  assert.ok(dataSeries.coefficientB() === 4, `coefficientB should be 4 after 11 datapoints, is ${dataSeries.coefficientB()}`)
-  assert.ok(dataSeries.coefficientC() === 3, `coefficientC should be 3 after 11 datapoints, is ${dataSeries.coefficientC()}`)
+  testCoefficientA(dataSeries, 4)
+  testCoefficientB(dataSeries, 4)
+  testCoefficientC(dataSeries, 3)
   dataSeries.push(0, 5)
-  assert.ok(dataSeries.coefficientA() === 4, `coefficientA should be 4 after 12 datapoints, is ${dataSeries.coefficientA()}`)
-  assert.ok(dataSeries.coefficientB() === 4, `coefficientB should be 4 after 12 datapoints, is ${dataSeries.coefficientB()}`)
-  assert.ok(dataSeries.coefficientC() === 5, `coefficientC should be 5 after 12 datapoints, is ${dataSeries.coefficientC()}`)
+  testCoefficientA(dataSeries, 4)
+  testCoefficientB(dataSeries, 4)
+  testCoefficientC(dataSeries, 5)
   dataSeries.push(1, 11)
-  assert.ok(dataSeries.coefficientA() === 4, `coefficientA should be 4 after 13 datapoints, is ${dataSeries.coefficientA()}`)
-  assert.ok(dataSeries.coefficientB() === 4, `coefficientB should be 4 after 13 datapoints, is ${dataSeries.coefficientB()}`)
-  assert.ok(dataSeries.coefficientC() === 3.857142857142857, `coefficientC should be 3.857142857142857 after 13 datapoints, is ${dataSeries.coefficientC()}`)
+  testCoefficientA(dataSeries, 4)
+  testCoefficientB(dataSeries, 4)
+  testCoefficientC(dataSeries, 3.857142857142857)
   dataSeries.push(2, 29)
-  assert.ok(dataSeries.coefficientA() === 4, `coefficientA should be 4 after 14 datapoints, is ${dataSeries.coefficientA()}`)
-  assert.ok(dataSeries.coefficientB() === 4, `coefficientB should be 4 after 14 datapoints, is ${dataSeries.coefficientB()}`)
-  assert.ok(dataSeries.coefficientC() === 3.933333333333333, `coefficientC should be 3.933333333333333 after 14 datapoints, is ${dataSeries.coefficientC()}`)
+  testCoefficientA(dataSeries, 4)
+  testCoefficientB(dataSeries, 4)
+  testCoefficientC(dataSeries, 3.933333333333333)
   dataSeries.push(3, 51)
-  assert.ok(dataSeries.coefficientA() === 4, `coefficientA should be 4 after 15 datapoints, is ${dataSeries.coefficientA()}`)
-  assert.ok(dataSeries.coefficientB() === 4, `coefficientB should be 4 after 15 datapoints, is ${dataSeries.coefficientB()}`)
-  assert.ok(dataSeries.coefficientC() === 4.022222222222222, `coefficientC should be 4.022222222222222 after 15 datapoints, is ${dataSeries.coefficientC()}`)
+  testCoefficientA(dataSeries, 4)
+  testCoefficientB(dataSeries, 4)
+  testCoefficientC(dataSeries, 4.022222222222222)
   dataSeries.push(4, 85)
-  assert.ok(dataSeries.coefficientA() === 4, `coefficientA should be 4 after 16 datapoints, is ${dataSeries.coefficientA()}`)
-  assert.ok(dataSeries.coefficientB() === 4, `coefficientB should be 4 after 16 datapoints, is ${dataSeries.coefficientB()}`)
-  assert.ok(dataSeries.coefficientC() === 4.022222222222222, `coefficientC should be 4.022222222222222 after 16 datapoints, is ${dataSeries.coefficientC()}`)
+  testCoefficientA(dataSeries, 4)
+  testCoefficientB(dataSeries, 4)
+  testCoefficientC(dataSeries, 4.022222222222222)
   dataSeries.push(5, 123)
-  assert.ok(dataSeries.coefficientA() === 4, `coefficientA should be 4 after 17 datapoints, is ${dataSeries.coefficientA()}`)
-  assert.ok(dataSeries.coefficientB() === 4, `coefficientB should be 4 after 17 datapoints, is ${dataSeries.coefficientB()}`)
-  assert.ok(dataSeries.coefficientC() === 3.933333333333333, `coefficientC should be 3.933333333333333 after 17 datapoints, is ${dataSeries.coefficientC()}`)
+  testCoefficientA(dataSeries, 4)
+  testCoefficientB(dataSeries, 4)
+  testCoefficientC(dataSeries, 3.933333333333333)
   dataSeries.push(6, 173)
-  assert.ok(dataSeries.coefficientA() === 4, `coefficientA should be 4 after 18 datapoints, is ${dataSeries.coefficientA()}`)
-  assert.ok(dataSeries.coefficientB() === 4, `coefficientB should be 4 after 18 datapoints, is ${dataSeries.coefficientB()}`)
-  assert.ok(dataSeries.coefficientC() === 4.111111111111111, `coefficientC should be 4.111111111111111 after 18 datapoints, is ${dataSeries.coefficientC()}`)
+  testCoefficientA(dataSeries, 4)
+  testCoefficientB(dataSeries, 4)
+  testCoefficientC(dataSeries, 4.111111111111111)
   dataSeries.push(7, 227)
-  assert.ok(dataSeries.coefficientA() === 4, `coefficientA should be 4 after 19 datapoints, is ${dataSeries.coefficientA()}`)
-  assert.ok(dataSeries.coefficientB() === 4, `coefficientB should be 4 after 19 datapoints, is ${dataSeries.coefficientB()}`)
-  assert.ok(dataSeries.coefficientC() === 3.933333333333333, `coefficientC should be 3.933333333333333 after 19 datapoints, is ${dataSeries.coefficientC()}`)
+  testCoefficientA(dataSeries, 4)
+  testCoefficientB(dataSeries, 4)
+  testCoefficientC(dataSeries, 3.933333333333333)
   dataSeries.push(8, 293)
-  assert.ok(dataSeries.coefficientA() === 4, `coefficientA should be 4 after 20 datapoints, is ${dataSeries.coefficientA()}`)
-  assert.ok(dataSeries.coefficientB() === 4, `coefficientB should be 4 after 20 datapoints, is ${dataSeries.coefficientB()}`)
-  assert.ok(dataSeries.coefficientC() === 4.111111111111111, `coefficientC should be 4.111111111111111 after 20 datapoints, is ${dataSeries.coefficientC()}`)
+  testCoefficientA(dataSeries, 4)
+  testCoefficientB(dataSeries, 4)
+  testCoefficientC(dataSeries, 4.111111111111111)
   dataSeries.push(9, 363)
-  assert.ok(dataSeries.coefficientA() === 4, `coefficientA should be 4 after 21 datapoints, is ${dataSeries.coefficientA()}`)
-  assert.ok(dataSeries.coefficientB() === 4, `coefficientB should be 4 after 21 datapoints, is ${dataSeries.coefficientB()}`)
-  assert.ok(dataSeries.coefficientC() === 3.933333333333333, `coefficientC should be 3.933333333333333 after 21 datapoints, is ${dataSeries.coefficientC()}`)
+  testCoefficientA(dataSeries, 4)
+  testCoefficientB(dataSeries, 4)
+  testCoefficientC(dataSeries, 3.933333333333333)
   dataSeries.push(10, 444)
-  assert.ok(dataSeries.coefficientA() === 4, `coefficientA should be 4 after 22 datapoints, is ${dataSeries.coefficientA()}`)
-  assert.ok(dataSeries.coefficientB() === 4, `coefficientB should be 4 after 22 datapoints, is ${dataSeries.coefficientB()}`)
-  assert.ok(dataSeries.coefficientC() === 4.111111111111111, `coefficientC should be 4.111111111111111 after 22 datapoints, is ${dataSeries.coefficientC()}`) // We get a 3 instead of 4, which is quite acceptable (especially since ORM ignores the C)
+  testCoefficientA(dataSeries, 4)
+  testCoefficientB(dataSeries, 9)
+  testCoefficientC(dataSeries, 4.111111111111111 // We consider this quite acceptable as ORM ignores the C coefficient anyways
 })
 
 test('Quadratic Approximation on function y = 4 * Math.pow(x, 2) + 4 * x + 4, with some noise (+/- 1) and spikes (+/- 9)', () => {
@@ -282,12 +281,9 @@ test('Quadratic Approximation on function y = 4 * Math.pow(x, 2) + 4 * x + 4, wi
   dataSeries.push(-6, 125)
   dataSeries.push(-5, 83)
   dataSeries.push(-4, 53)
-  assert.ok(dataSeries.coefficientA() === 4, `coefficientA should be 4 after 8 datapoints, is ${dataSeries.coefficientA()}`)
-  // assert.ok(dataSeries.coefficientA() === 4.111111111111111, `coefficientA should be 4.111111111111111 after 8 datapoints, is ${dataSeries.coefficientA()}`)
-  assert.ok(dataSeries.coefficientB() === 4, `coefficientB should be 4 after 8 datapoints, is ${dataSeries.coefficientB()}`)
-  // assert.ok(dataSeries.coefficientB() === 5.066666666666666, `coefficientB should be 5.066666666666666 after 8 datapoints, is ${dataSeries.coefficientB()}`)
-  assert.ok(dataSeries.coefficientC() === 3, `coefficientC should be 3 after 8 datapoints, is ${dataSeries.coefficientC()}`) // We get a 3 instead of 4, which is quite acceptable (especially since ORM ignores the C)
-  // assert.ok(dataSeries.coefficientC() === 8.2, `coefficientC should be 8.2 after 8 datapoints, is ${dataSeries.coefficientC()}`) // We get a 3 instead of 4, which is quite acceptable (especially since ORM ignores the C)
+  testCoefficientA(dataSeries, 4)
+  testCoefficientB(dataSeries, 4)
+  testCoefficientC(dataSeries, 3)
   dataSeries.push(-3, 37)
   assert.ok(dataSeries.coefficientA() === 4, `coefficientA should remain 4 after 9 datapoints (first spike, +9), is ${dataSeries.coefficientA()}`)
   // assert.ok(dataSeries.coefficientA() === 4.416666666666667, `coefficientA should remain 4.416666666666667 after 9 datapoints (first spike, +9), is ${dataSeries.coefficientA()}`)
@@ -344,9 +340,9 @@ test('Quadratic Approximation on function y = 4 * Math.pow(x, 2) + 4 * x + 4, wi
   assert.ok(dataSeries.coefficientB() === 4, `coefficientB should remain 4 after 21 datapoints, is ${dataSeries.coefficientB()}`)
   assert.ok(dataSeries.coefficientC() === 3.72, `coefficientC should remain 3.72 after 21 datapoints, is ${dataSeries.coefficientC()}`) // We get a 3 instead of 4, which is quite acceptable (especially since ORM ignores the C)
   dataSeries.push(10, 444)
-  assert.ok(dataSeries.coefficientA() === 4, `coefficientA should remain 4 after 22 datapoints, is ${dataSeries.coefficientA()}`)
-  assert.ok(dataSeries.coefficientB() === 4, `coefficientB should remain 4 after 22 datapoints, is ${dataSeries.coefficientB()}`)
-  assert.ok(dataSeries.coefficientC() === 4.533333333333333, `coefficientC should be 4.533333333333333 after 22 datapoints, is ${dataSeries.coefficientC()}`) // We get a 3 instead of 4, which is quite acceptable (especially since ORM ignores the C)
+  testCoefficientA(dataSeries, 9)
+  testCoefficientB(dataSeries, 4)
+  testCoefficientC(dataSeries, 4.533333333333333)
 })
 
 test('Quadratic TS Estimation should be decent for standard real-life example from MathBits with some noise', () => {
@@ -472,9 +468,9 @@ test('Quadratic Approximation with a clean function and a reset', () => {
   dataSeries.push(-7, 86)
   dataSeries.push(-6, 62)
   dataSeries.push(-5, 42)
-  assert.ok(dataSeries.coefficientA() === 2, `coefficientA should be 2 after 6 datapoints, is ${dataSeries.coefficientA()}`)
-  assert.ok(dataSeries.coefficientB() === 2, `coefficientB should be 2 after 6 datapoints, is ${dataSeries.coefficientB()}`)
-  assert.ok(dataSeries.coefficientC() === 2, `coefficientC should be 2 after 6 datapoints, is ${dataSeries.coefficientC()}`)
+  testCoefficientA(dataSeries, 2)
+  testCoefficientB(dataSeries, 2)
+  testCoefficientC(dataSeries, 2)
   dataSeries.push(-4, 26)
   dataSeries.push(-3, 14) // Pi ;)
   dataSeries.push(-2, 6)
@@ -482,9 +478,9 @@ test('Quadratic Approximation with a clean function and a reset', () => {
   dataSeries.push(0, 2)
   dataSeries.push(1, 6)
   dataSeries.push(2, 14)
-  assert.ok(dataSeries.coefficientA() === 2, `coefficientA should be 2 after 13 datapoints, is ${dataSeries.coefficientA()}`)
-  assert.ok(dataSeries.coefficientB() === 2, `coefficientB should be 2 after 13 datapoints, is ${dataSeries.coefficientB()}`)
-  assert.ok(dataSeries.coefficientC() === 2, `coefficientC should be 2 after 13 datapoints, is ${dataSeries.coefficientC()}`)
+  testCoefficientA(dataSeries, 2)
+  testCoefficientB(dataSeries, 2)
+  testCoefficientC(dataSeries, 2)
   dataSeries.push(3, 26)
   dataSeries.push(4, 42)
   dataSeries.push(5, 62)
@@ -493,25 +489,25 @@ test('Quadratic Approximation with a clean function and a reset', () => {
   dataSeries.push(8, 146)
   dataSeries.push(9, 182)
   dataSeries.push(10, 222)
-  assert.ok(dataSeries.coefficientA() === 2, `coefficientA should be 2 after 21 datapoints, is ${dataSeries.coefficientA()}`)
-  assert.ok(dataSeries.coefficientB() === 2, `coefficientB should be 2 after 21 datapoints, is ${dataSeries.coefficientB()}`)
-  assert.ok(dataSeries.coefficientC() === 2, `coefficientC should be 2 after 21 datapoints, is ${dataSeries.coefficientC()}`)
+  testCoefficientA(dataSeries, 2)
+  testCoefficientB(dataSeries, 2)
+  testCoefficientC(dataSeries, 2)
   dataSeries.reset()
-  assert.ok(dataSeries.coefficientA() === 0, `coefficientA should be 0 after reset, is ${dataSeries.coefficientA()}`)
-  assert.ok(dataSeries.coefficientB() === 0, `coefficientB should be 0 after reset, is ${dataSeries.coefficientB()}`)
-  assert.ok(dataSeries.coefficientC() === 0, `coefficientC should be 0 after reset, is ${dataSeries.coefficientC()}`)
+  testCoefficientA(dataSeries, 0)
+  testCoefficientB(dataSeries, 0)
+  testCoefficientC(dataSeries, 0)
   dataSeries.push(-1, 2)
-  assert.ok(dataSeries.coefficientA() === 0, `coefficientA should remain 0 with one datapoint, is ${dataSeries.coefficientA()}`)
-  assert.ok(dataSeries.coefficientB() === 0, `coefficientB should remain 0 with one datapoint, is ${dataSeries.coefficientB()}`)
-  assert.ok(dataSeries.coefficientC() === 0, `coefficientC should remain 0 with one datapoint, is ${dataSeries.coefficientC()}`)
+  testCoefficientA(dataSeries, 0)
+  testCoefficientB(dataSeries, 0)
+  testCoefficientC(dataSeries, 0)
   dataSeries.push(0, 2)
-  assert.ok(dataSeries.coefficientA() === 0, `coefficientA should remain 0 with two datapoint, is ${dataSeries.coefficientA()}`)
-  assert.ok(dataSeries.coefficientB() === 0, `coefficientB should remain 0 with two datapoint, is ${dataSeries.coefficientB()}`)
-  assert.ok(dataSeries.coefficientC() === 0, `coefficientC should remain 0 with two datapoint, is ${dataSeries.coefficientC()}`)
+  testCoefficientA(dataSeries, 0)
+  testCoefficientB(dataSeries, 0)
+  testCoefficientC(dataSeries, 0)
   dataSeries.push(1, 6)
-  assert.ok(dataSeries.coefficientA() === 2, `coefficientA should be 2, is ${dataSeries.coefficientA()}`)
-  assert.ok(dataSeries.coefficientB() === 2, `coefficientB should be 2, is ${dataSeries.coefficientB()}`)
-  assert.ok(dataSeries.coefficientC() === 2, `coefficientC should be 2, is ${dataSeries.coefficientC()}`)
+  testCoefficientA(dataSeries, 2)
+  testCoefficientB(dataSeries, 2)
+  testCoefficientC(dataSeries, 2)
 })
 
 test('Quadratic TS Estimation should result in a straight line for function y = x', () => {
@@ -524,9 +520,9 @@ test('Quadratic TS Estimation should result in a straight line for function y = 
   dataSeries.push(4, 4)
   dataSeries.push(5, 5)
   dataSeries.push(6, 6)
-  assert.ok(dataSeries.coefficientA() === 0, `coefficientA should be 0, is ${dataSeries.coefficientA()}`)
-  assert.ok(dataSeries.coefficientB() === 1, `coefficientB should be 1, is ${dataSeries.coefficientB()}`)
-  assert.ok(dataSeries.coefficientC() === 0, `coefficientC should be 0, is ${dataSeries.coefficientC()}`)
+  testCoefficientA(dataSeries, 0)
+  testCoefficientB(dataSeries, 1)
+  testCoefficientC(dataSeries, 0)
 })
 
 test('Quadratic TS Estimation should result in a changing coefficientA when the force fluctuates', () => {
@@ -535,8 +531,8 @@ test('Quadratic TS Estimation should result in a changing coefficientA when the 
   const dataSeries = createTSQuadraticSeries(11)
   dataSeries.push(0.01, 0)
   dataSeries.push(0.02, 0.00000666667)
+  dataSeries.push(0.03, 0.0000333333)
   assert.ok(dataSeries.coefficientA() === 99, `time: ${dataSeries.xAtSeriesEnd()}, coefficientA: ${dataSeries.coefficientA()}, coefficientB: ${dataSeries.coefficientB()}, Slope-10: ${dataSeries.slope(10)}, Slope-9: ${dataSeries.slope(9)}, Slope-8: ${dataSeries.slope(8)}, Slope-7: ${dataSeries.slope(7)}, Slope-6: ${dataSeries.slope(6)}, Slope-5: ${dataSeries.slope(5)}, Slope-4: ${dataSeries.slope(4)}, Slope-3: ${dataSeries.slope(3)}, Slope-2: ${dataSeries.slope(2)}, Slope-1: ${dataSeries.slope(1)}, Slope-0: ${dataSeries.slope(0)}`)
-  dataSeries.push(0.03, 0.0000333333)
   dataSeries.push(0.04, 0.0000933333)
   dataSeries.push(0.05, 0.0002)
   dataSeries.push(0.06, 0.000366667)
@@ -552,20 +548,33 @@ test('Quadratic TS Estimation should result in a changing coefficientA when the 
   // Data is compared to the data that generated them (real data in comment)
   const dataSeries = createTSQuadraticSeries(11)
   dataSeries.push(0.01, 0)
-  assert.ok(dataSeries.coefficientA() === 0, `coefficientA (0.5 * Acceleration) should be 0 at ${dataSeries.xAtSeriesEnd()} sec, is ${dataSeries.coefficientA()}`) // From data generation, Coef A should be -1.25
-  assert.ok(dataSeries.coefficientB() === 0, `coefficientB (Velocity, begin) should be 0 at ${dataSeries.xAtSeriesEnd()} sec, is ${dataSeries.coefficientB()}`) // From data generation, Coef A should be -1.25
-  assert.ok(dataSeries.slope(10) === 0, `Slope-10 (Velocity at ${dataSeries.xAtPosition(10)} sec) should be 0 at ${dataSeries.xAtSeriesEnd()} sec, is ${dataSeries.slope(10)}`) // From data generation, Slope should be
-  assert.ok(dataSeries.slope(9) === 0, `Slope-9 (Velocity at ${dataSeries.xAtPosition(9)} sec) should be 0 at ${dataSeries.xAtSeriesEnd()} sec, is ${dataSeries.slope(9)}`) // From data generation, Slope should be
-  assert.ok(dataSeries.slope(8) === 0, `Slope-8 (Velocity at ${dataSeries.xAtPosition(8)} sec) should be 0 at ${dataSeries.xAtSeriesEnd()} sec, is ${dataSeries.slope(8)}`) // From data generation, Slope should be
-  assert.ok(dataSeries.slope(7) === 0, `Slope-7 (Velocity at ${dataSeries.xAtPosition(7)} sec) should be 0 at ${dataSeries.xAtSeriesEnd()} sec, is ${dataSeries.slope(7)}`) // From data generation, Slope should be
-  assert.ok(dataSeries.slope(6) === 0, `Slope-6 (Velocity at ${dataSeries.xAtPosition(6)} sec) should be 0 at ${dataSeries.xAtSeriesEnd()} sec, is ${dataSeries.slope(6)}`) // From data generation, Slope should be
-  assert.ok(dataSeries.slope(5) === 0, `Slope-5 (Velocity at ${dataSeries.xAtPosition(5)} sec) should be 0 at ${dataSeries.xAtSeriesEnd()} sec, is ${dataSeries.slope(5)}`) // From data generation, Slope should be
-  assert.ok(dataSeries.slope(4) === 0, `Slope-4 (Velocity at ${dataSeries.xAtPosition(4)} sec) should be 0 at ${dataSeries.xAtSeriesEnd()} sec, is ${dataSeries.slope(4)}`) // From data generation, Slope should be
-  assert.ok(dataSeries.slope(3) === 0, `Slope-3 (Velocity at ${dataSeries.xAtPosition(3)} sec) should be 0 at ${dataSeries.xAtSeriesEnd()} sec, is ${dataSeries.slope(3)}`) // From data generation, Slope should be
-  assert.ok(dataSeries.slope(2) === 0, `Slope-2 (Velocity at ${dataSeries.xAtPosition(2)} sec) should be 0 at ${dataSeries.xAtSeriesEnd()} sec, is ${dataSeries.slope(2)}`) // From data generation, Slope should be
-  assert.ok(dataSeries.slope(1) === 0, `Slope-1 (Velocity at ${dataSeries.xAtPosition(1)} sec) should be 0 at ${dataSeries.xAtSeriesEnd()} sec, is ${dataSeries.slope(1)}`) // From data generation, Slope should be
-  assert.ok(dataSeries.slope(0) === 0, `Slope-0 (Velocity at ${dataSeries.xAtPosition(0)} sec) should be 0 at ${dataSeries.xAtSeriesEnd()} sec, is ${dataSeries.slope(0)}`) // From data generation, Slope should be
+  testCoefficientA(dataSeries, 0) // From data generation, CoefficientA should be
+  testCoefficientB(dataSeries, 0) // From data generation, CoefficientB should be
+  testSlope(dataSeries, 10, 0) // From data generation, Slope should be
+  testSlope(dataSeries, 9, 0) // From data generation, Slope should be
+  testSlope(dataSeries, 8, 0) // From data generation, Slope should be
+  testSlope(dataSeries, 7, 0) // From data generation, Slope should be
+  testSlope(dataSeries, 6, 0) // From data generation, Slope should be
+  testSlope(dataSeries, 5, 0) // From data generation, Slope should be
+  testSlope(dataSeries, 4, 0) // From data generation, Slope should be
+  testSlope(dataSeries, 3, 0) // From data generation, Slope should be
+  testSlope(dataSeries, 2, 0) // From data generation, Slope should be
+  testSlope(dataSeries, 1, 0) // From data generation, Slope should be
+  testSlope(dataSeries, 0, 0) // From data generation, Slope should be
   dataSeries.push(0.02, 0.00000666667)
+  testCoefficientA(dataSeries, 0) // From data generation, CoefficientA should be
+  testCoefficientB(dataSeries, 0) // From data generation, CoefficientB should be
+  testSlope(dataSeries, 10, 0) // From data generation, Slope should be
+  testSlope(dataSeries, 9, 0) // From data generation, Slope should be
+  testSlope(dataSeries, 8, 0) // From data generation, Slope should be
+  testSlope(dataSeries, 7, 0) // From data generation, Slope should be
+  testSlope(dataSeries, 6, 0) // From data generation, Slope should be
+  testSlope(dataSeries, 5, 0) // From data generation, Slope should be
+  testSlope(dataSeries, 4, 0) // From data generation, Slope should be
+  testSlope(dataSeries, 3, 0) // From data generation, Slope should be
+  testSlope(dataSeries, 2, 0) // From data generation, Slope should be
+  testSlope(dataSeries, 1, 0) // From data generation, Slope should be
+  testSlope(dataSeries, 0, 0) // From data generation, Slope should be
   dataSeries.push(0.03, 0.0000333333)
   dataSeries.push(0.04, 0.0000933333)
   dataSeries.push(0.05, 0.0002)
@@ -575,22 +584,35 @@ test('Quadratic TS Estimation should result in a changing coefficientA when the 
   dataSeries.push(0.09, 0.00136)
   dataSeries.push(0.1, 0.0019)
   dataSeries.push(0.11, 0.002566667)
-  assert.ok(dataSeries.coefficientA() === 0.3666662777777779, `coefficientA (0.5 * Acceleration) should be 0.3666662777777779 at ${dataSeries.xAtSeriesEnd()} sec, is ${dataSeries.coefficientA()}`) // From data generation, Coef A should be -1.25
-  assert.ok(dataSeries.coefficientB() === -0.02188884166666667, `coefficientB (Velocity, begin) should be -0.02188884166666667 at ${dataSeries.xAtSeriesEnd()} sec, is ${dataSeries.coefficientB()}`) // From data generation, Coef A should be -1.25
-  assert.ok(dataSeries.slope(10) === 0.05877773944444446, `Slope-10 (Velocity at ${dataSeries.xAtPosition(10)} sec) should be 0.05877773944444446 at ${dataSeries.xAtSeriesEnd()} sec, is ${dataSeries.slope(10)}`) // From data generation, Slope should be
-  assert.ok(dataSeries.slope(9) === 0.0514444138888889, `Slope-9 (Velocity at ${dataSeries.xAtPosition(9)} sec) should be 0.0514444138888889 at ${dataSeries.xAtSeriesEnd()} sec, is ${dataSeries.slope(9)}`) // From data generation, Slope should be
-  assert.ok(dataSeries.slope(8) === 0.04411108833333334, `Slope-8 (Velocity at ${dataSeries.xAtPosition(8)} sec) should be 0.04411108833333334 at ${dataSeries.xAtSeriesEnd()} sec, is ${dataSeries.slope(8)}`) // From data generation, Slope should be
-  assert.ok(dataSeries.slope(7) === 0.03677776277777779, `Slope-7 (Velocity at ${dataSeries.xAtPosition(7)} sec) should be 0.03677776277777779 at ${dataSeries.xAtSeriesEnd()} sec, is ${dataSeries.slope(7)}`) // From data generation, Slope should be
-  assert.ok(dataSeries.slope(6) === 0.02944443722222224, `Slope-6 (Velocity at ${dataSeries.xAtPosition(6)} sec) should be 0.02944443722222224 at ${dataSeries.xAtSeriesEnd()} sec, is ${dataSeries.slope(6)}`) // From data generation, Slope should be
-  assert.ok(dataSeries.slope(5) === 0.022111111666666673, `Slope-5 (Velocity at ${dataSeries.xAtPosition(5)} sec) should be 0.022111111666666673 at ${dataSeries.xAtSeriesEnd()} sec, is ${dataSeries.slope(5)}`) // From data generation, Slope should be
-  assert.ok(dataSeries.slope(4) === 0.014777786111111118, `Slope-4 (Velocity at ${dataSeries.xAtPosition(4)} sec) should be 0.014777786111111118 at ${dataSeries.xAtSeriesEnd()} sec, is ${dataSeries.slope(4)}`) // From data generation, Slope should be
-  assert.ok(dataSeries.slope(3) === 0.007444460555555563, `Slope-3 (Velocity at ${dataSeries.xAtPosition(3)} sec) should be 0.007444460555555563 at ${dataSeries.xAtSeriesEnd()} sec, is ${dataSeries.slope(3)}`) // From data generation, Slope should be
-  assert.ok(dataSeries.slope(2) === 0.00011113500000000179, `Slope-2 (Velocity at ${dataSeries.xAtPosition(2)} sec) should be 0.00011113500000000179 at ${dataSeries.xAtSeriesEnd()} sec, is ${dataSeries.slope(2)}`) // From data generation, Slope should be
-  assert.ok(dataSeries.slope(1) === -0.007222190555555553, `Slope-1 (Velocity at ${dataSeries.xAtPosition(1)} sec) should be -0.007222190555555553 at ${dataSeries.xAtSeriesEnd()} sec, is ${dataSeries.slope(1)}`) // From data generation, Slope should be
-  assert.ok(dataSeries.slope(0) === -0.014555516111111111, `Slope-0 (Velocity at ${dataSeries.xAtPosition(0)} sec) should be -0.014555516111111111 at ${dataSeries.xAtSeriesEnd()} sec, is ${dataSeries.slope(0)}`) // From data generation, Slope should be
+  testCoefficientA(dataSeries, 0.3666662777777779) // From data generation, CoefficientA should be
+  testCoefficientB(dataSeries, -0.02188884166666667) // From data generation, CoefficientB should be
+  testSlope(dataSeries, 10, 0.05877773944444446) // From data generation, Slope should be
+  testSlope(dataSeries, 9, 0.0514444138888889) // From data generation, Slope should be
+  testSlope(dataSeries, 8, 0.04411108833333334) // From data generation, Slope should be
+  testSlope(dataSeries, 7, 0.03677776277777779) // From data generation, Slope should be
+  testSlope(dataSeries, 6, 0.02944443722222224) // From data generation, Slope should be
+  testSlope(dataSeries, 5, 0.022111111666666673) // From data generation, Slope should be
+  testSlope(dataSeries, 4, 0.014777786111111118) // From data generation, Slope should be
+  testSlope(dataSeries, 3, 0.007444460555555563) // From data generation, Slope should be
+  testSlope(dataSeries, 2, 0.00011113500000000179) // From data generation, Slope should be
+  testSlope(dataSeries, 1, -0.007222190555555553) // From data generation, Slope should be
+  testSlope(dataSeries, 0, -0.014555516111111111) // From data generation, Slope should be
   dataSeries.push(0.12, 0.003373333)
-  assert.ok(dataSeries.coefficientA() === 99, `time: ${dataSeries.xAtSeriesEnd()}, coefficientA: ${dataSeries.coefficientA()}, coefficientB: ${dataSeries.coefficientB()}, Slope-10: ${dataSeries.slope(10)}, Slope-9: ${dataSeries.slope(9)}, Slope-8: ${dataSeries.slope(8)}, Slope-7: ${dataSeries.slope(7)}, Slope-6: ${dataSeries.slope(6)}, Slope-5: ${dataSeries.slope(5)}, Slope-4: ${dataSeries.slope(4)}, Slope-3: ${dataSeries.slope(3)}, Slope-2: ${dataSeries.slope(2)}, Slope-1: ${dataSeries.slope(1)}, Slope-0: ${dataSeries.slope(0)}`)
+  testCoefficientA(dataSeries, 0.39999956250000007) // From data generation, CoefficientA should be
+  testCoefficientB(dataSeries, -0.024555497619047614) // From data generation, CoefficientB should be
+  testSlope(dataSeries, 10, 0.0714443973809524) // From data generation, Slope should be
+  testSlope(dataSeries, 9, 0.0634444061309524) // From data generation, Slope should be
+  testSlope(dataSeries, 8, 0.055444414880952406) // From data generation, Slope should be
+  testSlope(dataSeries, 7, 0.0474444236309524) // From data generation, Slope should be
+  testSlope(dataSeries, 6, 0.039444432380952396) // From data generation, Slope should be
+  testSlope(dataSeries, 5, 0.0314444411309524) // From data generation, Slope should be
+  testSlope(dataSeries, 4, 0.023444449880952394) // From data generation, Slope should be
+  testSlope(dataSeries, 3, 0.015444458630952396) // From data generation, Slope should be
+  testSlope(dataSeries, 2, 0.007444467380952391) // From data generation, Slope should be
+  testSlope(dataSeries, 1, -0.0005555238690476104) // From data generation, Slope should be
+  testSlope(dataSeries, 0, -0.008555515119047612) // From data generation, Slope should be
   dataSeries.push(0.13, 0.004333333)
+  assert.ok(dataSeries.coefficientA() === 99, `time: ${dataSeries.xAtSeriesEnd()}, coefficientA: ${dataSeries.coefficientA()}, coefficientB: ${dataSeries.coefficientB()}, Slope-10: ${dataSeries.slope(10)}, Slope-9: ${dataSeries.slope(9)}, Slope-8: ${dataSeries.slope(8)}, Slope-7: ${dataSeries.slope(7)}, Slope-6: ${dataSeries.slope(6)}, Slope-5: ${dataSeries.slope(5)}, Slope-4: ${dataSeries.slope(4)}, Slope-3: ${dataSeries.slope(3)}, Slope-2: ${dataSeries.slope(2)}, Slope-1: ${dataSeries.slope(1)}, Slope-0: ${dataSeries.slope(0)}`)
   dataSeries.push(0.14, 0.00546)
   dataSeries.push(0.15, 0.006766667)
   dataSeries.push(0.16, 0.008266667)
@@ -599,20 +621,33 @@ test('Quadratic TS Estimation should result in a changing coefficientA when the 
   dataSeries.push(0.19, 0.01406)
   dataSeries.push(0.2, 0.016466667)
   dataSeries.push(0.21, 0.019133333)
-  assert.ok(dataSeries.coefficientA() === 0.8333338888888899, `coefficientA (0.5 * Acceleration) should be 0.8333338888888899 at ${dataSeries.xAtSeriesEnd()} sec, is ${dataSeries.coefficientA()}`) // From data generation, Coef A should be -1.25
-  assert.ok(dataSeries.coefficientB() === -0.11055569444444437, `coefficientB (Velocity, begin) should be 0 at ${dataSeries.xAtSeriesEnd()} sec, is ${dataSeries.coefficientB()}`) // From data generation, Coef A should be -1.25
-  assert.ok(dataSeries.slope(10) === 0.2394445388888894, `Slope-10 (Velocity at ${dataSeries.xAtPosition(10)} sec) should be 0.2394445388888894 at ${dataSeries.xAtSeriesEnd()} sec, is ${dataSeries.slope(10)}`) // From data generation, Slope should be
-  assert.ok(dataSeries.slope(9) === 0.22277786111111164, `Slope-9 (Velocity at ${dataSeries.xAtPosition(9)} sec) should be 0.22277786111111164 at ${dataSeries.xAtSeriesEnd()} sec, is ${dataSeries.slope(9)}`) // From data generation, Slope should be
-  assert.ok(dataSeries.slope(8) === 0.20611118333333384, `Slope-8 (Velocity at ${dataSeries.xAtPosition(8)} sec) should be 0.20611118333333384 at ${dataSeries.xAtSeriesEnd()} sec, is ${dataSeries.slope(8)}`) // From data generation, Slope should be
-  testVelocity(dataSeries, 7, 0.18944450555555603) // From data generation, Slope should be
-  testVelocity(dataSeries, 6, 0.17277782777777823) // From data generation, Slope should be
-  testVelocity(dataSeries, 5, 0.15611115000000042) // From data generation, Slope should be
-  testVelocity(dataSeries, 4, 0.13944447222222262) // From data generation, Slope should be
-  testVelocity(dataSeries, 3, 0.12277779444444482) // From data generation, Slope should be
-  testVelocity(dataSeries, 2, 0.10611111666666702) // From data generation, Slope should be
-  testVelocity(dataSeries, 1, 0.08944443888888921) // From data generation, Slope should be
-  testVelocity(dataSeries, 0, 0.07277776111111141) // From data generation, Slope should be
+  testCoefficientA(dataSeries, 0.8333338888888899) // From data generation, CoefficientA should be
+  testCoefficientB(dataSeries, -0.11055569444444437) // From data generation, CoefficientB should be
+  testVelocity(dataSeries, 10, 0.2394445388888894) // From data generation, Slope should be
+  testSlope(dataSeries, 9, 0.22277786111111164) // From data generation, Slope should be
+  testSlope(dataSeries, 8, 0.20611118333333384) // From data generation, Slope should be
+  testSlope(dataSeries, 7, 0.18944450555555603) // From data generation, Slope should be
+  testSlope(dataSeries, 6, 0.17277782777777823) // From data generation, Slope should be
+  testSlope(dataSeries, 5, 0.15611115000000042) // From data generation, Slope should be
+  testSlope(dataSeries, 4, 0.13944447222222262) // From data generation, Slope should be
+  testSlope(dataSeries, 3, 0.12277779444444482) // From data generation, Slope should be
+  testSlope(dataSeries, 2, 0.10611111666666702) // From data generation, Slope should be
+  testSlope(dataSeries, 1, 0.08944443888888921) // From data generation, Slope should be
+  testSlope(dataSeries, 0, 0.07277776111111141) // From data generation, Slope should be
   dataSeries.push(0.22, 0.022073333)
+  testCoefficientA(dataSeries, 0.9000000000000012) // From data generation, CoefficientA should be
+  testCoefficientB(dataSeries, -0.1285555666666672) // From data generation, CoefficientB should be
+  testSlope(dataSeries, 10, 0.26744443333333334) // From data generation, Slope should be
+  testSlope(dataSeries, 9, 0.2494444333333333) // From data generation, Slope should be
+  testSlope(dataSeries, 8, 0.23144443333333334) // From data generation, Slope should be
+  testSlope(dataSeries, 7, 0.21344443333333327) // From data generation, Slope should be
+  testSlope(dataSeries, 6, 0.19544443333333325) // From data generation, Slope should be
+  testSlope(dataSeries, 5, 0.17744443333333323) // From data generation, Slope should be
+  testSlope(dataSeries, 4, 0.15944443333333322) // From data generation, Slope should be
+  testSlope(dataSeries, 3, 0.14144443333333315) // From data generation, Slope should be
+  testSlope(dataSeries, 2, 0.12344443333333319) // From data generation, Slope should be
+  testSlope(dataSeries, 1, 0.10544443333333312) // From data generation, Slope should be
+  testSlope(dataSeries, 0, 0.0874444333333331) // From data generation, Slope should be
   dataSeries.push(0.23, 0.0253)
   dataSeries.push(0.24, 0.028826667)
   dataSeries.push(0.25, 0.032666667)
@@ -622,6 +657,19 @@ test('Quadratic TS Estimation should result in a changing coefficientA when the 
   dataSeries.push(0.29, 0.051426667)
   dataSeries.push(0.3, 0.057033333)
   dataSeries.push(0.31, 0.063033333)
+  testCoefficientA(dataSeries, 1.500000000000005) // From data generation, CoefficientA should be
+  testCoefficientB(dataSeries, -0.35055556666666643) // From data generation, CoefficientB should be
+  testSlope(dataSeries, 10, 0.5794444333333367) // From data generation, Slope should be 0.62
+  testSlope(dataSeries, 9, 0.5494444333333366) // From data generation, Slope should be
+  testSlope(dataSeries, 8, 0.5194444333333365) // From data generation, Slope should be
+  testSlope(dataSeries, 7, 0.48944443333333654) // From data generation, Slope should be
+  testSlope(dataSeries, 6, 0.4594444333333364) // From data generation, Slope should be
+  testSlope(dataSeries, 5, 0.42944443333333626) // From data generation, Slope should be
+  testSlope(dataSeries, 4, 0.3994444333333361) // From data generation, Slope should be
+  testSlope(dataSeries, 3, 0.369444433333336) // From data generation, Slope should be
+  testSlope(dataSeries, 2, 0.33944443333333596) // From data generation, Slope should be
+  testSlope(dataSeries, 1, 0.3094444333333358) // From data generation, Slope should be
+  testSlope(dataSeries, 0, 0.2794444333333357) // From data generation, Slope should be
   dataSeries.push(0.32, 0.06944)
   dataSeries.push(0.33, 0.076266667)
   dataSeries.push(0.34, 0.083526667)
@@ -632,6 +680,19 @@ test('Quadratic TS Estimation should result in a changing coefficientA when the 
   dataSeries.push(0.39, 0.126793333)
   dataSeries.push(0.4, 0.136933333)
   dataSeries.push(0.41, 0.1476)
+  testCoefficientA(dataSeries, 2.1666661111111924) // From data generation, CoefficientA should be
+  testCoefficientB(dataSeries, -0.7238885166666844) // From data generation, CoefficientB should be
+  testSlope(dataSeries, 10, 1.0527776944444933) // From data generation, Slope should be
+  testSlope(dataSeries, 9, 1.0094443722222697) // From data generation, Slope should be
+  testSlope(dataSeries, 8, 0.9661110500000458) // From data generation, Slope should be
+  testSlope(dataSeries, 7, 0.922777727777822) // From data generation, Slope should be
+  testSlope(dataSeries, 6, 0.8794444055555979) // From data generation, Slope should be
+  testSlope(dataSeries, 5, 0.836111083333374) // From data generation, Slope should be
+  testSlope(dataSeries, 4, 0.7927777611111502) // From data generation, Slope should be
+  testSlope(dataSeries, 3, 0.7494444388889265) // From data generation, Slope should be
+  testSlope(dataSeries, 2, 0.7061111166667027) // From data generation, Slope should be
+  testSlope(dataSeries, 1, 0.6627777944444788) // From data generation, Slope should be
+  testSlope(dataSeries, 0, 0.619444472222255) // From data generation, Slope should be
   dataSeries.push(0.42, 0.158806667)
   dataSeries.push(0.43, 0.170566667)
   dataSeries.push(0.44, 0.182893333)
@@ -642,6 +703,19 @@ test('Quadratic TS Estimation should result in a changing coefficientA when the 
   dataSeries.push(0.49, 0.253493333)
   dataSeries.push(0.5, 0.2695)
   dataSeries.push(0.51, 0.286166667)
+  testCoefficientA(dataSeries, 2.833332777777739) // From data generation, CoefficientA should be
+  testCoefficientB(dataSeries, -1.230555072222179) // From data generation, CoefficientB should be
+  testSlope(dataSeries, 10, 1.6594443611111147) // From data generation, Slope should be
+  testSlope(dataSeries, 9, 1.60277770555556) // From data generation, Slope should be
+  testSlope(dataSeries, 8, 1.5461110500000055) // From data generation, Slope should be
+  testSlope(dataSeries, 7, 1.4894443944444504) // From data generation, Slope should be
+  testSlope(dataSeries, 6, 1.4327777388888958) // From data generation, Slope should be
+  testSlope(dataSeries, 5, 1.3761110833333412) // From data generation, Slope should be
+  testSlope(dataSeries, 4, 1.3194444277777861) // From data generation, Slope should be
+  testSlope(dataSeries, 3, 1.2627777722222315) // From data generation, Slope should be
+  testSlope(dataSeries, 2, 1.2061111166666765) // From data generation, Slope should be
+  testSlope(dataSeries, 1, 1.1494444611111219) // From data generation, Slope should be
+  testSlope(dataSeries, 0, 1.0927778055555668) // From data generation, Slope should be
   dataSeries.push(0.52, 0.303506667)
   dataSeries.push(0.53, 0.321533333)
   dataSeries.push(0.54, 0.34026)
@@ -652,6 +726,19 @@ test('Quadratic TS Estimation should result in a changing coefficientA when the 
   dataSeries.push(0.59, 0.44486)
   dataSeries.push(0.6, 0.468066667)
   dataSeries.push(0.61, 0.492066667)
+  testCoefficientA(dataSeries, 3.5000005555560083) // From data generation, CoefficientA should be
+  testCoefficientB(dataSeries, -1.8705561388889318) // From data generation, CoefficientB should be
+  testSlope(dataSeries, 10, 2.399444538889398) // From data generation, Slope should be
+  testSlope(dataSeries, 9, 2.3294445277782776) // From data generation, Slope should be
+  testSlope(dataSeries, 8, 2.2594445166671573) // From data generation, Slope should be
+  testSlope(dataSeries, 7, 2.189444505556037) // From data generation, Slope should be
+  testSlope(dataSeries, 6, 2.1194444944449176) // From data generation, Slope should be
+  testSlope(dataSeries, 5, 2.049444483333798) // From data generation, Slope should be
+  testSlope(dataSeries, 4, 1.9794444722226776) // From data generation, Slope should be
+  testSlope(dataSeries, 3, 1.9094444611115573) // From data generation, Slope should be
+  testSlope(dataSeries, 2, 1.839444450000437) // From data generation, Slope should be
+  testSlope(dataSeries, 1, 1.7694444388893171) // From data generation, Slope should be
+  testSlope(dataSeries, 0, 1.6994444277781968) // From data generation, Slope should be
   dataSeries.push(0.62, 0.516873333)
   dataSeries.push(0.63, 0.5425)
   dataSeries.push(0.64, 0.56896)
@@ -662,6 +749,19 @@ test('Quadratic TS Estimation should result in a changing coefficientA when the 
   dataSeries.push(0.69, 0.714226667)
   dataSeries.push(0.7, 0.745966667)
   dataSeries.push(0.71, 0.778633333)
+  testCoefficientA(dataSeries, 4.166666599999969) // From data generation, CoefficientA should be
+  testCoefficientB(dataSeries, -2.6438888999999857) // From data generation, CoefficientB should be
+  testSlope(dataSeries, 10, 3.2727776719999704) // From data generation, Slope should be
+  testSlope(dataSeries, 9, 3.189444339999971) // From data generation, Slope should be
+  testSlope(dataSeries, 8, 3.106111007999971) // From data generation, Slope should be
+  testSlope(dataSeries, 7, 3.0227776759999725) // From data generation, Slope should be
+  testSlope(dataSeries, 6, 2.939444343999973) // From data generation, Slope should be
+  testSlope(dataSeries, 5, 2.8561110119999733) // From data generation, Slope should be
+  testSlope(dataSeries, 4, 2.7727776799999746) // From data generation, Slope should be
+  testSlope(dataSeries, 3, 2.689444347999975) // From data generation, Slope should be
+  testSlope(dataSeries, 2, 2.6061110159999754) // From data generation, Slope should be
+  testSlope(dataSeries, 1, 2.522777683999976) // From data generation, Slope should be
+  testSlope(dataSeries, 0, 2.4394443519999762) // From data generation, Slope should be
   dataSeries.push(0.72, 0.81224)
   dataSeries.push(0.73, 0.8468)
   dataSeries.push(0.74, 0.882326667)
@@ -672,6 +772,19 @@ test('Quadratic TS Estimation should result in a changing coefficientA when the 
   dataSeries.push(0.79, 1.074926667)
   dataSeries.push(0.8, 1.116533333)
   dataSeries.push(0.81, 1.1592)
+  testCoefficientA(dataSeries, 4.83333339999992) // From data generation, CoefficientA should be
+  testCoefficientB(dataSeries, -3.550555566666534) // From data generation, CoefficientB should be
+  testSlope(dataSeries, 10, 4.279444541333337) // From data generation, Slope should be
+  testSlope(dataSeries, 9, 4.182777873333338) // From data generation, Slope should be
+  testSlope(dataSeries, 8, 4.08611120533334) // From data generation, Slope should be
+  testSlope(dataSeries, 7, 3.9894445373333416) // From data generation, Slope should be
+  testSlope(dataSeries, 6, 3.8927778693333432) // From data generation, Slope should be
+  testSlope(dataSeries, 5, 3.796111201333345) // From data generation, Slope should be
+  testSlope(dataSeries, 4, 3.6994445333333466) // From data generation, Slope should be
+  testSlope(dataSeries, 3, 3.6027778653333473) // From data generation, Slope should be
+  testSlope(dataSeries, 2, 3.506111197333349) // From data generation, Slope should be
+  testSlope(dataSeries, 1, 3.4094445293333506) // From data generation, Slope should be
+  testSlope(dataSeries, 0, 3.3127778613333523) // From data generation, Slope should be
   dataSeries.push(0.82, 1.20294)
   dataSeries.push(0.83, 1.247766667)
   dataSeries.push(0.84, 1.293693333)
@@ -682,6 +795,19 @@ test('Quadratic TS Estimation should result in a changing coefficientA when the 
   dataSeries.push(0.89, 1.540293333)
   dataSeries.push(0.9, 1.5931)
   dataSeries.push(0.91, 1.6471)
+  testCoefficientA(dataSeries, 5.499999444446317) // From data generation, CoefficientA should be
+  testCoefficientB(dataSeries, -4.59055462777715) // From data generation, CoefficientB should be
+  testSlope(dataSeries, 10, 5.419444361115147) // From data generation, Slope should be 5.46
+  testSlope(dataSeries, 9, 5.309444372226221) // From data generation, Slope should be
+  testSlope(dataSeries, 8, 5.199444383337294) // From data generation, Slope should be
+  testSlope(dataSeries, 7, 5.089444394448368) // From data generation, Slope should be
+  testSlope(dataSeries, 6, 4.979444405559441) // From data generation, Slope should be
+  testSlope(dataSeries, 5, 4.869444416670515) // From data generation, Slope should be
+  testSlope(dataSeries, 4, 4.759444427781588) // From data generation, Slope should be
+  testSlope(dataSeries, 3, 4.649444438892662) // From data generation, Slope should be
+  testSlope(dataSeries, 2, 4.539444450003735) // From data generation, Slope should be
+  testSlope(dataSeries, 1, 4.429444461114809) // From data generation, Slope should be
+  testSlope(dataSeries, 0, 4.319444472225884) // From data generation, Slope should be
   dataSeries.push(0.92, 1.702306667)
   dataSeries.push(0.93, 1.758733333)
   dataSeries.push(0.94, 1.816393333)
@@ -692,6 +818,19 @@ test('Quadratic TS Estimation should result in a changing coefficientA when the 
   dataSeries.push(0.99, 2.12366)
   dataSeries.push(1, 2.189)
   dataSeries.push(1.01, 2.254875)
+  testCoefficientA(dataSeries, 6.133333333333351) // From data generation, CoefficientA should be 6.6
+  testCoefficientB(dataSeries, -5.680777180952511) // From data generation, CoefficientB should be 6.448
+  testSlope(dataSeries, 10, 6.708556152380858) // From data generation, Slope should be
+  testSlope(dataSeries, 9, 6.5858894857141905) // From data generation, Slope should be
+  testSlope(dataSeries, 8, 6.463222819047523) // From data generation, Slope should be
+  testSlope(dataSeries, 7, 6.340556152380856) // From data generation, Slope should be
+  testSlope(dataSeries, 6, 6.217889485714188) // From data generation, Slope should be
+  testSlope(dataSeries, 5, 6.095222819047523) // From data generation, Slope should be
+  testSlope(dataSeries, 4, 5.9725561523808555) // From data generation, Slope should be
+  testSlope(dataSeries, 3, 5.849889485714188) // From data generation, Slope should be
+  testSlope(dataSeries, 2, 5.7272228190475225) // From data generation, Slope should be
+  testSlope(dataSeries, 1, 5.604556152380855) // From data generation, Slope should be
+  testSlope(dataSeries, 0, 5.481889485714188) // From data generation, Slope should be
   dataSeries.push(1.02, 2.3205)
   dataSeries.push(1.03, 2.385875)
   dataSeries.push(1.04, 2.451)
@@ -702,19 +841,33 @@ test('Quadratic TS Estimation should result in a changing coefficientA when the 
   dataSeries.push(1.09, 2.772875)
   dataSeries.push(1.1, 2.8365)
   dataSeries.push(1.11, 2.899875)
-  assert.ok(dataSeries.coefficientA() === -1.2499999999804303, `coefficientA (0.5 * Acceleration) should be -1.2499999999804303, is ${dataSeries.coefficientA()}`) // From data generation, Coef A should be -1.25
-  // assert.ok(dataSeries.coefficientA() === -1.2500000000005613, `coefficientA should be -1.2500000000005613 at 1.11 sec, is ${dataSeries.coefficientA()}`) // From data generation, Coef A should be -1.25
-  assert.ok(dataSeries.slope(10) === 6.325000000039106, `coefficientB (Velocity) should be 6.325000000039106, is ${dataSeries.slope(10)}`) // From data generation, Coef B should be 6.325
-  // assert.ok(dataSeries.slope(dataSeries.length() - 1) === 6.324999999998028, `coefficientB should be 6.324999999998028 at 1.11 sec, is ${dataSeries.slope(dataSeries.length() - 1)}`) // From data generation, Coef B should be 6.325
-  assert.ok(dataSeries.slope(9) === 6.350000000038715, `coefficientB (Velocity at 1.10 sec) should be 6.350000000038715 at 1.11 sec, is ${dataSeries.slope(9)}`) // From data generation, Coef B should be 6.35
+  testCoefficientA(dataSeries, -1.2499999999804303) // From data generation, CoefficientA should be -1.25
+  testCoefficientB(dataSeries, 0) // From data generation, CoefficientB should be
+  testSlope(dataSeries, 10, 6.325000000039106) // From data generation, Slope should be 6.325
+  testSlope(dataSeries, 9, 6.350000000038715) // From data generation, Slope should be 6.35
+  testSlope(dataSeries, 8, 0) // From data generation, Slope should be
+  testSlope(dataSeries, 7, 0) // From data generation, Slope should be
+  testSlope(dataSeries, 6, 0) // From data generation, Slope should be
+  testSlope(dataSeries, 5, 0) // From data generation, Slope should be
+  testSlope(dataSeries, 4, 0) // From data generation, Slope should be
+  testSlope(dataSeries, 3, 0) // From data generation, Slope should be
+  testSlope(dataSeries, 2, 0) // From data generation, Slope should be
+  testSlope(dataSeries, 1, 0) // From data generation, Slope should be
+  testSlope(dataSeries, 0, 0) // From data generation, Slope should be
   dataSeries.push(1.12, 2.963)
-  assert.ok(dataSeries.coefficientA() === -1.2499999999943079, `coefficientA (0.5 * Acceleration) should be -1.2499999999943079 at 1.12, is ${dataSeries.coefficientA()}`) // From data generation, Coef A should be -1.25
-  // assert.ok(dataSeries.coefficientA() === -1.2500000000012466, `coefficientA should be -1.2500000000012466 at 1.12, is ${dataSeries.coefficientA()}`) // From data generation, Coef A should be -1.25
-  assert.ok(dataSeries.slope(10) === 6.300000000011751, `coefficientB (Velocity) should be 6.300000000011751 at 1.12 sec, is ${dataSeries.slope(10)}`) // From data generation, Coef B should be 6.3
-  // assert.ok(dataSeries.slope(dataSeries.length() - 1) === 6.299999999997237, `coefficientB should be 6.299999999997237 at 1.12 sec, is ${dataSeries.slope(dataSeries.length() - 1)}`) // From data generation, Coef B should be 6.3
-  assert.ok(dataSeries.slope(9) === 6.325000000011638, `coefficientB (Velocity at 1.11 sec) should be 6.325000000011638 at 1.12 sec, is ${dataSeries.slope(9)}`) // From data generation, Coef B should be 6.325
-  // assert.ok(dataSeries.slope(dataSeries.length() - 2) === 6.299999999997237, `coefficientB should be 6.324999999998028 at 1.12 for 1.11, is ${dataSeries.slope(dataSeries.length() - 1)}`) // From data generation, Coef B should be 6.325
-  assert.ok(dataSeries.slope(8) === 6.350000000011524, `coefficientB (Velocity at 1.10 sec) should be 6.350000000011524 at 1.12 sec, is ${dataSeries.slope(8)}`) // From data generation, Coef B should be 6.35
+  testCoefficientA(dataSeries, -1.2499999999943079) // From data generation, CoefficientA should be -1.25
+  testCoefficientB(dataSeries, 0) // From data generation, CoefficientB should be 6.3
+  testSlope(dataSeries, 10, 6.300000000011751) // From data generation, Slope should be 6.3
+  testSlope(dataSeries, 9, 6.325000000011638) // From data generation, Slope should be 6.325
+  testSlope(dataSeries, 8, 6.350000000011524) // From data generation, Slope should be 6.35
+  testSlope(dataSeries, 7, 0) // From data generation, Slope should be
+  testSlope(dataSeries, 6, 0) // From data generation, Slope should be
+  testSlope(dataSeries, 5, 0) // From data generation, Slope should be
+  testSlope(dataSeries, 4, 0) // From data generation, Slope should be
+  testSlope(dataSeries, 3, 0) // From data generation, Slope should be
+  testSlope(dataSeries, 2, 0) // From data generation, Slope should be
+  testSlope(dataSeries, 1, 0) // From data generation, Slope should be
+  testSlope(dataSeries, 0, 0) // From data generation, Slope should be
   dataSeries.push(1.13, 3.025875)
   dataSeries.push(1.14, 3.0885)
   dataSeries.push(1.15, 3.150875)
@@ -902,8 +1055,19 @@ test('Quadratic TS Estimation should result in a changing coefficientA when the 
   dataSeries.push(2.97, 10.339875)
   dataSeries.push(2.98, 10.3565)
   dataSeries.push(2.99, 10.372875)
-  assert.ok(dataSeries.coefficientA() === -1.2500000000030973, `coefficientA should be -1.2500000000030973, is ${dataSeries.coefficientA()}`) // From data generation, Coef A should be -1.25
-  assert.ok(dataSeries.slope(dataSeries.length() - 1) === 1.6249999999811182, `coefficientB should be 1.6249999999811182, is ${dataSeries.slope(dataSeries.length() - 1)}`) // From data generation, Coef B should be 1.625
+  testCoefficientA(dataSeries, -1.2500000000030973) // From data generation, CoefficientA should be
+  testCoefficientB(dataSeries, 0) // From data generation, CoefficientB should be
+  testSlope(dataSeries, 10, 1.6249999999811182) // From data generation, Slope should be 1.625
+  testSlope(dataSeries, 9, 0) // From data generation, Slope should be
+  testSlope(dataSeries, 8, 0) // From data generation, Slope should be
+  testSlope(dataSeries, 7, 0) // From data generation, Slope should be
+  testSlope(dataSeries, 6, 0) // From data generation, Slope should be
+  testSlope(dataSeries, 5, 0) // From data generation, Slope should be
+  testSlope(dataSeries, 4, 0) // From data generation, Slope should be
+  testSlope(dataSeries, 3, 0) // From data generation, Slope should be
+  testSlope(dataSeries, 2, 0) // From data generation, Slope should be
+  testSlope(dataSeries, 1, 0) // From data generation, Slope should be
+  testSlope(dataSeries, 0, 0) // From data generation, Slope should be
 })
 
 test('Quadratic TS Estimation should result in a changing coefficientA when the force fluctuates', () => {
@@ -932,8 +1096,8 @@ test('Quadratic TS Estimation should result in a changing coefficientA when the 
   dataSeries.push(0.2, 0.016466667)
   dataSeries.push(0.21, 0.019133333)
   dataSeries.push(0.22, 0.022073333)
-  assert.ok(dataSeries.coefficientA() === 99, `time: ${dataSeries.xAtSeriesEnd}, coefficientA: ${dataSeries.coefficientA()}, coefficientB: ${dataSeries.coefficientB()}, Slope-10: ${dataSeries.slope(10)}, Slope-9: ${dataSeries.slope(9)}, Slope-8: ${dataSeries.slope(8)}, Slope-7: ${dataSeries.slope(7)}, Slope-6: ${dataSeries.slope(6)}, Slope-5: ${dataSeries.slope(5)}, Slope-4: ${dataSeries.slope(4)}, Slope-3: ${dataSeries.slope(3)}, Slope-2: ${dataSeries.slope(2)}, Slope-1: ${dataSeries.slope(1)}, Slope-0: ${dataSeries.slope(0)}`)
   dataSeries.push(0.23, 0.0253)
+  assert.ok(dataSeries.coefficientA() === 99, `time: ${dataSeries.xAtSeriesEnd()}, coefficientA: ${dataSeries.coefficientA()}, coefficientB: ${dataSeries.coefficientB()}, Slope-10: ${dataSeries.slope(10)}, Slope-9: ${dataSeries.slope(9)}, Slope-8: ${dataSeries.slope(8)}, Slope-7: ${dataSeries.slope(7)}, Slope-6: ${dataSeries.slope(6)}, Slope-5: ${dataSeries.slope(5)}, Slope-4: ${dataSeries.slope(4)}, Slope-3: ${dataSeries.slope(3)}, Slope-2: ${dataSeries.slope(2)}, Slope-1: ${dataSeries.slope(1)}, Slope-0: ${dataSeries.slope(0)}`)
   dataSeries.push(0.24, 0.028826667)
   dataSeries.push(0.25, 0.032666667)
   dataSeries.push(0.26, 0.036833333)
@@ -979,8 +1143,8 @@ test('Quadratic TS Estimation should result in a changing coefficientA when the 
   dataSeries.push(0.3, 0.057033333)
   dataSeries.push(0.31, 0.063033333)
   dataSeries.push(0.32, 0.06944)
-  assert.ok(dataSeries.coefficientA() === 99, `time: ${dataSeries.xAtSeriesEnd()}, coefficientA: ${dataSeries.coefficientA()}, coefficientB: ${dataSeries.coefficientB()}, Slope-10: ${dataSeries.slope(10)}, Slope-9: ${dataSeries.slope(9)}, Slope-8: ${dataSeries.slope(8)}, Slope-7: ${dataSeries.slope(7)}, Slope-6: ${dataSeries.slope(6)}, Slope-5: ${dataSeries.slope(5)}, Slope-4: ${dataSeries.slope(4)}, Slope-3: ${dataSeries.slope(3)}, Slope-2: ${dataSeries.slope(2)}, Slope-1: ${dataSeries.slope(1)}, Slope-0: ${dataSeries.slope(0)}`)
   dataSeries.push(0.33, 0.076266667)
+  assert.ok(dataSeries.coefficientA() === 99, `time: ${dataSeries.xAtSeriesEnd()}, coefficientA: ${dataSeries.coefficientA()}, coefficientB: ${dataSeries.coefficientB()}, Slope-10: ${dataSeries.slope(10)}, Slope-9: ${dataSeries.slope(9)}, Slope-8: ${dataSeries.slope(8)}, Slope-7: ${dataSeries.slope(7)}, Slope-6: ${dataSeries.slope(6)}, Slope-5: ${dataSeries.slope(5)}, Slope-4: ${dataSeries.slope(4)}, Slope-3: ${dataSeries.slope(3)}, Slope-2: ${dataSeries.slope(2)}, Slope-1: ${dataSeries.slope(1)}, Slope-0: ${dataSeries.slope(0)}`)
   dataSeries.push(0.34, 0.083526667)
   dataSeries.push(0.35, 0.091233333)
   dataSeries.push(0.36, 0.0994)
@@ -1036,8 +1200,8 @@ test('Quadratic TS Estimation should result in a changing coefficientA when the 
   dataSeries.push(0.4, 0.136933333)
   dataSeries.push(0.41, 0.1476)
   dataSeries.push(0.42, 0.158806667)
-  assert.ok(dataSeries.coefficientA() === 99, `time: ${dataSeries.xAtSeriesEnd()}, coefficientA: ${dataSeries.coefficientA()}, coefficientB: ${dataSeries.coefficientB()}, Slope-10: ${dataSeries.slope(10)}, Slope-9: ${dataSeries.slope(9)}, Slope-8: ${dataSeries.slope(8)}, Slope-7: ${dataSeries.slope(7)}, Slope-6: ${dataSeries.slope(6)}, Slope-5: ${dataSeries.slope(5)}, Slope-4: ${dataSeries.slope(4)}, Slope-3: ${dataSeries.slope(3)}, Slope-2: ${dataSeries.slope(2)}, Slope-1: ${dataSeries.slope(1)}, Slope-0: ${dataSeries.slope(0)}`)
   dataSeries.push(0.43, 0.170566667)
+  assert.ok(dataSeries.coefficientA() === 99, `time: ${dataSeries.xAtSeriesEnd()}, coefficientA: ${dataSeries.coefficientA()}, coefficientB: ${dataSeries.coefficientB()}, Slope-10: ${dataSeries.slope(10)}, Slope-9: ${dataSeries.slope(9)}, Slope-8: ${dataSeries.slope(8)}, Slope-7: ${dataSeries.slope(7)}, Slope-6: ${dataSeries.slope(6)}, Slope-5: ${dataSeries.slope(5)}, Slope-4: ${dataSeries.slope(4)}, Slope-3: ${dataSeries.slope(3)}, Slope-2: ${dataSeries.slope(2)}, Slope-1: ${dataSeries.slope(1)}, Slope-0: ${dataSeries.slope(0)}`)
   dataSeries.push(0.44, 0.182893333)
   dataSeries.push(0.45, 0.1958)
   dataSeries.push(0.46, 0.2093)
@@ -1103,8 +1267,8 @@ test('Quadratic TS Estimation should result in a changing coefficientA when the 
   dataSeries.push(0.5, 0.2695)
   dataSeries.push(0.51, 0.286166667)
   dataSeries.push(0.52, 0.303506667)
-  assert.ok(dataSeries.coefficientA() === 99, `time: ${dataSeries.xAtSeriesEnd()}, coefficientA: ${dataSeries.coefficientA()}, coefficientB: ${dataSeries.coefficientB()}, Slope-10: ${dataSeries.slope(10)}, Slope-9: ${dataSeries.slope(9)}, Slope-8: ${dataSeries.slope(8)}, Slope-7: ${dataSeries.slope(7)}, Slope-6: ${dataSeries.slope(6)}, Slope-5: ${dataSeries.slope(5)}, Slope-4: ${dataSeries.slope(4)}, Slope-3: ${dataSeries.slope(3)}, Slope-2: ${dataSeries.slope(2)}, Slope-1: ${dataSeries.slope(1)}, Slope-0: ${dataSeries.slope(0)}`)
   dataSeries.push(0.53, 0.321533333)
+  assert.ok(dataSeries.coefficientA() === 99, `time: ${dataSeries.xAtSeriesEnd()}, coefficientA: ${dataSeries.coefficientA()}, coefficientB: ${dataSeries.coefficientB()}, Slope-10: ${dataSeries.slope(10)}, Slope-9: ${dataSeries.slope(9)}, Slope-8: ${dataSeries.slope(8)}, Slope-7: ${dataSeries.slope(7)}, Slope-6: ${dataSeries.slope(6)}, Slope-5: ${dataSeries.slope(5)}, Slope-4: ${dataSeries.slope(4)}, Slope-3: ${dataSeries.slope(3)}, Slope-2: ${dataSeries.slope(2)}, Slope-1: ${dataSeries.slope(1)}, Slope-0: ${dataSeries.slope(0)}`)
   dataSeries.push(0.54, 0.34026)
   dataSeries.push(0.55, 0.3597)
   dataSeries.push(0.56, 0.379866667)
@@ -1180,8 +1344,8 @@ test('Quadratic TS Estimation should result in a changing coefficientA when the 
   dataSeries.push(0.6, 0.468066667)
   dataSeries.push(0.61, 0.492066667)
   dataSeries.push(0.62, 0.516873333)
-  assert.ok(dataSeries.coefficientA() === 99, `time: ${dataSeries.xAtSeriesEnd()}, coefficientA: ${dataSeries.coefficientA()}, coefficientB: ${dataSeries.coefficientB()}, Slope-10: ${dataSeries.slope(10)}, Slope-9: ${dataSeries.slope(9)}, Slope-8: ${dataSeries.slope(8)}, Slope-7: ${dataSeries.slope(7)}, Slope-6: ${dataSeries.slope(6)}, Slope-5: ${dataSeries.slope(5)}, Slope-4: ${dataSeries.slope(4)}, Slope-3: ${dataSeries.slope(3)}, Slope-2: ${dataSeries.slope(2)}, Slope-1: ${dataSeries.slope(1)}, Slope-0: ${dataSeries.slope(0)}`)
   dataSeries.push(0.63, 0.5425)
+  assert.ok(dataSeries.coefficientA() === 99, `time: ${dataSeries.xAtSeriesEnd()}, coefficientA: ${dataSeries.coefficientA()}, coefficientB: ${dataSeries.coefficientB()}, Slope-10: ${dataSeries.slope(10)}, Slope-9: ${dataSeries.slope(9)}, Slope-8: ${dataSeries.slope(8)}, Slope-7: ${dataSeries.slope(7)}, Slope-6: ${dataSeries.slope(6)}, Slope-5: ${dataSeries.slope(5)}, Slope-4: ${dataSeries.slope(4)}, Slope-3: ${dataSeries.slope(3)}, Slope-2: ${dataSeries.slope(2)}, Slope-1: ${dataSeries.slope(1)}, Slope-0: ${dataSeries.slope(0)}`)
   dataSeries.push(0.64, 0.56896)
   dataSeries.push(0.65, 0.596266667)
   dataSeries.push(0.66, 0.624433333)
@@ -1267,8 +1431,8 @@ test('Quadratic TS Estimation should result in a changing coefficientA when the 
   dataSeries.push(0.7, 0.745966667)
   dataSeries.push(0.71, 0.778633333)
   dataSeries.push(0.72, 0.81224)
-  assert.ok(dataSeries.coefficientA() === 99, `time: ${dataSeries.xAtSeriesEnd()}, coefficientA: ${dataSeries.coefficientA()}, coefficientB: ${dataSeries.coefficientB()}, Slope-10: ${dataSeries.slope(10)}, Slope-9: ${dataSeries.slope(9)}, Slope-8: ${dataSeries.slope(8)}, Slope-7: ${dataSeries.slope(7)}, Slope-6: ${dataSeries.slope(6)}, Slope-5: ${dataSeries.slope(5)}, Slope-4: ${dataSeries.slope(4)}, Slope-3: ${dataSeries.slope(3)}, Slope-2: ${dataSeries.slope(2)}, Slope-1: ${dataSeries.slope(1)}, Slope-0: ${dataSeries.slope(0)}`)
   dataSeries.push(0.73, 0.8468)
+  assert.ok(dataSeries.coefficientA() === 99, `time: ${dataSeries.xAtSeriesEnd()}, coefficientA: ${dataSeries.coefficientA()}, coefficientB: ${dataSeries.coefficientB()}, Slope-10: ${dataSeries.slope(10)}, Slope-9: ${dataSeries.slope(9)}, Slope-8: ${dataSeries.slope(8)}, Slope-7: ${dataSeries.slope(7)}, Slope-6: ${dataSeries.slope(6)}, Slope-5: ${dataSeries.slope(5)}, Slope-4: ${dataSeries.slope(4)}, Slope-3: ${dataSeries.slope(3)}, Slope-2: ${dataSeries.slope(2)}, Slope-1: ${dataSeries.slope(1)}, Slope-0: ${dataSeries.slope(0)}`)
   dataSeries.push(0.74, 0.882326667)
   dataSeries.push(0.75, 0.918833333)
   dataSeries.push(0.76, 0.956333333)
@@ -1364,8 +1528,8 @@ test('Quadratic TS Estimation should result in a changing coefficientA when the 
   dataSeries.push(0.8, 1.116533333)
   dataSeries.push(0.81, 1.1592)
   dataSeries.push(0.82, 1.20294)
-  assert.ok(dataSeries.coefficientA() === 99, `time: ${dataSeries.xAtSeriesEnd()}, coefficientA: ${dataSeries.coefficientA()}, coefficientB: ${dataSeries.coefficientB()}, Slope-10: ${dataSeries.slope(10)}, Slope-9: ${dataSeries.slope(9)}, Slope-8: ${dataSeries.slope(8)}, Slope-7: ${dataSeries.slope(7)}, Slope-6: ${dataSeries.slope(6)}, Slope-5: ${dataSeries.slope(5)}, Slope-4: ${dataSeries.slope(4)}, Slope-3: ${dataSeries.slope(3)}, Slope-2: ${dataSeries.slope(2)}, Slope-1: ${dataSeries.slope(1)}, Slope-0: ${dataSeries.slope(0)}`)
   dataSeries.push(0.83, 1.247766667)
+  assert.ok(dataSeries.coefficientA() === 99, `time: ${dataSeries.xAtSeriesEnd()}, coefficientA: ${dataSeries.coefficientA()}, coefficientB: ${dataSeries.coefficientB()}, Slope-10: ${dataSeries.slope(10)}, Slope-9: ${dataSeries.slope(9)}, Slope-8: ${dataSeries.slope(8)}, Slope-7: ${dataSeries.slope(7)}, Slope-6: ${dataSeries.slope(6)}, Slope-5: ${dataSeries.slope(5)}, Slope-4: ${dataSeries.slope(4)}, Slope-3: ${dataSeries.slope(3)}, Slope-2: ${dataSeries.slope(2)}, Slope-1: ${dataSeries.slope(1)}, Slope-0: ${dataSeries.slope(0)}`)
   dataSeries.push(0.84, 1.293693333)
   dataSeries.push(0.85, 1.340733333)
   dataSeries.push(0.86, 1.3889)
@@ -1471,8 +1635,8 @@ test('Quadratic TS Estimation should result in a changing coefficientA when the 
   dataSeries.push(0.9, 1.5931)
   dataSeries.push(0.91, 1.6471)
   dataSeries.push(0.92, 1.702306667)
-  assert.ok(dataSeries.coefficientA() === 99, `time: ${dataSeries.xAtSeriesEnd()}, coefficientA: ${dataSeries.coefficientA()}, coefficientB: ${dataSeries.coefficientB()}, Slope-10: ${dataSeries.slope(10)}, Slope-9: ${dataSeries.slope(9)}, Slope-8: ${dataSeries.slope(8)}, Slope-7: ${dataSeries.slope(7)}, Slope-6: ${dataSeries.slope(6)}, Slope-5: ${dataSeries.slope(5)}, Slope-4: ${dataSeries.slope(4)}, Slope-3: ${dataSeries.slope(3)}, Slope-2: ${dataSeries.slope(2)}, Slope-1: ${dataSeries.slope(1)}, Slope-0: ${dataSeries.slope(0)}`)
   dataSeries.push(0.93, 1.758733333)
+  assert.ok(dataSeries.coefficientA() === 99, `time: ${dataSeries.xAtSeriesEnd()}, coefficientA: ${dataSeries.coefficientA()}, coefficientB: ${dataSeries.coefficientB()}, Slope-10: ${dataSeries.slope(10)}, Slope-9: ${dataSeries.slope(9)}, Slope-8: ${dataSeries.slope(8)}, Slope-7: ${dataSeries.slope(7)}, Slope-6: ${dataSeries.slope(6)}, Slope-5: ${dataSeries.slope(5)}, Slope-4: ${dataSeries.slope(4)}, Slope-3: ${dataSeries.slope(3)}, Slope-2: ${dataSeries.slope(2)}, Slope-1: ${dataSeries.slope(1)}, Slope-0: ${dataSeries.slope(0)}`)
   dataSeries.push(0.94, 1.816393333)
   dataSeries.push(0.95, 1.8753)
   dataSeries.push(0.96, 1.935466667)
@@ -1588,8 +1752,8 @@ test('Quadratic TS Estimation should result in a changing coefficientA when the 
   dataSeries.push(1, 2.189)
   dataSeries.push(1.01, 2.254875)
   dataSeries.push(1.02, 2.3205)
-  assert.ok(dataSeries.coefficientA() === 99, `time: ${dataSeries.xAtSeriesEnd()}, coefficientA: ${dataSeries.coefficientA()}, coefficientB: ${dataSeries.coefficientB()}, Slope-10: ${dataSeries.slope(10)}, Slope-9: ${dataSeries.slope(9)}, Slope-8: ${dataSeries.slope(8)}, Slope-7: ${dataSeries.slope(7)}, Slope-6: ${dataSeries.slope(6)}, Slope-5: ${dataSeries.slope(5)}, Slope-4: ${dataSeries.slope(4)}, Slope-3: ${dataSeries.slope(3)}, Slope-2: ${dataSeries.slope(2)}, Slope-1: ${dataSeries.slope(1)}, Slope-0: ${dataSeries.slope(0)}`)
   dataSeries.push(1.03, 2.385875)
+  assert.ok(dataSeries.coefficientA() === 99, `time: ${dataSeries.xAtSeriesEnd()}, coefficientA: ${dataSeries.coefficientA()}, coefficientB: ${dataSeries.coefficientB()}, Slope-10: ${dataSeries.slope(10)}, Slope-9: ${dataSeries.slope(9)}, Slope-8: ${dataSeries.slope(8)}, Slope-7: ${dataSeries.slope(7)}, Slope-6: ${dataSeries.slope(6)}, Slope-5: ${dataSeries.slope(5)}, Slope-4: ${dataSeries.slope(4)}, Slope-3: ${dataSeries.slope(3)}, Slope-2: ${dataSeries.slope(2)}, Slope-1: ${dataSeries.slope(1)}, Slope-0: ${dataSeries.slope(0)}`)
   dataSeries.push(1.04, 2.451)
   dataSeries.push(1.05, 2.515875)
   dataSeries.push(1.06, 2.5805)
@@ -1600,7 +1764,19 @@ test('Quadratic TS Estimation should result in a changing coefficientA when the 
   dataSeries.push(1.11, 2.899875)
 })
 
-function testVelocity (series, position, expectedValue) {
+function testCoefficientA (series, expectedValue) {
+  assert.ok(series.coefficientA() === expectedValue, `coefficientA should be ${expectedValue} at X-position ${series.xAtSeriesEnd()}, is ${series.coefficientA()}`)
+}
+
+function testCoefficientB (series, expectedValue) {
+  assert.ok(series.coefficientB() === expectedValue, `coefficientB should be ${expectedValue} at X-position ${series.xAtSeriesEnd()}, is ${series.coefficientB()}`)
+}
+
+function testCoefficientC (series, expectedValue) {
+  assert.ok(series.coefficientC() === expectedValue, `coefficientC should be ${expectedValue} at X-position ${series.xAtSeriesEnd()}, is ${series.coefficientC()}`)
+}
+
+function testSlope (series, position, expectedValue) {
   assert.ok(series.slope(position) === expectedValue, `Slope-${position} (slope at X-position ${series.xAtPosition(position)}) should be ${expectedValue} at X-position ${series.xAtSeriesEnd()}, is ${series.slope(position)}`)
 }
 
