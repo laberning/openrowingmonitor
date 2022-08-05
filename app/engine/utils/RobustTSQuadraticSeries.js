@@ -167,12 +167,20 @@ function createTSQuadraticSeries (maxSeriesLength = 0) {
     return X.atSeriesEnd()
   }
 
+  function xAtPosition (position) {
+    return X.get(position)
+  }
+
   function yAtSeriesBegin () {
     return Y.atSeriesBegin()
   }
 
   function yAtSeriesEnd () {
     return Y.atSeriesEnd()
+  }
+
+  function yAtPosition (position) {
+    return Y.get(position)
   }
 
   function xSum () {
@@ -306,8 +314,10 @@ function createTSQuadraticSeries (maxSeriesLength = 0) {
     numberOfYValuesEqualOrBelow,
     xAtSeriesBegin,
     xAtSeriesEnd,
+    xAtPosition,
     yAtSeriesBegin,
     yAtSeriesEnd,
+    yAtPosition,
     xSum,
     ySum,
     xSeries,
