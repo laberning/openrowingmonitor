@@ -76,8 +76,12 @@ function createTSQuadraticSeries (maxSeriesLength = 0) {
     }
   }
 
-  function slope (index) {
-    return _slope(X.get(index))
+  function slope (position) {
+    if (X.length() > 2 && position < X.length()) {
+      return ((_A * 2 * X.get(position)) + _B)
+    } else {
+      return 0
+    }
   }
 
   function slopeAtSeriesBegin () {
