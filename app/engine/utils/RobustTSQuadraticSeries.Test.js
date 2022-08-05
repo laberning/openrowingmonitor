@@ -653,9 +653,9 @@ test('Quadratic TS Estimation should result in a changing coefficientA when the 
   // assert.ok(dataSeries.coefficientA() === -1.2500000000012466, `coefficientA should be -1.2500000000012466 at 1.12, is ${dataSeries.coefficientA()}`) // From data generation, Coef A should be -1.25
   assert.ok(dataSeries.slope(10) === 6.300000000011751, `coefficientB (Velocity) should be 6.300000000011751 at 1.12 sec, is ${dataSeries.slope(10)}`) // From data generation, Coef B should be 6.3
   // assert.ok(dataSeries.slope(dataSeries.length() - 1) === 6.299999999997237, `coefficientB should be 6.299999999997237 at 1.12 sec, is ${dataSeries.slope(dataSeries.length() - 1)}`) // From data generation, Coef B should be 6.3
-  assert.ok(dataSeries.slope(9) === 6.300000000011751, `coefficientB (Velocity at 1.11 sec) should be 6.300000000011751 at 1.12 sec, is ${dataSeries.slope(9)}`) // From data generation, Coef B should be 6.325
+  assert.ok(dataSeries.slope(9) === 6.325000000011638, `coefficientB (Velocity at 1.11 sec) should be 6.325000000011638 at 1.12 sec, is ${dataSeries.slope(9)}`) // From data generation, Coef B should be 6.325
   // assert.ok(dataSeries.slope(dataSeries.length() - 2) === 6.299999999997237, `coefficientB should be 6.324999999998028 at 1.12 for 1.11, is ${dataSeries.slope(dataSeries.length() - 1)}`) // From data generation, Coef B should be 6.325
-  assert.ok(dataSeries.slope(8) === 6.300000000011751, `coefficientB (Velocity at 1.11 sec) should be 6.300000000011751 at 1.12 sec, is ${dataSeries.slope(8)}`)
+  assert.ok(dataSeries.slope(8) === 6.300000000011751, `coefficientB (Velocity at 1.10 sec) should be 6.300000000011751 at 1.12 sec, is ${dataSeries.slope(8)}`)
   dataSeries.push(1.13, 3.025875)
   dataSeries.push(1.14, 3.0885)
   dataSeries.push(1.15, 3.150875)
