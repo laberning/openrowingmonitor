@@ -621,7 +621,7 @@ test('Quadratic TS Estimation should result in a changing coefficientA when the 
   testSlope(dataSeries, 1, 0.0041111349999999845)
   testSlope(dataSeries, 0, -0.004555523888888902)
   dataSeries.push(0.14, 0.00546)
-  
+
   dataSeries.push(0.15, 0.006766667)
   assert.ok(dataSeries.coefficientA() === 99, `time: ${dataSeries.xAtSeriesEnd()}, coefficientA: ${dataSeries.coefficientA()}, coefficientB: ${dataSeries.coefficientB()}, Slope-10: ${dataSeries.slope(10)}, Slope-9: ${dataSeries.slope(9)}, Slope-8: ${dataSeries.slope(8)}, Slope-7: ${dataSeries.slope(7)}, Slope-6: ${dataSeries.slope(6)}, Slope-5: ${dataSeries.slope(5)}, Slope-4: ${dataSeries.slope(4)}, Slope-3: ${dataSeries.slope(3)}, Slope-2: ${dataSeries.slope(2)}, Slope-1: ${dataSeries.slope(1)}, Slope-0: ${dataSeries.slope(0)}`)
   dataSeries.push(0.16, 0.008266667)
@@ -1576,7 +1576,6 @@ test('Quadratic TS Estimation should result in a changing coefficientA when the 
   dataSeries.push(0.62, 0.516873333)
   dataSeries.push(0.63, 0.5425)
   dataSeries.push(0.64, 0.56896)
-  
   dataSeries.push(0.65, 0.596266667)
   assert.ok(dataSeries.coefficientA() === 99, `time: ${dataSeries.xAtSeriesEnd()}, coefficientA: ${dataSeries.coefficientA()}, coefficientB: ${dataSeries.coefficientB()}, Slope-10: ${dataSeries.slope(10)}, Slope-9: ${dataSeries.slope(9)}, Slope-8: ${dataSeries.slope(8)}, Slope-7: ${dataSeries.slope(7)}, Slope-6: ${dataSeries.slope(6)}, Slope-5: ${dataSeries.slope(5)}, Slope-4: ${dataSeries.slope(4)}, Slope-3: ${dataSeries.slope(3)}, Slope-2: ${dataSeries.slope(2)}, Slope-1: ${dataSeries.slope(1)}, Slope-0: ${dataSeries.slope(0)}`)
   dataSeries.push(0.66, 0.624433333)
@@ -1664,7 +1663,6 @@ test('Quadratic TS Estimation should result in a changing coefficientA when the 
   dataSeries.push(0.72, 0.81224)
   dataSeries.push(0.73, 0.8468)
   dataSeries.push(0.74, 0.882326667)
-  
   dataSeries.push(0.75, 0.918833333)
   assert.ok(dataSeries.coefficientA() === 99, `time: ${dataSeries.xAtSeriesEnd()}, coefficientA: ${dataSeries.coefficientA()}, coefficientB: ${dataSeries.coefficientB()}, Slope-10: ${dataSeries.slope(10)}, Slope-9: ${dataSeries.slope(9)}, Slope-8: ${dataSeries.slope(8)}, Slope-7: ${dataSeries.slope(7)}, Slope-6: ${dataSeries.slope(6)}, Slope-5: ${dataSeries.slope(5)}, Slope-4: ${dataSeries.slope(4)}, Slope-3: ${dataSeries.slope(3)}, Slope-2: ${dataSeries.slope(2)}, Slope-1: ${dataSeries.slope(1)}, Slope-0: ${dataSeries.slope(0)}`)
   dataSeries.push(0.76, 0.956333333)
@@ -1762,7 +1760,6 @@ test('Quadratic TS Estimation should result in a changing coefficientA when the 
   dataSeries.push(0.82, 1.20294)
   dataSeries.push(0.83, 1.247766667)
   dataSeries.push(0.84, 1.293693333)
-  
   dataSeries.push(0.85, 1.340733333)
   assert.ok(dataSeries.coefficientA() === 99, `time: ${dataSeries.xAtSeriesEnd()}, coefficientA: ${dataSeries.coefficientA()}, coefficientB: ${dataSeries.coefficientB()}, Slope-10: ${dataSeries.slope(10)}, Slope-9: ${dataSeries.slope(9)}, Slope-8: ${dataSeries.slope(8)}, Slope-7: ${dataSeries.slope(7)}, Slope-6: ${dataSeries.slope(6)}, Slope-5: ${dataSeries.slope(5)}, Slope-4: ${dataSeries.slope(4)}, Slope-3: ${dataSeries.slope(3)}, Slope-2: ${dataSeries.slope(2)}, Slope-1: ${dataSeries.slope(1)}, Slope-0: ${dataSeries.slope(0)}`)
   dataSeries.push(0.86, 1.3889)
@@ -1870,7 +1867,6 @@ test('Quadratic TS Estimation should result in a changing coefficientA when the 
   dataSeries.push(0.92, 1.702306667)
   dataSeries.push(0.93, 1.758733333)
   dataSeries.push(0.94, 1.816393333)
-  
   dataSeries.push(0.95, 1.8753)
   assert.ok(dataSeries.coefficientA() === 99, `time: ${dataSeries.xAtSeriesEnd()}, coefficientA: ${dataSeries.coefficientA()}, coefficientB: ${dataSeries.coefficientB()}, Slope-10: ${dataSeries.slope(10)}, Slope-9: ${dataSeries.slope(9)}, Slope-8: ${dataSeries.slope(8)}, Slope-7: ${dataSeries.slope(7)}, Slope-6: ${dataSeries.slope(6)}, Slope-5: ${dataSeries.slope(5)}, Slope-4: ${dataSeries.slope(4)}, Slope-3: ${dataSeries.slope(3)}, Slope-2: ${dataSeries.slope(2)}, Slope-1: ${dataSeries.slope(1)}, Slope-0: ${dataSeries.slope(0)}`)
   dataSeries.push(0.96, 1.935466667)
@@ -1988,7 +1984,6 @@ test('Quadratic TS Estimation should result in a changing coefficientA when the 
   dataSeries.push(1.02, 2.3205)
   dataSeries.push(1.03, 2.385875)
   dataSeries.push(1.04, 2.451)
-  
   dataSeries.push(1.05, 2.515875)
   assert.ok(dataSeries.coefficientA() === 99, `time: ${dataSeries.xAtSeriesEnd()}, coefficientA: ${dataSeries.coefficientA()}, coefficientB: ${dataSeries.coefficientB()}, Slope-10: ${dataSeries.slope(10)}, Slope-9: ${dataSeries.slope(9)}, Slope-8: ${dataSeries.slope(8)}, Slope-7: ${dataSeries.slope(7)}, Slope-6: ${dataSeries.slope(6)}, Slope-5: ${dataSeries.slope(5)}, Slope-4: ${dataSeries.slope(4)}, Slope-3: ${dataSeries.slope(3)}, Slope-2: ${dataSeries.slope(2)}, Slope-1: ${dataSeries.slope(1)}, Slope-0: ${dataSeries.slope(0)}`)
   dataSeries.push(1.06, 2.5805)
