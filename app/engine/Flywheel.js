@@ -107,14 +107,13 @@ function createFlywheel (rowerSettings) {
       // The angularVelocityMatrix has reached its maximum length
       _angularVelocityMatrix.shift()
     }
-    _angularVelocityMatrix[_angularVelocityMatrix.length] = createSeries(flankLength + 1)
+    _angularVelocityMatrix[_angularVelocityMatrix.length] = createSeries(flankLength)
 
     let i = 0
     while (i < _angularVelocityMatrix.length) {
       _angularVelocityMatrix[i].push(_angularDistance.slope(i))
       i++
     }
-    _angularVelocityMatrix[0].push(_angularDistance.coefficientB())
     _angularVelocityAtBeginFlank = _angularVelocityMatrix[0].median()
 
     // Let's calculate the Angular Acceleration
