@@ -267,7 +267,7 @@ test('Quadratic Approximation on function y = 4 * Math.pow(x, 2) + 4 * x + 4, wi
   dataSeries.push(10, 444)
   testCoefficientA(dataSeries, 4)
   testCoefficientB(dataSeries, 9)
-  testCoefficientC(dataSeries, 4.111111111111111 // We consider this quite acceptable as ORM ignores the C coefficient anyways
+  testCoefficientC(dataSeries, 4.111111111111111) // We consider this quite acceptable as ORM ignores the C coefficient anyways
 })
 
 test('Quadratic Approximation on function y = 4 * Math.pow(x, 2) + 4 * x + 4, with some noise (+/- 1) and spikes (+/- 9)', () => {
