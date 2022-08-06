@@ -2282,7 +2282,6 @@ test('Quadratic TS Estimation should result in a changing coefficientA with a co
   testSlope(dataSeries, 0, 1.8749999999817382) // From data generation, Slope should be
 })
 
-
 test('Quadratic TS Estimation should result in a changing coefficientA with a constant force increase, with noise (x +/- 0.001)', () => {
   // As ORM will encounter changing forces during the stroke, we simulate this as well
   // Data based on an acceleration of 01,075 * X, where Y is the distance
@@ -3218,6 +3217,5 @@ function testSlope (series, position, expectedValue) {
 function reportAll (series) {
   assert.ok(series.coefficientA() === 99, `time: ${series.xAtSeriesEnd()}, coefficientA: ${series.coefficientA()}, Slope-10: ${series.slope(10)}, Slope-9: ${series.slope(9)}, Slope-8: ${series.slope(8)}, Slope-7: ${series.slope(7)}, Slope-6: ${series.slope(6)}, Slope-5: ${series.slope(5)}, Slope-4: ${series.slope(4)}, Slope-3: ${series.slope(3)}, Slope-2: ${series.slope(2)}, Slope-1: ${series.slope(1)}, Slope-0: ${series.slope(0)}`)
 }
-
 
 test.run()
