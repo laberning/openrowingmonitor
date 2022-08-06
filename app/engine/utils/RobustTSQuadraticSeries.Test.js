@@ -2266,20 +2266,20 @@ test('Quadratic TS Estimation should result in a changing coefficientA when the 
   dataSeries.push(2.97, 10.339875)
   dataSeries.push(2.98, 10.3565)
   dataSeries.push(2.99, 10.372875)
-  reportAll(dataSeries)
+  // reportAll(dataSeries)
   testCoefficientA(dataSeries, -1.2500000000030973) // From data generation, CoefficientA should be
-  testCoefficientB(dataSeries, 0) // From data generation, CoefficientB should be
+  testCoefficientB(dataSeries, 9.09999999999964) // From data generation, CoefficientB should be
   testSlope(dataSeries, 10, 1.6249999999811182) // From data generation, Slope should be 1.625
-  testSlope(dataSeries, 9, 0) // From data generation, Slope should be
-  testSlope(dataSeries, 8, 0) // From data generation, Slope should be
-  testSlope(dataSeries, 7, 0) // From data generation, Slope should be
-  testSlope(dataSeries, 6, 0) // From data generation, Slope should be
-  testSlope(dataSeries, 5, 0) // From data generation, Slope should be
-  testSlope(dataSeries, 4, 0) // From data generation, Slope should be
-  testSlope(dataSeries, 3, 0) // From data generation, Slope should be
-  testSlope(dataSeries, 2, 0) // From data generation, Slope should be
-  testSlope(dataSeries, 1, 0) // From data generation, Slope should be
-  testSlope(dataSeries, 0, 0) // From data generation, Slope should be
+  testSlope(dataSeries, 9, 1.6499999999811807) // From data generation, Slope should be
+  testSlope(dataSeries, 8, 1.6749999999812424) // From data generation, Slope should be
+  testSlope(dataSeries, 7, 1.699999999981305) // From data generation, Slope should be
+  testSlope(dataSeries, 6, 1.7249999999813665) // From data generation, Slope should be
+  testSlope(dataSeries, 5, 1.749999999981429) // From data generation, Slope should be
+  testSlope(dataSeries, 4, 1.7749999999814898) // From data generation, Slope should be
+  testSlope(dataSeries, 3, 1.7999999999815524) // From data generation, Slope should be
+  testSlope(dataSeries, 2, 1.824999999981614) // From data generation, Slope should be
+  testSlope(dataSeries, 1, 1.8499999999816765) // From data generation, Slope should be
+  testSlope(dataSeries, 0, 1.8749999999817382) // From data generation, Slope should be
 })
 
 function testCoefficientA (series, expectedValue) {
@@ -2298,8 +2298,10 @@ function testSlope (series, position, expectedValue) {
   assert.ok(series.slope(position) === expectedValue, `Expected value for Slope-${position} at X-position ${series.xAtSeriesEnd()} (slope at X-position ${series.xAtPosition(position)}) is ${expectedValue}, encountered a ${series.slope(position)}`)
 }
 
+/*
 function reportAll (series) {
   assert.ok(series.coefficientA() === 99, `time: ${series.xAtSeriesEnd()}, coefficientA: ${series.coefficientA()}, coefficientB: ${series.coefficientB()}, Slope-10: ${series.slope(10)}, Slope-9: ${series.slope(9)}, Slope-8: ${series.slope(8)}, Slope-7: ${series.slope(7)}, Slope-6: ${series.slope(6)}, Slope-5: ${series.slope(5)}, Slope-4: ${series.slope(4)}, Slope-3: ${series.slope(3)}, Slope-2: ${series.slope(2)}, Slope-1: ${series.slope(1)}, Slope-0: ${series.slope(0)}`)
 }
+*/
 
 test.run()
