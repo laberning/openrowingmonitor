@@ -512,33 +512,33 @@ test('Quadratic TS Estimation should result in a changing coefficientA with a co
   // Data based on an acceleration of 0,075 * X, where Y is the distance (based on Distance = 0,0375 * t^3
   const dataSeries = createTSQuadraticSeries(11)
   dataSeries.push(0.01, 0)
-  testCoefficientA(dataSeries, 0) // From data generation, CoefficientA should be
-  testCoefficientB(dataSeries, 0) // From data generation, CoefficientB should be
-  testSlope(dataSeries, 10, 0) // From data generation, Slope should be
-  testSlope(dataSeries, 9, 0) // From data generation, Slope should be
-  testSlope(dataSeries, 8, 0) // From data generation, Slope should be
-  testSlope(dataSeries, 7, 0) // From data generation, Slope should be
-  testSlope(dataSeries, 6, 0) // From data generation, Slope should be
-  testSlope(dataSeries, 5, 0) // From data generation, Slope should be
-  testSlope(dataSeries, 4, 0) // From data generation, Slope should be
-  testSlope(dataSeries, 3, 0) // From data generation, Slope should be
-  testSlope(dataSeries, 2, 0) // From data generation, Slope should be
-  testSlope(dataSeries, 1, 0) // From data generation, Slope should be
-  testSlope(dataSeries, 0, 0) // From data generation, Slope should be
+  testCoefficientA(dataSeries, 0)
+  testCoefficientB(dataSeries, 0)
+  testSlope(dataSeries, 10, 0)
+  testSlope(dataSeries, 9, 0)
+  testSlope(dataSeries, 8, 0)
+  testSlope(dataSeries, 7, 0)
+  testSlope(dataSeries, 6, 0)
+  testSlope(dataSeries, 5, 0)
+  testSlope(dataSeries, 4, 0)
+  testSlope(dataSeries, 3, 0)
+  testSlope(dataSeries, 2, 0)
+  testSlope(dataSeries, 1, 0)
+  testSlope(dataSeries, 0, 0)
   dataSeries.push(0.02, 0.00000666667)
-  testCoefficientA(dataSeries, 0) // From data generation, CoefficientA should be
-  testCoefficientB(dataSeries, 0) // From data generation, CoefficientB should be
-  testSlope(dataSeries, 10, 0) // From data generation, Slope should be
-  testSlope(dataSeries, 9, 0) // From data generation, Slope should be
-  testSlope(dataSeries, 8, 0) // From data generation, Slope should be
-  testSlope(dataSeries, 7, 0) // From data generation, Slope should be
-  testSlope(dataSeries, 6, 0) // From data generation, Slope should be
-  testSlope(dataSeries, 5, 0) // From data generation, Slope should be
-  testSlope(dataSeries, 4, 0) // From data generation, Slope should be
-  testSlope(dataSeries, 3, 0) // From data generation, Slope should be
-  testSlope(dataSeries, 2, 0) // From data generation, Slope should be
-  testSlope(dataSeries, 1, 0) // From data generation, Slope should be
-  testSlope(dataSeries, 0, 0) // From data generation, Slope should be
+  testCoefficientA(dataSeries, 0)
+  testCoefficientB(dataSeries, 0)
+  testSlope(dataSeries, 10, 0)
+  testSlope(dataSeries, 9, 0)
+  testSlope(dataSeries, 8, 0)
+  testSlope(dataSeries, 7, 0)
+  testSlope(dataSeries, 6, 0)
+  testSlope(dataSeries, 5, 0)
+  testSlope(dataSeries, 4, 0)
+  testSlope(dataSeries, 3, 0)
+  testSlope(dataSeries, 2, 0)
+  testSlope(dataSeries, 1, 0)
+  testSlope(dataSeries, 0, 0)
   dataSeries.push(0.03, 0.0000333333)
   testCoefficientA(dataSeries, 0.09999980000000004)
   testCoefficientB(dataSeries, -0.002333327000000001)
@@ -652,33 +652,33 @@ test('Quadratic TS Estimation should result in a changing coefficientA with a co
   testSlope(dataSeries, 1, -0.003555614750000019)
   testSlope(dataSeries, 0, -0.010222279208333348)
   dataSeries.push(0.11, 0.002566667)
-  testCoefficientA(dataSeries, 0.3666662777777779) // From data generation, CoefficientA should be
-  testCoefficientB(dataSeries, -0.02188884166666667) // From data generation, CoefficientB should be
-  testSlope(dataSeries, 10, 0.05877773944444446) // From data generation, Slope should be
-  testSlope(dataSeries, 9, 0.0514444138888889) // From data generation, Slope should be
-  testSlope(dataSeries, 8, 0.04411108833333334) // From data generation, Slope should be
-  testSlope(dataSeries, 7, 0.03677776277777779) // From data generation, Slope should be
-  testSlope(dataSeries, 6, 0.02944443722222224) // From data generation, Slope should be
-  testSlope(dataSeries, 5, 0.022111111666666673) // From data generation, Slope should be
-  testSlope(dataSeries, 4, 0.014777786111111118) // From data generation, Slope should be
-  testSlope(dataSeries, 3, 0.007444460555555563) // From data generation, Slope should be
-  testSlope(dataSeries, 2, 0.00011113500000000179) // From data generation, Slope should be
-  testSlope(dataSeries, 1, -0.007222190555555553) // From data generation, Slope should be
-  testSlope(dataSeries, 0, -0.014555516111111111) // From data generation, Slope should be
+  testCoefficientA(dataSeries, 0.3666662777777779)
+  testCoefficientB(dataSeries, -0.02188884166666667)
+  testSlope(dataSeries, 10, 0.05877773944444446)
+  testSlope(dataSeries, 9, 0.0514444138888889)
+  testSlope(dataSeries, 8, 0.04411108833333334)
+  testSlope(dataSeries, 7, 0.03677776277777779)
+  testSlope(dataSeries, 6, 0.02944443722222224)
+  testSlope(dataSeries, 5, 0.022111111666666673)
+  testSlope(dataSeries, 4, 0.014777786111111118)
+  testSlope(dataSeries, 3, 0.007444460555555563)
+  testSlope(dataSeries, 2, 0.00011113500000000179)
+  testSlope(dataSeries, 1, -0.007222190555555553)
+  testSlope(dataSeries, 0, -0.014555516111111111)
   dataSeries.push(0.12, 0.003373333)
-  testCoefficientA(dataSeries, 0.39999956250000007) // From data generation, CoefficientA should be
-  testCoefficientB(dataSeries, -0.024555497619047614) // From data generation, CoefficientB should be
-  testSlope(dataSeries, 10, 0.0714443973809524) // From data generation, Slope should be
-  testSlope(dataSeries, 9, 0.0634444061309524) // From data generation, Slope should be
-  testSlope(dataSeries, 8, 0.055444414880952406) // From data generation, Slope should be
-  testSlope(dataSeries, 7, 0.0474444236309524) // From data generation, Slope should be
-  testSlope(dataSeries, 6, 0.039444432380952396) // From data generation, Slope should be
-  testSlope(dataSeries, 5, 0.0314444411309524) // From data generation, Slope should be
-  testSlope(dataSeries, 4, 0.023444449880952394) // From data generation, Slope should be
-  testSlope(dataSeries, 3, 0.015444458630952396) // From data generation, Slope should be
-  testSlope(dataSeries, 2, 0.007444467380952391) // From data generation, Slope should be
-  testSlope(dataSeries, 1, -0.0005555238690476104) // From data generation, Slope should be
-  testSlope(dataSeries, 0, -0.008555515119047612) // From data generation, Slope should be
+  testCoefficientA(dataSeries, 0.39999956250000007)
+  testCoefficientB(dataSeries, -0.024555497619047614)
+  testSlope(dataSeries, 10, 0.0714443973809524)
+  testSlope(dataSeries, 9, 0.0634444061309524)
+  testSlope(dataSeries, 8, 0.055444414880952406)
+  testSlope(dataSeries, 7, 0.0474444236309524)
+  testSlope(dataSeries, 6, 0.039444432380952396)
+  testSlope(dataSeries, 5, 0.0314444411309524)
+  testSlope(dataSeries, 4, 0.023444449880952394)
+  testSlope(dataSeries, 3, 0.015444458630952396)
+  testSlope(dataSeries, 2, 0.007444467380952391)
+  testSlope(dataSeries, 1, -0.0005555238690476104)
+  testSlope(dataSeries, 0, -0.008555515119047612)
   dataSeries.push(0.13, 0.004333333)
   testCoefficientA(dataSeries, 0.43333294444444437)
   testCoefficientB(dataSeries, -0.030555500555555563)
@@ -792,33 +792,33 @@ test('Quadratic TS Estimation should result in a changing coefficientA with a co
   testSlope(dataSeries, 1, 0.0742222111111106)
   testSlope(dataSeries, 0, 0.058888863888888476)
   dataSeries.push(0.21, 0.019133333)
-  testCoefficientA(dataSeries, 0.8333338888888899) // From data generation, CoefficientA should be
-  testCoefficientB(dataSeries, -0.11055569444444437) // From data generation, CoefficientB should be
-  testSlope(dataSeries, 10, 0.2394445388888894) // From data generation, Slope should be
-  testSlope(dataSeries, 9, 0.22277786111111164) // From data generation, Slope should be
-  testSlope(dataSeries, 8, 0.20611118333333384) // From data generation, Slope should be
-  testSlope(dataSeries, 7, 0.18944450555555603) // From data generation, Slope should be
-  testSlope(dataSeries, 6, 0.17277782777777823) // From data generation, Slope should be
-  testSlope(dataSeries, 5, 0.15611115000000042) // From data generation, Slope should be
-  testSlope(dataSeries, 4, 0.13944447222222262) // From data generation, Slope should be
-  testSlope(dataSeries, 3, 0.12277779444444482) // From data generation, Slope should be
-  testSlope(dataSeries, 2, 0.10611111666666702) // From data generation, Slope should be
-  testSlope(dataSeries, 1, 0.08944443888888921) // From data generation, Slope should be
-  testSlope(dataSeries, 0, 0.07277776111111141) // From data generation, Slope should be
+  testCoefficientA(dataSeries, 0.8333338888888899)
+  testCoefficientB(dataSeries, -0.11055569444444437)
+  testSlope(dataSeries, 10, 0.2394445388888894)
+  testSlope(dataSeries, 9, 0.22277786111111164)
+  testSlope(dataSeries, 8, 0.20611118333333384)
+  testSlope(dataSeries, 7, 0.18944450555555603)
+  testSlope(dataSeries, 6, 0.17277782777777823)
+  testSlope(dataSeries, 5, 0.15611115000000042)
+  testSlope(dataSeries, 4, 0.13944447222222262)
+  testSlope(dataSeries, 3, 0.12277779444444482)
+  testSlope(dataSeries, 2, 0.10611111666666702)
+  testSlope(dataSeries, 1, 0.08944443888888921)
+  testSlope(dataSeries, 0, 0.07277776111111141)
   dataSeries.push(0.22, 0.022073333)
-  testCoefficientA(dataSeries, 0.9000000000000012) // From data generation, CoefficientA should be
-  testCoefficientB(dataSeries, -0.1285555666666672) // From data generation, CoefficientB should be
-  testSlope(dataSeries, 10, 0.26744443333333334) // From data generation, Slope should be
-  testSlope(dataSeries, 9, 0.2494444333333333) // From data generation, Slope should be
-  testSlope(dataSeries, 8, 0.23144443333333334) // From data generation, Slope should be
-  testSlope(dataSeries, 7, 0.21344443333333327) // From data generation, Slope should be
-  testSlope(dataSeries, 6, 0.19544443333333325) // From data generation, Slope should be
-  testSlope(dataSeries, 5, 0.17744443333333323) // From data generation, Slope should be
-  testSlope(dataSeries, 4, 0.15944443333333322) // From data generation, Slope should be
-  testSlope(dataSeries, 3, 0.14144443333333315) // From data generation, Slope should be
-  testSlope(dataSeries, 2, 0.12344443333333319) // From data generation, Slope should be
-  testSlope(dataSeries, 1, 0.10544443333333312) // From data generation, Slope should be
-  testSlope(dataSeries, 0, 0.0874444333333331) // From data generation, Slope should be
+  testCoefficientA(dataSeries, 0.9000000000000012)
+  testCoefficientB(dataSeries, -0.1285555666666672)
+  testSlope(dataSeries, 10, 0.26744443333333334)
+  testSlope(dataSeries, 9, 0.2494444333333333)
+  testSlope(dataSeries, 8, 0.23144443333333334)
+  testSlope(dataSeries, 7, 0.21344443333333327)
+  testSlope(dataSeries, 6, 0.19544443333333325)
+  testSlope(dataSeries, 5, 0.17744443333333323)
+  testSlope(dataSeries, 4, 0.15944443333333322)
+  testSlope(dataSeries, 3, 0.14144443333333315)
+  testSlope(dataSeries, 2, 0.12344443333333319)
+  testSlope(dataSeries, 1, 0.10544443333333312)
+  testSlope(dataSeries, 0, 0.0874444333333331)
   dataSeries.push(0.23, 0.0253)
   testCoefficientA(dataSeries, 0.9666661111111128)
   testCoefficientB(dataSeries, -0.14788871666666734)
@@ -932,33 +932,33 @@ test('Quadratic TS Estimation should result in a changing coefficientA with a co
   testSlope(dataSeries, 1, 0.2814444388888905)
   testSlope(dataSeries, 0, 0.2527777611111126)
   dataSeries.push(0.31, 0.063033333)
-  testCoefficientA(dataSeries, 1.500000000000005) // From data generation, CoefficientA should be
-  testCoefficientB(dataSeries, -0.35055556666666643) // From data generation, CoefficientB should be
-  testSlope(dataSeries, 10, 0.5794444333333367) // From data generation, Slope should be 0.62
-  testSlope(dataSeries, 9, 0.5494444333333366) // From data generation, Slope should be
-  testSlope(dataSeries, 8, 0.5194444333333365) // From data generation, Slope should be
-  testSlope(dataSeries, 7, 0.48944443333333654) // From data generation, Slope should be
-  testSlope(dataSeries, 6, 0.4594444333333364) // From data generation, Slope should be
-  testSlope(dataSeries, 5, 0.42944443333333626) // From data generation, Slope should be
-  testSlope(dataSeries, 4, 0.3994444333333361) // From data generation, Slope should be
-  testSlope(dataSeries, 3, 0.369444433333336) // From data generation, Slope should be
-  testSlope(dataSeries, 2, 0.33944443333333596) // From data generation, Slope should be
-  testSlope(dataSeries, 1, 0.3094444333333358) // From data generation, Slope should be
-  testSlope(dataSeries, 0, 0.2794444333333357) // From data generation, Slope should be
+  testCoefficientA(dataSeries, 1.500000000000005)
+  testCoefficientB(dataSeries, -0.35055556666666643)
+  testSlope(dataSeries, 10, 0.5794444333333367)
+  testSlope(dataSeries, 9, 0.5494444333333366)
+  testSlope(dataSeries, 8, 0.5194444333333365)
+  testSlope(dataSeries, 7, 0.48944443333333654)
+  testSlope(dataSeries, 6, 0.4594444333333364)
+  testSlope(dataSeries, 5, 0.42944443333333626)
+  testSlope(dataSeries, 4, 0.3994444333333361)
+  testSlope(dataSeries, 3, 0.369444433333336)
+  testSlope(dataSeries, 2, 0.33944443333333596)
+  testSlope(dataSeries, 1, 0.3094444333333358)
+  testSlope(dataSeries, 0, 0.2794444333333357)
   dataSeries.push(0.32, 0.06944)
-  testCoefficientA(dataSeries, 1.5666661111111233) // From data generation, CoefficientA should be
-  testCoefficientB(dataSeries, -0.38188861666666574) // From data generation, CoefficientB should be
-  testSlope(dataSeries, 10, 0.6207776944444532) // From data generation, Slope should be
-  testSlope(dataSeries, 9, 0.5894443722222307) // From data generation, Slope should be
-  testSlope(dataSeries, 8, 0.5581110500000082) // From data generation, Slope should be
-  testSlope(dataSeries, 7, 0.5267777277777858) // From data generation, Slope should be
-  testSlope(dataSeries, 6, 0.49544440555556335) // From data generation, Slope should be
-  testSlope(dataSeries, 5, 0.46411108333334095) // From data generation, Slope should be
-  testSlope(dataSeries, 4, 0.43277776111111843) // From data generation, Slope should be
-  testSlope(dataSeries, 3, 0.4014444388888959) // From data generation, Slope should be
-  testSlope(dataSeries, 2, 0.3701111166666734) // From data generation, Slope should be
-  testSlope(dataSeries, 1, 0.338777794444451) // From data generation, Slope should be
-  testSlope(dataSeries, 0, 0.3074444722222285) // From data generation, Slope should be
+  testCoefficientA(dataSeries, 1.5666661111111233)
+  testCoefficientB(dataSeries, -0.38188861666666574)
+  testSlope(dataSeries, 10, 0.6207776944444532)
+  testSlope(dataSeries, 9, 0.5894443722222307)
+  testSlope(dataSeries, 8, 0.5581110500000082)
+  testSlope(dataSeries, 7, 0.5267777277777858)
+  testSlope(dataSeries, 6, 0.49544440555556335)
+  testSlope(dataSeries, 5, 0.46411108333334095)
+  testSlope(dataSeries, 4, 0.43277776111111843)
+  testSlope(dataSeries, 3, 0.4014444388888959)
+  testSlope(dataSeries, 2, 0.3701111166666734)
+  testSlope(dataSeries, 1, 0.338777794444451)
+  testSlope(dataSeries, 0, 0.3074444722222285)
   dataSeries.push(0.33, 0.076266667)
   testCoefficientA(dataSeries, 1.6333327777777635)
   testCoefficientB(dataSeries, -0.414555272222218)
@@ -1072,19 +1072,19 @@ test('Quadratic TS Estimation should result in a changing coefficientA with a co
   testSlope(dataSeries, 1, 0.6214444333333257)
   testSlope(dataSeries, 0, 0.5794444333333256)
   dataSeries.push(0.41, 0.1476)
-  testCoefficientA(dataSeries, 2.1666661111111924) // From data generation, CoefficientA should be
-  testCoefficientB(dataSeries, -0.7238885166666844) // From data generation, CoefficientB should be
-  testSlope(dataSeries, 10, 1.0527776944444933) // From data generation, Slope should be
-  testSlope(dataSeries, 9, 1.0094443722222697) // From data generation, Slope should be
-  testSlope(dataSeries, 8, 0.9661110500000458) // From data generation, Slope should be
-  testSlope(dataSeries, 7, 0.922777727777822) // From data generation, Slope should be
-  testSlope(dataSeries, 6, 0.8794444055555979) // From data generation, Slope should be
-  testSlope(dataSeries, 5, 0.836111083333374) // From data generation, Slope should be
-  testSlope(dataSeries, 4, 0.7927777611111502) // From data generation, Slope should be
-  testSlope(dataSeries, 3, 0.7494444388889265) // From data generation, Slope should be
-  testSlope(dataSeries, 2, 0.7061111166667027) // From data generation, Slope should be
-  testSlope(dataSeries, 1, 0.6627777944444788) // From data generation, Slope should be
-  testSlope(dataSeries, 0, 0.619444472222255) // From data generation, Slope should be
+  testCoefficientA(dataSeries, 2.1666661111111924)
+  testCoefficientB(dataSeries, -0.7238885166666844)
+  testSlope(dataSeries, 10, 1.0527776944444933)
+  testSlope(dataSeries, 9, 1.0094443722222697)
+  testSlope(dataSeries, 8, 0.9661110500000458)
+  testSlope(dataSeries, 7, 0.922777727777822)
+  testSlope(dataSeries, 6, 0.8794444055555979)
+  testSlope(dataSeries, 5, 0.836111083333374)
+  testSlope(dataSeries, 4, 0.7927777611111502)
+  testSlope(dataSeries, 3, 0.7494444388889265)
+  testSlope(dataSeries, 2, 0.7061111166667027)
+  testSlope(dataSeries, 1, 0.6627777944444788)
+  testSlope(dataSeries, 0, 0.619444472222255)
   dataSeries.push(0.42, 0.158806667)
   testCoefficientA(dataSeries, 2.2333327777778647)
   testCoefficientB(dataSeries, -0.7685551722222349)
@@ -1212,19 +1212,19 @@ test('Quadratic TS Estimation should result in a changing coefficientA with a co
   testSlope(dataSeries, 1, 1.094777794444506)
   testSlope(dataSeries, 0, 1.0394444722222842)
   dataSeries.push(0.51, 0.286166667)
-  testCoefficientA(dataSeries, 2.833332777777739) // From data generation, CoefficientA should be
-  testCoefficientB(dataSeries, -1.230555072222179) // From data generation, CoefficientB should be
-  testSlope(dataSeries, 10, 1.6594443611111147) // From data generation, Slope should be
-  testSlope(dataSeries, 9, 1.60277770555556) // From data generation, Slope should be
-  testSlope(dataSeries, 8, 1.5461110500000055) // From data generation, Slope should be
-  testSlope(dataSeries, 7, 1.4894443944444504) // From data generation, Slope should be
-  testSlope(dataSeries, 6, 1.4327777388888958) // From data generation, Slope should be
-  testSlope(dataSeries, 5, 1.3761110833333412) // From data generation, Slope should be
-  testSlope(dataSeries, 4, 1.3194444277777861) // From data generation, Slope should be
-  testSlope(dataSeries, 3, 1.2627777722222315) // From data generation, Slope should be
-  testSlope(dataSeries, 2, 1.2061111166666765) // From data generation, Slope should be
-  testSlope(dataSeries, 1, 1.1494444611111219) // From data generation, Slope should be
-  testSlope(dataSeries, 0, 1.0927778055555668) // From data generation, Slope should be
+  testCoefficientA(dataSeries, 2.833332777777739)
+  testCoefficientB(dataSeries, -1.230555072222179)
+  testSlope(dataSeries, 10, 1.6594443611111147)
+  testSlope(dataSeries, 9, 1.60277770555556)
+  testSlope(dataSeries, 8, 1.5461110500000055)
+  testSlope(dataSeries, 7, 1.4894443944444504)
+  testSlope(dataSeries, 6, 1.4327777388888958)
+  testSlope(dataSeries, 5, 1.3761110833333412)
+  testSlope(dataSeries, 4, 1.3194444277777861)
+  testSlope(dataSeries, 3, 1.2627777722222315)
+  testSlope(dataSeries, 2, 1.2061111166666765)
+  testSlope(dataSeries, 1, 1.1494444611111219)
+  testSlope(dataSeries, 0, 1.0927778055555668)
   dataSeries.push(0.52, 0.303506667)
   testCoefficientA(dataSeries, 2.900000555555566)
   testCoefficientB(dataSeries, -1.2885560388889228)
@@ -1352,19 +1352,19 @@ test('Quadratic TS Estimation should result in a changing coefficientA with a co
   testSlope(dataSeries, 1, 1.7014444611110429)
   testSlope(dataSeries, 0, 1.6327778055554873)
   dataSeries.push(0.61, 0.492066667)
-  testCoefficientA(dataSeries, 3.5000005555560083) // From data generation, CoefficientA should be
-  testCoefficientB(dataSeries, -1.8705561388889318) // From data generation, CoefficientB should be
-  testSlope(dataSeries, 10, 2.399444538889398) // From data generation, Slope should be
-  testSlope(dataSeries, 9, 2.3294445277782776) // From data generation, Slope should be
-  testSlope(dataSeries, 8, 2.2594445166671573) // From data generation, Slope should be
-  testSlope(dataSeries, 7, 2.189444505556037) // From data generation, Slope should be
-  testSlope(dataSeries, 6, 2.1194444944449176) // From data generation, Slope should be
-  testSlope(dataSeries, 5, 2.049444483333798) // From data generation, Slope should be
-  testSlope(dataSeries, 4, 1.9794444722226776) // From data generation, Slope should be
-  testSlope(dataSeries, 3, 1.9094444611115573) // From data generation, Slope should be
-  testSlope(dataSeries, 2, 1.839444450000437) // From data generation, Slope should be
-  testSlope(dataSeries, 1, 1.7694444388893171) // From data generation, Slope should be
-  testSlope(dataSeries, 0, 1.6994444277781968) // From data generation, Slope should be
+  testCoefficientA(dataSeries, 3.5000005555560083)
+  testCoefficientB(dataSeries, -1.8705561388889318)
+  testSlope(dataSeries, 10, 2.399444538889398)
+  testSlope(dataSeries, 9, 2.3294445277782776)
+  testSlope(dataSeries, 8, 2.2594445166671573)
+  testSlope(dataSeries, 7, 2.189444505556037)
+  testSlope(dataSeries, 6, 2.1194444944449176)
+  testSlope(dataSeries, 5, 2.049444483333798)
+  testSlope(dataSeries, 4, 1.9794444722226776)
+  testSlope(dataSeries, 3, 1.9094444611115573)
+  testSlope(dataSeries, 2, 1.839444450000437)
+  testSlope(dataSeries, 1, 1.7694444388893171)
+  testSlope(dataSeries, 0, 1.6994444277781968)
   dataSeries.push(0.62, 0.516873333)
   testCoefficientA(dataSeries, 3.5666665999999925)
   testCoefficientB(dataSeries, -1.9418889000000683)
@@ -1492,19 +1492,19 @@ test('Quadratic TS Estimation should result in a changing coefficientA with a co
   testSlope(dataSeries, 1, 2.441444438889243)
   testSlope(dataSeries, 0, 2.3594444277781275)
   dataSeries.push(0.71, 0.778633333)
-  testCoefficientA(dataSeries, 4.166666599999969) // From data generation, CoefficientA should be
-  testCoefficientB(dataSeries, -2.6438888999999857) // From data generation, CoefficientB should be
-  testSlope(dataSeries, 10, 3.2727776719999704) // From data generation, Slope should be
-  testSlope(dataSeries, 9, 3.189444339999971) // From data generation, Slope should be
-  testSlope(dataSeries, 8, 3.106111007999971) // From data generation, Slope should be
-  testSlope(dataSeries, 7, 3.0227776759999725) // From data generation, Slope should be
-  testSlope(dataSeries, 6, 2.939444343999973) // From data generation, Slope should be
-  testSlope(dataSeries, 5, 2.8561110119999733) // From data generation, Slope should be
-  testSlope(dataSeries, 4, 2.7727776799999746) // From data generation, Slope should be
-  testSlope(dataSeries, 3, 2.689444347999975) // From data generation, Slope should be
-  testSlope(dataSeries, 2, 2.6061110159999754) // From data generation, Slope should be
-  testSlope(dataSeries, 1, 2.522777683999976) // From data generation, Slope should be
-  testSlope(dataSeries, 0, 2.4394443519999762) // From data generation, Slope should be
+  testCoefficientA(dataSeries, 4.166666599999969)
+  testCoefficientB(dataSeries, -2.6438888999999857)
+  testSlope(dataSeries, 10, 3.2727776719999704)
+  testSlope(dataSeries, 9, 3.189444339999971)
+  testSlope(dataSeries, 8, 3.106111007999971)
+  testSlope(dataSeries, 7, 3.0227776759999725)
+  testSlope(dataSeries, 6, 2.939444343999973)
+  testSlope(dataSeries, 5, 2.8561110119999733)
+  testSlope(dataSeries, 4, 2.7727776799999746)
+  testSlope(dataSeries, 3, 2.689444347999975)
+  testSlope(dataSeries, 2, 2.6061110159999754)
+  testSlope(dataSeries, 1, 2.522777683999976)
+  testSlope(dataSeries, 0, 2.4394443519999762)
   dataSeries.push(0.72, 0.81224)
   testCoefficientA(dataSeries, 4.233333399999986)
   testCoefficientB(dataSeries, -2.7285555666666763)
@@ -1632,19 +1632,19 @@ test('Quadratic TS Estimation should result in a changing coefficientA with a co
   testSlope(dataSeries, 1, 3.3147776719996322)
   testSlope(dataSeries, 0, 3.219444339999634)
   dataSeries.push(0.81, 1.1592)
-  testCoefficientA(dataSeries, 4.83333339999992) // From data generation, CoefficientA should be
-  testCoefficientB(dataSeries, -3.550555566666534) // From data generation, CoefficientB should be
-  testSlope(dataSeries, 10, 4.279444541333337) // From data generation, Slope should be
-  testSlope(dataSeries, 9, 4.182777873333338) // From data generation, Slope should be
-  testSlope(dataSeries, 8, 4.08611120533334) // From data generation, Slope should be
-  testSlope(dataSeries, 7, 3.9894445373333416) // From data generation, Slope should be
-  testSlope(dataSeries, 6, 3.8927778693333432) // From data generation, Slope should be
-  testSlope(dataSeries, 5, 3.796111201333345) // From data generation, Slope should be
-  testSlope(dataSeries, 4, 3.6994445333333466) // From data generation, Slope should be
-  testSlope(dataSeries, 3, 3.6027778653333473) // From data generation, Slope should be
-  testSlope(dataSeries, 2, 3.506111197333349) // From data generation, Slope should be
-  testSlope(dataSeries, 1, 3.4094445293333506) // From data generation, Slope should be
-  testSlope(dataSeries, 0, 3.3127778613333523) // From data generation, Slope should be
+  testCoefficientA(dataSeries, 4.83333339999992)
+  testCoefficientB(dataSeries, -3.550555566666534)
+  testSlope(dataSeries, 10, 4.279444541333337)
+  testSlope(dataSeries, 9, 4.182777873333338)
+  testSlope(dataSeries, 8, 4.08611120533334)
+  testSlope(dataSeries, 7, 3.9894445373333416)
+  testSlope(dataSeries, 6, 3.8927778693333432)
+  testSlope(dataSeries, 5, 3.796111201333345)
+  testSlope(dataSeries, 4, 3.6994445333333466)
+  testSlope(dataSeries, 3, 3.6027778653333473)
+  testSlope(dataSeries, 2, 3.506111197333349)
+  testSlope(dataSeries, 1, 3.4094445293333506)
+  testSlope(dataSeries, 0, 3.3127778613333523)
   dataSeries.push(0.82, 1.20294)
   testCoefficientA(dataSeries, 4.899999444445996)
   testCoefficientB(dataSeries, -3.6485547277777206)
@@ -1772,19 +1772,19 @@ test('Quadratic TS Estimation should result in a changing coefficientA with a co
   testSlope(dataSeries, 1, 4.3214445413330145)
   testSlope(dataSeries, 0, 4.212777873333027)
   dataSeries.push(0.91, 1.6471)
-  testCoefficientA(dataSeries, 5.499999444446317) // From data generation, CoefficientA should be
-  testCoefficientB(dataSeries, -4.59055462777715) // From data generation, CoefficientB should be
-  testSlope(dataSeries, 10, 5.419444361115147) // From data generation, Slope should be 5.46
-  testSlope(dataSeries, 9, 5.309444372226221) // From data generation, Slope should be
-  testSlope(dataSeries, 8, 5.199444383337294) // From data generation, Slope should be
-  testSlope(dataSeries, 7, 5.089444394448368) // From data generation, Slope should be
-  testSlope(dataSeries, 6, 4.979444405559441) // From data generation, Slope should be
-  testSlope(dataSeries, 5, 4.869444416670515) // From data generation, Slope should be
-  testSlope(dataSeries, 4, 4.759444427781588) // From data generation, Slope should be
-  testSlope(dataSeries, 3, 4.649444438892662) // From data generation, Slope should be
-  testSlope(dataSeries, 2, 4.539444450003735) // From data generation, Slope should be
-  testSlope(dataSeries, 1, 4.429444461114809) // From data generation, Slope should be
-  testSlope(dataSeries, 0, 4.319444472225884) // From data generation, Slope should be
+  testCoefficientA(dataSeries, 5.499999444446317)
+  testCoefficientB(dataSeries, -4.59055462777715)
+  testSlope(dataSeries, 10, 5.419444361115147)
+  testSlope(dataSeries, 9, 5.309444372226221)
+  testSlope(dataSeries, 8, 5.199444383337294)
+  testSlope(dataSeries, 7, 5.089444394448368)
+  testSlope(dataSeries, 6, 4.979444405559441)
+  testSlope(dataSeries, 5, 4.869444416670515)
+  testSlope(dataSeries, 4, 4.759444427781588)
+  testSlope(dataSeries, 3, 4.649444438892662)
+  testSlope(dataSeries, 2, 4.539444450003735)
+  testSlope(dataSeries, 1, 4.429444461114809)
+  testSlope(dataSeries, 0, 4.319444472225884)
   dataSeries.push(0.92, 1.702306667)
   testCoefficientA(dataSeries, 5.566667222221478)
   testCoefficientB(dataSeries, -4.701889816665797)
@@ -1912,19 +1912,19 @@ test('Quadratic TS Estimation should result in a changing coefficientA with a co
   testSlope(dataSeries, 1, 5.461444461111763)
   testSlope(dataSeries, 0, 5.3394444722228664)
   dataSeries.push(1.01, 2.254875)
-  testCoefficientA(dataSeries, 6.133333333333351) // From data generation, CoefficientA should be 6.6
-  testCoefficientB(dataSeries, -5.680777180952511) // From data generation, CoefficientB should be 6.448
-  testSlope(dataSeries, 10, 6.708556152380858) // From data generation, Slope should be
-  testSlope(dataSeries, 9, 6.5858894857141905) // From data generation, Slope should be
-  testSlope(dataSeries, 8, 6.463222819047523) // From data generation, Slope should be
-  testSlope(dataSeries, 7, 6.340556152380856) // From data generation, Slope should be
-  testSlope(dataSeries, 6, 6.217889485714188) // From data generation, Slope should be
-  testSlope(dataSeries, 5, 6.095222819047523) // From data generation, Slope should be
-  testSlope(dataSeries, 4, 5.9725561523808555) // From data generation, Slope should be
-  testSlope(dataSeries, 3, 5.849889485714188) // From data generation, Slope should be
-  testSlope(dataSeries, 2, 5.7272228190475225) // From data generation, Slope should be
-  testSlope(dataSeries, 1, 5.604556152380855) // From data generation, Slope should be
-  testSlope(dataSeries, 0, 5.481889485714188) // From data generation, Slope should be
+  testCoefficientA(dataSeries, 6.133333333333351)
+  testCoefficientB(dataSeries, -5.680777180952511)
+  testSlope(dataSeries, 10, 6.708556152380858)
+  testSlope(dataSeries, 9, 6.5858894857141905)
+  testSlope(dataSeries, 8, 6.463222819047523)
+  testSlope(dataSeries, 7, 6.340556152380856)
+  testSlope(dataSeries, 6, 6.217889485714188)
+  testSlope(dataSeries, 5, 6.095222819047523)
+  testSlope(dataSeries, 4, 5.9725561523808555)
+  testSlope(dataSeries, 3, 5.849889485714188)
+  testSlope(dataSeries, 2, 5.7272228190475225)
+  testSlope(dataSeries, 1, 5.604556152380855)
+  testSlope(dataSeries, 0, 5.481889485714188)
   dataSeries.push(1.02, 2.3205)
   testCoefficientA(dataSeries, 6.133333333333351)
   testCoefficientB(dataSeries, -5.680777180952511)
@@ -2053,9 +2053,9 @@ test('Quadratic TS Estimation should result in a changing coefficientA with a co
   testSlope(dataSeries, 0, 6.569472222232486)
   dataSeries.push(1.11, 2.899875)
   testCoefficientA(dataSeries, -1.2499999999804303) // From data generation, CoefficientA should be -1.25
-  testCoefficientB(dataSeries, 9.099999999995662) // From data generation, CoefficientB should be 6,468
+  testCoefficientB(dataSeries, 9.099999999995662)
   testSlope(dataSeries, 10, 6.325000000039106) // From data generation, Slope should be 6.325
-  testSlope(dataSeries, 9, 6.350000000038715) // From data generation, Slope should be 6.35
+  testSlope(dataSeries, 9, 6.350000000038715) // From data generation, Slope should be 6.350
   testSlope(dataSeries, 8, 6.375000000038323)
   testSlope(dataSeries, 7, 6.400000000037933)
   testSlope(dataSeries, 6, 6.4250000000375405)
@@ -2068,17 +2068,17 @@ test('Quadratic TS Estimation should result in a changing coefficientA with a co
   dataSeries.push(1.12, 2.963)
   testCoefficientA(dataSeries, -1.2499999999943079) // From data generation, CoefficientA should be -1.25
   testCoefficientB(dataSeries, 9.099999999999001) // From data generation, CoefficientB should be 6.3
-  testSlope(dataSeries, 10, 6.300000000011751) // From data generation, Slope should be 6.3
+  testSlope(dataSeries, 10, 6.300000000011751) // From data generation, Slope should be 6.300
   testSlope(dataSeries, 9, 6.325000000011638) // From data generation, Slope should be 6.325
-  testSlope(dataSeries, 8, 6.350000000011524) // From data generation, Slope should be 6.35
-  testSlope(dataSeries, 7, 6.3750000000114095) // From data generation, Slope should be
-  testSlope(dataSeries, 6, 6.400000000011296) // From data generation, Slope should be
-  testSlope(dataSeries, 5, 6.425000000011183) // From data generation, Slope should be
-  testSlope(dataSeries, 4, 6.450000000011069) // From data generation, Slope should be
-  testSlope(dataSeries, 3, 6.475000000010954) // From data generation, Slope should be
-  testSlope(dataSeries, 2, 6.500000000010841) // From data generation, Slope should be
-  testSlope(dataSeries, 1, 6.525000000010727) // From data generation, Slope should be
-  testSlope(dataSeries, 0, 6.550000000010613) // From data generation, Slope should be
+  testSlope(dataSeries, 8, 6.350000000011524) // From data generation, Slope should be 6.350
+  testSlope(dataSeries, 7, 6.3750000000114095) // From data generation, Slope should be 6.357
+  testSlope(dataSeries, 6, 6.400000000011296) // From data generation, Slope should be 6.400
+  testSlope(dataSeries, 5, 6.425000000011183) // From data generation, Slope should be 6.425
+  testSlope(dataSeries, 4, 6.450000000011069) // From data generation, Slope should be 6.450
+  testSlope(dataSeries, 3, 6.475000000010954) // From data generation, Slope should be 6.475
+  testSlope(dataSeries, 2, 6.500000000010841) // From data generation, Slope should be 6.500
+  testSlope(dataSeries, 1, 6.525000000010727) // From data generation, Slope should be 6.525
+  testSlope(dataSeries, 0, 6.550000000010613) // From data generation, Slope should be 6.550
   dataSeries.push(1.13, 3.025875)
   dataSeries.push(1.14, 3.0885)
   dataSeries.push(1.15, 3.150875)
@@ -2270,16 +2270,16 @@ test('Quadratic TS Estimation should result in a changing coefficientA with a co
   testCoefficientA(dataSeries, -1.2500000000030973) // From data generation, CoefficientA should be
   testCoefficientB(dataSeries, 9.09999999999964) // From data generation, CoefficientB should be
   testSlope(dataSeries, 10, 1.6249999999811182) // From data generation, Slope should be 1.625
-  testSlope(dataSeries, 9, 1.6499999999811807) // From data generation, Slope should be
-  testSlope(dataSeries, 8, 1.6749999999812424) // From data generation, Slope should be
-  testSlope(dataSeries, 7, 1.699999999981305) // From data generation, Slope should be
-  testSlope(dataSeries, 6, 1.7249999999813665) // From data generation, Slope should be
-  testSlope(dataSeries, 5, 1.749999999981429) // From data generation, Slope should be
-  testSlope(dataSeries, 4, 1.7749999999814898) // From data generation, Slope should be
-  testSlope(dataSeries, 3, 1.7999999999815524) // From data generation, Slope should be
-  testSlope(dataSeries, 2, 1.824999999981614) // From data generation, Slope should be
-  testSlope(dataSeries, 1, 1.8499999999816765) // From data generation, Slope should be
-  testSlope(dataSeries, 0, 1.8749999999817382) // From data generation, Slope should be
+  testSlope(dataSeries, 9, 1.6499999999811807) // From data generation, Slope should be 1.650
+  testSlope(dataSeries, 8, 1.6749999999812424) // From data generation, Slope should be 1.675
+  testSlope(dataSeries, 7, 1.699999999981305) // From data generation, Slope should be 1.700
+  testSlope(dataSeries, 6, 1.7249999999813665) // From data generation, Slope should be 1.725
+  testSlope(dataSeries, 5, 1.749999999981429) // From data generation, Slope should be 1.750
+  testSlope(dataSeries, 4, 1.7749999999814898) // From data generation, Slope should be 1.775
+  testSlope(dataSeries, 3, 1.7999999999815524) // From data generation, Slope should be 1.800
+  testSlope(dataSeries, 2, 1.824999999981614) // From data generation, Slope should be 1.825
+  testSlope(dataSeries, 1, 1.8499999999816765) // From data generation, Slope should be 1.850
+  testSlope(dataSeries, 0, 1.8749999999817382) // From data generation, Slope should be 1.875
 })
 
 test('Quadratic TS Estimation should result in a changing coefficientA with a constant force increase, with noise (x +/- 0.001)', () => {
@@ -2289,8 +2289,8 @@ test('Quadratic TS Estimation should result in a changing coefficientA with a co
   dataSeries.push(0.009, 0)
   dataSeries.push(0.021, 0.00000666667)
   dataSeries.push(0.029, 0.0000333333)
-  reportAll(dataSeries)
   dataSeries.push(0.041, 0.0000933333)
+  reportAll(dataSeries)
   dataSeries.push(0.049, 0.0002)
   dataSeries.push(0.061, 0.000366667)
   dataSeries.push(0.069, 0.000606667)
@@ -2314,8 +2314,8 @@ test('Quadratic TS Estimation should result in a changing coefficientA with a co
   dataSeries.push(0.101, 0.0019)
   dataSeries.push(0.109, 0.002566667)
   dataSeries.push(0.121, 0.003373333)
-  reportAll(dataSeries)
   dataSeries.push(0.129, 0.004333333)
+  reportAll(dataSeries)
   dataSeries.push(0.141, 0.00546)
   dataSeries.push(0.149, 0.006766667)
   dataSeries.push(0.161, 0.008266667)
@@ -2350,8 +2350,8 @@ test('Quadratic TS Estimation should result in a changing coefficientA with a co
   dataSeries.push(0.201, 0.016466667)
   dataSeries.push(0.209, 0.019133333)
   dataSeries.push(0.221, 0.022073333)
-  reportAll(dataSeries)
   dataSeries.push(0.229, 0.0253)
+  reportAll(dataSeries)
   dataSeries.push(0.241, 0.028826667)
   dataSeries.push(0.249, 0.032666667)
   dataSeries.push(0.261, 0.036833333)
@@ -2396,8 +2396,8 @@ test('Quadratic TS Estimation should result in a changing coefficientA with a co
   dataSeries.push(0.301, 0.057033333)
   dataSeries.push(0.309, 0.063033333)
   dataSeries.push(0.321, 0.06944)
-  reportAll(dataSeries)
   dataSeries.push(0.329, 0.076266667)
+  reportAll(dataSeries)
   dataSeries.push(0.341, 0.083526667)
   dataSeries.push(0.349, 0.091233333)
   dataSeries.push(0.361, 0.0994)
@@ -2452,8 +2452,8 @@ test('Quadratic TS Estimation should result in a changing coefficientA with a co
   dataSeries.push(0.401, 0.136933333)
   dataSeries.push(0.409, 0.1476)
   dataSeries.push(0.421, 0.158806667)
-  reportAll(dataSeries)
   dataSeries.push(0.429, 0.170566667)
+  reportAll(dataSeries)
   dataSeries.push(0.441, 0.182893333)
   dataSeries.push(0.449, 0.1958)
   dataSeries.push(0.461, 0.2093)
@@ -2518,8 +2518,8 @@ test('Quadratic TS Estimation should result in a changing coefficientA with a co
   dataSeries.push(0.501, 0.2695)
   dataSeries.push(0.509, 0.286166667)
   dataSeries.push(0.521, 0.303506667)
-  reportAll(dataSeries)
   dataSeries.push(0.529, 0.321533333)
+  reportAll(dataSeries)
   dataSeries.push(0.541, 0.34026)
   dataSeries.push(0.549, 0.3597)
   dataSeries.push(0.561, 0.379866667)
@@ -2594,8 +2594,8 @@ test('Quadratic TS Estimation should result in a changing coefficientA with a co
   dataSeries.push(0.601, 0.468066667)
   dataSeries.push(0.609, 0.492066667)
   dataSeries.push(0.621, 0.516873333)
-  reportAll(dataSeries)
   dataSeries.push(0.629, 0.5425)
+  reportAll(dataSeries)
   dataSeries.push(0.641, 0.56896)
   dataSeries.push(0.649, 0.596266667)
   dataSeries.push(0.661, 0.624433333)
@@ -2680,8 +2680,8 @@ test('Quadratic TS Estimation should result in a changing coefficientA with a co
   dataSeries.push(0.701, 0.745966667)
   dataSeries.push(0.709, 0.778633333)
   dataSeries.push(0.721, 0.81224)
-  reportAll(dataSeries)
   dataSeries.push(0.729, 0.8468)
+  reportAll(dataSeries)
   dataSeries.push(0.741, 0.882326667)
   dataSeries.push(0.749, 0.918833333)
   dataSeries.push(0.761, 0.956333333)
@@ -2776,8 +2776,8 @@ test('Quadratic TS Estimation should result in a changing coefficientA with a co
   dataSeries.push(0.801, 1.116533333)
   dataSeries.push(0.809, 1.1592)
   dataSeries.push(0.821, 1.20294)
-  reportAll(dataSeries)
   dataSeries.push(0.829, 1.247766667)
+  reportAll(dataSeries)
   dataSeries.push(0.841, 1.293693333)
   dataSeries.push(0.849, 1.340733333)
   dataSeries.push(0.861, 1.3889)
@@ -2882,8 +2882,8 @@ test('Quadratic TS Estimation should result in a changing coefficientA with a co
   dataSeries.push(0.901, 1.5931)
   dataSeries.push(0.909, 1.6471)
   dataSeries.push(0.921, 1.702306667)
-  reportAll(dataSeries)
   dataSeries.push(0.929, 1.758733333)
+  reportAll(dataSeries)
   dataSeries.push(0.941, 1.816393333)
   dataSeries.push(0.949, 1.8753)
   dataSeries.push(0.961, 1.935466667)
@@ -2998,8 +2998,8 @@ test('Quadratic TS Estimation should result in a changing coefficientA with a co
   dataSeries.push(1.001, 2.189)
   dataSeries.push(1.009, 2.254875)
   dataSeries.push(1.021, 2.3205)
-  reportAll(dataSeries)
   dataSeries.push(1.029, 2.385875)
+  reportAll(dataSeries)
   dataSeries.push(1.041, 2.451)
   dataSeries.push(1.049, 2.515875)
   dataSeries.push(1.061, 2.5805)
