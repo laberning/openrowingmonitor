@@ -2067,7 +2067,7 @@ test('Quadratic TS Estimation should result in a changing coefficientA when the 
   testSlope(dataSeries, 0, 6.5750000000351925)
   dataSeries.push(1.12, 2.963)
   testCoefficientA(dataSeries, -1.2499999999943079) // From data generation, CoefficientA should be -1.25
-  testCoefficientB(dataSeries, 0) // From data generation, CoefficientB should be 6.3
+  testCoefficientB(dataSeries, 9.099999999999001) // From data generation, CoefficientB should be 6.3
   testSlope(dataSeries, 10, 6.300000000011751) // From data generation, Slope should be 6.3
   testSlope(dataSeries, 9, 6.325000000011638) // From data generation, Slope should be 6.325
   testSlope(dataSeries, 8, 6.350000000011524) // From data generation, Slope should be 6.35
