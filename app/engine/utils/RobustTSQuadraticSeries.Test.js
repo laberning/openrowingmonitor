@@ -2066,20 +2066,19 @@ test('Quadratic TS Estimation should result in a changing coefficientA when the 
   testSlope(dataSeries, 1, 6.550000000035584)
   testSlope(dataSeries, 0, 6.5750000000351925)
   dataSeries.push(1.12, 2.963)
-  reportAll(dataSeries)
   testCoefficientA(dataSeries, -1.2499999999943079) // From data generation, CoefficientA should be -1.25
   testCoefficientB(dataSeries, 0) // From data generation, CoefficientB should be 6.3
   testSlope(dataSeries, 10, 6.300000000011751) // From data generation, Slope should be 6.3
   testSlope(dataSeries, 9, 6.325000000011638) // From data generation, Slope should be 6.325
   testSlope(dataSeries, 8, 6.350000000011524) // From data generation, Slope should be 6.35
-  testSlope(dataSeries, 7, 0) // From data generation, Slope should be
-  testSlope(dataSeries, 6, 0) // From data generation, Slope should be
-  testSlope(dataSeries, 5, 0) // From data generation, Slope should be
-  testSlope(dataSeries, 4, 0) // From data generation, Slope should be
-  testSlope(dataSeries, 3, 0) // From data generation, Slope should be
-  testSlope(dataSeries, 2, 0) // From data generation, Slope should be
-  testSlope(dataSeries, 1, 0) // From data generation, Slope should be
-  testSlope(dataSeries, 0, 0) // From data generation, Slope should be
+  testSlope(dataSeries, 7, 6.3750000000114095) // From data generation, Slope should be
+  testSlope(dataSeries, 6, 6.400000000011296) // From data generation, Slope should be
+  testSlope(dataSeries, 5, 6.425000000011183) // From data generation, Slope should be
+  testSlope(dataSeries, 4, 6.450000000011069) // From data generation, Slope should be
+  testSlope(dataSeries, 3, 6.475000000010954) // From data generation, Slope should be
+  testSlope(dataSeries, 2, 6.500000000010841) // From data generation, Slope should be
+  testSlope(dataSeries, 1, 6.525000000010727) // From data generation, Slope should be
+  testSlope(dataSeries, 0, 6.550000000010613) // From data generation, Slope should be
   dataSeries.push(1.13, 3.025875)
   dataSeries.push(1.14, 3.0885)
   dataSeries.push(1.15, 3.150875)
