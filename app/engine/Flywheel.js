@@ -118,7 +118,7 @@ function createFlywheel (rowerSettings) {
 
     // Let's calculate the Angular Acceleration
     _angularAcceleration.push(2 * _angularDistance.coefficientA())
-    _angularAccelerationAtBeginFlank = _angularAcceleration.median()  // dit kan waarschijnlijk beter _angularAcceleration.atSeriesBegin() zijn!!!!!
+    _angularAccelerationAtBeginFlank = _angularAcceleration.median() // @@ dit kan waarschijnlijk beter _angularAcceleration.atSeriesBegin() zijn!!!!!
 
     // And finally calculate the torque
     _torqueAtBeginFlank = (rowerSettings.flywheelInertia * _angularAccelerationAtBeginFlank + drag.clean() * Math.pow(_angularVelocityAtBeginFlank, 2))
