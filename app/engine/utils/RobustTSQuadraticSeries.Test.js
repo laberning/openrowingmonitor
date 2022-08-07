@@ -2340,7 +2340,6 @@ test('Quadratic TS Estimation on a real stroke', () => {
   dataSeries.push(0.296474353, 29.32153143)
   dataSeries.push(0.306319855, 30.36872898)
   dataSeries.push(0.316180579, 31.41592654)
-  dataSeries.push(0.325871835, 32.46312409)
   reportAll(dataSeries)
 })
 
@@ -2392,7 +2391,6 @@ test('Quadratic TS Estimation on a real stroke', () => {
   dataSeries.push(0.429384372, 43.98229715)
   dataSeries.push(0.43850913, 45.0294947)
   dataSeries.push(0.447510736, 46.07669225)
-  dataSeries.push(0.456562473, 47.1238898)
   reportAll(dataSeries)
 })
 
@@ -2458,7 +2456,6 @@ test('Quadratic TS Estimation on a real stroke', () => {
   dataSeries.push(0.5552034, 58.64306287)
   dataSeries.push(0.563983962, 59.69026042)
   dataSeries.push(0.572796192, 60.73745797)
-  dataSeries.push(0.581727665, 61.78465552)
   reportAll(dataSeries)
 })
 
@@ -2538,7 +2535,6 @@ test('Quadratic TS Estimation on a real stroke', () => {
   dataSeries.push(0.678244193, 73.30382858)
   dataSeries.push(0.687232057, 74.35102613)
   dataSeries.push(0.696202328, 75.39822369)
-  dataSeries.push(0.70497376, 76.44542124)
   reportAll(dataSeries)
 })
 
@@ -2632,7 +2628,6 @@ test('Quadratic TS Estimation on a real stroke', () => {
   dataSeries.push(0.803095707, 87.9645943)
   dataSeries.push(0.811993958, 89.01179185)
   dataSeries.push(0.820780261, 90.0589894)
-  dataSeries.push(0.829730698, 91.10618695)
   reportAll(dataSeries)
 })
 
@@ -2740,7 +2735,6 @@ test('Quadratic TS Estimation on a real stroke', () => {
   dataSeries.push(0.929456673, 102.62536)
   dataSeries.push(0.938468052, 103.6725576)
   dataSeries.push(0.947589434, 104.7197551)
-  dataSeries.push(0.956809189, 105.7669527)
   reportAll(dataSeries)
 })
 
@@ -2862,7 +2856,6 @@ test('Quadratic TS Estimation on a real stroke', () => {
   dataSeries.push(1.057966787, 117.2861257)
   dataSeries.push(1.067336084, 118.3333233)
   dataSeries.push(1.076716419, 119.3805208)
-  dataSeries.push(1.086067771, 120.4277184)
   reportAll(dataSeries)
 })
 
@@ -2998,7 +2991,6 @@ test('Quadratic TS Estimation on a real stroke', () => {
   dataSeries.push(1.188955549, 131.9468915)
   dataSeries.push(1.198398015, 132.994089)
   dataSeries.push(1.207586862, 134.0412866)
-  dataSeries.push(1.216961826, 135.0884841)
   reportAll(dataSeries)
 })
 
@@ -3148,7 +3140,6 @@ test('Quadratic TS Estimation on a real stroke', () => {
   dataSeries.push(1.321509192, 146.6076572)
   dataSeries.push(1.331006066, 147.6548547)
   dataSeries.push(1.340566813, 148.7020523)
-  dataSeries.push(1.3502321, 149.7492498)
   reportAll(dataSeries)
 })
 
@@ -3312,7 +3303,6 @@ test('Quadratic TS Estimation on a real stroke', () => {
   dataSeries.push(1.456336642, 161.2684229)
   dataSeries.push(1.466142619, 162.3156204)
   dataSeries.push(1.476054525, 163.362818)
-  dataSeries.push(1.485875743, 164.4100155)
   reportAll(dataSeries)
 })
 
@@ -3490,7 +3480,6 @@ test('Quadratic TS Estimation on a real stroke', () => {
   dataSeries.push(1.593868694, 175.9291886)
   dataSeries.push(1.603622892, 176.9763862)
   dataSeries.push(1.613346385, 178.0235837)
-  dataSeries.push(1.623114731, 179.0707813)
   reportAll(dataSeries)
 })
 
@@ -3682,7 +3671,6 @@ test('Quadratic TS Estimation on a real stroke', () => {
   dataSeries.push(1.73290542, 190.5899543)
   dataSeries.push(1.742824123, 191.6371519)
   dataSeries.push(1.752832884, 192.6843494)
-  dataSeries.push(1.762981204, 193.731547)
   reportAll(dataSeries)
 })
 
@@ -3888,7 +3876,6 @@ test('Quadratic TS Estimation on a real stroke', () => {
   dataSeries.push(1.874303908, 205.25072)
   dataSeries.push(1.884755695, 206.2979176)
   dataSeries.push(1.895014532, 207.3451151)
-  dataSeries.push(1.905196774, 208.3923127)
   reportAll(dataSeries)
 })
 
@@ -4108,7 +4095,6 @@ test('Quadratic TS Estimation on a real stroke', () => {
   dataSeries.push(2.01841843, 219.9114858)
   dataSeries.push(2.028724323, 220.9586833)
   dataSeries.push(2.038960029, 222.0058809)
-  dataSeries.push(2.049296979, 223.0530784)
   reportAll(dataSeries)
 })
 
@@ -4342,7 +4328,6 @@ test('Quadratic TS Estimation on a real stroke', () => {
   dataSeries.push(2.164344687, 234.5722515)
   dataSeries.push(2.174775103, 235.619449)
   dataSeries.push(2.18537006, 236.6666466)
-  dataSeries.push(2.196043798, 237.7138441)
   reportAll(dataSeries)
 })
 
@@ -4590,7 +4575,6 @@ test('Quadratic TS Estimation on a real stroke', () => {
   dataSeries.push(2.312773854, 249.2330172)
   dataSeries.push(2.32357041, 250.2802147) // Done
   dataSeries.push(2.334544378, 251.3274123)
-  dataSeries.push(2.345140057, 252.3746098)
   reportAll(dataSeries)
 })
 
@@ -4853,7 +4837,6 @@ test('Quadratic TS Estimation on a real stroke', () => {
   dataSeries.push(2.474722505, 264.9409805)
   dataSeries.push(2.485543876, 265.988178)
   dataSeries.push(2.496390896, 267.0353756)
-  dataSeries.push(2.507331067, 268.0825731)
   reportAll(dataSeries)
 })
 
@@ -5856,6 +5839,7 @@ test('Quadratic TS Estimation on a real stroke', () => {
   testSlope(dataSeries, 1, 99.77278217331141)
   testSlope(dataSeries, 0, 100.12766296195022)
   dataSeries.push(2.485543876, 265.988178)
+  reportAll(dataSeries)
   dataSeries.push(2.496390896, 267.0353756)
   dataSeries.push(2.507331067, 268.0825731)
   dataSeries.push(2.518307257, 269.1297707)
