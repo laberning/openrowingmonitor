@@ -2293,7 +2293,6 @@ test('Quadratic TS Estimation on a real stroke', () => {
   dataSeries.push(0.055612867, 5.235987756)
   dataSeries.push(0.066788371, 6.283185307)
   dataSeries.push(0.077708127, 7.330382858)
-  dataSeries.push(0.088572437, 8.37758041)
   reportAll(dataSeries)
 })
 
@@ -2314,7 +2313,6 @@ test('Quadratic TS Estimation on a real stroke', () => {
   dataSeries.push(0.121246222, 11.51917306)
   dataSeries.push(0.132376485, 12.56637061)
   dataSeries.push(0.142763169, 13.61356817)
-  dataSeries.push(0.15328932, 14.66076572)
   reportAll(dataSeries)
 })
 
@@ -2349,7 +2347,6 @@ test('Quadratic TS Estimation on a real stroke', () => {
   dataSeries.push(0.266811586, 26.17993878)
   dataSeries.push(0.276675069, 27.22713633)
   dataSeries.push(0.286590054, 28.27433388)
-  dataSeries.push(0.296474353, 29.32153143)
   reportAll(dataSeries)
 })
 
@@ -2398,7 +2395,6 @@ test('Quadratic TS Estimation on a real stroke', () => {
   dataSeries.push(0.40163207, 40.8407045)
   dataSeries.push(0.410732456, 41.88790205)
   dataSeries.push(0.420041719, 42.9350996)
-  dataSeries.push(0.429384372, 43.98229715)
   reportAll(dataSeries)
 })
 
@@ -2461,7 +2457,6 @@ test('Quadratic TS Estimation on a real stroke', () => {
   dataSeries.push(0.528624985, 55.50147021)
   dataSeries.push(0.537590627, 56.54866776)
   dataSeries.push(0.54643632, 57.59586532)
-  dataSeries.push(0.5552034, 58.64306287)
   reportAll(dataSeries)
 })
 
@@ -2538,7 +2533,6 @@ test('Quadratic TS Estimation on a real stroke', () => {
   dataSeries.push(0.651964583, 70.16223593)
   dataSeries.push(0.66068594, 71.20943348)
   dataSeries.push(0.66942713, 72.25663103)
-  dataSeries.push(0.678244193, 73.30382858)
   reportAll(dataSeries)
 })
 
@@ -2629,7 +2623,6 @@ test('Quadratic TS Estimation on a real stroke', () => {
   dataSeries.push(0.775924145, 84.82300165)
   dataSeries.push(0.785613215, 85.8701992)
   dataSeries.push(0.793953486, 86.91739675)
-  dataSeries.push(0.803095707, 87.9645943)
   reportAll(dataSeries)
 })
 
@@ -2734,7 +2727,6 @@ test('Quadratic TS Estimation on a real stroke', () => {
   dataSeries.push(0.902175715, 99.48376736)
   dataSeries.push(0.911383452, 100.5309649)
   dataSeries.push(0.920426998, 101.5781625)
-  dataSeries.push(0.929456673, 102.62536)
   reportAll(dataSeries)
 })
 
@@ -2853,7 +2845,6 @@ test('Quadratic TS Estimation on a real stroke', () => {
   dataSeries.push(1.030419932, 114.1445331)
   dataSeries.push(1.039487683, 115.1917306)
   dataSeries.push(1.04868003, 116.2389282)
-  dataSeries.push(1.057966787, 117.2861257)
   reportAll(dataSeries)
 })
 
@@ -2986,7 +2977,6 @@ test('Quadratic TS Estimation on a real stroke', () => {
   dataSeries.push(1.16043009, 128.8052988)
   dataSeries.push(1.169838425, 129.8524963)
   dataSeries.push(1.179333522, 130.8996939)
-  dataSeries.push(1.188955549, 131.9468915)
   reportAll(dataSeries)
 })
 
@@ -3133,7 +3123,6 @@ test('Quadratic TS Estimation on a real stroke', () => {
   dataSeries.push(1.293037532, 143.4660645)
   dataSeries.push(1.302636391, 144.5132621)
   dataSeries.push(1.312148988, 145.5604596)
-  dataSeries.push(1.321509192, 146.6076572)
   reportAll(dataSeries)
 })
 
@@ -3294,7 +3283,6 @@ test('Quadratic TS Estimation on a real stroke', () => {
   dataSeries.push(1.427500637, 158.1268302)
   dataSeries.push(1.437013438, 159.1740278)
   dataSeries.push(1.446614816, 160.2212253)
-  dataSeries.push(1.456336642, 161.2684229)
   reportAll(dataSeries)
 })
 
@@ -3469,7 +3457,6 @@ test('Quadratic TS Estimation on a real stroke', () => {
   dataSeries.push(1.563938732, 172.7875959)
   dataSeries.push(1.573778283, 173.8347935)
   dataSeries.push(1.583837026, 174.881991)
-  dataSeries.push(1.593868694, 175.9291886)
   reportAll(dataSeries)
 })
 
@@ -3658,7 +3645,6 @@ test('Quadratic TS Estimation on a real stroke', () => {
   dataSeries.push(1.702892657, 187.4483617)
   dataSeries.push(1.713011939, 188.4955592)
   dataSeries.push(1.722956031, 189.5427568)
-  dataSeries.push(1.73290542, 190.5899543)
   reportAll(dataSeries)
 })
 
@@ -3861,7 +3847,6 @@ test('Quadratic TS Estimation on a real stroke', () => {
   dataSeries.push(1.843990593, 202.1091274)
   dataSeries.push(1.854018576, 203.1563249)
   dataSeries.push(1.864139501, 204.2035225)
-  dataSeries.push(1.874303908, 205.25072)
   reportAll(dataSeries)
 })
 
@@ -4078,7 +4063,6 @@ test('Quadratic TS Estimation on a real stroke', () => {
   dataSeries.push(1.987195593, 216.7698931)
   dataSeries.push(1.997677121, 217.8170906)
   dataSeries.push(2.007913975, 218.8642882)
-  dataSeries.push(2.01841843, 219.9114858)
   reportAll(dataSeries)
 })
 
@@ -4309,7 +4293,6 @@ test('Quadratic TS Estimation on a real stroke', () => {
   dataSeries.push(2.132907159, 231.4306588)
   dataSeries.push(2.143543784, 232.4778564)
   dataSeries.push(2.153975644, 233.5250539)
-  dataSeries.push(2.164344687, 234.5722515)
   reportAll(dataSeries)
 })
 
@@ -4554,7 +4537,6 @@ test('Quadratic TS Estimation on a real stroke', () => {
   dataSeries.push(2.28104578, 246.0914245)
   dataSeries.push(2.291509178, 247.1386221)
   dataSeries.push(2.302206342, 248.1858196)
-  dataSeries.push(2.312773854, 249.2330172)
   reportAll(dataSeries)
 })
 
@@ -4813,7 +4795,6 @@ test('Quadratic TS Estimation on a real stroke', () => {
   dataSeries.push(2.431094398, 260.7521902)
   dataSeries.push(2.441909455, 261.7993878)
   dataSeries.push(2.452858737, 262.8465854)
-  dataSeries.push(2.46391706, 263.8937829)
   reportAll(dataSeries)
 })
 
@@ -5086,7 +5067,6 @@ test('Quadratic TS Estimation on a real stroke', () => {
   dataSeries.push(2.584076195, 275.412956)
   dataSeries.push(2.595270059, 276.4601535)
   dataSeries.push(2.606227046, 277.5073511)
-  dataSeries.push(2.617122716, 278.5545486)
   reportAll(dataSeries)
 })
 
@@ -5372,8 +5352,8 @@ test('Quadratic TS Estimation on a real stroke', () => {
   dataSeries.push(2.727709332, 289.0265241)
   dataSeries.push(2.738516481, 290.0737217)
   dataSeries.push(2.749224035, 291.1209192)
-  dataSeries.push(2.7599462, 292.1681168)
   reportAll(dataSeries)
+  dataSeries.push(2.7599462, 292.1681168)
   dataSeries.push(2.7707152, 293.2153143)
 })
 
