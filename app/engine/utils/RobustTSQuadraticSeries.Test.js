@@ -2286,7 +2286,7 @@ test('Quadratic TS Estimation on a real stroke', () => {
   // As ORM will encounter changing forces during the stroke
   const dataSeries = createTSQuadraticSeries(11)
   dataSeries.push(0, 0)
-    testCoefficientA(dataSeries, 0)
+  testCoefficientA(dataSeries, 0)
   testCoefficientB(dataSeries, 0)
   testSlope(dataSeries, 10, 0)
   testSlope(dataSeries, 9, 0)
@@ -2314,7 +2314,7 @@ test('Quadratic TS Estimation on a real stroke', () => {
   testSlope(dataSeries, 1, 0)
   testSlope(dataSeries, 0, 0)
   dataSeries.push(0.022144058, 2.094395102)
-    testCoefficientA(dataSeries, 7.50843472946067)
+  testCoefficientA(dataSeries, 7.50843472946067)
   testCoefficientB(dataSeries, 94.4141887257801)
   testSlope(dataSeries, 10, 0)
   testSlope(dataSeries, 9, 0)
