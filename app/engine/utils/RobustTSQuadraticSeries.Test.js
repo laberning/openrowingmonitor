@@ -6118,7 +6118,7 @@ test('Quadratic TS Estimation on a real stroke', () => {
   testSlope(dataSeries, 7, 102.90509383308137)
   testSlope(dataSeries, 6, 102.9756187450749)
   testSlope(dataSeries, 5, 103.04740065642588)
-  testSlope(dataSeries, 4, 103.1186827353825
+  testSlope(dataSeries, 4, 103.1186827353825)
   dataSeries.push(2.716609823, 287.9793266)
   testCoefficientA(dataSeries, -2.629661346706557)
   testCoefficientB(dataSeries, 109.35976212382201)
