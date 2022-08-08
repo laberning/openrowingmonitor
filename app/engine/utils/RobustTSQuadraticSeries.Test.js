@@ -454,10 +454,9 @@ test('Quadratic TS Estimation should be decent for standard real-life example fr
   dataSeries.push(2230, 1840)
   dataSeries.push(2400, 1956)
   dataSeries.push(2930, 1954)
-  reportAll(dataSeries)
-  testCoefficientA(dataSeries, -0.10466531440162272) // The example results in -0.1012 for R after two rounds, which we consider acceptably close
-  testCoefficientB(dataSeries, 6.854724080267559) // The example results in 6.7444 for R after two rounds, which we consider acceptably close
-  testCoefficientC(dataSeries, -23.701915708812262) // The example results in 18.2536 for R after two rounds, but for ORM, this factor is irrelevant
+  testCoefficientA(dataSeries, -0.0004480669511301859) // The example results in -0.00045 through QR decomposition by Givens rotations, which we consider acceptably close
+  testCoefficientB(dataSeries, 2.7988686703923236) // The example results in 2.39893 for QR decomposition by Givens rotationss, which we consider acceptably close
+  testCoefficientC(dataSeries, -1613.0695243192479) // The example results in -1216.143887 for QR decomposition by Givens rotations, but for ORM, this factor is irrelevant
 })
 
 test('Quadratic Approximation with a clean function and a reset', () => {
