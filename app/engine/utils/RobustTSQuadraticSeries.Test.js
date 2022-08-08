@@ -441,7 +441,6 @@ test('Quadratic TS Estimation should be decent for standard real-life example fr
   testCoefficientC(dataSeries, -23.701915708812262) // The example results in 18.2536 for R after two rounds, but for ORM, this factor is irrelevant
 })
 
-
 test('Quadratic TS Estimation should be decent for standard real-life example from StatsDirect.com with some noise and chaotic X values', () => {
   // Test based on https://www.statsdirect.com/help/regression_and_correlation/polynomial.htm
   const dataSeries = createTSQuadraticSeries(10)
