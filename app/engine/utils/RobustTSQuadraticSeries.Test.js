@@ -441,6 +441,26 @@ test('Quadratic TS Estimation should be decent for standard real-life example fr
   testCoefficientC(dataSeries, -23.701915708812262) // The example results in 18.2536 for R after two rounds, but for ORM, this factor is irrelevant
 })
 
+
+test('Quadratic TS Estimation should be decent for standard real-life example from StatsDirect.com with some noise and chaotic X values', () => {
+  // Test based on https://www.statsdirect.com/help/regression_and_correlation/polynomial.htm
+  const dataSeries = createTSQuadraticSeries(10)
+  dataSeries.push(1290, 1182)
+  dataSeries.push(1350, 1172)
+  dataSeries.push(1470, 1264)
+  dataSeries.push(1600, 1493)
+  dataSeries.push(1710, 1571)
+  dataSeries.push(1840, 1711)
+  dataSeries.push(1980, 1804)
+  dataSeries.push(2230, 1840)
+  dataSeries.push(2400, 1956)
+  dataSeries.push(2930, 1954)
+  reportAll(dataSeries)
+  testCoefficientA(dataSeries, -0.10466531440162272) // The example results in -0.1012 for R after two rounds, which we consider acceptably close
+  testCoefficientB(dataSeries, 6.854724080267559) // The example results in 6.7444 for R after two rounds, which we consider acceptably close
+  testCoefficientC(dataSeries, -23.701915708812262) // The example results in 18.2536 for R after two rounds, but for ORM, this factor is irrelevant
+})
+
 test('Quadratic Approximation with a clean function and a reset', () => {
   // Data based on 2 x^2 + 2 x + 2
   const dataSeries = createTSQuadraticSeries(10)
@@ -6234,7 +6254,7 @@ function testSlope (series, position, expectedValue) {
 }
 
 function reportAll (series) {
-  assert.ok(series.coefficientA() === 99, `time: ${series.xAtSeriesEnd()}, coefficientA: ${series.coefficientA()}, coefficientB: ${series.coefficientB()}, Slope-10: ${series.slope(10)}, Slope-9: ${series.slope(9)}, Slope-8: ${series.slope(8)}, Slope-7: ${series.slope(7)}, Slope-6: ${series.slope(6)}, Slope-5: ${series.slope(5)}, Slope-4: ${series.slope(4)}, Slope-3: ${series.slope(3)}, Slope-2: ${series.slope(2)}, Slope-1: ${series.slope(1)}, Slope-0: ${series.slope(0)}`)
+  assert.ok(series.coefficientA() === 99, `time: ${series.xAtSeriesEnd()}, coefficientA: ${series.coefficientA()}, coefficientB: ${series.coefficientB()}, coefficientC: ${series.coefficientC()}, Slope-10: ${series.slope(10)}, Slope-9: ${series.slope(9)}, Slope-8: ${series.slope(8)}, Slope-7: ${series.slope(7)}, Slope-6: ${series.slope(6)}, Slope-5: ${series.slope(5)}, Slope-4: ${series.slope(4)}, Slope-3: ${series.slope(3)}, Slope-2: ${series.slope(2)}, Slope-1: ${series.slope(1)}, Slope-0: ${series.slope(0)}`)
 }
 
 test.run()
