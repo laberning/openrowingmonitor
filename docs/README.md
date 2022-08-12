@@ -30,7 +30,7 @@ Open Rowing Monitor implements a physics model to simulate the typical metrics o
 * Total number of strokes
 * Heart Rate (supports BLE and ANT+ heart rate monitors, ANT+ requires an ANT+ USB stick)
 
-It calculates and can export many other key rowing metrics, including Drive length (meters), Drive time (milliseconds), Recovery Time (milliseconds), Average handle force (Newton), Peak handle force (Newton) and a Force curve.
+It calculates and can export many other key rowing metrics, including Drive length (meters), Drive time (milliseconds), Recovery Time (milliseconds), Average handle force (Newton), Peak handle force (Newton) and the associated handle force curve, handle velocity curve and handle power curve.
 
 ### Web Interface
 
@@ -59,7 +59,7 @@ Open Rowing Monitor is based on the idea that metrics should be easily accessibl
 
 * **Training Center XML files (TCX)**: These are XML-files that contain the most essential metrics of a rowing session. You can upload these files to training platforms like [Strava](https://www.strava.com), [Garmin Connect](https://connect.garmin.com) or [Trainingpeaks](https://trainingpeaks.com) to track your training sessions;
 
-* **RowingData** files, which are comma-seperated files with all metrics RowingData understands. These can be used with [RowingData](https://pypi.org/project/rowingdata/) to display your results locally, or uploaded to [RowsAndAll](https://rowsandall.com/) for a webbased analysis (including in-stroke metrics). The csv-files can also be used to process in Excel, allowing your own custom analysis. This is the most extensive set of metrics that Open Rowing Monitor can produce;
+* **RowingData** files, which are comma-seperated files with all metrics RowingData understands. These can be used with [RowingData](https://pypi.org/project/rowingdata/) to display your results locally, or uploaded to [RowsAndAll](https://rowsandall.com/) for a webbased analysis (including dynamic in-stroke metrics). The csv-files can also be processed manually in Excel, allowing your own custom analysis. This is the most extensive set of metrics that Open Rowing Monitor can produce;
 
 * **Raw flywheel measurements of the flywheel**, also in CSV files. These files are great to start your own exploration of your rowing style and also to learn about the specifics of your rowing machine (some Excel files that can help with this are included in the `docs` folder).
 
@@ -77,9 +77,9 @@ Also have a look at the [Detailed Installation Instructions](installation.md) fo
 
 ## How it all started
 
-Lars originally started this project, because my rowing machine (Sportstech WRX700) has a very simple computer and I wanted to build something with a clean interface that calculates more realistic metrics. Also, this was a good reason to learn a bit more about Bluetooth and all its specifics.
+Lars originally started this project, because his rowing machine (Sportstech WRX700) has a very simple computer and I wanted to build something with a clean interface that calculates more realistic metrics. Also, this was a good reason to learn a bit more about Bluetooth and all its specifics.
 
-The original proof of concept version started as a sketch on an Arduino, but when I started adding things like a web frontend and BLE I moved it to the much more powerful Raspberry Pi. Maybe using a Raspberry Pi for this small IoT-project is a bit of an overkill, but it has the capacity for further features such as syncing training data or rowing games. And it has USB-Ports that I can use to charge my phone while rowing :-)
+The original proof of concept version started as a sketch on an Arduino, but the web frontend and BLE needed the much more powerful Raspberry Pi. Maybe using a Raspberry Pi for this small IoT-project is a bit of an overkill, but it has the capacity for further features such as syncing training data or rowing games. And it has USB-Ports that you can use to charge your phone while rowing :-)
 
 ## Further information
 
