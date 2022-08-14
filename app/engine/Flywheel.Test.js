@@ -123,7 +123,6 @@ test('Correct Flywheel behaviour at initialisation', () => {
   assert.ok(flywheel.isDwelling() === false, `isDwelling should be false, is ${flywheel.isDwelling()}`)
   assert.ok(flywheel.isUnpowered() === true, `isUnpowered should be false, is ${flywheel.isUnpowered()}`)
   assert.ok(flywheel.isPowered() === false, `isPowered should be true, is ${flywheel.isPowered()}`)
-
 })
 
 
