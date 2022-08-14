@@ -99,7 +99,7 @@ test('Correct Rower behaviour for a noisefree stroke', () => {
     sprocketRadius: 2
   }
   
-  const rower = createRower(baseConfig)
+  const rower = createRower(specificConfig)
   testStrokeState(rower, 'WaitingForDrive')
   testTotalMovingTimeSinceStart(rower, 0)
   testTotalNumberOfStrokes(rower, -1)
