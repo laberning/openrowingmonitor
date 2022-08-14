@@ -41,7 +41,7 @@ test('Correct rower behaviour at initialisation', () => {
   testTotalMovingTimeSinceStart(rower, 0)
   testTotalNumberOfStrokes(rower, -1)
   testTotalLinearDistanceSinceStart(rower, 0)
-  testCycleDuration(rower, 'NaN')
+  testCycleDuration(rower, 1.3)
   testCycleLinearDistance(rower, 0)
   testCycleLinearVelocity(rower, 0)
   testCyclePower(rower, 0)
@@ -142,7 +142,7 @@ test('Correct Rower behaviour for a noisefree stroke', () => {
   testStrokeState(rower, 'Drive')
   testTotalMovingTimeSinceStart(rower, 0.088970487)
   testTotalNumberOfStrokes(rower, 0)
-  testTotalLinearDistanceSinceStart(rower, 0)
+  testTotalLinearDistanceSinceStart(rower, 0.31037384539231255)
   testCycleDuration(rower, 0)
   testCycleLinearDistance(rower, 0)
   testCycleLinearVelocity(rower, 0)
@@ -248,11 +248,7 @@ function testTotalLinearDistanceSinceStart (rower, expectedValue) {
 }
 
 function testCycleDuration (rower, expectedValue) {
-  if (expectedValue === 'NaN') {
-    assert.ok(isNaN(rower.cycleDuration()), `cycleDuration should be NaN at ${rower.totalMovingTimeSinceStart()} sec, is ${rower.cycleDuration()}`)
-  } else {
-    assert.ok(rower.cycleDuration() === expectedValue, `cycleDuration should be ${expectedValue} sec at ${rower.totalMovingTimeSinceStart()} sec, is ${rower.cycleDuration()}`)
-  }
+  assert.ok(rower.cycleDuration() === expectedValue, `cycleDuration should be ${expectedValue} sec at ${rower.totalMovingTimeSinceStart()} sec, is ${rower.cycleDuration()}`)
 }
 
 function testCycleLinearDistance (rower, expectedValue) {
