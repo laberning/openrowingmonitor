@@ -57,8 +57,18 @@ test('Correct Flywheel behaviour at initialisation', () => {
 // Test behaviour for noisy stroke
 
 // Test behaviour for not maintaining metrics
-test('Correct Flywheel behaviour at initialisation', () => {
+test('Correct Flywheel behaviour at maintainStateOnly', () => {
   const flywheel = createFlywheel(baseConfig)
+  assert.ok(flywheel.deltaTime() === 0, `deltaTime should be 0 sec, is ${flywheel.deltaTime()}`)
+  assert.ok(flywheel.spinningTime() === 0, `spinningTime should be 0 sec, is ${flywheel.spinningTime()}`)
+  assert.ok(flywheel.angularPosition() === 0, `Angular Position should be 0 Radians, is ${flywheel.angularPosition()}`)
+  assert.ok(flywheel.angularVelocity() === 0, `Angular Velocity should be 0 Radians/sec, is ${flywheel.angularVelocity()}`)
+  assert.ok(flywheel.angularAcceleration() === 0, `Angular Acceleration should be 0 Radians/sec^2, is ${flywheel.angularAcceleration()}`)
+  assert.ok(flywheel.torque() === 0, `Torque should be 0 N/M, is ${flywheel.torque()}`)
+  assert.ok(flywheel.dragFactor() === 0.0001, `Drag Factor should be 0.0001 N*m*s2, is ${flywheel.dragFactor()}`)
+  assert.ok(flywheel.isDwelling() === false, `isDwelling should be false, is ${flywheel.isDwelling()}`)
+  assert.ok(flywheel.isUnpowered() === false, `isUnpowered should be false, is ${flywheel.isUnpowered()}`)
+  assert.ok(flywheel.isPowered() === true, `isPowered should be true, is ${flywheel.isPowered()}`)
   flywheel.maintainStateOnly()
   flywheel.pushValue(0)
   flywheel.pushValue(0.011081761)
@@ -88,7 +98,7 @@ test('Correct Flywheel behaviour at initialisation', () => {
   assert.ok(flywheel.angularAcceleration() === 0, `Angular Acceleration should remain 0 Radians/sec^2, is ${flywheel.angularAcceleration()}`)
   assert.ok(flywheel.torque() === 0, `Torque should remain 0 N/M, is ${flywheel.torque()}`)
   assert.ok(flywheel.dragFactor() === 0.0001, `Drag Factor should remain 0.0001 N*m*s2, is ${flywheel.dragFactor()}`)
-  assert.ok(flywheel.isDwelling() === false, `isDwelling should be false, is ${flywheel.isDwelling()}`)
+  assert.ok(flywheel.isDwelling() === false, `isDwelling (2) should be false, is ${flywheel.isDwelling()}`)
   assert.ok(flywheel.isUnpowered() === false, `isUnpowered should be false, is ${flywheel.isUnpowered()}`)
   assert.ok(flywheel.isPowered() === true, `isPowered should be true, is ${flywheel.isPowered()}`)
   flywheel.pushValue(0.226370642)
@@ -120,7 +130,7 @@ test('Correct Flywheel behaviour at initialisation', () => {
   assert.ok(flywheel.angularAcceleration() === 0, `Angular Acceleration should remain 0 Radians/sec^2, is ${flywheel.angularAcceleration()}`)
   assert.ok(flywheel.torque() === 0, `Torque should remain 0 N/M, is ${flywheel.torque()}`)
   assert.ok(flywheel.dragFactor() === 0.0001, `Drag Factor should remain 0.0001 N*m*s2, is ${flywheel.dragFactor()}`)
-  assert.ok(flywheel.isDwelling() === false, `isDwelling should be false, is ${flywheel.isDwelling()}`)
+  assert.ok(flywheel.isDwelling() === false, `isDwelling (3) should be false, is ${flywheel.isDwelling()}`)
   assert.ok(flywheel.isUnpowered() === true, `isUnpowered should be false, is ${flywheel.isUnpowered()}`)
   assert.ok(flywheel.isPowered() === false, `isPowered should be true, is ${flywheel.isPowered()}`)
 })
