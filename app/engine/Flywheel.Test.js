@@ -132,7 +132,7 @@ test('Correct Flywheel behaviour for a noisefree stroke', () => {
   flywheel.pushValue(0.021209919)
   testDeltaTime(flywheel, 0.02089567)
   testSpinningTime(flywheel, 0.4508356267)
-  testAngularPosition(flywheel, 25.132741228718345)
+  testAngularPosition(flywheel, 40.84070449666731)
   testAngularVelocity(flywheel, 0)
   testAngularAcceleration(flywheel, 0)
   testTorque(flywheel, 0)
@@ -147,6 +147,10 @@ test('Correct Flywheel behaviour for a noisefree stroke', () => {
 // Test behaviour for noisy downgoing flank
 
 // Test behaviour for noisy stroke
+
+// Test drag factor calculation
+
+// Test Dynamic stroke detection
 
 // Test behaviour for not maintaining metrics
 test('Correct Flywheel behaviour at maintainStateOnly', () => {
