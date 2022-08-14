@@ -29,7 +29,7 @@ const log = loglevel.getLogger('RowingEngine')
 
 function createFlywheel (rowerSettings) {
   const angularDisplacementPerImpulse = (2.0 * Math.PI) / rowerSettings.numOfImpulsesPerRevolution
-  const flankLength = Math.max(2, rowerSettings.flankLength)
+  const flankLength = Math.max(3, rowerSettings.flankLength)
   const minimumDragFactorSamples = Math.floor(rowerSettings.minimumRecoveryTime / rowerSettings.maximumTimeBetweenImpulses)
   const minumumTorqueBeforeStroke = rowerSettings.minumumForceBeforeStroke * (rowerSettings.sprocketRadius / 100)
   const currentDt = createStreamFilter(3, rowerSettings.maximumTimeBetweenImpulses)
