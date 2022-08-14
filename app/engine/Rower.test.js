@@ -76,28 +76,29 @@ test('Correct rower behaviour at initialisation', () => {
 
 // Test behaviour for perfect stroke
 test('Correct Rower behaviour for a noisefree stroke', () => {
-const specificConfig = {
-  numOfImpulsesPerRevolution: 6,
-  flankLength: 11,
-  numberOfErrorsAllowed: 2,
-  minimumStrokeQuality: 0.30,
-  minumumRecoverySlope: 0,
-  autoAdjustRecoverySlope: true,
-  autoAdjustRecoverySlopeMargin: 0.10,
-  minumumForceBeforeStroke: 50,
-  minimumDriveTime: 0.1,
-  minimumRecoveryTime: 0.2,
-  maximumStrokeTimeBeforePause: 0.2,
-  minimumTimeBetweenImpulses: 0.005,
-  maximumTimeBetweenImpulses: 0.02,
-  autoAdjustDragFactor: true,
-  dragFactorSmoothing: 3,
-  dragFactor: 100,
-  minimumDragQuality: 0.83,
-  flywheelInertia: 0.1,
-  magicConstant: 2.8,
-  sprocketRadius: 2
-}
+  const specificConfig = {
+    numOfImpulsesPerRevolution: 6,
+    flankLength: 11,
+    numberOfErrorsAllowed: 2,
+    minimumStrokeQuality: 0.30,
+    minumumRecoverySlope: 0,
+    autoAdjustRecoverySlope: true,
+    autoAdjustRecoverySlopeMargin: 0.10,
+    minumumForceBeforeStroke: 50,
+    minimumDriveTime: 0.1,
+    minimumRecoveryTime: 0.2,
+    maximumStrokeTimeBeforePause: 0.2,
+    minimumTimeBetweenImpulses: 0.005,
+    maximumTimeBetweenImpulses: 0.02,
+    autoAdjustDragFactor: true,
+    dragFactorSmoothing: 3,
+    dragFactor: 100,
+    minimumDragQuality: 0.83,
+    flywheelInertia: 0.1,
+    magicConstant: 2.8,
+    sprocketRadius: 2
+  }
+  
   const rower = createRower(baseConfig)
   testStrokeState(rower, 'WaitingForDrive')
   testTotalMovingTimeSinceStart(rower, 0)
