@@ -189,7 +189,7 @@ function createFlywheel (rowerSettings) {
   function angularAcceleration () {
     // This function returns the angular acceleration of the flywheel in Radians/sec^2 BEFORE the flanl
     if (maintainMetrics && (_deltaTime.length() >= flankLength)) {
-      return Math.max(0, _angularAccelerationBeforeFlank)
+      return _angularAccelerationBeforeFlank
     } else {
       return 0
     }
