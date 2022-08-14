@@ -24,8 +24,8 @@ import loglevel from 'loglevel'
 import { createStreamFilter } from './utils/StreamFilter.js'
 import { createSeries } from './utils/Series.js'
 import { createOLSLinearSeries } from './utils/OLSLinearSeries.js'
-// import { createTSQuadraticSeries } from './utils/TSQuadraticSeries.js'
-import { createTSQuadraticSeries } from './utils/RobustTSQuadraticSeries.js'
+import { createTSQuadraticSeries } from './utils/TSQuadraticSeries.js'
+// import { createTSQuadraticSeries } from './utils/RobustTSQuadraticSeries.js'
 const log = loglevel.getLogger('RowingEngine')
 
 function createFlywheel (rowerSettings) {
