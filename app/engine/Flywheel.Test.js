@@ -118,7 +118,6 @@ test('Correct Flywheel behaviour at maintainStateOnly', () => {
   testIsPowered(flywheel, false)
 })
 
-
 // Test behaviour for noisy upgoing flank
 
 // Test behaviour for noisy downgoing flank
