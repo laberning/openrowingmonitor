@@ -49,8 +49,7 @@ test('Correct Flywheel behaviour at initialisation', () => {
 // Test behaviour for perfect downgoing flank
 
 // Test behaviour for perfect stroke
-// Test behaviour for not maintaining metrics
-test('Correct Flywheel behaviour at maintainStateOnly', () => {
+test('Correct Flywheel behaviour for a noisefree stroke', () => {
   const flywheel = createFlywheel(baseConfig)
   testDeltaTime(flywheel, 0)
   testSpinningTime(flywheel, 0)
@@ -82,8 +81,8 @@ test('Correct Flywheel behaviour at maintainStateOnly', () => {
   flywheel.pushValue(0.010511225)
   flywheel.pushValue(0.010386684)
   testDeltaTime(flywheel, 0.011051853)
-  testSpinningTime(flywheel, 0)
-  // testAngularPosition(flywheel, 0)
+  testSpinningTime(flywheel, 0.088970487)
+  testAngularPosition(flywheel, 0)
   // testAngularVelocity(flywheel, 0)
   // testAngularAcceleration(flywheel, 0)
   // testTorque(flywheel, 0)
@@ -164,7 +163,7 @@ test('Correct Flywheel behaviour at maintainStateOnly', () => {
   testAngularAcceleration(flywheel, 0)
   testTorque(flywheel, 0)
   testDragFactor(flywheel, 0.0001)
-  // testIsDwelling(flywheel, false) // As all values are below 0.1, this shouldn't happen
+  testIsDwelling(flywheel, false)
   testIsUnpowered(flywheel, false)
   testIsPowered(flywheel, true)
   flywheel.pushValue(0.010769)
