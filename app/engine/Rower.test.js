@@ -48,7 +48,7 @@ test('Correct rower behaviour at initialisation', () => {
   testDriveAverageHandleForce(rower, 0)
   testDrivePeakHandleForce(rower, 0)
   testRecoveryDuration(rower, 0)
-  testRecoveryDragFactor(rower, 0)
+  testRecoveryDragFactor(rower, 100)
   testInstantHandlePower(rower, 0)
 })
 
@@ -91,7 +91,7 @@ test('Correct Rower behaviour for a noisefree stroke', () => {
   testDriveAverageHandleForce(rower, 0)
   testDrivePeakHandleForce(rower, 0)
   testRecoveryDuration(rower, 0)
-  testRecoveryDragFactor(rower, 0)
+  testRecoveryDragFactor(rower, 100)
   testInstantHandlePower(rower, 0)
   rower.handleRotationImpulse(0.011221636)
   testStrokeState(rower, 'Drive')
