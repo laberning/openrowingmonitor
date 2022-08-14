@@ -32,7 +32,7 @@ test('Correct Flywheel behaviour at initialisation', () => {
   const flywheel = createFlywheel(baseConfig)
   testDeltaTime(flywheel, 0)
   testSpinningTime(flywheel, 0)
-  assert.ok(flywheel.angularPosition() === 0, `Angular Position should be 0 Radians, is ${flywheel.angularPosition()}`)
+  testAngularPosition(flywheel, 0)
   assert.ok(flywheel.angularVelocity() === 0, `Angular Velocity should be 0 Radians/sec, is ${flywheel.angularVelocity()}`)
   assert.ok(flywheel.angularAcceleration() === 0, `Angular Acceleration should be 0 Radians/sec^2, is ${flywheel.angularAcceleration()}`)
   assert.ok(flywheel.torque() === 0, `Torque should be 0 N/M, is ${flywheel.torque()}`)
@@ -61,7 +61,7 @@ test('Correct Flywheel behaviour at maintainStateOnly', () => {
   const flywheel = createFlywheel(baseConfig)
   testDeltaTime(flywheel, 0)
   testSpinningTime(flywheel, 0)
-  assert.ok(flywheel.angularPosition() === 0, `Angular Position should be 0 Radians, is ${flywheel.angularPosition()}`)
+  testAngularPosition(flywheel, 0)
   assert.ok(flywheel.angularVelocity() === 0, `Angular Velocity should be 0 Radians/sec, is ${flywheel.angularVelocity()}`)
   assert.ok(flywheel.angularAcceleration() === 0, `Angular Acceleration should be 0 Radians/sec^2, is ${flywheel.angularAcceleration()}`)
   assert.ok(flywheel.torque() === 0, `Torque should be 0 N/M, is ${flywheel.torque()}`)
@@ -91,7 +91,7 @@ test('Correct Flywheel behaviour at maintainStateOnly', () => {
   flywheel.pushValue(0.010956987)
   testDeltaTime(flywheel, 0)
   testSpinningTime(flywheel, 0)
-  assert.ok(flywheel.angularPosition() === 0, `Angular Position should remain 0 Radians, is ${flywheel.angularPosition()}`)
+  testAngularPosition(flywheel, 0)
   assert.ok(flywheel.angularVelocity() === 0, `Angular Velocity should remain 0 Radians/sec, is ${flywheel.angularVelocity()}`)
   assert.ok(flywheel.angularAcceleration() === 0, `Angular Acceleration should remain 0 Radians/sec^2, is ${flywheel.angularAcceleration()}`)
   assert.ok(flywheel.torque() === 0, `Torque should remain 0 N/M, is ${flywheel.torque()}`)
@@ -116,7 +116,7 @@ test('Correct Flywheel behaviour at maintainStateOnly', () => {
   flywheel.pushValue(0.010769)
   testDeltaTime(flywheel, 0)
   testSpinningTime(flywheel, 0)
-  assert.ok(flywheel.angularPosition() === 0, `Angular Position should remain 0 Radians, is ${flywheel.angularPosition()}`)
+  testAngularPosition(flywheel, 0)
   assert.ok(flywheel.angularVelocity() === 0, `Angular Velocity should remain 0 Radians/sec, is ${flywheel.angularVelocity()}`)
   assert.ok(flywheel.angularAcceleration() === 0, `Angular Acceleration should remain 0 Radians/sec^2, is ${flywheel.angularAcceleration()}`)
   assert.ok(flywheel.torque() === 0, `Torque should remain 0 N/M, is ${flywheel.torque()}`)
@@ -136,5 +136,8 @@ function testSpinningTime (flywheel, expectedValue) {
   assert.ok(flywheel.spinningTime() === expectedValue, `spinningTime should be ${expectedValue} sec at flywheel.spinningTime() sec, is ${flywheel.spinningTime()}`)
 }
 
+function testAngularPosition (flywheel, expectedValue) {
+  assert.ok(flywheel.angularPosition() === expectedValue, `angularPosition should be ${expectedValue} Radians at flywheel.spinningTime() sec, is ${flywheel.angularPosition()}`)
+}
 
 test.run()
