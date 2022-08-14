@@ -67,7 +67,7 @@ Uploading your sessions to Strava is an integrated feature, for all other platfo
 
 ## Installation
 
-You will need a Raspberry Pi Zero W, Raspberry Pi Zero 2 W, Raspberry Pi 3 or a Raspberry Pi 4 with a fresh installation of Raspberry Pi OS Lite for this. Connect to the device with SSH and initiate the following command to install Open Rowing Monitor as an automatically starting system service:
+You will need a Raspberry Pi Zero W, Raspberry Pi Zero 2 W, Raspberry Pi 3 or a Raspberry Pi 4 with a fresh installation of Raspberry Pi OS Lite for this (the 64Bit kernel is preferred). Connect to the device with SSH and initiate the following command to install Open Rowing Monitor as an automatically starting system service:
 
 ```zsh
 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/laberning/openrowingmonitor/HEAD/install/install.sh)"
