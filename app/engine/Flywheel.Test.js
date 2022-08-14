@@ -108,7 +108,7 @@ test('Correct Flywheel behaviour for a noisefree stroke', () => {
   testDeltaTime(flywheel, 0.01089567)
   testSpinningTime(flywheel, 0.24984299900000007)
   testAngularPosition(flywheel, 25.132741228718345)
-  testAngularVelocity(flywheel, 97.07271474918261)
+  testAngularVelocity(flywheel, 97.07271474918261) // This one is just weird, as it is faster than the end of the drive
   testAngularAcceleration(flywheel, 0)
   testTorque(flywheel, 0)
   testDragFactor(flywheel, 0.0001)
@@ -149,7 +149,7 @@ test('Correct Flywheel behaviour for a noisefree stroke', () => {
   flywheel.pushValue(0.010526151)
   flywheel.pushValue(0.010511225)
   flywheel.pushValue(0.010386684)
-  
+
   flywheel.pushValue(0.020769)
   flywheel.pushValue(0.020707554)
   flywheel.pushValue(0.020722165)
