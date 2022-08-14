@@ -96,7 +96,7 @@ test('Correct Flywheel behaviour at maintainStateOnly', () => {
   assert.ok(flywheel.angularAcceleration() === 0, `Angular Acceleration should remain 0 Radians/sec^2, is ${flywheel.angularAcceleration()}`)
   assert.ok(flywheel.torque() === 0, `Torque should remain 0 N/M, is ${flywheel.torque()}`)
   assert.ok(flywheel.dragFactor() === 0.0001, `Drag Factor should remain 0.0001 N*m*s2, is ${flywheel.dragFactor()}`)
-  assert.ok(flywheel.isDwelling() === false, `isDwelling (2) should be false, is ${flywheel.isDwelling()}`)
+  assert.ok(flywheel.isDwelling() = false, `isDwelling (2) should be false ${baseConfig.maximumTimeBetweenImpulses}, is ${flywheel.isDwelling()}`)
   assert.ok(flywheel.isUnpowered() === false, `isUnpowered should be false, is ${flywheel.isUnpowered()}`)
   assert.ok(flywheel.isPowered() === true, `isPowered should be true, is ${flywheel.isPowered()}`)
   flywheel.pushValue(0.01089567)
