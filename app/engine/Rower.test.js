@@ -20,7 +20,9 @@ const baseConfig = {
   autoAdjustRecoverySlope: true,
   autoAdjustRecoverySlopeMargin: 0.10,
   minumumForceBeforeStroke: 50,
-  minimumRecoveryTime: 2,
+  minimumRecoveryTime: 0.9,
+  minimumDriveTime: 0.4,
+  maximumStrokeTimeBeforePause: 6.0,
   minimumTimeBetweenImpulses: 0.005,
   maximumTimeBetweenImpulses: 0.02,
   autoAdjustDragFactor: true,
@@ -28,6 +30,7 @@ const baseConfig = {
   dragFactor: 100,
   minimumDragQuality: 0.83,
   flywheelInertia: 0.1,
+  magicConstant: 2.8,
   sprocketRadius: 2
 }
 
@@ -104,7 +107,7 @@ test('Correct Rower behaviour for a noisefree stroke', () => {
   testTotalMovingTimeSinceStart(rower, 0)
   testTotalNumberOfStrokes(rower, -1)
   testTotalLinearDistanceSinceStart(rower, 0)
-  testCycleDuration(rower, 'NaN')
+  testCycleDuration(rower, 0.30000000000000004)
   testCycleLinearDistance(rower, 0)
   testCycleLinearVelocity(rower, 0)
   testCyclePower(rower, 0)
