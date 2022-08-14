@@ -37,9 +37,9 @@ test('Correct Flywheel behaviour at initialisation', () => {
   testAngularAcceleration(flywheel, 0)
   testTorque(flywheel, 0)
   testDragFactor(flywheel, 0.0001)
-  assert.ok(flywheel.isDwelling() === false, `isDwelling should be false, is ${flywheel.isDwelling()}`)
-  assert.ok(flywheel.isUnpowered() === false, `isUnpowered should be false, is ${flywheel.isUnpowered()}`)
-  assert.ok(flywheel.isPowered() === true, `isPowered should be true, is ${flywheel.isPowered()}`)
+  testIsDwelling(flywheel, false)
+  testIsUnpowered(flywheel, false)
+  testIsPowered(flywheel, true)
 })
 
 // Test behaviour for one datapoint
@@ -66,9 +66,9 @@ test('Correct Flywheel behaviour at maintainStateOnly', () => {
   testAngularAcceleration(flywheel, 0)
   testTorque(flywheel, 0)
   testDragFactor(flywheel, 0.0001)
-  assert.ok(flywheel.isDwelling() === false, `isDwelling should be false, is ${flywheel.isDwelling()}`)
-  assert.ok(flywheel.isUnpowered() === false, `isUnpowered should be false, is ${flywheel.isUnpowered()}`)
-  assert.ok(flywheel.isPowered() === true, `isPowered should be true, is ${flywheel.isPowered()}`)
+  testIsDwelling(flywheel, false)
+  testIsUnpowered(flywheel, false)
+  testIsPowered(flywheel, true)
   flywheel.maintainStateOnly()
   flywheel.pushValue(0.011221636)
   flywheel.pushValue(0.011175504)
@@ -96,9 +96,9 @@ test('Correct Flywheel behaviour at maintainStateOnly', () => {
   testAngularAcceleration(flywheel, 0)
   testTorque(flywheel, 0)
   testDragFactor(flywheel, 0.0001)
-  assert.ok(flywheel.isDwelling() === false, `isDwelling (2) should be false, is ${flywheel.isDwelling()}`)
-  assert.ok(flywheel.isUnpowered() === false, `isUnpowered should be false, is ${flywheel.isUnpowered()}`)
-  assert.ok(flywheel.isPowered() === true, `isPowered should be true, is ${flywheel.isPowered()}`)
+  // testIsDwelling(flywheel, false) // As all values are below 0.1, this shouldn't happen
+  testIsUnpowered(flywheel, false)
+  testIsPowered(flywheel, true)
   flywheel.pushValue(0.010769)
   flywheel.pushValue(0.010707554)
   flywheel.pushValue(0.010722165)
@@ -121,9 +121,9 @@ test('Correct Flywheel behaviour at maintainStateOnly', () => {
   testAngularAcceleration(flywheel, 0)
   testTorque(flywheel, 0)
   testDragFactor(flywheel, 0.0001)
-  assert.ok(flywheel.isDwelling() === false, `isDwelling (3) should be false, is ${flywheel.isDwelling()}`)
-  assert.ok(flywheel.isUnpowered() === true, `isUnpowered should be false, is ${flywheel.isUnpowered()}`)
-  assert.ok(flywheel.isPowered() === false, `isPowered should be true, is ${flywheel.isPowered()}`)
+  testIsDwelling(flywheel, false)
+  testIsUnpowered(flywheel, true)
+  testIsPowered(flywheel, false)
 })
 
 // Test behaviour after reset
@@ -154,6 +154,18 @@ function testTorque (flywheel, expectedValue) {
 
 function testDragFactor (flywheel, expectedValue) {
   assert.ok(flywheel.dragFactor() === expectedValue, `Drag Factor should be ${expectedValue} N*m*s^2 at flywheel.spinningTime() sec, is ${flywheel.dragFactor()}`)
+}
+
+function testIsDwelling (flywheel, expectedValue) {
+  assert.ok(flywheel.isDwelling() === expectedValue, `isDwelling should be ${expectedValue} at flywheel.spinningTime() sec, is ${flywheel.isDwelling()}`)
+}
+
+function testIsUnpowered (flywheel, expectedValue) {
+  assert.ok(flywheel.isUnpowered() === expectedValue, `isUnpowered should be ${expectedValue} at flywheel.spinningTime() sec, is ${flywheel.isUnpowered()}`)
+}
+
+function testIsPowered (flywheel, expectedValue) {
+  assert.ok(flywheel.isPowered() === expectedValue, `isPowered should be ${expectedValue} at flywheel.spinningTime() sec, is ${flywheel.isPowered()}`)
 }
 
 test.run()
