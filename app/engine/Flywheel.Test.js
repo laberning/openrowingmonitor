@@ -12,7 +12,7 @@ const baseConfig = {
   flankLength: 11,
   numberOfErrorsAllowed: 2,
   minimumStrokeQuality: 0.30,
-  minumumRecoverySlope: 0.7,
+  minumumRecoverySlope: 0,
   autoAdjustRecoverySlope: true,
   autoAdjustRecoverySlopeMargin: 0.10,
   minumumForceBeforeStroke: 50,
@@ -197,43 +197,43 @@ test('Correct Flywheel behaviour at maintainStateOnly', () => {
 // Test behaviour after reset
 
 function testDeltaTime (flywheel, expectedValue) {
-  assert.ok(flywheel.deltaTime() === expectedValue, `deltaTime should be ${expectedValue} sec at flywheel.spinningTime() sec, is ${flywheel.deltaTime()}`)
+  assert.ok(flywheel.deltaTime() === expectedValue, `deltaTime should be ${expectedValue} sec at ${flywheel.spinningTime()} sec, is ${flywheel.deltaTime()}`)
 }
 
 function testSpinningTime (flywheel, expectedValue) {
-  assert.ok(flywheel.spinningTime() === expectedValue, `spinningTime should be ${expectedValue} sec at flywheel.spinningTime() sec, is ${flywheel.spinningTime()}`)
+  assert.ok(flywheel.spinningTime() === expectedValue, `spinningTime should be ${expectedValue} sec at ${flywheel.spinningTime()} sec, is ${flywheel.spinningTime()}`)
 }
 
 function testAngularPosition (flywheel, expectedValue) {
-  assert.ok(flywheel.angularPosition() === expectedValue, `angularPosition should be ${expectedValue} Radians at flywheel.spinningTime() sec, is ${flywheel.angularPosition()}`)
+  assert.ok(flywheel.angularPosition() === expectedValue, `angularPosition should be ${expectedValue} Radians at ${flywheel.spinningTime()} sec, is ${flywheel.angularPosition()}`)
 }
 
 function testAngularVelocity (flywheel, expectedValue) {
-  assert.ok(flywheel.angularVelocity() === expectedValue, `angularVelocity should be ${expectedValue} Radians/sec at flywheel.spinningTime() sec, is ${flywheel.angularVelocity()}`)
+  assert.ok(flywheel.angularVelocity() === expectedValue, `angularVelocity should be ${expectedValue} Radians/sec at ${flywheel.spinningTime()} sec, is ${flywheel.angularVelocity()}`)
 }
 
 function testAngularAcceleration (flywheel, expectedValue) {
-  assert.ok(flywheel.angularAcceleration() === expectedValue, `angularAcceleration should be ${expectedValue} Radians/sec^2 at flywheel.spinningTime() sec, is ${flywheel.angularAcceleration()}`)
+  assert.ok(flywheel.angularAcceleration() === expectedValue, `angularAcceleration should be ${expectedValue} Radians/sec^2 at ${flywheel.spinningTime()} sec, is ${flywheel.angularAcceleration()}`)
 }
 
 function testTorque (flywheel, expectedValue) {
-  assert.ok(flywheel.torque() === expectedValue, `Torque should be ${expectedValue} N/M at flywheel.spinningTime() sec, is ${flywheel.torque()}`)
+  assert.ok(flywheel.torque() === expectedValue, `Torque should be ${expectedValue} N/M at ${flywheel.spinningTime()} sec, is ${flywheel.torque()}`)
 }
 
 function testDragFactor (flywheel, expectedValue) {
-  assert.ok(flywheel.dragFactor() === expectedValue, `Drag Factor should be ${expectedValue} N*m*s^2 at flywheel.spinningTime() sec, is ${flywheel.dragFactor()}`)
+  assert.ok(flywheel.dragFactor() === expectedValue, `Drag Factor should be ${expectedValue} N*m*s^2 at ${flywheel.spinningTime()} sec, is ${flywheel.dragFactor()}`)
 }
 
 function testIsDwelling (flywheel, expectedValue) {
-  assert.ok(flywheel.isDwelling() === expectedValue, `isDwelling should be ${expectedValue} at flywheel.spinningTime() sec, is ${flywheel.isDwelling()}`)
+  assert.ok(flywheel.isDwelling() === expectedValue, `isDwelling should be ${expectedValue} at ${flywheel.spinningTime()} sec, is ${flywheel.isDwelling()}`)
 }
 
 function testIsUnpowered (flywheel, expectedValue) {
-  assert.ok(flywheel.isUnpowered() === expectedValue, `isUnpowered should be ${expectedValue} at flywheel.spinningTime() sec, is ${flywheel.isUnpowered()}`)
+  assert.ok(flywheel.isUnpowered() === expectedValue, `isUnpowered should be ${expectedValue} at ${flywheel.spinningTime()} sec, is ${flywheel.isUnpowered()}`)
 }
 
 function testIsPowered (flywheel, expectedValue) {
-  assert.ok(flywheel.isPowered() === expectedValue, `isPowered should be ${expectedValue} at flywheel.spinningTime() sec, is ${flywheel.isPowered()}`)
+  assert.ok(flywheel.isPowered() === expectedValue, `isPowered should be ${expectedValue} at ${flywheel.spinningTime()} sec, is ${flywheel.isPowered()}`)
 }
 
 test.run()
