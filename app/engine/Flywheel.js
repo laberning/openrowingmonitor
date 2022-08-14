@@ -4,8 +4,8 @@
 
   This models the flywheel with all of its attributes, which we can also test for being powered
 
-  All times and distances are defined as being at the beginning of the flank, unless they are named current* as RowingEngine's
-  solely depends on times and angular positions at the start of the flank (as they are to be certain to belong to a specific
+  All times and distances are defined as being before the beginning of the flank, as RowingEngine's metrics
+  solely depend on times and angular positions before the flank (as they are to be certain to belong to a specific
   drive or recovery phase).
 
   Please note: The array contains a buffer of flankLenght measured currentDt's, BEFORE they are actually processed
@@ -14,8 +14,8 @@
   as we don't know wether they will belong to a Drive or Recovery phase. So we include things which we know for certain that
   are part of a specific phase, i.e. dirtyDataPoints[flankLength], which will be eliminated from the flank
 
-  The calculation of angular velocity and acceleration is based on Linear Regression, as this second derivative tends to  be
-  quite fragile when small errors are thrown in the mix. The math behind this can be found in https://physics.info/motion-equations/
+  The calculation of angular velocity and acceleration is based on Quadratic Regression, as the second derivative tends to be
+  quite fragile when small errors are thrown in the mix. The math behind this approach can be found in https://physics.info/motion-equations/
   which is intended for simple linear motion, but the formula are identical when applied to angular distances, velocities and
   accelerations.
 */
