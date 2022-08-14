@@ -57,7 +57,6 @@ test('Correct Flywheel behaviour at initialisation', () => {
 // Test behaviour for noisy stroke
 
 // Test behaviour for not maintaining metrics
-// Test behaviour for no datapoints
 test('Correct Flywheel behaviour at initialisation', () => {
   const flywheel = createFlywheel(baseConfig)
   flywheel.maintainStateOnly()
