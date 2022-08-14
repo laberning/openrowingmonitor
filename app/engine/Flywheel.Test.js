@@ -125,7 +125,6 @@ test('Correct Flywheel behaviour at initialisation', () => {
   assert.ok(flywheel.isPowered() === false, `isPowered should be true, is ${flywheel.isPowered()}`)
 })
 
-
 // Test behaviour after reset
 
 test.run()
