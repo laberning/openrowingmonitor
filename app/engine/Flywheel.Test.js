@@ -81,7 +81,7 @@ test('Correct Flywheel behaviour at maintainStateOnly', () => {
   flywheel.pushValue(0.010526151)
   flywheel.pushValue(0.010511225)
   flywheel.pushValue(0.010386684)
-  // testDeltaTime(flywheel, 0)
+  testDeltaTime(flywheel, 0)
   // testSpinningTime(flywheel, 0)
   // testAngularPosition(flywheel, 0)
   // testAngularVelocity(flywheel, 0)
