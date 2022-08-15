@@ -262,7 +262,7 @@ test('Correct Rower behaviour for three noisefree strokes', () => {
   testTotalLinearDistanceSinceStart(rower, 3.173108196370115)
   testTotalNumberOfStrokes(rower, 2)
   testCycleDuration(rower, 0.36010650100000036)
-  testCycleLinearDistance(rower, 1.054169521741954)
+  testCycleLinearDistance(rower, 1.3481049883173792)
   testCycleLinearVelocity(rower, 3.233614902568041)
   testCyclePower(rower, 94.67229918305185)
   testDriveDuration(rower, 0.143485717)
