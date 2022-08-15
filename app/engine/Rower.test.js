@@ -199,7 +199,6 @@ test('Correct Rower behaviour for a noisefree stroke', () => {
   testInstantHandlePower(rower, 0)
 })
 
-
 // Test behaviour for noisy upgoing flank
 
 // Test behaviour for noisy downgoing flank
