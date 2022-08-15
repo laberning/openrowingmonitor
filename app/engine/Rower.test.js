@@ -57,8 +57,8 @@ test('Correct rower behaviour at initialisation', () => {
 
 // Test behaviour for one datapoint
 
-// Test behaviour for perfect stroke
-test('Correct Rower behaviour for two noisefree strokes', () => {
+// Test behaviour for three perfect identical strokes, including settingling behaviour of metrics
+test('Correct Rower behaviour for three noisefree strokes', () => {
   const specificConfig = {
     numOfImpulsesPerRevolution: 6,
     flankLength: 11,
@@ -258,7 +258,7 @@ test('Correct Rower behaviour for two noisefree strokes', () => {
   rower.handleRotationImpulse(0.010511225)
   rower.handleRotationImpulse(0.010386684)
   testStrokeState(rower, 'Drive')
-  testTotalMovingTimeSinceStart(rower, 0.46020725100000004)
+  testTotalMovingTimeSinceStart(rower, 0.8314440150000004)
   testTotalLinearDistanceSinceStart(rower, 1.5369732812411068)
   testTotalNumberOfStrokes(rower, 2)
   testTotalLinearDistanceSinceStart(rower, 1.5369732812411068)
@@ -292,7 +292,7 @@ test('Correct Rower behaviour for two noisefree strokes', () => {
   rower.handleRotationImpulse(0.011209919)
   testStrokeState(rower, 'Recovery')
   testTotalMovingTimeSinceStart(rower, 0.6210797630000001)
-  testTotalNumberOfStrokes(rower, 1)
+  testTotalNumberOfStrokes(rower, 2)
   testTotalLinearDistanceSinceStart(rower, 2.2570480982701784)
   testCycleDuration(rower, 0.3818901600000001)
   testCycleLinearDistance(rower, 0.9120947682368242)
