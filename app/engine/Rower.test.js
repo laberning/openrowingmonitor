@@ -203,7 +203,7 @@ test('Correct Rower behaviour for two noisefree strokes', () => {
   testDriveAverageHandleForce(rower, 135.1539916297626)
   testDrivePeakHandleForce(rower, 213.08591529407013)
   testRecoveryDuration(rower, 0.27244301)
-  testRecoveryDragFactor(rower, 100)
+  testRecoveryDragFactor(rower, 269.73125212721015)
   testInstantHandlePower(rower, 0)
 })
 
@@ -335,7 +335,7 @@ test('Correct Rower behaviour for a noisefree stroke', () => {
   testDriveAverageHandleForce(rower, 193.82556307418187)
   testDrivePeakHandleForce(rower, 303.2433563085232)
   testRecoveryDuration(rower, 0.27244301)
-  testRecoveryDragFactor(rower, 100)
+  testRecoveryDragFactor(rower, 269.73125212721015)
   testInstantHandlePower(rower, 0)
 })
 
@@ -483,7 +483,7 @@ test('Correct Rower behaviour for a noisefree stroke', () => {
   testDriveAverageHandleForce(rower, 193.82556307418187)
   testDrivePeakHandleForce(rower, 303.2433563085232)
   testRecoveryDuration(rower, 0.21709765100000022)
-  testRecoveryDragFactor(rower, 100)
+  testRecoveryDragFactor(rower, 269.73125212721015)
   testInstantHandlePower(rower, 0)
 })
 
