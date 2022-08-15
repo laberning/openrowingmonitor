@@ -58,7 +58,7 @@ test('Correct rower behaviour at initialisation', () => {
 // Test behaviour for one datapoint
 
 // Test behaviour for three perfect identical strokes, including settingling behaviour of metrics
-test('Correct Rower behaviour for three noisefree strokes', () => {
+test('Correct Rower behaviour for three noisefree strokes with dynamic dragfactor and stroke detection', () => {
   const specificConfig = {
     numOfImpulsesPerRevolution: 6,
     flankLength: 11,
@@ -264,7 +264,7 @@ test('Correct Rower behaviour for three noisefree strokes', () => {
   testCycleDuration(rower, 0.36010650100000036)
   testCycleLinearDistance(rower, 1.3481049883173792)
   testCycleLinearVelocity(rower, 4.399155786037744)
-  testCyclePower(rower, 94.67229918305185)
+  testCyclePower(rower, 238.3779368882063)
   testDriveDuration(rower, 0.143485717)
   testDriveLinearDistance(rower, 0.1920199512077526)
   testDriveLength(rower, 0.29321531433504733)
