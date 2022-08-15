@@ -58,7 +58,7 @@ test('Correct rower behaviour at initialisation', () => {
 // Test behaviour for one datapoint
 
 // Test behaviour for perfect stroke
-test('Correct Rower behaviour for a noisefree stroke', () => {
+test('Correct Rower behaviour for two noisefree strokes', () => {
   const specificConfig = {
     numOfImpulsesPerRevolution: 6,
     flankLength: 11,
@@ -134,7 +134,7 @@ test('Correct Rower behaviour for a noisefree stroke', () => {
   testDrivePeakHandleForce(rower, 148.21599460366207)
   testRecoveryDuration(rower, 0)
   testRecoveryDragFactor(rower, 100)
-  testInstantHandlePower(rower, 0)
+  testInstantHandlePower(rower, 281.27434724439394)
 })
 
 // Test behaviour for perfect stroke
@@ -223,13 +223,13 @@ test('Correct Rower behaviour for a noisefree stroke', () => {
   testCycleLinearDistance(rower, 0.8276635877128334)
   testCycleLinearVelocity(rower, 3.364821039986529)
   testCyclePower(rower, 0)
-  testDriveDuration(rower, 0)
+  testDriveDuration(rower, 0.143485717)
   testDriveLinearDistance(rower, 0)
   testDriveLength(rower, 0)
   testDriveAverageHandleForce(rower, 0)
   testDrivePeakHandleForce(rower, 0)
   testRecoveryDuration(rower, 0)
-  testRecoveryDragFactor(rower, 0)
+  testRecoveryDragFactor(rower, 100)
   testInstantHandlePower(rower, 0)
 })
 
@@ -336,7 +336,7 @@ test('Correct Rower behaviour for a noisefree stroke', () => {
   testTotalLinearDistanceSinceStart(rower, 1.5369732812411068)
   testTotalNumberOfStrokes(rower, 1)
   testTotalLinearDistanceSinceStart(rower, 1.5369732812411068)
-  testCycleDuration(rower, 0)
+  testCycleDuration(rower, 0.415928727)
   testCycleLinearDistance(rower, 0)
   testCycleLinearVelocity(rower, 0)
   testCyclePower(rower, 0)
@@ -346,7 +346,7 @@ test('Correct Rower behaviour for a noisefree stroke', () => {
   testDriveAverageHandleForce(rower, 0)
   testDrivePeakHandleForce(rower, 0)
   testRecoveryDuration(rower, 0)
-  testRecoveryDragFactor(rower, 0)
+  testRecoveryDragFactor(rower, 100)
   testInstantHandlePower(rower, 0)
 })
 
@@ -468,7 +468,7 @@ test('Correct Rower behaviour for a noisefree stroke', () => {
   testTotalMovingTimeSinceStart(rower, 0.6210797630000001)
   testTotalNumberOfStrokes(rower, 1)
   testTotalLinearDistanceSinceStart(rower, 2.2570480982701784)
-  testCycleDuration(rower, 0)
+  testCycleDuration(rower, 0.3818901600000001)
   testCycleLinearDistance(rower, 0)
   testCycleLinearVelocity(rower, 0)
   testCyclePower(rower, 0)
@@ -478,7 +478,7 @@ test('Correct Rower behaviour for a noisefree stroke', () => {
   testDriveAverageHandleForce(rower, 0)
   testDrivePeakHandleForce(rower, 0)
   testRecoveryDuration(rower, 0)
-  testRecoveryDragFactor(rower, 0)
+  testRecoveryDragFactor(rower, 100)
   testInstantHandlePower(rower, 0)
 })
 
@@ -616,7 +616,7 @@ test('Correct Rower behaviour for a noisefree stroke', () => {
   testTotalMovingTimeSinceStart(rower, 0.7424735280000003)
   testTotalNumberOfStrokes(rower, 1)
   testTotalLinearDistanceSinceStart(rower, 2.785102964091498)
-  testCycleDuration(rower, 0)
+  testCycleDuration(rower, 0.32654480100000033)
   testCycleLinearDistance(rower, 0)
   testCycleLinearVelocity(rower, 0)
   testCyclePower(rower, 0)
@@ -626,7 +626,7 @@ test('Correct Rower behaviour for a noisefree stroke', () => {
   testDriveAverageHandleForce(rower, 0)
   testDrivePeakHandleForce(rower, 0)
   testRecoveryDuration(rower, 0)
-  testRecoveryDragFactor(rower, 0)
+  testRecoveryDragFactor(rower, 100)
   testInstantHandlePower(rower, 0)
 })
 
