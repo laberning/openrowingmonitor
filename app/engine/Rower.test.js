@@ -57,26 +57,6 @@ test('Correct rower behaviour at initialisation', () => {
 
 // Test behaviour for one datapoint
 
-// Test behaviour for perfect upgoing flank
-
-// Test behaviour for perfect downgoing flank
-
-// Test behaviour for perfect stroke
-
-// Test behaviour for noisy upgoing flank
-
-// Test behaviour for noisy downgoing flank
-
-// Test behaviour for noisy stroke
-
-// Test behaviour after reset
-
-// Test behaviour for one datapoint
-
-// Test behaviour for perfect upgoing flank
-
-// Test behaviour for perfect downgoing flank
-
 // Test behaviour for perfect stroke
 test('Correct Rower behaviour for a noisefree stroke', () => {
   const specificConfig = {
@@ -143,7 +123,7 @@ test('Correct Rower behaviour for a noisefree stroke', () => {
   testTotalMovingTimeSinceStart(rower, 0.088970487)
   testTotalNumberOfStrokes(rower, 0)
   testTotalLinearDistanceSinceStart(rower, 0.31037384539231255)
-  testCycleDuration(rower, 0)
+  testCycleDuration(rower, 0.30000000000000004)
   testCycleLinearDistance(rower, 0)
   testCycleLinearVelocity(rower, 0)
   testCyclePower(rower, 0)
@@ -219,9 +199,16 @@ test('Correct Rower behaviour for a noisefree stroke', () => {
   testInstantHandlePower(rower, 0)
 })
 
+
 // Test behaviour for noisy upgoing flank
 
 // Test behaviour for noisy downgoing flank
+
+// Test behaviour for noisy stroke
+
+// Test behaviour after reset
+
+// Test behaviour for one datapoint
 
 // Test behaviour for noisy stroke
 
