@@ -135,71 +135,6 @@ test('Correct Rower behaviour for two noisefree strokes', () => {
   testRecoveryDuration(rower, 0)
   testRecoveryDragFactor(rower, 100)
   testInstantHandlePower(rower, 281.27434724439394)
-})
-
-// Test behaviour for perfect stroke
-test('Correct Rower behaviour for a noisefree stroke', () => {
-  const specificConfig = {
-    numOfImpulsesPerRevolution: 6,
-    flankLength: 11,
-    numberOfErrorsAllowed: 2,
-    minimumStrokeQuality: 0.30,
-    minumumRecoverySlope: 0,
-    autoAdjustRecoverySlope: true,
-    autoAdjustRecoverySlopeMargin: 0.10,
-    minumumForceBeforeStroke: 50,
-    minimumDriveTime: 0.1,
-    minimumRecoveryTime: 0.2,
-    maximumStrokeTimeBeforePause: 0.2,
-    minimumTimeBetweenImpulses: 0.005,
-    maximumTimeBetweenImpulses: 0.02,
-    autoAdjustDragFactor: true,
-    dragFactorSmoothing: 3,
-    dragFactor: 100,
-    minimumDragQuality: 0.83,
-    flywheelInertia: 0.1,
-    magicConstant: 2.8,
-    sprocketRadius: 2
-  }
-
-  const rower = createRower(specificConfig)
-  testStrokeState(rower, 'WaitingForDrive')
-  testTotalMovingTimeSinceStart(rower, 0)
-  testTotalNumberOfStrokes(rower, -1)
-  testTotalLinearDistanceSinceStart(rower, 0)
-  testCycleDuration(rower, 0.30000000000000004)
-  testCycleLinearDistance(rower, 0)
-  testCycleLinearVelocity(rower, 0)
-  testCyclePower(rower, 0)
-  testDriveDuration(rower, 0)
-  testDriveLinearDistance(rower, 0)
-  testDriveLength(rower, 0)
-  testDriveAverageHandleForce(rower, 0)
-  testDrivePeakHandleForce(rower, 0)
-  testRecoveryDuration(rower, 0)
-  testRecoveryDragFactor(rower, 100)
-  testInstantHandlePower(rower, 0)
-  rower.handleRotationImpulse(0.011221636)
-  testStrokeState(rower, 'Drive')
-  rower.handleRotationImpulse(0.011175504)
-  rower.handleRotationImpulse(0.01116456)
-  rower.handleRotationImpulse(0.011130263)
-  rower.handleRotationImpulse(0.011082613)
-  rower.handleRotationImpulse(0.011081761)
-  rower.handleRotationImpulse(0.011062297)
-  rower.handleRotationImpulse(0.011051853)
-  rower.handleRotationImpulse(0.010973313)
-  rower.handleRotationImpulse(0.010919756)
-  rower.handleRotationImpulse(0.01086431)
-  rower.handleRotationImpulse(0.010800864)
-  rower.handleRotationImpulse(0.010956987)
-  rower.handleRotationImpulse(0.010653396)
-  rower.handleRotationImpulse(0.010648619)
-  rower.handleRotationImpulse(0.010536818)
-  rower.handleRotationImpulse(0.010526151)
-  rower.handleRotationImpulse(0.010511225)
-  rower.handleRotationImpulse(0.010386684)
-  testStrokeState(rower, 'Drive')
   rower.handleRotationImpulse(0.010769)
   rower.handleRotationImpulse(0.010707554)
   rower.handleRotationImpulse(0.010722165)
@@ -224,7 +159,7 @@ test('Correct Rower behaviour for a noisefree stroke', () => {
   testCycleLinearVelocity(rower, 3.364821039986529)
   testCyclePower(rower, 0)
   testDriveDuration(rower, 0.143485717)
-  testDriveLinearDistance(rower, 0)
+  testDriveLinearDistance(rower, 0.48280375949915283)
   testDriveLength(rower, 0)
   testDriveAverageHandleForce(rower, 0)
   testDrivePeakHandleForce(rower, 0)
@@ -337,7 +272,7 @@ test('Correct Rower behaviour for a noisefree stroke', () => {
   testTotalNumberOfStrokes(rower, 1)
   testTotalLinearDistanceSinceStart(rower, 1.5369732812411068)
   testCycleDuration(rower, 0.415928727)
-  testCycleLinearDistance(rower, 0)
+  testCycleLinearDistance(rower, 1.054169521741954)
   testCycleLinearVelocity(rower, 0)
   testCyclePower(rower, 0)
   testDriveDuration(rower, 0)
@@ -469,7 +404,7 @@ test('Correct Rower behaviour for a noisefree stroke', () => {
   testTotalNumberOfStrokes(rower, 1)
   testTotalLinearDistanceSinceStart(rower, 2.2570480982701784)
   testCycleDuration(rower, 0.3818901600000001)
-  testCycleLinearDistance(rower, 0)
+  testCycleLinearDistance(rower, 0.9120947682368242)
   testCycleLinearVelocity(rower, 0)
   testCyclePower(rower, 0)
   testDriveDuration(rower, 0)
@@ -617,7 +552,7 @@ test('Correct Rower behaviour for a noisefree stroke', () => {
   testTotalNumberOfStrokes(rower, 1)
   testTotalLinearDistanceSinceStart(rower, 2.785102964091498)
   testCycleDuration(rower, 0.32654480100000033)
-  testCycleLinearDistance(rower, 0)
+  testCycleLinearDistance(rower, 1.4401496340581437)
   testCycleLinearVelocity(rower, 0)
   testCyclePower(rower, 0)
   testDriveDuration(rower, 0)
