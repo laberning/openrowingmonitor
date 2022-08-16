@@ -989,7 +989,7 @@ test('Quadratic TS Estimation should result in a changing coefficientA with a co
   testSlope(dataSeries, 1, 0.3694444611111085)
   testSlope(dataSeries, 0, 0.33677780555555326)
   dataSeries.push(0.34, 0.083526667)
-  reportAll(dataSeries)
+  // reportAll(dataSeries)
   testCoefficientA(dataSeries, 1.700000555555579)
   testCoefficientB(dataSeries, -0.44855583888889444)
   testSlope(dataSeries, 10, 0.7074445388888995)
