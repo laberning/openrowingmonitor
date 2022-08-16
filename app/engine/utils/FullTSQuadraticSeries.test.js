@@ -188,8 +188,7 @@ test('Quadratic Approximation on function y = 4 * Math.pow(x, 2) + 4 * x + 4, wi
   testCoefficientC(dataSeries, -195)
   dataSeries.push(-8, 229)
   testCoefficientA(dataSeries, 4)
-  assert.ok(dataSeries.coefficientB() === -8, `coefficientB should be -8 after 4 datapoints, is ${dataSeries.coefficientB()}`)
-  // assert.ok(dataSeries.coefficientB() === 16, `coefficientB should be 16 after 4 datapoints, is ${dataSeries.coefficientB()}`)
+  testCoefficientB(dataSeries, 4.666666666666666)
   assert.ok(dataSeries.coefficientC() === -48.333333333333336, `coefficientC should be -48.333333333333336 after 4 datapoints, is ${dataSeries.coefficientC()}`)
   // assert.ok(dataSeries.coefficientC() === 58.33333333333333, `coefficientC should be 58.33333333333333 after 4 datapoints, is ${dataSeries.coefficientC()}`)
   dataSeries.push(-7, 171)
@@ -280,7 +279,7 @@ test('Quadratic Approximation on function y = 4 * Math.pow(x, 2) + 4 * x + 4, wi
   dataSeries.push(-5, 83)
   dataSeries.push(-4, 53)
   testCoefficientA(dataSeries, 4)
-  testCoefficientB(dataSeries, 4)
+  testCoefficientB(dataSeries, 4.4)
   testCoefficientC(dataSeries, 3)
   dataSeries.push(-3, 37) // FIRST SPIKE +9
   testCoefficientA(dataSeries, 4)
@@ -357,7 +356,7 @@ test('Quadratic TS Estimation should be decent for standard real-life example fr
   dataSeries.push(60, 231.4)
   dataSeries.push(64, 180.4)
   testCoefficientA(dataSeries, -0.17785023090944152) // In the example, the TI084 results in -0.1737141137, which we consider acceptably close
-  testCoefficientB(dataSeries, 14.875000000000004) // In the example, the TI084 results in 14.52117133, which we consider acceptably close
+  testCoefficientB(dataSeries, 15.005518925518913) // In the example, the TI084 results in 14.52117133, which we consider acceptably close
   testCoefficientC(dataSeries, -32.561632653064834) // In the example, the TI084 results in -21.89774466, which we consider acceptably close
 })
 
@@ -372,7 +371,7 @@ test('Quadratic TS Estimation should be decent for standard real-life example fr
   dataSeries.push(2, 6)
   dataSeries.push(3, 14)
   testCoefficientA(dataSeries, 1.1166666666666667) // The example results in 1.1071 for OLS, which we consider acceptably close
-  testCoefficientB(dataSeries, 1.1666666666666667) // The example results in 1 for OLS, which we consider acceptably close
+  testCoefficientB(dataSeries, 1.125) // The example results in 1 for OLS, which we consider acceptably close
   testCoefficientC(dataSeries, 1) // The example results in 0.5714 for OLS, which we consider acceptably close
 })
 
@@ -418,7 +417,7 @@ test('Quadratic TS Estimation should be decent for standard real-life example fr
   dataSeries.push(0.715372314, -1.20379729)
   dataSeries.push(0.681745393, -0.83059624)
   testCoefficientA(dataSeries, -3.13052236289358)
-  testCoefficientB(dataSeries, 1.4334785345517704)
+  testCoefficientB(dataSeries, 0.8866733959812066)
   testCoefficientC(dataSeries, 0.09073933224254299)
 })
 
@@ -437,7 +436,7 @@ test('Quadratic TS Estimation should be decent for standard real-life example fr
   dataSeries.push(55, 44)
   dataSeries.push(60, 27)
   testCoefficientA(dataSeries, -0.10466531440162272) // The example results in -0.1012 for R after two rounds, which we consider acceptably close
-  testCoefficientB(dataSeries, 6.854724080267559) // The example results in 6.7444 for R after two rounds, which we consider acceptably close
+  testCoefficientB(dataSeries, 7.049898580121704) // The example results in 6.7444 for R after two rounds, which we consider acceptably close
   testCoefficientC(dataSeries, -23.701915708812262) // The example results in 18.2536 for R after two rounds, but for ORM, this factor is irrelevant
 })
 
@@ -455,7 +454,7 @@ test('Quadratic TS Estimation should be decent for standard real-life example fr
   dataSeries.push(2400, 1956)
   dataSeries.push(2930, 1954)
   testCoefficientA(dataSeries, -0.0004480669511301859) // The example results in -0.00045 through QR decomposition by Givens rotations, which we consider acceptably close
-  testCoefficientB(dataSeries, 2.7988686703923236) // The example results in 2.39893 for QR decomposition by Givens rotationss, which we consider acceptably close
+  testCoefficientB(dataSeries, 2.3216877058559673) // The example results in 2.39893 for QR decomposition by Givens rotations, which we consider acceptably close
   testCoefficientC(dataSeries, -1613.0695243192479) // The example results in -1216.143887 for QR decomposition by Givens rotations, but for ORM, this factor is irrelevant
 })
 
@@ -573,7 +572,7 @@ test('Quadratic TS Estimation should result in a changing coefficientA with a co
   testSlope(dataSeries, 0, -0.0003333310000000001)
   dataSeries.push(0.04, 0.0000933333)
   testCoefficientA(dataSeries, 0.13333332500000003)
-  testCoefficientB(dataSeries, -0.0029999975000000005)
+  testCoefficientB(dataSeries, -0.00355555625)
   testSlope(dataSeries, 10, 0)
   testSlope(dataSeries, 9, 0)
   testSlope(dataSeries, 8, 0)
@@ -2347,7 +2346,7 @@ test('Quadratic TS Estimation on a real stroke', () => {
   testSlope(dataSeries, 0, 94.4141887257801)
   dataSeries.push(0.033226671, 3.141592654)
   testCoefficientA(dataSeries, -0.1640765049962567)
-  testCoefficientB(dataSeries, 94.47090667363852)
+  testCoefficientB(dataSeries, 94.5557800953213)
   testSlope(dataSeries, 10, 0)
   testSlope(dataSeries, 9, 0)
   testSlope(dataSeries, 8, 0)
