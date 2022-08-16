@@ -321,22 +321,21 @@ test('Correct Rower behaviour for three noisefree strokes with dynamic dragfacto
   rower.handleRotationImpulse(0.021099509)
   rower.handleRotationImpulse(0.021131862)
   rower.handleRotationImpulse(0.021209919)
-  reportAll(rower)
   testStrokeState(rower, 'WaitingForDrive')
-  testTotalMovingTimeSinceStart(rower, 0.7424735280000003)
-  testTotalNumberOfStrokes(rower, 1)
-  testTotalLinearDistanceSinceStart(rower, 2.785102964091498)
-  testCycleDuration(rower, 0.32654480100000033)
-  testCycleLinearDistance(rower, 1.4401496340581437)
-  testCycleLinearVelocity(rower, 4.410266614712209)
-  testCyclePower(rower, 240.18869668977658)
-  testDriveDuration(rower, 0.1094471500000001)
-  testDriveLinearDistance(rower, 0.4800498780193813)
-  testDriveLength(rower, 0.2094395102393196)
-  testDriveAverageHandleForce(rower, 193.82556307418187)
-  testDrivePeakHandleForce(rower, 303.2433563085232)
-  testRecoveryDuration(rower, 0.21709765100000022)
-  testRecoveryDragFactor(rower, 269.73125212721015)
+  testTotalMovingTimeSinceStart(rower, 1.1137102920000004)
+  testTotalNumberOfStrokes(rower, 2)
+  testTotalLinearDistanceSinceStart(rower, 4.454285409008487)
+  testCycleDuration(rower, 0.348839624)
+  testCycleLinearDistance(rower, 1.5731724693131137)
+  testCycleLinearVelocity(rower, 4.509729861746192)
+  testCyclePower(rower, 256.8086305961085)
+  testDriveDuration(rower, 0.12108857700000009)
+  testDriveLinearDistance(rower, 0.5407780363263824)
+  testDriveLength(rower, 0.23038346126325138)
+  testDriveAverageHandleForce(rower, 180.65761837643407)
+  testDrivePeakHandleForce(rower, 284.5696073281661)
+  testRecoveryDuration(rower, 0.22775104699999993)
+  testRecoveryDragFactor(rower, 289.7018411337537)
   testInstantHandlePower(rower, 0)
 })
 
@@ -422,8 +421,10 @@ function testInstantHandlePower (rower, expectedValue) {
   assert.ok(rower.instantHandlePower() === expectedValue, `instantHandlePower should be ${expectedValue} Watt at ${rower.totalMovingTimeSinceStart()} sec, is ${rower.instantHandlePower()}`)
 }
 
+/*
 function reportAll (rower) {
   assert.ok(0, `time: ${rower.totalMovingTimeSinceStart()}, state ${rower.strokeState()}, No Strokes: ${rower.totalNumberOfStrokes()}, Lin Distance: ${rower.totalLinearDistanceSinceStart()}, cycle dur: ${rower.cycleDuration()}, cycle Lin Dist: ${rower.cycleLinearDistance()}, Lin Velocity: ${rower.cycleLinearVelocity()}, Power: ${rower.cyclePower()}, Drive Dur: ${rower.driveDuration()}, Drive Lin. Dist. ${rower.driveLinearDistance()}, Drive Length: ${rower.driveLength()}, Av. Handle Force: ${rower.driveAverageHandleForce()}, Peak Handle Force: ${rower.drivePeakHandleForce()}, Rec. Dur: ${rower.recoveryDuration()}, Dragfactor: ${rower.recoveryDragFactor()}, Inst Handle Power: ${rower.instantHandlePower()}`)
 }
+*/
 
 test.run()
