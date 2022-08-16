@@ -220,7 +220,7 @@ test('Quadratic Approximation on function y = 4 * Math.pow(x, 2) + 4 * x + 4, wi
   testCoefficientC(dataSeries, 3)
   dataSeries.push(0, 5)
   testCoefficientA(dataSeries, 4)
-  testCoefficientB(dataSeries, 4)
+  testCoefficientB(dataSeries, 4.253968253968254)
   testCoefficientC(dataSeries, 5)
   dataSeries.push(1, 11)
   testCoefficientA(dataSeries, 4)
@@ -324,7 +324,7 @@ test('Quadratic Approximation on function y = 4 * Math.pow(x, 2) + 4 * x + 4, wi
   testCoefficientC(dataSeries, 3.7885714285714287) // This is quite acceptable as ORM ignores the C
   dataSeries.push(8, 293)
   testCoefficientA(dataSeries, 4)
-  testCoefficientB(dataSeries, 4)
+  testCoefficientB(dataSeries, 3.8666666666666663)
   testCoefficientC(dataSeries, 3.4380952380952383) // This is quite acceptable as ORM ignores the C
   dataSeries.push(9, 363)
   testCoefficientA(dataSeries, 4)
@@ -624,7 +624,6 @@ test('Quadratic TS Estimation should result in a changing coefficientA with a co
   testSlope(dataSeries, 1, -0.0003333565277777919)
   testSlope(dataSeries, 0, -0.0050000276388889)
   dataSeries.push(0.08, 0.000933333)
-  reportAll(dataSeries)
   testCoefficientA(dataSeries, 0.2666669749999998)
   testCoefficientB(dataSeries, -0.011000018699999994)
   testSlope(dataSeries, 10, 0)
@@ -2095,6 +2094,7 @@ test('Quadratic TS Estimation should result in a changing coefficientA with a co
   testSlope(dataSeries, 2, 6.500000000010841) // From data generation, Slope should be 6.500
   testSlope(dataSeries, 1, 6.525000000010727) // From data generation, Slope should be 6.525
   testSlope(dataSeries, 0, 6.550000000010613) // From data generation, Slope should be 6.550
+  reportAll(dataSeries)
   dataSeries.push(1.13, 3.025875)
   dataSeries.push(1.14, 3.0885)
   dataSeries.push(1.15, 3.150875)
@@ -2386,7 +2386,6 @@ test('Quadratic TS Estimation on a real stroke', () => {
   testSlope(dataSeries, 1, 94.81511816302246)
   testSlope(dataSeries, 0, 95.20175048309528)
   dataSeries.push(0.066788371, 6.283185307)
-  reportAll(dataSeries)
   testCoefficientA(dataSeries, -14.119548426798733)
   testCoefficientB(dataSeries, 95.01988447787427)
   testSlope(dataSeries, 10, 0)
@@ -6232,6 +6231,7 @@ test('Quadratic TS Estimation on a real stroke', () => {
   testSlope(dataSeries, 2, 90.5436048228385)
   testSlope(dataSeries, 1, 90.47484294304391)
   testSlope(dataSeries, 0, 90.40638552100752)
+  reportAll(dataSeries)
 })
 
 function testCoefficientA (series, expectedValue) {
