@@ -257,6 +257,7 @@ test('Correct Rower behaviour for three noisefree strokes with dynamic dragfacto
   rower.handleRotationImpulse(0.010526151)
   rower.handleRotationImpulse(0.010511225)
   rower.handleRotationImpulse(0.010386684)
+  reportAll(rower)
   testStrokeState(rower, 'Drive')
   testTotalMovingTimeSinceStart(rower, 0.8314440150000004)
   testTotalLinearDistanceSinceStart(rower, 3.1760827776915828)
@@ -419,6 +420,10 @@ function testRecoveryDragFactor (rower, expectedValue) {
 
 function testInstantHandlePower (rower, expectedValue) {
   assert.ok(rower.instantHandlePower() === expectedValue, `instantHandlePower should be ${expectedValue} Watt at ${rower.totalMovingTimeSinceStart()} sec, is ${rower.instantHandlePower()}`)
+}
+
+function reportAll (rower) {
+  assert.ok(0, `time: ${rower.totalMovingTimeSinceStart()}, state ${rower.strokeState()}, No Strokes: ${rower.totalNumberOfStrokes()}, Lin Distance: ${rower.totalLinearDistanceSinceStart()}, cycle dur: ${rower.cycleDuration()}, cycle Lin Dist: ${rower.cycleLinearDistance()}, Lin Velocity: ${rower.cycleLinearVelocity()}, Power: ${rower.cyclePower()}, Drive Dur: ${rower.driveDuration()}, Drive Lin. Dist. ${rower.driveLinearDistance()}, Drive Length: ${rower.driveLength()}, Av. Handle Force: ${rower.driveAverageHandleForce()}, Peak Handle Force: ${rower.drivePeakHandleForce()}, Rec. Dur: ${rower.recoveryDuration()}, Dragfactor: ${rower.recoveryDragFactor()}, Inst Handle Power: ${rower.instantHandlePower()}`)
 }
 
 test.run()
