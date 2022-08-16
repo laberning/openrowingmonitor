@@ -110,7 +110,7 @@ test('Correct Flywheel behaviour for a noisefree stroke', () => {
   testAngularPosition(flywheel, 25.132741228718345)
   testAngularVelocity(flywheel, 97.35317080866787) // This one is just weird, as it is faster than the end of the drive
   testAngularAcceleration(flywheel, -25.44203640860512)
-  testTorque(flywheel, -2.0755523316696673)
+  testTorque(flywheel, -1.596439654210346)
   testDragFactor(flywheel, 0.0001)
   testIsDwelling(flywheel, false)
   testIsUnpowered(flywheel, true)
