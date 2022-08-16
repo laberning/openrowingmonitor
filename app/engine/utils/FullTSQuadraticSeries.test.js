@@ -8,7 +8,7 @@
 import { test } from 'uvu'
 import * as assert from 'uvu/assert'
 
-import { createTSQuadraticSeries } from './RobustTSQuadraticSeries.js'
+import { createTSQuadraticSeries } from './FullTSQuadraticSeries.js'
 
 test('Quadratic Approximation startup behaviour', () => {
   const dataSeries = createTSQuadraticSeries(10)
