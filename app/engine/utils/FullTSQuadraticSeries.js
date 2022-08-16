@@ -223,14 +223,14 @@ function createTSQuadraticSeries (maxSeriesLength = 0) {
 
   function calculateB (pointOne, pointThree) {
     if ((pointOne + 1) < pointThree && X.get(pointOne) !== X.get(pointThree)) {
-      const pointTwo = Math.floor((pointOne + pointThree) / 2)
-      if (pointOne < pointTwo && pointTwo < pointThree && X.get(pointOne) !== X.get(pointTwo) && X.get(pointTwo) !== X.get(pointThree)) {
+      const results = createSeries(maxSeriesLength)
+      let pointTwo = pointOne + 1
+      while (pointOne < pointTwo && pointTwo < pointThree && X.get(pointOne) !== X.get(pointTwo) && X.get(pointTwo) !== X.get(pointThree)) {
         // For the underlying math, see https://www.quora.com/How-do-I-find-a-quadratic-equation-from-points/answer/Robert-Paxson
-        return ((Math.pow(X.get(pointOne), 2) * (Y.get(pointTwo) - Y.get(pointThree)) + Math.pow(X.get(pointTwo), 2) * (Y.get(pointThree) - Y.get(pointOne)) + Math.pow(X.get(pointThree), 2) * (Y.get(pointOne) - Y.get(pointTwo))) / ((X.get(pointOne) - X.get(pointTwo)) * (X.get(pointOne) - X.get(pointThree)) * (X.get(pointTwo) - X.get(pointThree))))
-      } else {
-        log.error('TS Quadratic Regressor, Division by zero prevented in CalculateB!')
-        return 0
+        results.push((Math.pow(X.get(pointOne), 2) * (Y.get(pointTwo) - Y.get(pointThree)) + Math.pow(X.get(pointTwo), 2) * (Y.get(pointThree) - Y.get(pointOne)) + Math.pow(X.get(pointThree), 2) * (Y.get(pointOne) - Y.get(pointTwo))) / ((X.get(pointOne) - X.get(pointTwo)) * (X.get(pointOne) - X.get(pointThree)) * (X.get(pointTwo) - X.get(pointThree))))
+        pointTwo += 1
       }
+      return results.median()
     } else {
       log.error('TS Quadratic Regressor, Division by zero prevented in CalculateA!')
       return 0
@@ -266,7 +266,7 @@ function createTSQuadraticSeries (maxSeriesLength = 0) {
     }
   }
 
-  /* Dit is technisch de beste oplossing, maar de kunstmatige testresultaten lijken er flink op achteruit te gaan
+  /* In theory this should deliver the result, but it doesn't do that yet, so this needs some additional work
   function trimmedMatrixMedian (inputMatrix) {
     if (inputMatrix.length > 1) {
       const intermediateMatrix = []
