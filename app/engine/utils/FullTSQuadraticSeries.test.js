@@ -196,7 +196,7 @@ test('Quadratic Approximation on function y = 4 * Math.pow(x, 2) + 4 * x + 4, wi
   testCoefficientC(dataSeries, -22.666666666666668)
   dataSeries.push(-6, 125)
   testCoefficientA(dataSeries, 4)
-  testCoefficientB(dataSeries, 4)
+  testCoefficientB(dataSeries, 4.533333333333333)
   testCoefficientC(dataSeries, 4)
   dataSeries.push(-5, 83)
   testCoefficientA(dataSeries, 4)
@@ -284,7 +284,7 @@ test('Quadratic Approximation on function y = 4 * Math.pow(x, 2) + 4 * x + 4, wi
   testCoefficientC(dataSeries, 12.644444444444446) // We get a 12.6 instead of 4, which is quite acceptable (especially since ORM ignores the C)
   dataSeries.push(-2, 3) // SECOND SPIKE -9
   testCoefficientA(dataSeries, 4)
-  testCoefficientB(dataSeries, 4)
+  testCoefficientB(dataSeries, 4.342857142857143)
   testCoefficientC(dataSeries, 3)
   dataSeries.push(-1, 3)
   testCoefficientA(dataSeries, 4)
@@ -578,7 +578,7 @@ test('Quadratic TS Estimation should result in a changing coefficientA with a co
   testSlope(dataSeries, 5, 0)
   testSlope(dataSeries, 4, 0)
   testSlope(dataSeries, 3, 0.007111109750000004)
-  testSlope(dataSeries, 2, 0.005000002000000002)
+  testSlope(dataSeries, 2, 0.004444443250000003)
   testSlope(dataSeries, 1, 0.0023333355000000012)
   testSlope(dataSeries, 0, -0.00033333099999999964)
   dataSeries.push(0.05, 0.0002)
@@ -988,6 +988,7 @@ test('Quadratic TS Estimation should result in a changing coefficientA with a co
   testSlope(dataSeries, 1, 0.3694444611111085)
   testSlope(dataSeries, 0, 0.33677780555555326)
   dataSeries.push(0.34, 0.083526667)
+  reportAll(dataSeries)
   testCoefficientA(dataSeries, 1.700000555555579)
   testCoefficientB(dataSeries, -0.44855583888889444)
   testSlope(dataSeries, 10, 0.7074445388888995)
@@ -2352,10 +2353,11 @@ test('Quadratic TS Estimation on a real stroke', () => {
   testSlope(dataSeries, 5, 0)
   testSlope(dataSeries, 4, 0)
   testSlope(dataSeries, 3, 94.54487666322062)
-  testSlope(dataSeries, 2, 94.46364003435238)
+  testSlope(dataSeries, 2, 94.54851345603515)
   testSlope(dataSeries, 1, 94.46727016041035)
   testSlope(dataSeries, 0, 94.47090667363852)
   dataSeries.push(0.044391231, 4.188790205)
+  reportAll(dataSeries)
   testCoefficientA(dataSeries, -8.855757214778297)
   testCoefficientB(dataSeries, 94.86158109692872)
   testSlope(dataSeries, 10, 0)
@@ -6247,10 +6249,8 @@ function testSlope (series, position, expectedValue) {
   assert.ok(series.slope(position) === expectedValue, `Expected value for Slope-${position} at X-position ${series.xAtSeriesEnd()} (slope at X-position ${series.xAtPosition(position)}) is ${expectedValue}, encountered a ${series.slope(position)}`)
 }
 
-/*
 function reportAll (series) {
   assert.ok(series.coefficientA() === 99, `time: ${series.xAtSeriesEnd()}, coefficientA: ${series.coefficientA()}, coefficientB: ${series.coefficientB()}, coefficientC: ${series.coefficientC()}, Slope-10: ${series.slope(10)}, Slope-9: ${series.slope(9)}, Slope-8: ${series.slope(8)}, Slope-7: ${series.slope(7)}, Slope-6: ${series.slope(6)}, Slope-5: ${series.slope(5)}, Slope-4: ${series.slope(4)}, Slope-3: ${series.slope(3)}, Slope-2: ${series.slope(2)}, Slope-1: ${series.slope(1)}, Slope-0: ${series.slope(0)}`)
 }
-*/
 
 test.run()
