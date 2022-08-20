@@ -53,7 +53,7 @@ export default class AdditionalStatus extends bleno.Characteristic {
       if (data.totalLinearDistance && data.totalLinearDistance !== 0) {
         averagePace = (data.totalMovingTime / data.totalLinearDistance) * 500
       }
-      bufferBuilder.writeUInt16LE(Math.round(averagePace * 100))
+      bufferBuilder.writeUInt16LE(Math.round(Math.min(averagePace * 100, 65535)))
       // restDistance: UInt16LE
       bufferBuilder.writeUInt16LE(0)
       // restTime: UInt24LE in 0.01 sec
