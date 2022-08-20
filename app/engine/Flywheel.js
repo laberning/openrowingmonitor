@@ -27,15 +27,18 @@ import { createOLSLinearSeries } from './utils/OLSLinearSeries.js'
 import { createTSQuadraticSeries } from './utils/FullTSQuadraticSeries.js'
 const log = loglevel.getLogger('RowingEngine')
 
+import fs from 'fs' // REMOVE ME!!!
+
 function createFlywheel (rowerSettings) {
   const angularDisplacementPerImpulse = (2.0 * Math.PI) / rowerSettings.numOfImpulsesPerRevolution
   const flankLength = Math.max(3, rowerSettings.flankLength)
   const minimumDragFactorSamples = Math.floor(rowerSettings.minimumRecoveryTime / rowerSettings.maximumTimeBetweenImpulses)
   const minumumTorqueBeforeStroke = rowerSettings.minumumForceBeforeStroke * (rowerSettings.sprocketRadius / 100)
-  const currentDt = createStreamFilter(3, rowerSettings.maximumTimeBetweenImpulses)
+  const currentDt = createStreamFilter(rowerSettings.smoothing, rowerSettings.maximumTimeBetweenImpulses)
   const _deltaTime = createOLSLinearSeries(flankLength)
   const _angularDistance = createTSQuadraticSeries(flankLength)
   const _angularVelocityMatrix = []
+  const _angularAccelerationMatrix = []
   const _angularAcceleration = createSeries(flankLength)
   const drag = createStreamFilter(rowerSettings.dragFactorSmoothing, (rowerSettings.dragFactor / 1000000))
   const recoveryDeltaTime = createOLSLinearSeries()
@@ -102,26 +105,31 @@ function createFlywheel (rowerSettings) {
     currentCleanTime += currentDt.clean()
     _angularDistance.push(currentCleanTime, currentAngularDistance)
 
-    // Let's update the matrix and  calculate the angular velocity
+    // Let's update the matrix and  calculate the angular velocity and acceleration
     if (_angularVelocityMatrix.length >= flankLength) {
       // The angularVelocityMatrix has reached its maximum length
       _angularVelocityMatrix.shift()
+      _angularAccelerationMatrix.shift()
     }
+
+    // Let's make room for a new set of values for angular velocity and acceleration
     _angularVelocityMatrix[_angularVelocityMatrix.length] = createSeries(flankLength)
+    _angularAccelerationMatrix[_angularAccelerationMatrix.length] = createSeries(flankLength)
 
     let i = 0
     while (i < _angularVelocityMatrix.length) {
-      _angularVelocityMatrix[i].push(_angularDistance.slope(i))
+      _angularVelocityMatrix[i].push(_angularDistance.firstDerivativeAtPosition(i))
+      _angularAccelerationMatrix[i].push(_angularDistance.secondDerivativeAtPosition(i))
       i++
     }
-    _angularVelocityAtBeginFlank = _angularVelocityMatrix[0].median()
 
-    // Let's calculate the Angular Acceleration
-    _angularAcceleration.push(2 * _angularDistance.coefficientA())
-    _angularAccelerationAtBeginFlank = _angularAcceleration.median() // @@ dit kan waarschijnlijk beter _angularAcceleration.atSeriesBegin() zijn!!!!!
+    _angularVelocityAtBeginFlank = _angularVelocityMatrix[0].median()
+    _angularAccelerationAtBeginFlank = _angularAccelerationMatrix[0].median()
 
     // And finally calculate the torque
     _torqueAtBeginFlank = (rowerSettings.flywheelInertia * _angularAccelerationAtBeginFlank + drag.clean() * Math.pow(_angularVelocityAtBeginFlank, 2))
+
+    // fs.appendFile('exports/RegressionData.csv', `${totalTimeSpinning};${_deltaTimeBeforeFlank};${_angularVelocityBeforeFlank};${_angularAccelerationBeforeFlank};${expAngAcc.median()};${_torqueBeforeFlank}\n`, (err) => { if (err) log.error(err) })  // REMOVE ME!!!!
   }
 
   function maintainStateOnly () {
