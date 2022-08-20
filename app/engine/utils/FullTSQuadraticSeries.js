@@ -4,7 +4,7 @@
 
   The TSLinearSeries is a datatype that represents a Linear Series. It allows
   values to be retrieved (like a FiFo buffer, or Queue) but it also includes
-  a Theil-Sen estimator Linear Regressor to determine the slope of this timeseries.
+  a Theil-Sen Quadratic Regressor to determine the coefficients of this timeseries.
 
   At creation its length is determined. After it is filled, the oldest will be pushed
   out of the queue) automatically.
@@ -56,7 +56,7 @@ function createTSQuadraticSeries (maxSeriesLength = 0) {
     B.push([])
     C.push([])
 
-    // Calculate the slopes of this new point
+    // Calculate the coefficients of this new point
     if (X.length() > 2) {
       // There are at least two points in the X and Y arrays, so let's add the new datapoint
       let i = 0
@@ -79,7 +79,7 @@ function createTSQuadraticSeries (maxSeriesLength = 0) {
     }
   }
 
-  function slope (position) {
+  function firstDerivativeAtPosition (position = 0) {
     if (X.length() > 2 && position < X.length()) {
       return ((_A * 2 * X.get(position)) + _B)
     } else {
@@ -87,15 +87,15 @@ function createTSQuadraticSeries (maxSeriesLength = 0) {
     }
   }
 
-  function slopeAtSeriesBegin () {
-    return _slope(X.get(0))
+  function secondDerivativeAtPosition (position = 0) {
+    if (X.length() > 2 && position < X.length()) {
+      return (_A * 2)
+    } else {
+      return 0
+    }
   }
 
-  function slopeAtSeriesEnd () {
-    return _slope(X.get(X.length() - 1))
-  }
-
-  function _slope (x) {
+  function slope (x) {
     if (X.length() > 2) {
       return ((_A * 2 * x) + _B)
     } else {
@@ -104,14 +104,17 @@ function createTSQuadraticSeries (maxSeriesLength = 0) {
   }
 
   function coefficientA () {
+    // For testing purposses only!
     return _A
   }
 
   function coefficientB () {
+    // For testing purposses only!
     return _B
   }
 
   function coefficientC () {
+    // For testing purposses only!
     return _C
   }
 
@@ -221,7 +224,7 @@ function createTSQuadraticSeries (maxSeriesLength = 0) {
     }
   }
 
-  function calculateB (pointOne, pointThree) {
+function calculateB (pointOne, pointThree) {
     if ((pointOne + 1) < pointThree && X.get(pointOne) !== X.get(pointThree)) {
       const results = createSeries(maxSeriesLength)
       let pointTwo = pointOne + 1
@@ -266,7 +269,7 @@ function createTSQuadraticSeries (maxSeriesLength = 0) {
     }
   }
 
-  /* In theory this should deliver the result, but it doesn't do that yet, so this needs some additional work
+  // Dit is technisch de beste oplossing, maar de kunstmatige testresultaten lijken er flink op achteruit te gaan
   function trimmedMatrixMedian (inputMatrix) {
     if (inputMatrix.length > 1) {
       const intermediateMatrix = []
@@ -283,7 +286,7 @@ function createTSQuadraticSeries (maxSeriesLength = 0) {
       return 0
     }
   }
-  */
+  //
 
   function reset () {
     X.reset()
@@ -298,9 +301,9 @@ function createTSQuadraticSeries (maxSeriesLength = 0) {
 
   return {
     push,
+    firstDerivativeAtPosition,
+    secondDerivativeAtPosition,
     slope,
-    slopeAtSeriesBegin,
-    slopeAtSeriesEnd,
     coefficientA,
     coefficientB,
     coefficientC,
