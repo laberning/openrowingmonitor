@@ -136,7 +136,7 @@ function createVoMax (config) {
 
     if (origintime > 0 && origindistance > 0 && targetdistance > 0) {
       originpace = (500 * origintime) / origindistance
-      return (originpace + (5 * Math.log2(targetdistance / origindistance)))
+      return (originpace + (config.userSettings.distanceCorrectionFactor * Math.log2(targetdistance / origindistance)))
     } else {
       return 0
     }
