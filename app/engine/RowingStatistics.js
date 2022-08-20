@@ -31,7 +31,9 @@ function createRowingStatistics (config, session) {
   let totalMovingTime = 0
   let totalNumberOfStrokes = 0
   let strokeCalories = 0
+  let strokeWork = 0
   const calories = createOLSLinearSeries()
+  const distanceOverTime = createOLSLinearSeries(Math.min(4, numOfDataPointsForAveraging))
   const driveDuration = createStreamFilter(numOfDataPointsForAveraging, config.rowerSettings.minimumDriveTime)
   const driveLength = createStreamFilter(numOfDataPointsForAveraging, 1.1)
   const driveDistance = createStreamFilter(numOfDataPointsForAveraging, 3)
@@ -167,10 +169,13 @@ function createRowingStatistics (config, session) {
     totalMovingTime = 0
     totalLinearDistance = 0.0
     totalNumberOfStrokes = -1
+    distanceOverTime.reset()
     driveDuration.reset()
     cycleDuration.reset()
     cycleDistance.reset()
     cyclePower.reset()
+    strokeCalories = 0
+    strokeWork = 0
     postExerciseHR = []
     cycleLinearVelocity.reset()
     lastStrokeState = 'WaitingForDrive'
@@ -186,6 +191,7 @@ function createRowingStatistics (config, session) {
   }
 
   function updateCycleMetrics () {
+    distanceOverTime.push(rower.totalMovingTimeSinceStart(), rower.totalLinearDistanceSinceStart())
     if (rower.cycleDuration() < maximumStrokeTime && rower.cycleDuration() > minimumStrokeTime) {
       // stroke duration has to be credible to be accepted
       cycleDuration.push(rower.cycleDuration())
@@ -216,6 +222,7 @@ function createRowingStatistics (config, session) {
 
     // based on: http://eodg.atm.ox.ac.uk/user/dudhia/rowing/physics/ergometer.html#section11
     strokeCalories = (4 * cyclePower.clean() + 350) * (cycleDuration.clean()) / 4200
+    strokeWork = cyclePower.clean() * cycleDuration.clean()
     const totalCalories = calories.yAtSeriesEnd() + strokeCalories
     calories.push(totalMovingTime, totalCalories)
   }
@@ -244,7 +251,7 @@ function createRowingStatistics (config, session) {
     // This function is called when the rowing session is stopped. postExerciseHR[0] is the last measured excercise HR
     // Thus postExerciseHR[1] is Recovery HR after 1 min, etc..
     if (heartrate !== undefined && heartrate > config.userSettings.restingHR && sessionStatus !== 'Rowing') {
-      log.debug(`*** HRR$${postExerciseHR.length}: ${heartrate}`)
+      log.debug(`*** HRR-${postExerciseHR.length}: ${heartrate}`)
       postExerciseHR.push(heartrate)
       if ((postExerciseHR.length > 1) && (postExerciseHR.length <= 4)) {
         // We skip reporting postExerciseHR[0] and only report measuring postExerciseHR[1], postExerciseHR[2], postExerciseHR[3]
@@ -279,7 +286,8 @@ function createRowingStatistics (config, session) {
       totalNumberOfStrokes: totalNumberOfStrokes > 0 ? totalNumberOfStrokes : 0,
       totalLinearDistance: totalLinearDistance > 0 ? totalLinearDistance : 0, // meters
       totalLinearDistanceFormatted: session.targetDistance > 0 ? Math.max(session.targetDistance - totalLinearDistance, 0) : totalLinearDistance,
-      strokeCalories: strokeCalories > 0 ? strokeCalories : 0,
+      strokeCalories: strokeCalories > 0 ? strokeCalories : 0, // kCal
+      strokeWork: strokeWork > 0 ? strokeWork : 0, // Joules
       totalCalories: calories.yAtSeriesEnd() > 0 ? calories.yAtSeriesEnd() : 0, // kcal
       totalCaloriesPerMinute: totalMovingTime > 60 ? caloriesPerPeriod(totalMovingTime - 60, totalMovingTime) : caloriesPerPeriod(0, 60),
       totalCaloriesPerHour: totalMovingTime > 3600 ? caloriesPerPeriod(totalMovingTime - 3600, totalMovingTime) : caloriesPerPeriod(0, 3600),
@@ -290,6 +298,8 @@ function createRowingStatistics (config, session) {
       cyclePace: cycleLinearVelocity.raw() > 0 ? cyclePace : Infinity, // seconds/500m
       cyclePaceFormatted: cycleLinearVelocity.raw() > 0 ? secondsToTimeString(Math.round(cyclePace)) : Infinity,
       cyclePower: cyclePower.clean() > 0 && cycleLinearVelocity.raw() > 0 && sessionStatus === 'Rowing' ? cyclePower.clean() : 0, // watts
+      cycleProjectedEndTime: session.targetDistance > 0 ? distanceOverTime.projectY(session.targetDistance) : session.targetTime,
+      cycleProjectedEndLinearDistance: session.targetTime > 0 ? distanceOverTime.projectX(session.targetTime) : session.targetDistance,
       driveDuration: driveDuration.clean() >= config.rowerSettings.minimumDriveTime && totalNumberOfStrokes > 0 && sessionStatus === 'Rowing' ? driveDuration.clean() : NaN, // seconds
       driveLength: driveLength.clean() > 0 && sessionStatus === 'Rowing' ? driveLength.clean() : NaN, // meters of chain movement
       driveDistance: driveDistance.clean() >= 0 && sessionStatus === 'Rowing' ? driveDistance.clean() : NaN, // meters
@@ -308,7 +318,7 @@ function createRowingStatistics (config, session) {
 
   // converts a timeStamp in seconds to a human readable hh:mm:ss format
   function secondsToTimeString (secondsTimeStamp) {
-    if (secondsTimeStamp === Infinity) return '∞'
+    if (secondsTimeStamp === Infinity) return 'âˆž'
     const hours = Math.floor(secondsTimeStamp / 60 / 60)
     const minutes = Math.floor(secondsTimeStamp / 60) - (hours * 60)
     const seconds = Math.floor(secondsTimeStamp % 60)
@@ -326,11 +336,10 @@ function createRowingStatistics (config, session) {
   }
 
   return Object.assign(emitter, {
-    handleDriveEnd,
     handleHeartrateMeasurement,
-    handleRecoveryEnd,
     handleRotationImpulse,
     stop: stopTraining,
+    resume: resumeTraining,
     reset: resetTraining
   })
 }
