@@ -56,8 +56,8 @@ export default class StrokeData extends bleno.Characteristic {
       bufferBuilder.writeUInt16LE(Math.round(data.driveAverageHandleForce * 10))
       if (this._updateValueCallback) {
         // workPerStroke is only added if data is not send via multiplexer
-        // workPerStroke: UInt16LE
-        bufferBuilder.writeUInt16LE(0)
+        // workPerStroke: UInt16LE in 0.1 Joules
+        bufferBuilder.writeUInt16LE(Math.round(data.strokeWork * 10))
       }
       // strokeCount: UInt16LE
       bufferBuilder.writeUInt16LE(data.totalNumberOfStrokes)
