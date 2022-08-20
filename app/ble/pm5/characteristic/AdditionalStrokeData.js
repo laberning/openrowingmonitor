@@ -46,14 +46,14 @@ export default class AdditionalStrokeData extends bleno.Characteristic {
       // strokeCount: UInt16LE
       bufferBuilder.writeUInt16LE(Math.round(data.totalNumberOfStrokes))
       // projectedWorkTime: UInt24LE in 1 sec
-      bufferBuilder.writeUInt24LE(0)
+      bufferBuilder.writeUInt24LE(Math.round(data.cycleProjectedEndTime))
       // projectedWorkDistance: UInt24LE in 1 m
-      bufferBuilder.writeUInt24LE(0)
+      bufferBuilder.writeUInt24LE(Math.round(data.cycleProjectedEndLinearDistance))
       if (!this._updateValueCallback) {
         // the multiplexer uses a slightly different format for the AdditionalStrokeData
         // it adds workPerStroke at the end
-        // workPerStroke: UInt16LE
-        bufferBuilder.writeUInt16LE(0)
+        // workPerStroke: UInt16LE in 0.1 Joules
+        bufferBuilder.writeUInt16LE(Math.round(data.strokeWork * 10))
       }
 
       if (this._updateValueCallback) {
