@@ -7,10 +7,10 @@
 const constants = {
   serial: '123456789',
   model: 'PM5',
-  name: 'PM5 123456789',
-  hardwareRevision: '633',
+  name: 'PM5 123456789 Row',
+  hardwareRevision: '907',
   // see https://www.concept2.com/service/monitors/pm5/firmware for available versions
-  firmwareRevision: '207',
+  firmwareRevision: '210',
   manufacturer: 'Concept2',
   ergMachineType: [0x05]
 }
