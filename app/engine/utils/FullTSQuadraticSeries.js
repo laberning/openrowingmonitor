@@ -224,7 +224,7 @@ function createTSQuadraticSeries (maxSeriesLength = 0) {
     }
   }
 
-function calculateB (pointOne, pointThree) {
+  function calculateB (pointOne, pointThree) {
     if ((pointOne + 1) < pointThree && X.get(pointOne) !== X.get(pointThree)) {
       const results = createSeries(maxSeriesLength)
       let pointTwo = pointOne + 1
@@ -256,8 +256,7 @@ function calculateB (pointOne, pointThree) {
     }
   }
 
-  // Dit is technische de mindere oplossing omdat deze delen meeneemt waar de opgevraagde mediaan niets mee van doen heeft,
-  // Maar dit lijkt wel de beste oplossing te leveren. Dit moet getest worden met productiedata
+  // This technically is a lesser implementation than the trimmedMatrixMedian, but it seems to deliver better results
   function matrixMedian (inputMatrix) {
     if (inputMatrix.length > 1) {
       const sortedArray = [...inputMatrix.flat()].sort((a, b) => a - b)
@@ -269,7 +268,8 @@ function calculateB (pointOne, pointThree) {
     }
   }
 
-  // Dit is technisch de beste oplossing, maar de kunstmatige testresultaten lijken er flink op achteruit te gaan
+  /* This technically is a better implementation than matrixMedian, but it seems to deliver worse results
+  // ToDo: find out why this isn't working, which probably will involve some deep and painfull mathematics
   function trimmedMatrixMedian (inputMatrix) {
     if (inputMatrix.length > 1) {
       const intermediateMatrix = []
@@ -286,7 +286,7 @@ function calculateB (pointOne, pointThree) {
       return 0
     }
   }
-  //
+  */
 
   function reset () {
     X.reset()
