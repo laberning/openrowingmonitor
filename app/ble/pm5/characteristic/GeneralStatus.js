@@ -58,7 +58,7 @@ export default class GeneralStatus extends bleno.Characteristic {
       // workoutDurationType: UInt8 0 TIME, 1 CALORIES, 2 DISTANCE, 3 WATTS
       bufferBuilder.writeUInt8(0)
       // dragFactor: UInt8
-      bufferBuilder.writeUInt8(Math.round(data.dragFactor))
+      bufferBuilder.writeUInt8(Math.round(Math.min(data.dragFactor, 255)))
 
       if (this._updateValueCallback) {
         this._updateValueCallback(bufferBuilder.getBuffer())
