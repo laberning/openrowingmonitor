@@ -27,8 +27,6 @@ import { createOLSLinearSeries } from './utils/OLSLinearSeries.js'
 import { createTSQuadraticSeries } from './utils/FullTSQuadraticSeries.js'
 const log = loglevel.getLogger('RowingEngine')
 
-import fs from 'fs' // REMOVE ME!!!
-
 function createFlywheel (rowerSettings) {
   const angularDisplacementPerImpulse = (2.0 * Math.PI) / rowerSettings.numOfImpulsesPerRevolution
   const flankLength = Math.max(3, rowerSettings.flankLength)
@@ -39,7 +37,6 @@ function createFlywheel (rowerSettings) {
   const _angularDistance = createTSQuadraticSeries(flankLength)
   const _angularVelocityMatrix = []
   const _angularAccelerationMatrix = []
-  const _angularAcceleration = createSeries(flankLength)
   const drag = createStreamFilter(rowerSettings.dragFactorSmoothing, (rowerSettings.dragFactor / 1000000))
   const recoveryDeltaTime = createOLSLinearSeries()
   const strokedetectionMinimalGoodnessOfFit = rowerSettings.minimumStrokeQuality
