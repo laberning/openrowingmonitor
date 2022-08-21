@@ -188,7 +188,7 @@ test('Correct Rower behaviour for three noisefree strokes with dynamic dragfacto
   rower.handleRotationImpulse(0.010526151)
   rower.handleRotationImpulse(0.010511225)
   rower.handleRotationImpulse(0.010386684)
-  testStrokeState(rower, 'Drive')
+  testStrokeState(rower, 'Recovery')
   testTotalMovingTimeSinceStart(rower, 0.46020725100000004)
   testTotalLinearDistanceSinceStart(rower, 1.5369732812411068)
   testTotalNumberOfStrokes(rower, 1)
