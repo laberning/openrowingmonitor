@@ -31,9 +31,9 @@ When installed, OpenRowingMonitor will not flood the log with messages. However,
 
 You can use the following commands on the command line to restart (to activate new settings) and retrieve the logs after changing the config:
 
-restart after config changes: `sudo systemctl restart openrowingmonitor`
- 
-Get the status of a service: `sudo systemctl status openrowingmonitor`
+restart after config a change to activate it: `sudo systemctl restart openrowingmonitor`
+
+Get the status of the OpenRowingMonitor service: `sudo systemctl status openrowingmonitor`
 
 Show the log output of a service: `sudo journalctl -u openrowingmonitor`
 
