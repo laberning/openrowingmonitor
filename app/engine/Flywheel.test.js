@@ -9,6 +9,7 @@ import { createFlywheel } from './Flywheel.js'
 
 const baseConfig = {
   numOfImpulsesPerRevolution: 6,
+  smoothing: 1,
   flankLength: 11,
   numberOfErrorsAllowed: 2,
   minimumStrokeQuality: 0.30,
@@ -83,9 +84,9 @@ test('Correct Flywheel behaviour for a noisefree stroke', () => {
   testDeltaTime(flywheel, 0.011051853)
   testSpinningTime(flywheel, 0.088970487)
   testAngularPosition(flywheel, 9.42477796076938)
-  testAngularVelocity(flywheel, 94.24886256268489)
-  testAngularAcceleration(flywheel, 10.616952625445563)
-  testTorque(flywheel, 1.949980071980543)
+  testAngularVelocity(flywheel, 95.26126661773489)
+  testAngularAcceleration(flywheel, 23.690349229418256)
+  testTorque(flywheel, 3.276505814703343)
   testDragFactor(flywheel, 0.0001)
   testIsDwelling(flywheel, false)
   testIsUnpowered(flywheel, false)
@@ -108,9 +109,9 @@ test('Correct Flywheel behaviour for a noisefree stroke', () => {
   testDeltaTime(flywheel, 0.01089567)
   testSpinningTime(flywheel, 0.24984299900000007)
   testAngularPosition(flywheel, 25.132741228718345)
-  testAngularVelocity(flywheel, 96.0578975348481) // This one is just weird, as it is faster than the end of the drive
-  testAngularAcceleration(flywheel, 10.678247657768765)
-  testTorque(flywheel, 1.990536733658414)
+  testAngularVelocity(flywheel, 96.59818534009558)
+  testAngularAcceleration(flywheel, -28.68758647905641)
+  testTorque(flywheel, -1.9356377068056956)
   testDragFactor(flywheel, 0.0001)
   testIsDwelling(flywheel, false)
   testIsUnpowered(flywheel, true)
@@ -131,11 +132,11 @@ test('Correct Flywheel behaviour for a noisefree stroke', () => {
   flywheel.pushValue(0.021131862)
   flywheel.pushValue(0.021209919)
   testDeltaTime(flywheel, 0.02089567)
-  testSpinningTime(flywheel, 0.4508356267)
+  testSpinningTime(flywheel, 0.45261901530000004)
   testAngularPosition(flywheel, 40.84070449666731)
-  testAngularVelocity(flywheel, 75.04826603698673)
-  testAngularAcceleration(flywheel, -28.74116734735154)
-  testTorque(flywheel, -2.31089251121932)
+  testAngularVelocity(flywheel, 82.8344307883191)
+  testAngularAcceleration(flywheel, -31.179572048417487)
+  testTorque(flywheel, -2.431802912439266)
   testDragFactor(flywheel, 0.0001)
   testIsDwelling(flywheel, true)
   testIsUnpowered(flywheel, true)
