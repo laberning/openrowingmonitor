@@ -8,6 +8,10 @@
 */
 import { test } from 'uvu'
 import * as assert from 'uvu/assert'
+import loglevel from 'loglevel'
+import rowerProfiles from '../../config/rowerProfiles.js'
+import { replayRowingSession } from '../tools/RowingRecorder.js'
+import { deepMerge } from '../tools/Helper.js'
 
 import { createRower } from './Rower.js'
 
@@ -40,7 +44,7 @@ test('Correct rower behaviour at initialisation', () => {
   const rower = createRower(baseConfig)
   testStrokeState(rower, 'WaitingForDrive')
   testTotalMovingTimeSinceStart(rower, 0)
-  testTotalNumberOfStrokes(rower, -1)
+  testTotalNumberOfStrokes(rower, 0)
   testTotalLinearDistanceSinceStart(rower, 0)
   testCycleDuration(rower, 1.3)
   testCycleLinearDistance(rower, 0)
@@ -88,7 +92,7 @@ test('Correct Rower behaviour for three noisefree strokes with dynamic dragfacto
   testStrokeState(rower, 'WaitingForDrive')
   testTotalMovingTimeSinceStart(rower, 0)
   testTotalLinearDistanceSinceStart(rower, 0)
-  testTotalNumberOfStrokes(rower, -1)
+  testTotalNumberOfStrokes(rower, 0)
   testCycleDuration(rower, 0.30000000000000004)
   testCycleLinearDistance(rower, 0)
   testCycleLinearVelocity(rower, 0)
@@ -125,7 +129,7 @@ test('Correct Rower behaviour for three noisefree strokes with dynamic dragfacto
   testStrokeState(rower, 'Drive')
   testTotalMovingTimeSinceStart(rower, 0.088970487)
   testTotalLinearDistanceSinceStart(rower, 0.31037384539231255)
-  testTotalNumberOfStrokes(rower, 0)
+  testTotalNumberOfStrokes(rower, 1)
   testCycleDuration(rower, 0.30000000000000004)
   testCycleLinearDistance(rower, 0.31037384539231255)
   testCycleLinearVelocity(rower, 0) // Shouldn't this one be filled after the first drive?
@@ -157,7 +161,7 @@ test('Correct Rower behaviour for three noisefree strokes with dynamic dragfacto
   testStrokeState(rower, 'Recovery')
   testTotalMovingTimeSinceStart(rower, 0.24984299900000007)
   testTotalLinearDistanceSinceStart(rower, 0.8276635877128334)
-  testTotalNumberOfStrokes(rower, 0)
+  testTotalNumberOfStrokes(rower, 1)
   testCycleDuration(rower, 0.143485717)
   testCycleLinearDistance(rower, 0.8276635877128334)
   testCycleLinearVelocity(rower, 3.364821039986529)
@@ -193,7 +197,7 @@ test('Correct Rower behaviour for three noisefree strokes with dynamic dragfacto
   testStrokeState(rower, 'Drive')
   testTotalMovingTimeSinceStart(rower, 0.46020725100000004)
   testTotalLinearDistanceSinceStart(rower, 1.5544602771665712)
-  testTotalNumberOfStrokes(rower, 1)
+  testTotalNumberOfStrokes(rower, 2)
   testCycleDuration(rower, 0.404798464)
   testCycleLinearDistance(rower, 1.0716565176674184)
   testCycleLinearVelocity(rower, 3.2373328057193076)
@@ -225,7 +229,7 @@ test('Correct Rower behaviour for three noisefree strokes with dynamic dragfacto
   testStrokeState(rower, 'Recovery')
   testTotalMovingTimeSinceStart(rower, 0.6210797630000001)
   testTotalLinearDistanceSinceStart(rower, 2.286439067030326)
-  testTotalNumberOfStrokes(rower, 1)
+  testTotalNumberOfStrokes(rower, 2)
   testCycleDuration(rower, 0.37123676400000005)
   testCycleLinearDistance(rower, 0.9759717198183395)
   testCycleLinearVelocity(rower, 4.469255430992759)
@@ -261,7 +265,7 @@ test('Correct Rower behaviour for three noisefree strokes with dynamic dragfacto
   testStrokeState(rower, 'Drive')
   testTotalMovingTimeSinceStart(rower, 0.8314440150000004)
   testTotalLinearDistanceSinceStart(rower, 3.213612200857749)
-  testTotalNumberOfStrokes(rower, 2)
+  testTotalNumberOfStrokes(rower, 3)
   testCycleDuration(rower, 0.3376750640000003)
   testCycleLinearDistance(rower, 1.4151589937365927)
   testCycleLinearVelocity(rower, 4.479916721710979)
@@ -293,7 +297,7 @@ test('Correct Rower behaviour for three noisefree strokes with dynamic dragfacto
   testStrokeState(rower, 'Recovery')
   testTotalMovingTimeSinceStart(rower, 0.9923165270000005)
   testTotalLinearDistanceSinceStart(rower, 3.945590990721503)
-  testTotalNumberOfStrokes(rower, 2)
+  testTotalNumberOfStrokes(rower, 3)
   testCycleDuration(rower, 0.3712367640000004)
   testCycleLinearDistance(rower, 1.1223674777910904)
   testCycleLinearVelocity(rower, 4.469255430992754)
@@ -324,7 +328,7 @@ test('Correct Rower behaviour for three noisefree strokes with dynamic dragfacto
   rower.handleRotationImpulse(0.021209919)
   testStrokeState(rower, 'WaitingForDrive')
   testTotalMovingTimeSinceStart(rower, 1.1025003730000005)
-  testTotalNumberOfStrokes(rower, 2)
+  testTotalNumberOfStrokes(rower, 3)
   testTotalLinearDistanceSinceStart(rower, 4.433576850630673)
   testCycleDuration(rower, 0.36002684500000015)
   testCycleLinearDistance(rower, 1.6103533377002601)
@@ -358,6 +362,72 @@ test('Correct Rower behaviour for three noisefree strokes with dynamic dragfacto
 
 // Test behaviour after reset
 
+// Test behaviour with real-life data
+
+test('sample data for Sportstech WRX700 should produce plausible results', async () => {
+  const rower = createRower(deepMerge(rowerProfiles.DEFAULT, rowerProfiles.Sportstech_WRX700))
+  testTotalMovingTimeSinceStart(rower, 0)
+  testTotalLinearDistanceSinceStart(rower, 0)
+  testTotalNumberOfStrokes(rower, 0)
+  testRecoveryDragFactor(rower, rowerProfiles.Sportstech_WRX700.dragFactor)
+
+  await replayRowingSession(rower.handleRotationImpulse, { filename: 'recordings/WRX700_2magnets.csv', realtime: false, loop: false })
+
+  testTotalMovingTimeSinceStart(rower, 46.302522627)
+  testTotalLinearDistanceSinceStart(rower, 167.00360957763186)
+  testTotalNumberOfStrokes(rower, 16)
+  // As dragFactor is static, it should remain in place
+  testRecoveryDragFactor(rower, rowerProfiles.Sportstech_WRX700.dragFactor)
+})
+
+test('sample data for DKN R-320 should produce plausible results', async () => {
+  const rower = createRower(deepMerge(rowerProfiles.DEFAULT, rowerProfiles.DKN_R320))
+  testTotalMovingTimeSinceStart(rower, 0)
+  testTotalLinearDistanceSinceStart(rower, 0)
+  testTotalNumberOfStrokes(rower, 0)
+  testRecoveryDragFactor(rower, rowerProfiles.DKN_R320.dragFactor)
+
+  await replayRowingSession(rower.handleRotationImpulse, { filename: 'recordings/DKNR320.csv', realtime: false, loop: false })
+
+  testTotalMovingTimeSinceStart(rower, 22.249536391000003)
+  testTotalLinearDistanceSinceStart(rower, 71.93409638401903)
+  testTotalNumberOfStrokes(rower, 10)
+  // As dragFactor is static, it should remain in place
+  testRecoveryDragFactor(rower, rowerProfiles.DKN_R320.dragFactor)
+})
+
+test('sample data for NordicTrack RX800 should produce plausible results', async () => {
+  const rower = createRower(deepMerge(rowerProfiles.DEFAULT, rowerProfiles.NordicTrack_RX800))
+  testTotalMovingTimeSinceStart(rower, 0)
+  testTotalLinearDistanceSinceStart(rower, 0)
+  testTotalNumberOfStrokes(rower, 0)
+  testRecoveryDragFactor(rower, rowerProfiles.NordicTrack_RX800.dragFactor)
+
+  await replayRowingSession(rower.handleRotationImpulse, { filename: 'recordings/RX800.csv', realtime: false, loop: false })
+
+  testTotalMovingTimeSinceStart(rower, 22.710637130999988)
+  testTotalLinearDistanceSinceStart(rower, 79.38045196125364)
+  testTotalNumberOfStrokes(rower, 10)
+  // As dragFactor is dynamic, it should have changed
+  testRecoveryDragFactor(rower, 486.7027417634664)
+})
+
+test('A full session for SportsTech WRX700 should produce plausible results', async () => {
+  const rower = createRower(deepMerge(rowerProfiles.DEFAULT, rowerProfiles.Sportstech_WRX700))
+  testTotalMovingTimeSinceStart(rower, 0)
+  testTotalLinearDistanceSinceStart(rower, 0)
+  testTotalNumberOfStrokes(rower, 0)
+  testRecoveryDragFactor(rower, rowerProfiles.Sportstech_WRX700.dragFactor)
+
+  await replayRowingSession(rower.handleRotationImpulse, { filename: 'recordings/WRX700_2magnets_session.csv', realtime: false, loop: false })
+
+  testTotalMovingTimeSinceStart(rower, 2341.3684300762125)
+  testTotalLinearDistanceSinceStart(rower, 8410.330084026222)
+  testTotalNumberOfStrokes(rower, 846)
+  // As dragFactor is static, it should remain in place
+  testRecoveryDragFactor(rower, rowerProfiles.Sportstech_WRX700.dragFactor)
+})
+
 function testStrokeState (rower, expectedValue) {
   assert.ok(rower.strokeState() === expectedValue, `strokeState should be ${expectedValue} at ${rower.totalMovingTimeSinceStart()} sec, is ${rower.strokeState()}`)
 }
@@ -367,7 +437,8 @@ function testTotalMovingTimeSinceStart (rower, expectedValue) {
 }
 
 function testTotalNumberOfStrokes (rower, expectedValue) {
-  assert.ok(rower.totalNumberOfStrokes() === expectedValue, `totalNumberOfStrokes should be ${expectedValue} at ${rower.totalMovingTimeSinceStart()} sec, is ${rower.totalNumberOfStrokes()}`)
+  // Please note there is a stroke 0
+  assert.ok(rower.totalNumberOfStrokes() + 1 === expectedValue, `totalNumberOfStrokes should be ${expectedValue} at ${rower.totalMovingTimeSinceStart()} sec, is ${rower.totalNumberOfStrokes() + 1}`)
 }
 
 function testTotalLinearDistanceSinceStart (rower, expectedValue) {
