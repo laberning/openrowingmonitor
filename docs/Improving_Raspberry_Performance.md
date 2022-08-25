@@ -24,7 +24,7 @@ Add to `/boot/cmdline.txt` the following option, if you consider it responsible 
 mitigations=off
 ```
 
-still to look at: https://forums.raspberrypi.com/viewtopic.php?t=228727, https://wiki.linuxaudio.org/wiki/raspberrypi
+still to look at: [This text]<https://forums.raspberrypi.com/viewtopic.php?t=228727>
 
 ### CPU Scaling
 
@@ -61,5 +61,7 @@ triggerhappy
 ```zsh
 sudo systemctl disable triggerhappy.service
 ```
+
+Still have to look at [this text]<https://wiki.linuxaudio.org/wiki/raspberrypi>
 
 ## Things you can do in OpenRowingMonitor
