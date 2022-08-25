@@ -15,21 +15,42 @@ The key feature for Open Rowing Monitor is to reliably produce metrics you see o
 * Stroke detection
 * Physical metrics (like distance, power and speed)
 
+### Getting an insight into the inner workings of OpenRowingMonitor
+
+When installed, OpenRowingMonitor will not flood the log with messages. However, when testing it is great to see what OpenRowingMonitor is doing. So first thing to do is to set the following in the settings:
+
+ ```js
+ // Available log levels: trace, debug, info, warn, error, silent
+ loglevel: {
+     // The default log level
+     default: 'info',
+     // The log level of of the rowing engine (stroke detection and physics model)
+     RowingEngine: 'debug'
+   },
+ ```
+
+You can use the following commands on the command line to restart (to activate new settings) and retrieve the logs after changing the config:
+
+restart after config changes: `sudo systemctl restart openrowingmonitor`
+ 
+Get the status of a service: `sudo systemctl status openrowingmonitor`
+
+Show the log output of a service: `sudo journalctl -u openrowingmonitor`
+
 ### Getting stroke detection right
 
 A key element in getting rowing data right is getting the stroke detection right, as we report many metrics on a per-stroke basis. The **Impulse Noise reduction settings** reduce the level of noise on the level of individual impulses. You should change these settings if you experience issues with stroke detection or the stability of the drag factor calculation. The stroke detection consists out of three types of filters:
 
 * A smoothing filter, using a running average. The **smoothing** setting determines the length of the running average for the impulses, which removes the height of the peaks, removes noise to a certain level but keeps the stroke detection responsive. Smoothing typically varies between 1 to 4, where 1 effectively turns it off.
 * A high-pass/low-pass filter, based on **minimumTimeBetweenImpulses** (the shortest allowable time between impulses) and **maximumTimeBetweenImpulses** (the longest allowed time between impulses). Combined, they remove any obvious errors in the duration between impulses (in seconds) during *active* rowing. Measurements outside of this range are filtered out to prevent the stroke detection algorithm to get distracted. This setting is highly dependent on the physical construction of your rower, so you have to determine it yourself without any hints. The easiest way to determine this is by visualizing your raw recordings in Excel.
-* A maximum change filter, which based on the the previous impulse determines the maximum amount of change (percentage) through the **maximumDownwardChange** and **maximumUpwardChange** settings.
 
-By changing the noise reduction settings, you can remove any obvious errors. You don't need to filter everything: it is just to remove obvious errors that might frustrate the stroke detection, but in the end you can't prevent every piece of noise out there. Begin with the noise filtering, when you are satisfied, you can adjust the rest of the stroke detection settings.
+By changing the noise reduction settings, you can remove any obvious errors. You don't need to filter everything: it is just to remove obvious errors that might frustrate the stroke detection, but in the end you can't prevent every piece of noise out there. OpenRowingMonitor can handle some noise, so it is just to prevent extreme outliers. Begin with the noise filtering, when you are satisfied, you can adjust the rest of the stroke detection settings.
 
-Another set of settings are the **flankLength** and **numberOfErrorsAllowed** setting, which determine the condition when the stroke detection is sufficiently confident that the stroke has started/ended. In essence, the stroke detection looks for a consecutive increasing/decreasing impulse lengths, and the **flankLength** determines how many consecutive flanks have to be seen before the stroke detection considers a stroke to begin or end. Please note that making the flank longer does *not* change your measurement in any way: the algorithms always rely on the beginning of the flank, not at the current end. Generally, a **flankLength** of 2 to 3 typically works. Sometimes, a measurement is too noisy, which requires some errors in the flanks to be ignored, which can be done through the **numberOfErrorsAllowed** setting. For example, the NordicTrack RX-800 successfully uses a **flankLength** of 9 and a **numberOfErrorsAllowed** of 2, which allows quite some noise but forces quite a long flank. This setting requires a lot of tweaking and rowing.
+Another set of settings are the **flankLength** and **numberOfErrorsAllowed** setting, which determine the condition when the stroke detection is sufficiently confident that the stroke has started/ended. In essence, the stroke detection looks for a consecutive increasing/decreasing impulse lengths, and the **flankLength** determines how many consecutive flanks have to be seen before the stroke detection considers a stroke to begin or end. Please note that making the flank longer does *not* change your measurement in any way: the algorithms always rely on the beginning of the flank, not at the current end. Generally, a **flankLength** of 3 to 4 typically works. Sometimes, a measurement is too noisy, which requires some errors in the flanks to be ignored, which can be done through the **numberOfErrorsAllowed** setting. For example, the NordicTrack RX-800 successfully uses a **flankLength** of 9 and a **numberOfErrorsAllowed** of 2, which allows quite some noise but forces quite a long flank. This setting requires a lot of tweaking and rowing.
 
-At the level of the stroke detection, there is some additional noise filtering, preventing noise to start a drive- or recovery-phase too early. The settings **minimumDriveTime** and **minimumRecoveryTime** determine the minimum times (in seconds) for the drive and recovery phases. Generally, the drive phase lasts at least 0.500 second, and the recovery phase 1.250 second for recreational rowers.
+At the level of the stroke detection, there is some additional noise filtering, preventing noise to start a drive- or recovery-phase too early. The settings **minimumDriveTime** and **minimumRecoveryTime** determine the minimum times (in seconds) for the drive and recovery phases. Generally, the drive phase lasts at least 0.500 second, and the recovery phase 0.900 second for recreational rowers.
 
-For the noise reduction settings and stroke detection settings, you can use the Excel tool. When OpenRowingMonitor records a log (set setting createRawDataFiles to `true`), you can paste the values in the first column of the "Raw Data" tab (please observe that the Raspberry uses a point as separator, and your version of Excel might expect a comma). From there, the Excel file simulates the calculations the OpenRowingMonitor makes, allowing you to play with these settings.
+When OpenRowingMonitor records a log (set setting createRawDataFiles to `true`), you can paste the values in the first column of the "Raw Data" tab (please observe that the Raspberry uses a point as separator, and your version of Excel might expect a comma). From there, the Excel file simulates the calculations the OpenRowingMonitor makes, allowing you to play with these settings.
 
 Please note that changing the noise filtering and stroke detection settings will affect your calculated dragFactor. So it is best to start with rowing a few strokes to determine settings for noise filtering and stroke detection, and then move on to the other settings.
 
