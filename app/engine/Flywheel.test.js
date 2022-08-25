@@ -4,6 +4,9 @@
 */
 import { test } from 'uvu'
 import * as assert from 'uvu/assert'
+import { deepMerge } from '../tools/Helper.js'
+import { replayRowingSession } from '../tools/RowingRecorder.js'
+import rowerProfiles from '../../config/rowerProfiles.js'
 
 import { createFlywheel } from './Flywheel.js'
 
@@ -221,6 +224,62 @@ test('Correct Flywheel behaviour at maintainStateOnly', () => {
   testIsDwelling(flywheel, false)
   testIsUnpowered(flywheel, true)
   testIsPowered(flywheel, false)
+})
+
+test('Correct Flywheel behaviour with a SportsTech WRX700', async () => {
+  const flywheel = createFlywheel(deepMerge(rowerProfiles.DEFAULT, rowerProfiles.Sportstech_WRX700))
+  testSpinningTime(flywheel, 0)
+  testAngularPosition(flywheel, 0)
+  testDragFactor(flywheel, (rowerProfiles.Sportstech_WRX700.dragFactor / 1000000))
+
+  // Inject 16 strokes
+  await replayRowingSession(flywheel.pushValue, { filename: 'recordings/WRX700_2magnets.csv', realtime: false, loop: false })
+  testSpinningTime(flywheel, 46.302522627)
+  testAngularPosition(flywheel, 741.4158662471912)
+  testDragFactor(flywheel, (rowerProfiles.Sportstech_WRX700.dragFactor / 1000000))
+})
+
+test('Correct Flywheel behaviour with a DKN R-320', async () => {
+  const flywheel = createFlywheel(deepMerge(rowerProfiles.DEFAULT, rowerProfiles.DKN_R320))
+  testSpinningTime(flywheel, 0)
+  testAngularPosition(flywheel, 0)
+  testDragFactor(flywheel, (rowerProfiles.DKN_R320.dragFactor / 1000000))
+
+  // Inject 10 strokes
+  await replayRowingSession(flywheel.pushValue, { filename: 'recordings/DKNR320.csv', realtime: false, loop: false })
+
+  testSpinningTime(flywheel, 22.249536391000003)
+  testAngularPosition(flywheel, 496.37163926718733)
+  // As dragfactor is static, it should remain the same
+  testDragFactor(flywheel, (rowerProfiles.DKN_R320.dragFactor / 1000000))
+})
+
+test('Correct Flywheel behaviour with a NordicTrack RX800', async () => {
+  const flywheel = createFlywheel(deepMerge(rowerProfiles.DEFAULT, rowerProfiles.NordicTrack_RX800))
+  testSpinningTime(flywheel, 0)
+  testAngularPosition(flywheel, 0)
+  testDragFactor(flywheel, (rowerProfiles.NordicTrack_RX800.dragFactor / 1000000))
+
+  // Inject 10 strokes
+  await replayRowingSession(flywheel.pushValue, { filename: 'recordings/RX800.csv', realtime: false, loop: false })
+
+  testSpinningTime(flywheel, 22.710637130999988)
+  testAngularPosition(flywheel, 1446.7034169780998)
+  // As the dragfactor is dynamic, it turns to another value
+  testDragFactor(flywheel, 0.000225)
+})
+
+test('Correct Flywheel behaviour with a full session on a SportsTech WRX700', async () => {
+  const flywheel = createFlywheel(deepMerge(rowerProfiles.DEFAULT, rowerProfiles.Sportstech_WRX700))
+  testSpinningTime(flywheel, 0)
+  testAngularPosition(flywheel, 0)
+  testDragFactor(flywheel, (rowerProfiles.Sportstech_WRX700.dragFactor / 1000000))
+
+  // Inject 846 strokes
+  await replayRowingSession(flywheel.pushValue, { filename: 'recordings/WRX700_2magnets_session.csv', realtime: false, loop: false })
+  testSpinningTime(flywheel, 2341.3684300762125)
+  testAngularPosition(flywheel, 37337.82868791469)
+  testDragFactor(flywheel, (rowerProfiles.Sportstech_WRX700.dragFactor / 1000000))
 })
 
 // Test behaviour after reset
