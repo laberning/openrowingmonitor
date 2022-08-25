@@ -30,7 +30,7 @@ Open Rowing Monitor implements a physics model to simulate the typical metrics o
 * Total number of strokes
 * Heart Rate (supports BLE and ANT+ heart rate monitors, ANT+ requires an ANT+ USB stick)
 
-It calculates and can export many other key rowing metrics, including Drive length (meters), Drive time (milliseconds), Recovery Time (milliseconds), Average handle force (Newton), Peak handle force (Newton) and the associated handle force curve, handle velocity curve and handle power curve.
+It calculates and can export many other key rowing metrics, including Drag factor, Drive length (meters), Drive time (milliseconds), Recovery Time (milliseconds), Average handle force (Newton), Peak handle force (Newton) and the associated handle force curve, handle velocity curve and handle power curve.
 
 ### Web Interface
 
