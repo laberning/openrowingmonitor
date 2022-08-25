@@ -83,8 +83,7 @@ export default {
     // drag factors are rejected to prevent drag poisoning
     minimumDragQuality: 0.83,
 
-    // The moment of inertia of the flywheel kg*m^2, which is ONLY relevant when autoAdjustDragFactor is set to true or when you
-    // use Force Curves. Otherwise this value isn't relevant to your rower
+    // The moment of inertia of the flywheel kg*m^2
     // A way to measure it is outlined here: https://dvernooy.github.io/projects/ergware/, "Flywheel moment of inertia"
     // You could also roughly estimate it by just doing some strokes and the comparing the calculated power values for
     // plausibility. Note that the power also depends on the drag factor (see above).
