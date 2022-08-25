@@ -16,6 +16,16 @@ Use a low latency or real time kernel. Currently, the Raspbian 64Bit Lite kernel
 
 Alternative is Ubuntu Core, which also provides a 64 bit kernel out of the box.
 
+### Kernel settings
+
+Add to `/boot/cmdline.txt` the following option, if you consider it responsible in your situation (this introduces a security risk):
+
+```zsh
+mitigations=off
+```
+
+still to look at: https://forums.raspberrypi.com/viewtopic.php?t=228727, https://wiki.linuxaudio.org/wiki/raspberrypi
+
 ### CPU Scaling
 
 Typically, Raspbian is configured to reduce energy consumption. Thus it uses the *ondemend* CPU governor. To get the most out of the CPU, we need to use the *performance* governor.
@@ -36,6 +46,12 @@ Now, you can set the default governor by editing `/etc/default/cpufrequtils` so 
 
 ```zsh
 GOVERNOR="performance"
+```
+
+After a reboot, you can check the governor by executing:
+
+```zsh
+sudo cpufreq-info
 ```
 
 ### Services you can disable safely
