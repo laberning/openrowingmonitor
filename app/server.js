@@ -43,9 +43,13 @@ if (config.gpioPriority) {
   }
 }
 
-const session = { // a hook for setting session parameters that the rower has to obey
-  targetDistance: 0,
-  targetTime: 0
+// a hook for setting session parameters that the rower has to obey
+// Hopefully this will be filled through the WebGUI or through the BLE interface (PM5-BLE can do this...)
+// When set, ORM will terminate the session after reaching the target. If not set, it will behave as usual (a "Just row" session).
+// When set, the GUI will behave similar to a PM5 in that it counts down from the target to 0
+const session = {
+  targetDistance: 0, // Target distance in meters
+  targetTime: 0 // Target time in seconds
 }
 
 log.info(`Session settings: distance limit ${(session.targetDistance > 0 ? session.targetDistance : 'none')} meters, time limit ${(session.targetTime > 0 ? session.targetTime : 'none')} secondss\n`)
