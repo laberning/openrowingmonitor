@@ -109,8 +109,7 @@ export default {
     maximumTimeBetweenImpulses: 0.5,
     minumumRecoverySlope: 0.125,
     flywheelInertia: 0.72,
-    dragFactor: 32000,
-
+    dragFactor: 32000
   },
 
   // DKN R-320 Air Rower
