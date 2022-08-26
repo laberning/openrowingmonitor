@@ -14,7 +14,7 @@ The choice has been made to use JavaScript to build te application, as many of t
 
 ## Main functional components
 
-We first describe the relation between the main functional components by describing the flow of the key pieces of information: the flywheel and heartrate measurements. We first follow the flow of the flywheel data, which is provided by the inteerupt driven `gpio.js`. The only information retrieved by OpenRowingMonitor is *CurrentDt*: the time between impulses. This data element is transformed in meaningful metrics in the following manner:
+We first describe the relation between the main functional components by describing the flow of the key pieces of information: the flywheel and heartrate measurements. We first follow the flow of the flywheel data, which is provided by the inteerupt driven `gpio.js`. The only information retrieved by Open Rowing Monitor is *CurrentDt*: the time between impulses. This data element is transformed in meaningful metrics in the following manner:
 
 ```mermaid
 sequenceDiagram
@@ -34,7 +34,7 @@ sequenceDiagram
   server.js-)clients: Metrics Updates<br>(State/Time based)
 ```
 
-The clients (both the webbased screens and periphal bluetooth devices) are updated based on both a set interval and when the stroke or session state changes. OpenRowingMonitor therefore consists out of two subsystems: an solely interruptdriven part that processes flywheel and heartrate interrupts, and the time/state based needs of the clients. It is the responsibility of `RowingStatistics.js` to manage this: it monitors the timers, session state and guarantees that it can present the clients with the freshest data availble.
+The clients (both the webbased screens and periphal bluetooth devices) are updated based on both a set interval and when the stroke or session state changes. Open Rowing Monitor therefore consists out of two subsystems: an solely interruptdriven part that processes flywheel and heartrate interrupts, and the time/state based needs of the clients. It is the responsibility of `RowingStatistics.js` to manage this: it monitors the timers, session state and guarantees that it can present the clients with the freshest data availble.
 
 Secondly, the heartrate data follows the same path, but requires significantly less processing:
 
@@ -52,20 +52,21 @@ sequenceDiagram
 
 ### gpio.js
 
-`gpio.js` is a small independent process, acting as an interrupt handler to the signals from the gpio-pin 17. The interrupthandler is the only part of OpenRowingMonitor that should run with extreme low latency as it determines the time between impulses. Latency in this process will present itself as noise in the measurements of *CurrentDt*. To OpenRowingMonitor it provides a stream of measurements that needed to be handled.
+`gpio.js` is a small independent process, acting as an interrupt handler to the signals from the gpio-pin 17. It translates the interrupts into a stream of times between the interrups (which we call *CurrentDt*). The interrupthandler is the only part of Open Rowing Monitor that should run with extreme low latency as it determines the time between impulses. Latency in this process will present itself as noise in the measurements of *CurrentDt*. To Open Rowing Monitor it provides a stream of measurements that needed to be handled.
 
 ### Server.js
 
 `Server.js` orchestrates all information flows and starts/stops processes when needed. It will:
 
-* Recieve (interrupt based) GPIO timing signals from `gpio.js` and send them to the `RowingStatistics.js`
-* Recieve (interrupt based) Heartrate measurements and sent them to the `RowingStatistics.js`
-* Recieve the metrics update messages from `RowingStatistics.js` (time-based and state-based updates of metrics) and send them to the webclients and blutooth periphials
-* Handle user input (through webinterface and periphials) and instruct `RowingStatistics.js` accordingly
+* Recieve (interrupt based) GPIO timing signals from `gpio.js` and send them to the `RowingStatistics.js`;
+* Recieve (interrupt based) Heartrate measurements and sent them to the `RowingStatistics.js`;
+* Recieve the metrics update messages from `RowingStatistics.js` (time-based and state-based updates of metrics) and distribut them to the webclients and blutooth periphials;
+* Handle user input (through webinterface and periphials) and instruct `RowingStatistics.js` to act accordingly;
+* Handle escalations from `RowingStatistics.js` (like reaching the end of the interval, or seeing the rower has stopped) and instruct the rest of the application, like the `WorkoutRecorder.js` accordingly.
 
 ### RowingStatistics.js
 
-`RowingStatistics.js` recieves *currentDt* updates, forwards them to `Rower.js` and subsequently inspects `Rower.js` for the resulting state and metrics. Based on this inspection, it updates the finite state machine of the session state and the associated metrics (i.e. linear velocity, linear distance, power, etc.). It maintains the following states:
+`RowingStatistics.js` recieves *currentDt* updates, forwards them to `Rower.js` and subsequently inspects `Rower.js` for the resulting strokestate and associated metrics. Based on this inspection, it updates the finite state machine of the sessionstate and the associated metrics (i.e. linear velocity, linear distance, power, etc.). It maintains the following sessionstates:
 
 ```mermaid
 stateDiagram-v2
@@ -97,7 +98,7 @@ In total, this takes full control of the displayed metrics in a specific interva
 
 ### Rower.js
 
-`Rower.js` recieves *currentDt* updates, forwards them to `Flywheel.js` and subsequently inspects `Flywheel.js` for the resulting state and angular metrics, transforming it to a rower state and linear metrics. `Rower.js` can have the following states:
+`Rower.js` recieves *currentDt* updates, forwards them to `Flywheel.js` and subsequently inspects `Flywheel.js` for the resulting state and angular metrics, transforming it to a strokestate and linear metrics. `Rower.js` can have the following strokestates:
 
 ```mermaid
 stateDiagram-v2
@@ -113,7 +114,7 @@ stateDiagram-v2
   Stopped --> [*]
 ```
 
-`Rower.js` inspects the flywheel behaviour on each impuls and translates the flywheel state into the rower's state (i.e. 'WaitingForDrive', 'Drive', 'Recovery', 'Stopped') through a finite state machine. Based on the angular metrics (i.e.e drag, angular velocity, angular acceleration) it also calculates the updated associated linear metrics (i.e. linear velocity, linear distance, power, etc.). As most metrics can only be calculated at (specific) phase ends, it will only report the metrics it can claculate. Aside temporal metrics (Linear Velocity, Power, etc.) it also maintains several absolute metrics (like total moving time and total linear distance travelled). It only updates metrics that can be updated meaningful, and it will not resend (potentially stale) data that isn't updated.
+`Rower.js` inspects the flywheel behaviour on each impuls and translates the flywheel state into the strokestate (i.e. 'WaitingForDrive', 'Drive', 'Recovery', 'Stopped') through a finite state machine. Based on the angular metrics (i.e.e drag, angular velocity, angular acceleration) it also calculates the updated associated linear metrics (i.e. linear velocity, linear distance, power, etc.). As most metrics can only be calculated at (specific) phase ends, it will only report the metrics it can claculate. Aside temporal metrics (Linear Velocity, Power, etc.) it also maintains several absolute metrics (like total moving time and total linear distance travelled). It only updates metrics that can be updated meaningful, and it will not resend (potentially stale) data that isn't updated.
 
 ### Flywheel.js
 
@@ -149,5 +150,5 @@ For the determination of angular velocity and angular acceleration we use quadra
 From a pure mathematical perspective, a higher order polynomial would be more appropriate. A cubic regressor, or even better a fourth order polynomal have shown to be better mathematical approximation of the time versus distance function for a Concept2 RowErg. However, there are some current practical objections against using these more complex methods:
 
 * Higher order polynomials are less stable in nature, and overfitting is a real issue. As this might introduce wild shocks in our metrics, this might be a potential issue for application;
-* A key limitation is the available number of datapoints. For the determination of a polynomial of the n-th order, you need at least n+1 datapoints (which in OpenRowingMonitor translates to a `flankLength`). Some rowers, for example the Sportstech WRX700, only deliver 5 to 6 datapoints for the entire drive phase, thus putting explicit limits on the number of datapoints available.
+* A key limitation is the available number of datapoints. For the determination of a polynomial of the n-th order, you need at least n+1 datapoints (which in Open Rowing Monitor translates to a `flankLength`). Some rowers, for example the Sportstech WRX700, only deliver 5 to 6 datapoints for the entire drive phase, thus putting explicit limits on the number of datapoints available for such an approximation.
 * Calculating a higher order polynomial in a robust way, for example by Theil-Senn regression, is CPU intensive. A quadratic approach requires a O(n<sup>2</sup>) calculation when a datapoint is added to the flank. Our estimate is that a cubic approach requires a O(n<sup>3</sup>) calculation, and a 4th polynomial a O(n<sup>4</sup>) calculation. With smaller flanks (which determines the n) this has proven to be doable, but for machines with produce a lot of datapoints, and thus more noise and a bigger `flankLength`(like the C2 RowErg and Nordictrack RX-800, both with an 11 `flankLength`) this becomes an issue, as completing 10<sup>3</sup> or even 10<sup>4</sup> complex calculations within the 5 miliseconds that is available before the next datapoint arrives, is most likely impossible.
