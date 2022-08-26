@@ -4,11 +4,13 @@ In this document, we describe the architectual construction of Open Rowing Monit
 
 ## Platform choice
 
-The choice has been made to use Raspian as OS, as it is easily installed by the user.
+We have chosen for Raspberry Pi, instead of Arduino, due to the CPU requirements needed for some machines. The Raspberry Pi can easily be bought by regular users and installation of the OS and applications is pretty straightforward. It also allows for easy connection of hardware through the GPIO interface.
 
-## Choice for JavaScript
+We have chosen to use Raspian as OS, as it is easily installed by the user, it provides a well maintained platform with many extensions, and it maintains a 64Bit PREEMPT kernel by default. [Ubuntu Core](https://ubuntu.com/core) provides a a leaner 64-bit low-latency kernel and their Snap-based IoT platform is beautiful, but it also requires a much more complex development and deployment toolchain, which would distract from the core application at the moment.
 
-The choice has been made to use JavaScript to build te application, as many components were readily available.
+## Choice for Node.js and JavaScript
+
+The choice has been made to use JavaScript to build te application, as many of the needed components (like GPIO and Bluetooth Low Energy) components are readily available. The choice for a runtime interpreted language is traditionally at odds with the low latency requirements that is close to physical hardware. The performance of the app depends heavily on the performance of node.js, which itself isn't optimized for low-latency and high frequency environments. However, in practice, we haven't run into any situations where CPU-load has proven to be too much or processing has been frustrated by latency, even when using full Theil-Senn quadratic regression models on larger flanks (which is O(n<sup>2</sup>)).
 
 ## Main functional components
 
@@ -140,18 +142,12 @@ Adittional benefit of this approach is that it makes transitions in intervals mo
 
 ## Open issues, Known problems and Regrettable design decissions
 
-### Use of Raspbian
+### Use of quadratic regression instead of cubic regression
 
-Currently, the algorithms can handle a significant level of noise at the cost of the precission of the peaks, but the data might become more reliable and accurate when the noise is removed from the source.
+For the determination of angular velocity and angular acceleration we use quadratic regression over the time versus distance function. When using the right algorithm, this has the strong benefit of being robust to noise, at the cost of a O(n<sup>2</sup>) calculation per new datapoint (where n is the flanklength). Quadratic regression would be fitting if the acceleration would be a constant, as the formulae used would aling perfectly with this use. Unfortunatly, the nature of the rowing stroke excludes that assumption as the ideal force curve is a heystack, and thus the force on the flywheel varies in time. As an approximation on a smaller interval, quadratic regression has proven to outperform (i.e. less suspect to noise in the signal) both the numerical approach with noise filtering and the linear regression methods.
 
-A default Rasbian install does quite a decent job in extracting metrics, but the standard 32-bit kernel isn't optimised for IoT applications with low-latency requirements, like a rowing machine. The low latency (or more precise, less fluctuating latency) is essential to measure the time between impulses, as small measurement errors in these intervals will throw off force-curve calculations by presenting themselves as peaks. Using the 32-bit kernel therefore isn't advised for high-frequency machines (like the Concept2's or NordicTracks).
+From a pure mathematical perspective, a higher order polynomial would be more appropriate. A cubic regressor, or even better a fourth order polynomal have shown to be better mathematical approximation of the time versus distance function for a Concept2 RowErg. However, there are some current practical objections against using these more complex methods:
 
-The 64Bit Raspian lite install provides a PREEMPT kernel out of the box, which is optimised for IoT applications with low-latency requirements. Installation of OpenRowingMonitor is possible and even has been tested very thoroughly, and has show to work well. Setting the GPIO and application priority isn't trivial, as setting it too high migh starve critical OS processes. The recommended practice for Low-Latency IoT to assign each critical process its own CPU has not been tried yet.
-
-An alternative to Rasbian is Ubuntu Core, which has a leaner 64-bit kernel, and where a low-latency kernel is maintained as well. Please note, this is NOT a PREEMPT kernel yet! The IoT approach of Ubuntu, which heavily depends on Snap as main application deployment vehicle, is a change from the current architecture as it would require a containered application. From an install perspective, it would make much more sense to depend on a backend (i.e the hardware measurement and webserver) to be in one Snap, and the Frontend to be in another Snap (as Ubuntu-Frame provides this front-end functionality out of the box, and thus only needs to be configured). There especially are issues with storing settings, which need to be retained even when the Snap gets updated. Therefore, this is a far from trivial approach.
-
-### Use of Node.js
-
-The choice for a runtime interpreted language is traditionally at odds with the low latency requirements that is close to actual hardware. In theory, the performance of the app would heavily depend on the performance of node.js, which isn't optimized for low-latency and high frequency environments. In practice, we haven't run into any situations where CPU-load has proven to be too much, even when using experimental full quadratic Theil-Senn estimations. However, migrating the interrupt handler to C++ might reduce latency variations and thus improve results.
-
-Switching from JavaScript/node.js to a precompiled C++ app completely would be doable, as the codebase is quite compact, but it would add a lot of complexity in deploying Open Rowing Monitor as the C++ code needs to be compiled for the target platform by the end user. In combination with the above, where Snap would do a lot of the heavy lifting to mitigate both platform dependence and application deployment, it might be an interesting approach to investigate.
+* Higher order polynomials are less stable in nature, and overfitting is a real issue. As this might introduce wild shocks in our metrics, this might be a potential issue for application;
+* A key limitation is the available number of datapoints. For the determination of a polynomial of the n-th order, you need at least n+1 datapoints (which in OpenRowingMonitor translates to a `flankLength`). Some rowers, for example the Sportstech WRX700, only deliver 5 to 6 datapoints for the entire drive phase, thus putting explicit limits on the number of datapoints available.
+* Calculating a higher order polynomial in a robust way, for example by Theil-Senn regression, is CPU intensive. A quadratic approach requires a O(n<sup>2</sup>) calculation when a datapoint is added to the flank. Our estimate is that a cubic approach requires a O(n<sup>3</sup>) calculation, and a 4th polynomial a O(n<sup>4</sup>) calculation. With smaller flanks (which determines the n) this has proven to be doable, but for machines with produce a lot of datapoints, and thus more noise and a bigger `flankLength`(like the C2 RowErg and Nordictrack RX-800, both with an 11 `flankLength`) this becomes an issue, as completing 10<sup>3</sup> or even 10<sup>4</sup> complex calculations within the 5 miliseconds that is available before the next datapoint arrives, is most likely impossible.
