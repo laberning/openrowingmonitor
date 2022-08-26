@@ -279,7 +279,7 @@ function createRowingStatistics (config, session) {
   function getMetrics () {
     const cyclePace = cycleLinearVelocity.clean() !== 0 && cycleLinearVelocity.raw() > 0 && sessionStatus === 'Rowing' ? (500.0 / cycleLinearVelocity.clean()) : Infinity
     return {
-      sessiontype: session.targetDistance > 0 ? 'Distance' : session.targetTime > 0 ? 'Time' : 'JustRow',
+      sessiontype: session.targetDistance > 0 ? 'Distance' : (session.targetTime > 0 ? 'Time' : 'JustRow'),
       sessionStatus,
       strokeState: rower.strokeState(),
       totalMovingTime: totalMovingTime > 0 ? totalMovingTime : 0,
