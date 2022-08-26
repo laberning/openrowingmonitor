@@ -41,8 +41,8 @@ export default class GeneralStatus extends bleno.Characteristic {
       bufferBuilder.writeUInt24LE(Math.round(data.totalMovingTime * 100))
       // distance: UInt24LE in 0.1 m
       bufferBuilder.writeUInt24LE(Math.round(data.totalLinearDistance * 10))
-      // workoutType: UInt8 will always use 0 (WORKOUTTYPE_JUSTROW_NOSPLITS)
-      bufferBuilder.writeUInt8(0)
+      // workoutType: UInt8 0 WORKOUTTYPE_JUSTROW_NOSPLITS, 2 WORKOUTTYPE_FIXEDDIST_NOSPLITS, 4 WORKOUTTYPE_FIXEDTIME_NOSPLITS
+      bufferBuilder.writeUInt8(data.sessionStatus === 'Distance' ? 2 : (data.sessionStatus === 'Time' ? 4 : 0))
       // intervalType: UInt8 will always use 255 (NONE)
       bufferBuilder.writeUInt8(255)
       // workoutState: UInt8 0 WAITTOBEGIN, 1 WORKOUTROW, 10 WORKOUTEND
