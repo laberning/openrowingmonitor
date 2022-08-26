@@ -4,7 +4,7 @@ This guide helps you to adjust the rowing monitor specifically for a new type of
 
 ## Why we need rower specific settings
 
-No rowing machine is the same, and some physical construction parameters are important for the Rowing Monitor to be known to be able to understand your rowing stroke. By far, the easiest way is to select your rower profile from `config/rowerProfiles.js` and put its name in `config.js` (i.e. `rowerSettings: rowerProfiles.WRX700`). The rowers mentioned there are maintained by us for OpenRowingMonitor and are structurally tested with changes typically automatically implemented.
+No rowing machine is the same, and some physical construction parameters are important for the Rowing Monitor to be known to be able to understand your rowing stroke. By far, the easiest way to configure your rower is to select your rower profile from `config/rowerProfiles.js` and put its name in `config.js` (i.e. `rowerSettings: rowerProfiles.WRX700`). The rowers mentioned there are maintained by us for OpenRowingMonitor and we also structurally test these machines with changes in settings. For you as a user, this has the benefit that updates in our software are automatically implemented. So if you make a rower profile for your machine, please send the profile and some raw data (explained below) to us as well so we can maintain it for you.
 
 If you want something special, or if your rower isn't in there, this guide will help you set it up. Please note that determining these settings is quite labor-intensive, and typically some hard rowing is involved. If you find suitable settings for a new type of rower, please send in the data and settings, so we can add it to OpenRowingMonitor and make other users happy as well.
 
@@ -14,6 +14,34 @@ The key feature for Open Rowing Monitor is to reliably produce metrics you see o
 
 * Stroke detection
 * Physical metrics (like distance, power and speed)
+
+We identified several steps to get things working:
+
+* Setting the right stroke noise filtering settings
+* Getting detailed logging
+* Getting stroke detection right by:
+  * Setting the right number of magnets
+  * Setting the right sprocket size
+  * Setting the minimal slope, stroke quality, flank length and number of errors
+* Getting the metrics right by:
+  * Setting the dragfactor
+
+### Getting stroke detection right
+
+A key element in getting rowing data right is getting the stroke detection right, as we report many metrics on a per-stroke basis. The **Impulse Noise reduction settings** reduce the level of noise on the level of individual impulses. You should change these settings if you experience issues with stroke detection or the stability of the drag factor calculation. The stroke detection consists out of three types of filters:
+
+* A smoothing filter, using a running average. The **smoothing** setting determines the length of the running average for the impulses, which removes the height of the peaks, removes noise to a certain level but keeps the stroke detection responsive. Smoothing typically varies between 1 to 4, where 1 effectively turns it off.
+* A high-pass/low-pass filter, based on **minimumTimeBetweenImpulses** (the shortest allowable time between impulses) and **maximumTimeBetweenImpulses** (the longest allowed time between impulses). Combined, they remove any obvious errors in the duration between impulses (in seconds) during *active* rowing. Measurements outside of this range are filtered out to prevent the stroke detection algorithm to get distracted. This setting is highly dependent on the physical construction of your rower, so you have to determine it yourself without any hints. The easiest way to determine this is by visualizing your raw recordings in Excel.
+
+By changing the noise reduction settings, you can remove any obvious errors. You don't need to filter everything: it is just to remove obvious errors that might frustrate the stroke detection, but in the end you can't prevent every piece of noise out there. OpenRowingMonitor can handle some noise, so it is just to prevent extreme outliers. Begin with the noise filtering, when you are satisfied, you can adjust the rest of the stroke detection settings.
+
+Another set of settings are the **flankLength** and **numberOfErrorsAllowed** setting, which determine the condition when the stroke detection is sufficiently confident that the stroke has started/ended. In essence, the stroke detection looks for a consecutive increasing/decreasing impulse lengths, and the **flankLength** determines how many consecutive flanks have to be seen before the stroke detection considers a stroke to begin or end. Please note that making the flank longer does *not* change your measurement in any way: the algorithms always rely on the beginning of the flank, not at the current end. Generally, a **flankLength** of 3 to 4 typically works. Sometimes, a measurement is too noisy, which requires some errors in the flanks to be ignored, which can be done through the **numberOfErrorsAllowed** setting. For example, the NordicTrack RX-800 successfully uses a **flankLength** of 9 and a **numberOfErrorsAllowed** of 2, which allows quite some noise but forces quite a long flank. This setting requires a lot of tweaking and rowing.
+
+At the level of the stroke detection, there is some additional noise filtering, preventing noise to start a drive- or recovery-phase too early. The settings **minimumDriveTime** and **minimumRecoveryTime** determine the minimum times (in seconds) for the drive and recovery phases. Generally, the drive phase lasts at least 0.500 second, and the recovery phase 0.900 second for recreational rowers.
+
+When OpenRowingMonitor records a log (set setting createRawDataFiles to `true`), you can paste the values in the first column of the "Raw Data" tab (please observe that the Raspberry uses a point as separator, and your version of Excel might expect a comma). From there, the Excel file simulates the calculations the OpenRowingMonitor makes, allowing you to play with these settings.
+
+Please note that changing the noise filtering and stroke detection settings will affect your calculated dragFactor. So it is best to start with rowing a few strokes to determine settings for noise filtering and stroke detection, and then move on to the other settings.
 
 ### Getting an insight into the inner workings of OpenRowingMonitor
 
@@ -36,23 +64,6 @@ restart after config a change to activate it: `sudo systemctl restart openrowing
 Get the status of the OpenRowingMonitor service: `sudo systemctl status openrowingmonitor`
 
 Show the log output of a service: `sudo journalctl -u openrowingmonitor`
-
-### Getting stroke detection right
-
-A key element in getting rowing data right is getting the stroke detection right, as we report many metrics on a per-stroke basis. The **Impulse Noise reduction settings** reduce the level of noise on the level of individual impulses. You should change these settings if you experience issues with stroke detection or the stability of the drag factor calculation. The stroke detection consists out of three types of filters:
-
-* A smoothing filter, using a running average. The **smoothing** setting determines the length of the running average for the impulses, which removes the height of the peaks, removes noise to a certain level but keeps the stroke detection responsive. Smoothing typically varies between 1 to 4, where 1 effectively turns it off.
-* A high-pass/low-pass filter, based on **minimumTimeBetweenImpulses** (the shortest allowable time between impulses) and **maximumTimeBetweenImpulses** (the longest allowed time between impulses). Combined, they remove any obvious errors in the duration between impulses (in seconds) during *active* rowing. Measurements outside of this range are filtered out to prevent the stroke detection algorithm to get distracted. This setting is highly dependent on the physical construction of your rower, so you have to determine it yourself without any hints. The easiest way to determine this is by visualizing your raw recordings in Excel.
-
-By changing the noise reduction settings, you can remove any obvious errors. You don't need to filter everything: it is just to remove obvious errors that might frustrate the stroke detection, but in the end you can't prevent every piece of noise out there. OpenRowingMonitor can handle some noise, so it is just to prevent extreme outliers. Begin with the noise filtering, when you are satisfied, you can adjust the rest of the stroke detection settings.
-
-Another set of settings are the **flankLength** and **numberOfErrorsAllowed** setting, which determine the condition when the stroke detection is sufficiently confident that the stroke has started/ended. In essence, the stroke detection looks for a consecutive increasing/decreasing impulse lengths, and the **flankLength** determines how many consecutive flanks have to be seen before the stroke detection considers a stroke to begin or end. Please note that making the flank longer does *not* change your measurement in any way: the algorithms always rely on the beginning of the flank, not at the current end. Generally, a **flankLength** of 3 to 4 typically works. Sometimes, a measurement is too noisy, which requires some errors in the flanks to be ignored, which can be done through the **numberOfErrorsAllowed** setting. For example, the NordicTrack RX-800 successfully uses a **flankLength** of 9 and a **numberOfErrorsAllowed** of 2, which allows quite some noise but forces quite a long flank. This setting requires a lot of tweaking and rowing.
-
-At the level of the stroke detection, there is some additional noise filtering, preventing noise to start a drive- or recovery-phase too early. The settings **minimumDriveTime** and **minimumRecoveryTime** determine the minimum times (in seconds) for the drive and recovery phases. Generally, the drive phase lasts at least 0.500 second, and the recovery phase 0.900 second for recreational rowers.
-
-When OpenRowingMonitor records a log (set setting createRawDataFiles to `true`), you can paste the values in the first column of the "Raw Data" tab (please observe that the Raspberry uses a point as separator, and your version of Excel might expect a comma). From there, the Excel file simulates the calculations the OpenRowingMonitor makes, allowing you to play with these settings.
-
-Please note that changing the noise filtering and stroke detection settings will affect your calculated dragFactor. So it is best to start with rowing a few strokes to determine settings for noise filtering and stroke detection, and then move on to the other settings.
 
 ### Getting the metrics right
 
@@ -95,3 +106,10 @@ Some people want it all, and we're happy to give to you when your rower and your
 * **dampingConstantSmoothing** determines the smoothing of the dragfactor across strokes (if autoAdjustDragFactor is set to true). Normally set at 5 strokes, which prevents wild values to throw off all your measurements. If you have rower that produces very little noise in the data, then it could be an option to reduce. If your machine produces noisy data, this is the one to increase before anything else.
 * **dampingConstantMaxChange** determines the maximum change between a currently determined dragfactor and the current average of the previous dampingConstantSmoothing strokes (if autoAdjustDragFactor is set to true). This filter reduces spikes in the calculation and thus makes the dragfactor less responsive to changes. The default value of 0.10 implies that the maximum upward/downward change is an increase of the drag with 10%. Please note that this filter still allows changes, it just limits their impact to this percentage. Most rower's dragfactor is relatively constant, however certain hyrid rower's dragfactor changes when the speed changes. To allow for bigger changes within a stroke, increase this setting. When the expected changes are small, set this setting small. When your rower is a hybrid or when you have one configuration for all your damper settings, this should be a bit wider.
 * **createRawDataFiles**: This is as raw as it gets, as setting this to `true` makes Open Rowing Monitor dump the raw impulse-lengths to a file (see [how we interpret this data](physics_openrowingmonitor.md)).
+
+## Sending in a rower profile to us
+
+Sending in a rower profile helps other users, but also helps yourself as we structurally test and update the knowwn configurations. We need the following things from you to maintain a rower profile:
+
+* The **profile** itself: these are the settings you used to get the machine working.
+* A **raw datafile** (described above) of a session, preferably with your distance and time. This allows us to test if newer versions of OpenRowingMonitor will deliver similar results to you.
