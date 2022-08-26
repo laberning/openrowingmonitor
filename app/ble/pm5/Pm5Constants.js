@@ -9,7 +9,7 @@ const constants = {
   model: 'PM5',
   name: 'PM5 123456789 Row',
   hardwareRevision: '907',
-  // see https://www.concept2.com/service/monitors/pm5/firmware for available versions
+  // See https://www.concept2.com/service/monitors/pm5/firmware for available versions
   // please note: hardware versions exclude a software version, and thus might confuse the client
   firmwareRevision: '210',
   manufacturer: 'Concept2',
