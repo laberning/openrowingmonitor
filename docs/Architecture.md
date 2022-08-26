@@ -1,5 +1,6 @@
 # Open Rowing Monitor architecture
 
+<!-- markdownlint-disable no-inline-html -->
 In this document, we describe the architectual construction of Open Rowing Monitor. For the reasons behind the physics, please look at [the Physics behind Open Rowing Monitor](Physics_Of_OpenRowingMonitor.md) and [its practical validation](Engine_Validation.md). In this document we describe the main functional blocks in Open Rowing Monitor, and the major design decissions.
 
 ## Platform choice
