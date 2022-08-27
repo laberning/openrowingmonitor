@@ -55,8 +55,8 @@ export default class GeneralStatus extends bleno.Characteristic {
       bufferBuilder.writeUInt24LE(Math.round(data.totalLinearDistance))
       // workoutDuration: UInt24LE in 0.01 sec (if type TIME)
       bufferBuilder.writeUInt24LE(Math.round(data.totalMovingTime * 100))
-      // workoutDurationType: UInt8 0 TIME, 1 CALORIES, 2 DISTANCE, 3 WATTS
-      bufferBuilder.writeUInt8(data.sessiontype === 'Distance' ? 2 : 0)
+      // workoutDurationType: UInt8 0 TIME, 0x40 CALORIES, 0x80 DISTANCE, 0xC0 WATTS
+      bufferBuilder.writeUInt8(data.sessiontype === 'Distance' ? 0x80 : 0)
       // dragFactor: UInt8
       bufferBuilder.writeUInt8(Math.round(Math.min(data.dragFactor, 255)))
 
