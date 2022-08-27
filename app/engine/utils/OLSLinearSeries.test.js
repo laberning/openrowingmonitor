@@ -7,7 +7,7 @@ import * as assert from 'uvu/assert'
 
 import { createOLSLinearSeries } from './OLSLinearSeries.js'
 
-test('Correct behaviour of a series after several puhed values, function y = 3x + 6, noisefree', () => {
+test('Correct behaviour of a series after initialisation', () => {
   const dataSeries = createOLSLinearSeries(3)
   testLength(dataSeries, 0)
   testXAtSeriesBegin(dataSeries, 0)
@@ -27,7 +27,11 @@ test('Correct behaviour of a series after several puhed values, function y = 3x 
   testSlopeEquals(dataSeries, 0)
   testInterceptEquals(dataSeries, 0)
   testGoodnessOfFitEquals(dataSeries, 0)
+})
 
+test('Correct behaviour of a series after several puhed values, function y = 3x + 6, noisefree, 1 datapoint', () => {
+  const dataSeries = createOLSLinearSeries(3)
+  testLength(dataSeries, 0)
   dataSeries.push(5, 9)
   testLength(dataSeries, 1)
   testXAtSeriesBegin(dataSeries, 5)
@@ -47,7 +51,11 @@ test('Correct behaviour of a series after several puhed values, function y = 3x 
   testSlopeEquals(dataSeries, 0)
   testInterceptEquals(dataSeries, 0)
   testGoodnessOfFitEquals(dataSeries, 0)
+})
 
+test('Correct behaviour of a series after several puhed values, function y = 3x + 6, noisefree, 2 datapoints', () => {
+  const dataSeries = createOLSLinearSeries(3)
+  dataSeries.push(5, 9)
   dataSeries.push(3, 3)
   testLength(dataSeries, 2)
   testXAtSeriesBegin(dataSeries, 5)
@@ -67,7 +75,12 @@ test('Correct behaviour of a series after several puhed values, function y = 3x 
   testSlopeEquals(dataSeries, 3)
   testInterceptEquals(dataSeries, -6)
   testGoodnessOfFitEquals(dataSeries, 1)
+})
 
+test('Correct behaviour of a series after several puhed values, function y = 3x + 6, noisefree, 3 datapoints', () => {
+  const dataSeries = createOLSLinearSeries(3)
+  dataSeries.push(5, 9)
+  dataSeries.push(3, 3)
   dataSeries.push(4, 6)
   testLength(dataSeries, 3)
   testXAtSeriesBegin(dataSeries, 5)
@@ -87,7 +100,13 @@ test('Correct behaviour of a series after several puhed values, function y = 3x 
   testSlopeEquals(dataSeries, 3)
   testInterceptEquals(dataSeries, -6)
   testGoodnessOfFitEquals(dataSeries, 1)
+})
 
+test('Correct behaviour of a series after several puhed values, function y = 3x + 6, noisefree, 4 datapoints', () => {
+  const dataSeries = createOLSLinearSeries(3)
+  dataSeries.push(5, 9)
+  dataSeries.push(3, 3)
+  dataSeries.push(4, 6)
   dataSeries.push(6, 12)
   testLength(dataSeries, 3)
   testXAtSeriesBegin(dataSeries, 3)
@@ -107,7 +126,14 @@ test('Correct behaviour of a series after several puhed values, function y = 3x 
   testSlopeEquals(dataSeries, 3)
   testInterceptEquals(dataSeries, -6)
   testGoodnessOfFitEquals(dataSeries, 1)
+})
 
+test('Correct behaviour of a series after several puhed values, function y = 3x + 6, noisefree, 5 datapoints', () => {
+  const dataSeries = createOLSLinearSeries(3)
+  dataSeries.push(5, 9)
+  dataSeries.push(3, 3)
+  dataSeries.push(4, 6)
+  dataSeries.push(6, 12)
   dataSeries.push(1, -3)
   testLength(dataSeries, 3)
   testXAtSeriesBegin(dataSeries, 4)
@@ -127,7 +153,14 @@ test('Correct behaviour of a series after several puhed values, function y = 3x 
   testSlopeEquals(dataSeries, 3)
   testInterceptEquals(dataSeries, -6)
   testGoodnessOfFitEquals(dataSeries, 1)
+})
 
+test('Correct behaviour of a series after several puhed values, function y = 3x + 6, noisefree, 4 datapoints and a reset', () => {
+  const dataSeries = createOLSLinearSeries(3)
+  dataSeries.push(5, 9)
+  dataSeries.push(3, 3)
+  dataSeries.push(4, 6)
+  dataSeries.push(6, 12)
   dataSeries.reset()
   testLength(dataSeries, 0)
   testXAtSeriesBegin(dataSeries, 0)
