@@ -1,6 +1,6 @@
 'use strict'
 /*
-  Open Rowing Monitor, https://github.com/jaapvanekris/openrowingmonitor
+  Open Rowing Monitor, https://github.com/laberning/openrowingmonitor
 
   As this object is fundamental for most other utility objects, we must test its behaviour quite thoroughly
 */
@@ -11,47 +11,47 @@ import { createSeries } from './Series.js'
 
 test('Series behaviour with an empty series', () => {
   const dataSeries = createSeries(3)
-  assert.ok(dataSeries.length() === 0, `Length should be 0, is ${dataSeries.length()}`)
-  assert.ok(dataSeries.atSeriesBegin() === 0, `atSeriesBegin should be 0, is ${dataSeries.atSeriesBegin()}`)
-  assert.ok(dataSeries.atSeriesEnd() === 0, `atSeriesEnd should be 0, is ${dataSeries.atSeriesEnd()}`)
-  assert.ok(dataSeries.numberOfValuesAbove(0) === 0, `numberOfValuesAbove(0) should be 0, is ${dataSeries.numberOfValuesAbove(0)}`)
-  assert.ok(dataSeries.numberOfValuesEqualOrBelow(0) === 0, `numberOfValuesAbove(0) should be 0, is ${dataSeries.numberOfValuesEqualOrBelow(0)}`)
-  assert.ok(dataSeries.numberOfValuesAbove(10) === 0, `numberOfValuesAbove(10) should be 0, is ${dataSeries.numberOfValuesAbove(0)}`)
-  assert.ok(dataSeries.numberOfValuesEqualOrBelow(10) === 0, `numberOfValuesAbove(10) should be 0, is ${dataSeries.numberOfValuesEqualOrBelow(0)}`)
-  assert.ok(dataSeries.sum() === 0, `sum should be 0, is ${dataSeries.sum()}`)
-  assert.ok(dataSeries.average() === 0, `average should be 0, is ${dataSeries.average()}`)
-  assert.ok(dataSeries.median() === 0, `median should be 0, is ${dataSeries.median()}`)
+  testLength(dataSeries, 0)
+  testatSeriesBegin(dataSeries, 0)
+  testAtSeriesEnd(dataSeries, 0)
+  testNumberOfValuesAbove(dataSeries, 0, 0)
+  testNumberOfValuesEqualOrBelow(dataSeries, 0, 0)
+  testNumberOfValuesAbove(dataSeries, 10, 0)
+  testNumberOfValuesEqualOrBelow(dataSeries, 10, 0)
+  testSum(dataSeries, 0)
+  testAverage(dataSeries, 0)
+  testMedian(dataSeries, 0)
 })
 
 test('Series behaviour with a single pushed value. Series = [9]', () => {
   const dataSeries = createSeries(3)
   dataSeries.push(9)
-  assert.ok(dataSeries.length() === 1, `Length should be 1, is ${dataSeries.length()}`)
-  assert.ok(dataSeries.atSeriesBegin() === 9, `atSeriesBegin should be 9, is ${dataSeries.atSeriesBegin()}`)
-  assert.ok(dataSeries.atSeriesEnd() === 9, `atSeriesEnd should be 9, is ${dataSeries.atSeriesEnd()}`)
-  assert.ok(dataSeries.numberOfValuesAbove(0) === 1, `numberOfValuesAbove should be 1, is ${dataSeries.numberOfValuesAbove(0)}`)
-  assert.ok(dataSeries.numberOfValuesEqualOrBelow(0) === 0, `numberOfValuesAbove should be 0, is ${dataSeries.numberOfValuesEqualOrBelow(0)}`)
-  assert.ok(dataSeries.numberOfValuesAbove(10) === 0, `numberOfValuesAbove(10) should be 0, is ${dataSeries.numberOfValuesAbove(0)}`)
-  assert.ok(dataSeries.numberOfValuesEqualOrBelow(10) === 1, `numberOfValuesAbove(10) should be 1, is ${dataSeries.numberOfValuesEqualOrBelow(0)}`)
-  assert.ok(dataSeries.sum() === 9, `sum should be 9, is ${dataSeries.sum()}`)
-  assert.ok(dataSeries.average() === 9, `average should be 9, is ${dataSeries.average()}`)
-  assert.ok(dataSeries.median() === 9, `median should be 9, is ${dataSeries.median()}`)
+  testLength(dataSeries, 1)
+  testatSeriesBegin(dataSeries, 9)
+  testAtSeriesEnd(dataSeries, 9)
+  testNumberOfValuesAbove(dataSeries, 0, 1)
+  testNumberOfValuesEqualOrBelow(dataSeries, 0, 0)
+  testNumberOfValuesAbove(dataSeries, 10, 0)
+  testNumberOfValuesEqualOrBelow(dataSeries, 10, 1)
+  testSum(dataSeries, 9)
+  testAverage(dataSeries, 9)
+  testMedian(dataSeries, 9)
 })
 
 test('Series behaviour with a second pushed value. Series = [9, 3]', () => {
   const dataSeries = createSeries(3)
   dataSeries.push(9)
   dataSeries.push(3)
-  assert.ok(dataSeries.length() === 2, `Length should be 2, is ${dataSeries.length()}`)
-  assert.ok(dataSeries.atSeriesBegin() === 9, `atSeriesBegin should be 9, is ${dataSeries.atSeriesBegin()}`)
-  assert.ok(dataSeries.atSeriesEnd() === 3, `atSeriesEnd should be 3, is ${dataSeries.atSeriesEnd()}`)
-  assert.ok(dataSeries.numberOfValuesAbove(0) === 2, `numberOfValuesAbove should be 2, is ${dataSeries.numberOfValuesAbove(0)}`)
-  assert.ok(dataSeries.numberOfValuesEqualOrBelow(0) === 0, `numberOfValuesAbove should be 0, is ${dataSeries.numberOfValuesEqualOrBelow(0)}`)
-  assert.ok(dataSeries.numberOfValuesAbove(10) === 0, `numberOfValuesAbove(10) should be 0, is ${dataSeries.numberOfValuesAbove(0)}`)
-  assert.ok(dataSeries.numberOfValuesEqualOrBelow(10) === 2, `numberOfValuesAbove(10) should be 2, is ${dataSeries.numberOfValuesEqualOrBelow(0)}`)
-  assert.ok(dataSeries.sum() === 12, `sum should be 12, is ${dataSeries.sum()}`)
-  assert.ok(dataSeries.average() === 6, `average should be 6, is ${dataSeries.average()}`)
-  assert.ok(dataSeries.median() === 6, `median should be 6, is ${dataSeries.median()}`)
+  testLength(dataSeries, 2)
+  testatSeriesBegin(dataSeries, 9)
+  testAtSeriesEnd(dataSeries, 3)
+  testNumberOfValuesAbove(dataSeries, 0, 2)
+  testNumberOfValuesEqualOrBelow(dataSeries, 0, 0)
+  testNumberOfValuesAbove(dataSeries, 10, 0)
+  testNumberOfValuesEqualOrBelow(dataSeries, 10, 2)
+  testSum(dataSeries, 12)
+  testAverage(dataSeries, 6)
+  testMedian(dataSeries, 6)
 })
 
 test('Series behaviour with a third pushed value. Series = [9, 3, 6]', () => {
@@ -59,16 +59,16 @@ test('Series behaviour with a third pushed value. Series = [9, 3, 6]', () => {
   dataSeries.push(9)
   dataSeries.push(3)
   dataSeries.push(6)
-  assert.ok(dataSeries.length() === 3, `Length should be 3, is ${dataSeries.length()}`)
-  assert.ok(dataSeries.atSeriesBegin() === 9, `atSeriesBegin should be 9, is ${dataSeries.atSeriesBegin()}`)
-  assert.ok(dataSeries.atSeriesEnd() === 6, `atSeriesEnd should be 6, is ${dataSeries.atSeriesEnd()}`)
-  assert.ok(dataSeries.numberOfValuesAbove(0) === 3, `numberOfValuesAbove should be 3, is ${dataSeries.numberOfValuesAbove(0)}`)
-  assert.ok(dataSeries.numberOfValuesEqualOrBelow(0) === 0, `numberOfValuesAbove should be 0, is ${dataSeries.numberOfValuesEqualOrBelow(0)}`)
-  assert.ok(dataSeries.numberOfValuesAbove(10) === 0, `numberOfValuesAbove(10) should be 0, is ${dataSeries.numberOfValuesAbove(0)}`)
-  assert.ok(dataSeries.numberOfValuesEqualOrBelow(10) === 3, `numberOfValuesAbove(10) should be 3, is ${dataSeries.numberOfValuesEqualOrBelow(0)}`)
-  assert.ok(dataSeries.sum() === 18, `sum should be 18, is ${dataSeries.sum()}`)
-  assert.ok(dataSeries.average() === 6, `average should be 6, is ${dataSeries.average()}`)
-  assert.ok(dataSeries.median() === 6, `median should be 6, is ${dataSeries.median()}`)
+  testLength(dataSeries, 3)
+  testatSeriesBegin(dataSeries, 9)
+  testAtSeriesEnd(dataSeries, 6)
+  testNumberOfValuesAbove(dataSeries, 0, 3)
+  testNumberOfValuesEqualOrBelow(dataSeries, 0, 0)
+  testNumberOfValuesAbove(dataSeries, 10, 0)
+  testNumberOfValuesEqualOrBelow(dataSeries, 10, 3)
+  testSum(dataSeries, 18)
+  testAverage(dataSeries, 6)
+  testMedian(dataSeries, 6)
 })
 
 test('Series behaviour with a fourth pushed value. Series = [3, 6, 12]', () => {
@@ -77,16 +77,16 @@ test('Series behaviour with a fourth pushed value. Series = [3, 6, 12]', () => {
   dataSeries.push(3)
   dataSeries.push(6)
   dataSeries.push(12)
-  assert.ok(dataSeries.length() === 3, `Length should be 3, is ${dataSeries.length()}`)
-  assert.ok(dataSeries.atSeriesBegin() === 3, `atSeriesBegin should be 3, is ${dataSeries.atSeriesBegin()}`)
-  assert.ok(dataSeries.atSeriesEnd() === 12, `atSeriesEnd should be 12, is ${dataSeries.atSeriesEnd()}`)
-  assert.ok(dataSeries.numberOfValuesAbove(0) === 3, `numberOfValuesAbove should be 3, is ${dataSeries.numberOfValuesAbove(0)}`)
-  assert.ok(dataSeries.numberOfValuesEqualOrBelow(0) === 0, `numberOfValuesAbove should be 0, is ${dataSeries.numberOfValuesEqualOrBelow(0)}`)
-  assert.ok(dataSeries.numberOfValuesAbove(10) === 1, `numberOfValuesAbove(10) should be 1, is ${dataSeries.numberOfValuesAbove(0)}`)
-  assert.ok(dataSeries.numberOfValuesEqualOrBelow(10) === 2, `numberOfValuesAbove(10) should be 2, is ${dataSeries.numberOfValuesEqualOrBelow(0)}`)
-  assert.ok(dataSeries.sum() === 21, `sum should be 21, is ${dataSeries.sum()}`)
-  assert.ok(dataSeries.average() === 7, `average should be 7, is ${dataSeries.average()}`)
-  assert.ok(dataSeries.median() === 6, `median should be 6, is ${dataSeries.median()}`)
+  testLength(dataSeries, 3)
+  testatSeriesBegin(dataSeries, 3)
+  testAtSeriesEnd(dataSeries, 12)
+  testNumberOfValuesAbove(dataSeries, 0, 3)
+  testNumberOfValuesEqualOrBelow(dataSeries, 0, 0)
+  testNumberOfValuesAbove(dataSeries, 10, 1)
+  testNumberOfValuesEqualOrBelow(dataSeries, 10, 2)
+  testSum(dataSeries, 21)
+  testAverage(dataSeries, 7)
+  testMedian(dataSeries, 6)
 })
 
 test('Series behaviour with a fifth pushed value. Series = [6, 12, -3]', () => {
@@ -96,16 +96,16 @@ test('Series behaviour with a fifth pushed value. Series = [6, 12, -3]', () => {
   dataSeries.push(6)
   dataSeries.push(12)
   dataSeries.push(-3)
-  assert.ok(dataSeries.length() === 3, `Length should be 3, is ${dataSeries.length()}`)
-  assert.ok(dataSeries.atSeriesBegin() === 6, `atSeriesBegin should be 6, is ${dataSeries.atSeriesBegin()}`)
-  assert.ok(dataSeries.atSeriesEnd() === -3, `atSeriesEnd should be -3, is ${dataSeries.atSeriesEnd()}`)
-  assert.ok(dataSeries.numberOfValuesAbove(0) === 2, `numberOfValuesAbove should be 2, is ${dataSeries.numberOfValuesAbove(0)}`)
-  assert.ok(dataSeries.numberOfValuesEqualOrBelow(0) === 1, `numberOfValuesAbove should be 1, is ${dataSeries.numberOfValuesEqualOrBelow(0)}`)
-  assert.ok(dataSeries.numberOfValuesAbove(10) === 1, `numberOfValuesAbove(10) should be 1, is ${dataSeries.numberOfValuesAbove(0)}`)
-  assert.ok(dataSeries.numberOfValuesEqualOrBelow(10) === 2, `numberOfValuesAbove(10) should be 2, is ${dataSeries.numberOfValuesEqualOrBelow(0)}`)
-  assert.ok(dataSeries.sum() === 15, `sum should be 15, is ${dataSeries.sum()}`)
-  assert.ok(dataSeries.average() === 5, `average should be 5, is ${dataSeries.average()}`)
-  assert.ok(dataSeries.median() === 6, `median should be 6, is ${dataSeries.median()}`)
+  testLength(dataSeries, 3)
+  testatSeriesBegin(dataSeries, 6)
+  testAtSeriesEnd(dataSeries, -3)
+  testNumberOfValuesAbove(dataSeries, 0, 2)
+  testNumberOfValuesEqualOrBelow(dataSeries, 0, 1)
+  testNumberOfValuesAbove(dataSeries, 10, 1)
+  testNumberOfValuesEqualOrBelow(dataSeries, 10, 2)
+  testSum(dataSeries, 15)
+  testAverage(dataSeries, 5)
+  testMedian(dataSeries, 6)
 })
 
 test('Series behaviour with a five pushed values followed by a reset, Series = []', () => {
@@ -116,16 +116,48 @@ test('Series behaviour with a five pushed values followed by a reset, Series = [
   dataSeries.push(12)
   dataSeries.push(-3)
   dataSeries.reset()
-  assert.ok(dataSeries.length() === 0, `Length should be 0, is ${dataSeries.length()}`)
-  assert.ok(dataSeries.atSeriesBegin() === 0, `atSeriesBegin should be 0, is ${dataSeries.atSeriesBegin()}`)
-  assert.ok(dataSeries.atSeriesEnd() === 0, `atSeriesEnd should be 0, is ${dataSeries.atSeriesEnd()}`)
-  assert.ok(dataSeries.numberOfValuesAbove(0) === 0, `numberOfValuesAbove(0) should be 0, is ${dataSeries.numberOfValuesAbove(0)}`)
-  assert.ok(dataSeries.numberOfValuesEqualOrBelow(0) === 0, `numberOfValuesAbove(0) should be 0, is ${dataSeries.numberOfValuesEqualOrBelow(0)}`)
-  assert.ok(dataSeries.numberOfValuesAbove(10) === 0, `numberOfValuesAbove(10) should be 0, is ${dataSeries.numberOfValuesAbove(0)}`)
-  assert.ok(dataSeries.numberOfValuesEqualOrBelow(10) === 0, `numberOfValuesAbove(10) should be 0, is ${dataSeries.numberOfValuesEqualOrBelow(0)}`)
-  assert.ok(dataSeries.sum() === 0, `sum should be 0, is ${dataSeries.sum()}`)
-  assert.ok(dataSeries.average() === 0, `average should be 0, is ${dataSeries.average()}`)
-  assert.ok(dataSeries.median() === 0, `median should be 0, is ${dataSeries.median()}`)
+  testLength(dataSeries, 0)
+  testatSeriesBegin(dataSeries, 0)
+  testAtSeriesEnd(dataSeries, 0)
+  testNumberOfValuesAbove(dataSeries, 0, 0)
+  testNumberOfValuesEqualOrBelow(dataSeries, 0, 0)
+  testNumberOfValuesAbove(dataSeries, 10, 0)
+  testNumberOfValuesEqualOrBelow(dataSeries, 10, 0)
+  testSum(dataSeries, 0)
+  testAverage(dataSeries, 0)
+  testMedian(dataSeries, 0)
 })
+
+function testLength (series, expectedValue) {
+  assert.ok(series.length() === expectedValue, `Expected length should be ${expectedValue}, encountered ${series.length()}`)
+}
+
+function testatSeriesBegin (series, expectedValue) {
+  assert.ok(series.atSeriesBegin() === expectedValue, `Expected atSeriesBegin to be ${expectedValue}, encountered ${series.atSeriesBegin()}`)
+}
+
+function testAtSeriesEnd (series, expectedValue) {
+  assert.ok(series.atSeriesEnd() === expectedValue, `Expected atSeriesEnd to be ${expectedValue}, encountered ${series.atSeriesEnd()}`)
+}
+
+function testNumberOfValuesAbove (series, cutoff, expectedValue) {
+  assert.ok(series.numberOfValuesAbove(cutoff) === expectedValue, `Expected numberOfValuesAbove(${cutoff}) to be ${expectedValue}, encountered ${series.numberOfValuesAbove(cutoff)}`)
+}
+
+function testNumberOfValuesEqualOrBelow (series, cutoff, expectedValue) {
+  assert.ok(series.numberOfValuesEqualOrBelow(cutoff) === expectedValue, `Expected numberOfValuesEqualOrBelow(${cutoff}) to be ${expectedValue}, encountered ${series.numberOfValuesEqualOrBelow(cutoff)}`)
+}
+
+function testSum (series, expectedValue) {
+  assert.ok(series.sum() === expectedValue, `Expected sum to be ${expectedValue}, encountered ${series.sum()}`)
+}
+
+function testAverage (series, expectedValue) {
+  assert.ok(series.average() === expectedValue, `Expected average to be ${expectedValue}, encountered ${series.average()}`)
+}
+
+function testMedian (series, expectedValue) {
+  assert.ok(series.median() === expectedValue, `Expected median to be ${expectedValue}, encountered ${series.median()}`)
+}
 
 test.run()
