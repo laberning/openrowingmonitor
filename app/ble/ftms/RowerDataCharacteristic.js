@@ -72,7 +72,7 @@ export default class RowerDataCharacteristic extends bleno.Characteristic {
       // todo: eventhough mathematically correct, setting 0xFFFF (65535s) causes some ugly spikes
       // in some applications which could shift the axis (i.e. workout diagrams in MyHomeFit)
       // so instead for now we use 0 here
-      bufferBuilder.writeUInt16LE(data.cyclePace !== Infinity ? Math.round(data.cyclePace) : 0xFFFF)
+      bufferBuilder.writeUInt16LE(data.cyclePace !== Infinity && data.cyclePace < 65535 ? Math.round(data.cyclePace) : 0xFFFF)
       // Instantaneous Power in watts
       bufferBuilder.writeUInt16LE(Math.round(data.cyclePower))
       // Energy in kcal
