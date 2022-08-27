@@ -50,7 +50,7 @@ export default class IndoorBikeDataCharacteristic extends bleno.Characteristic {
 
   notify (data) {
     // ignore events without the mandatory fields
-    if (!('speed' in data)) {
+    if (!('cycleLinearVelocity' in data)) {
       log.error('can not deliver bike data without mandatory fields')
       return this.RESULT_SUCCESS
     }
@@ -68,26 +68,26 @@ export default class IndoorBikeDataCharacteristic extends bleno.Characteristic {
       // see https://www.bluetooth.com/specifications/specs/gatt-specification-supplement-3/
       // for some of the data types
       // Instantaneous Speed in km/h
-      bufferBuilder.writeUInt16LE(Math.round(data.speed * 100))
+      bufferBuilder.writeUInt16LE(data.cycleLinearVelocity * 3.6 * 100)
       // Instantaneous Cadence in rotations per minute (we use this to communicate the strokes per minute)
-      bufferBuilder.writeUInt16LE(Math.round(data.strokesPerMinute * 2))
+      bufferBuilder.writeUInt16LE(Math.round(data.cycleStrokeRate * 2))
       // Total Distance in meters
-      bufferBuilder.writeUInt24LE(Math.round(data.distanceTotal))
+      bufferBuilder.writeUInt24LE(Math.round(data.totalLinearDistance))
       // Instantaneous Power in watts
-      bufferBuilder.writeUInt16LE(Math.round(data.power))
+      bufferBuilder.writeUInt16LE(Math.round(data.cyclePower))
       // Energy
       // Total energy in kcal
-      bufferBuilder.writeUInt16LE(Math.round(data.caloriesTotal))
+      bufferBuilder.writeUInt16LE(Math.round(data.totalCalories))
       // Energy per hour
       // The Energy per Hour field represents the average expended energy of a user during a
       // period of one hour.
-      bufferBuilder.writeUInt16LE(Math.round(data.caloriesPerHour))
+      bufferBuilder.writeUInt16LE(Math.round(data.totalCaloriesPerHour))
       // Energy per minute
-      bufferBuilder.writeUInt8(Math.round(data.caloriesPerMinute))
+      bufferBuilder.writeUInt8(Math.round(data.totalCaloriesPerMinute))
       // Heart Rate: Beats per minute with a resolution of 1
       bufferBuilder.writeUInt8(Math.round(data.heartrate))
       // Elapsed Time: Seconds with a resolution of 1
-      bufferBuilder.writeUInt16LE(Math.round(data.durationTotal))
+      bufferBuilder.writeUInt16LE(Math.round(data.totalMovingTime))
 
       const buffer = bufferBuilder.getBuffer()
       if (buffer.length > this._subscriberMaxValueSize) {
