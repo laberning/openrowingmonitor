@@ -50,10 +50,10 @@ export default class StrokeData extends bleno.Characteristic {
       bufferBuilder.writeUInt16LE(Math.round(data.recoveryDuration * 100))
       // strokeDistance: UInt16LE in 0.01 s
       bufferBuilder.writeUInt16LE(Math.round(data.cycleDistance * 100))
-      // peakDriveForce: UInt16LE in 0.1 watts
-      bufferBuilder.writeUInt16LE(Math.round(data.drivePeakHandleForce * 10))
-      // averageDriveForce: UInt16LE in 0.1 watts
-      bufferBuilder.writeUInt16LE(Math.round(data.driveAverageHandleForce * 10))
+      // peakDriveForce: UInt16LE in 0.1 lbs
+      bufferBuilder.writeUInt16LE(Math.round(data.drivePeakHandleForce * 0.224809 * 10))
+      // averageDriveForce: UInt16LE in 0.1 lbs
+      bufferBuilder.writeUInt16LE(Math.round(data.driveAverageHandleForce * 0.224809 * 10))
       if (this._updateValueCallback) {
         // workPerStroke is only added if data is not send via multiplexer
         // workPerStroke: UInt16LE in 0.1 Joules
