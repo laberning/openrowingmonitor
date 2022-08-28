@@ -16,36 +16,46 @@ export default {
     // i.e. the number of magnets if used with a reed sensor
     numOfImpulsesPerRevolution: 1,
 
+    // How big the sprocket is that attaches your belt/chain to your flywheel. This determines both the force on the handle
+    // as well as the drive length. If all goes well, you end up with average forces around 400 to 800 N and drive lengths around 1.20 to 1.35 m
+    sprocketRadius: 7.0,
+
     // NOISE FILTER SETTINGS
     // Filter Settings to reduce noise in the measured data
-    // Minimum and maximum duration between impulses in seconds during active rowing. Measurements outside of this range
-    // are replaced by a default value.
+    // Minimum and maximum duration between impulses in seconds during active rowing. Measurements above the maximum are filtered, so setting these liberaly
+    // might help here
     minimumTimeBetweenImpulses: 0.014,
     maximumTimeBetweenImpulses: 0.5,
-    // Percentage change between successive intervals before measurements are considered invalid
-    maximumDownwardChange: 0.25, // effectively the maximum acceleration
-    maximumUpwardChange: 1.75, // effectively the maximum decceleration
-    // Smoothing determines the length of the running average for certain volatile measurements, 1 effectively turns it off
+
+    // Smoothing determines the length of the running average for filtering the currentDt, 1 effectively turns it off
     smoothing: 1,
 
     // STROKE DETECTION SETTINGS
     // Flank length determines the minimum number of consecutive increasing/decreasing measuments that are needed before the stroke detection
     // considers a drive phase change
     // numberOfErrorsAllowed allows for a more noisy approach, but shouldn't be needed
-    flankLength: 2,
-    numberOfErrorsAllowed: 0,
+    flankLength: 3,
+    numberOfErrorsAllowed: 1,
 
-    // Natural deceleration is used to distinguish between a powered and unpowered flywheel.
-    // This must be a NEGATIVE number and indicates the level of deceleration required to interpret it as a free spinning
-    // flywheel. The best way to find the correct value for your rowing machine is a try and error approach.
-    // You can also set this to zero (or positive), to use the more robust, but not so precise acceleration-based stroke
-    // detection algorithm.
-    naturalDeceleration: 0,
+    // This is the minimum force that has to be on the handle before ORM considers it a stroke, in Newtons. So this is about 2 Kg or 4.4 Lbs.
+    minumumForceBeforeStroke: 20,
+
+    // The minimal inclination of the currentDt's before it is considered a recovery. When set to 0, it will look for a pure increase/decrease
+    minumumRecoverySlope: 0,
+
+    // The minimum quality level of the stroke detection: 1.0 is perfect, 0.1 pretty bad. Normally around 0.33. Setting this too high will stop
+    // the recovery phase from being detected.
+    minimumStrokeQuality: 0.34,
+
+    // ORM can automatically calculate the recovery slope and adjust it dynamically. For this to work, autoAdjustDragFactor MUST be set to true
+    autoAdjustRecoverySlope: false,
+
+    // The margin used between the automatically calculated recovery slope and a next recovery. Don't touch unless you know what you are doing.
+    autoAdjustRecoverySlopeMargin: 0.036,
 
     // Error reducing settings for the rowing phase detection (in seconds)
-    maximumImpulseTimeBeforePause: 3.0, // maximum time between impulses before the rowing engine considers it a pause
     minimumDriveTime: 0.300, // minimum time of the drive phase
-    minimumRecoveryTime: 1.200, // minimum time of the recovery phase
+    minimumRecoveryTime: 0.900, // minimum time of the recovery phase
 
     // Needed to determine the drag factor of the rowing machine. This value can be measured in the recovery phase
     // of the stroke.
@@ -64,23 +74,23 @@ export default {
     // When your machine's power and speed readings are too volatile it is wise to turn it off
     autoAdjustDragFactor: false,
 
-    // The moment of inertia of the flywheel kg*m^2, which is ONLY relevant when autoAdjustDragFactor is set to true or when you
-    // use Force Curves. Otherwise this value isn't relevant to your rower
+    // If autoAdjustDragFactor is set to true, it will calculate the drag each recovery phase and update it accordingly to calculate speed,
+    // distance, etc.. As this calculation that is prone to noise in the measuremnts, it is wise to apply smoothing to prevent this noise
+    // from throwing off your key metrics. The default value is a running average of the drag factor of 5 strokes
+    dragFactorSmoothing: 5,
+
+    // When drag is calculated, we also get a quality indication. Based on this quality indication (1.0 is best, 0.1 pretty bad), low quality
+    // drag factors are rejected to prevent drag poisoning
+    minimumDragQuality: 0.83,
+
+    // The moment of inertia of the flywheel kg*m^2
     // A way to measure it is outlined here: https://dvernooy.github.io/projects/ergware/, "Flywheel moment of inertia"
     // You could also roughly estimate it by just doing some strokes and the comparing the calculated power values for
     // plausibility. Note that the power also depends on the drag factor (see above).
     flywheelInertia: 0.5,
 
-    // If autoAdjustDragFactor is set to true, it will calculate the drag each recovery phase and update it accordingly to calculate speed,
-    // distance, etc.. As this calculation that is prone to noise in the measuremnts, it is wise to apply smoothing to prevent this noise
-    // from throwing off your key metrics. The default value is a running average of the drag factor of 5 strokes
-    dampingConstantSmoothing: 5,
-
-    // Another setting for when autoAdjustDragFactor is set to true: the maximum allowed change from the current value. Spikes usually imply
-    // measurement errors, so this setting determines the maximum change with respect to the current dragfactor. Please note that this filter
-    // will prevent large changes, but will still move the dragfactor upward/downward to prevent it from being stuck. The value is in maximum
-    // allowed change. The default value of 0.10 implies that the maximum upward/downward change is an increase of the drag with 10%.
-    dampingConstantMaxChange: 0.10,
+    // The time before a stroke is considered paused
+    maximumStrokeTimeBeforePause: 6.0,
 
     // A constant that is commonly used to convert flywheel revolutions to a rowed distance
     // see here: http://eodg.atm.ox.ac.uk/user/dudhia/rowing/physics/ergometer.html#section9
@@ -92,98 +102,41 @@ export default {
   },
 
   // Sportstech WRX700
-  WRX700: {
+  Sportstech_WRX700: {
     numOfImpulsesPerRevolution: 2,
-    naturalDeceleration: -5.0,
+    minimumTimeBetweenImpulses: 0.005,
+    maximumTimeBetweenImpulses: 0.5,
+    minumumRecoverySlope: 0.125,
     flywheelInertia: 0.72,
     dragFactor: 32000
   },
 
   // DKN R-320 Air Rower
-  DKNR320: {
+  DKN_R320: {
     numOfImpulsesPerRevolution: 1,
     flywheelInertia: 0.94,
     dragFactor: 8522
   },
 
   // NordicTrack RX800 Air Rower
-  RX800: {
+  NordicTrack_RX800: {
     numOfImpulsesPerRevolution: 4,
-    /* Damper setting 10
-    minimumTimeBetweenImpulses: 0.018,
-    maximumTimeBetweenImpulses: 0.0338,
-    smoothing: 3,
-    maximumDownwardChange: 0.88,
-    maximumUpwardChange: 1.11,
-    flankLength: 9,
-    numberOfErrorsAllowed: 2,
-    naturalDeceleration: -11.5, // perfect runs
-    minimumDriveTime: 0.40,
-    minimumRecoveryTime: 0.90,
-    flywheelInertia: 0.146,
-    dragFactor: 560
-    */
-
-    /* Damper setting 8
-    minimumTimeBetweenImpulses: 0.017,
-    maximumTimeBetweenImpulses: 0.034,
-    smoothing: 3,
-    maximumDownwardChange: 0.8,
-    maximumUpwardChange: 1.15,
-    flankLength: 9,
-    numberOfErrorsAllowed: 2,
-    naturalDeceleration: -10.25, // perfect runs
-    minimumDriveTime: 0.30,
-    minimumRecoveryTime: 0.90,
-    flywheelInertia: 0.131,
-    dragFactor: 440
-    */
-
-    // Damper setting 6
-    minimumTimeBetweenImpulses: 0.00925,
-    maximumTimeBetweenImpulses: 0.038,
-    smoothing: 3,
-    maximumDownwardChange: 0.86,
-    maximumUpwardChange: 1.13,
-    flankLength: 9,
-    numberOfErrorsAllowed: 2,
-    // naturalDeceleration: -8.5, // perfect runs IIII
-    naturalDeceleration: -8.6, // perfect runs IIIXI
-    minimumDriveTime: 0.28,
-    minimumRecoveryTime: 0.90,
-    flywheelInertia: 0.189,
-    dragFactor: 460
-    //
-
-    /* Damper setting 4
-    minimumTimeBetweenImpulses: 0.00925,
-    maximumTimeBetweenImpulses: 0.0335,
-    smoothing: 3,
-    maximumDownwardChange: 0.890,
-    maximumUpwardChange: 1.07,
-    flankLength: 10,
-    numberOfErrorsAllowed: 2,
-    naturalDeceleration: -5.5, // perfect runs I
-    minimumDriveTime: 0.24,
-    minimumRecoveryTime: 0.90,
-    flywheelInertia: 0.140,
-    dragFactor: 255
-    */
-
-    /* Damper setting 2
-    minimumTimeBetweenImpulses: 0.00925,
-    maximumTimeBetweenImpulses: 0.030,
-    smoothing: 4,
-    maximumDownwardChange: 0.962,
-    maximumUpwardChange: 1.07,
+    minimumTimeBetweenImpulses: 0.005,
+    maximumTimeBetweenImpulses: 0.022,
+    sprocketRadius: 3.0,
+    autoAdjustDragFactor: true,
+    minimumDragQuality: 0.83,
+    dragFactorSmoothing: 3,
+    flywheelInertia: 0.180,
+    dragFactor: 225,
     flankLength: 11,
     numberOfErrorsAllowed: 2,
-    naturalDeceleration: -2.45, // perfect runs
-    minimumDriveTime: 0.28,
-    minimumRecoveryTime: 0.90,
-    flywheelInertia: 0.155,
-    dragFactor: 155,
-    magicConstant: 2.8
-    */
+    minimumStrokeQuality: 0.34,
+    minumumRecoverySlope: 0.001,
+    autoAdjustRecoverySlope: true,
+    autoAdjustRecoverySlopeMargin: 0.036,
+    minumumForceBeforeStroke: 80,
+    minimumDriveTime: 0.30,
+    minimumRecoveryTime: 0.90
   }
 }
