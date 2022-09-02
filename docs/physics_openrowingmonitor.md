@@ -10,7 +10,7 @@ Please note that this text is used as a rationale for design decissions in Open 
 Before we analyze the physics of a rowing engine, we first need to define the basic concepts. First we identify the key physical systems at play, then we define the key phases in the rowing stroke.
 
 ### Physical systems in a rower
-A rowing machine effectively has two fundamental movements: a **linear** (the rower moving up and down, or a boat moving forward) and a **rotational** where the energy that the rower inputs in the system is absorbed through a flywheel (either a solid one, or a liquid one).
+A rowing machine effectively has two fundamental movements: a **linear** (the rower moving up and down, or a boat moving forward) and a **rotational** where the energy that the rower inputs in the system is absorbed through a flywheel (either a solid one, or a liquid one) [[1]](#1).
 
 <img src="img/physics/indoorrower.png" width="700">
 
@@ -51,9 +51,39 @@ On an indoor rower, the rowing cycle will always start with a stroke, followed b
 
 Combined, we consider a *Drive* followed by a *Recovery* a **Stroke**. In the calculation of several metrics, the requirement is that it should include *a* *Drive* and *a* *Recovery*, but order isn't a strict requirement for some metrics [[2]](#2). We call such combination of a *Drive* and *Recovery* without perticular order a **Cycle**, which allows us to calculate these metrics twice per *stroke*.
 
+## Leading design principles of the rowing engine
+
+As described in [the architecture](Architecture.md), the rowing engine is the core of Open Rowing Monitor and consists of three major parts: 
+
+* `Flywheel.js`, which determines rotational metrics,
+* `Rower.js`, which transforms rotational metrics in a rowing state and linear metrics,
+* `RowingStatistics.js`, which manages session state, session metrics and optimizes metrics for presentation.
+
+Although the physics is well-understood and even well-described publicly (see [[1]](#1),[[2]](#2),[[3]](#3) and [[4]](#4)), applying these formulae in a practical solution for multiple rowers delivering reliable results is quite challenging. Especially small errors, noise, tends to produce visible effects on the recorded metrics. Therefore, in our design of the physics engine, we obey the following principles (see also [the architecture document](Architecture.md)):
+
+* stay as close to the original data as possible (thus depend on direct measurements as much as possible) instead of heavily depend on derived data. This means that there are two absolute values we try to stay close to as much as possible: the **time between an impulse** and the **Number of Impulses**, where we consider **Number of Impulses** most reliable, and **time between an impulse** reliable but containing noise (the origin and meaning of these metrics, as well the effects of this approach are explained later);
+
+* use robust calculations wherever possible (i.e. not depend on a single measurements, extrapolations or derivative functions, etc.) to reduce effects of measurement errors. When we do need to calculate a derived function, we choose to use a robust linear regression method to reduce the impact of noise;
+
+* Be as close to the results of the Concept2 when possible and realistic, as they are considered the golden standard in indoor rowing metrics.
+
+@@@@@@@@
+
 ## Relevant rotational metrics
 
 Typically, measurements are done in the rotational part of the rower, on the flywheel. There is a magnetic reed sensor or optical sensor that will measure time between either magnets or reflective stripes, which gives an **Impulse** each time a magnet or stripe passes. Depending on the **number of impulse providers** (i.e. the number of magnets or stripes), the number of impulses per rotation increases, increasing the resolution of the measurement. By measuring the **time between impulses**, deductions about speed and acceleration of the flywheel can be made, and thus the effort of the rower.
+
+As mentioned above, most rowers depend on measuring the **time between impulses**, triggered by some impulse giver (magnet or light) on the flywheel. For example, when the flywheel rotates on a NordicTrack RX800, the passing of a magnet on the flywheel triggers a reed-switch, that delivers a pulse to our Raspberry Pi. We measure the time between two subsequent impulses and call this *currentDt*: the time between two impulses. *currentDt* is the basis for all our calculations.
+
+The following picture shows the time between impulses through time:
+![Measurements of flywheel](img/physics/flywheelmeasurement.png)
+*Measurements of flywheel*
+
+Here, it is clear that the flywheel first accelerates (i.e. the time between impulses become smaller) and then decelerates (i.e. the time between impulses become bigger), which is typical for the rowing motion.
+
+Using the time between impulses, or *currentDt* as it is called internally in Open Rowing Monitor, means we can't measure anything directly aside from *angular displacement* (i.e. the number of impulses generated), and that we have to accept some noise in measurements. For example, as we don't measure torque on the flywheel directly, we can't determine where the flywheel exactly accelerates/decelerates, we can only detect a change in the times between impulses. In essence, we only can conclude that an acceleration has taken place somewhere near a specific impulse, but we can't be certain about where the acceleration exactly has taken place and we can only estimate how big the force must have been. Additionally, small vibrations in the chassis due to tiny unbalance in the flywheel can lead to small deviations in measurements. This kind of deviations in our measurement can make many subsequent derived calculation on this measurement too volatile. This is why we explicitly distinguish between *measurements* and *estimates* based on these measurements in this document, to clearly indicate their potential volatility.
+
+Dealing with noise and deviations is an dominant issue, especially because we have to deal with many types of machines. Aside from implementing a lot of noise reduction, we also focus on using robust calculations: calculations that don't deliver radically different results when a small measurement error is introduced in the measurement of *currentDt*. We typically avoid things like derived functions when possible, as deriving over small values of *currentDt* typically produce huge deviations in the resulting estimate. We sometimes even do this at the cost of inaccuracy with respect to the perfect theoretical model, as long as the deviation is systematic in one direction, to prevent estimates to become too unstable for practical use.
 
 Open Rowing Monitor needs to keep track of several metrics about the flywheel and its state, including
 
@@ -68,38 +98,6 @@ Open Rowing Monitor needs to keep track of several metrics about the flywheel an
 * the **Torque** of the flywheel
 
 * The *estimated* **drag factor** of the flywheel: the level af (air/water/magnet) resistence encountered by the flywheel, as a result of a damper setting.
-
-#### Relevant linear metrics
-
-* The *estimated* **Linear Distance** of the boat (in Meters): the distance the boat is expected to travel;
-
-* *estimated* **Linear Velocity** of the boat (in Meters/Second): the speed at which the boat is expected to travel.
-
-* *estimated* **power produced** by the rower (in Watts): the power the rower produced during the stroke.
-
-## What a rowing machine actually measures
-
-As mentioned above, most rowers depend on measuring the **time between impulses**, triggered by some impulse giver (magnet or light) on the flywheel. For example, when the flywheel rotates on a NordicTrack RX800, the passing of a magnet on the flywheel triggers a reed-switch, that delivers a pulse to our Raspberry Pi. We measure the time between two subsequent impulses and call this *currentDt*: the time between two impulses. *currentDt* is the basis for all our calculations.
-
-The following picture shows the time between impulses through time:
-![Measurements of flywheel](img/physics/flywheelmeasurement.png)
-*Measurements of flywheel*
-
-Here, it is clear that the flywheel first accelerates (i.e. the time between impulses become smaller) and then decelerates (i.e. the time between impulses become bigger), which is typical for the rowing motion.
-
-Using the time between impulses, or *currentDt* as it is called internally in Open Rowing Monitor, means we can't measure anything directly aside from *angular displacement* (i.e. the number of impulses generated), and that we have to accept some noise in measurements. For example, as we don't measure torque on the flywheel directly, we can't determine where the flywheel exactly accelerates/decelerates, we can only detect a change in the times between impulses. In essence, we only can conclude that an acceleration has taken place somewhere near a specific impulse, but we can't be certain about where the acceleration exactly has taken place and we can only estimate how big the force must have been. Additionally, small vibrations in the chassis due to tiny unbalance in the flywheel can lead to small deviations in measurements. This kind of deviations in our measurement can make many subsequent derived calculation on this measurement too volatile. This is why we explicitly distinguish between *measurements* and *estimates* based on these measurements in this document, to clearly indicate their potential volatility.
-
-Dealing with noise and deviations is an dominant issue, especially because we have to deal with many types of machines. Aside from implementing a lot of noise reduction, we also focus on using robust calculations: calculations that don't deliver radically different results when a small measurement error is introduced in the measurement of *currentDt*. We typically avoid things like derived functions when possible, as deriving over small values of *currentDt* typically produce huge deviations in the resulting estimate. We sometimes even do this at the cost of inaccuracy with respect to the perfect theoretical model, as long as the deviation is systematic in one direction, to prevent estimates to become too unstable for practical use.
-
-## Leading design principles of the rowing engine
-
-The physics engine is the core of Open Rowing Monitor. It measures rorational metrics and determines linear metrics based on that. Although the physics is well-understood and even well-described publicly (see [[1]](#1),[[2]](#2),[[3]](#3) and [[4]](#4)), applying these formulae in a practical solution for multiple rowers delivering reliable results is quite challenging. Especially small errors, noise, tends to produce visible effects on the recorded metrics. Therefore, in our design of the physics engine, we try to:
-
-* stay as close to the original data as possible (thus depend on direct measurements as much as possible) instead of heavily depend on derived data. This means that there are two absolute values we try to stay close to as much as possible: the **time between an impulse** and the **Number of Impulses**, where we consider **Number of Impulses** most reliable, and **time between an impulse** reliable but containing noise (the origin and meaning of these metrics, as well the effects of this approach are explained later);
-
-* use robust calculations wherever possible (i.e. not depend on a single measurements, extrapolations or derivative functions, etc.) to reduce effects of measurement errors. When we do need to calculate a derived function, we choose to use a robust linear regression method to reduce the impact of noise;
-
-* Be as close to the results of the Concept2 when possible and realistic, as they are considered the golden standard in indoor rowing metrics.
 
 ## Determining the rotational metrics
 
@@ -175,7 +173,13 @@ As the slope of the line *currentDt* over *time* is equal to (k \* 2&pi;) / (I \
 
 > k = slope \* (I \* Impulses Per Rotation) / 2&pi;
 
-## Determining the linear metrics
+## Relevant linear metrics
+
+* The *estimated* **Linear Distance** of the boat (in Meters): the distance the boat is expected to travel;
+
+* *estimated* **Linear Velocity** of the boat (in Meters/Second): the speed at which the boat is expected to travel.
+
+* *estimated* **power produced** by the rower (in Watts): the power the rower produced during the stroke.
 
 ### Linear distance
 
