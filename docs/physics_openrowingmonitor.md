@@ -75,7 +75,7 @@ Depending on the **number of impulse providers** (i.e. the number of magnets or 
 
 Open Rowing Monitor needs to keep track of several metrics about the flywheel and its state, including:
 
-* The **Angular Distance** of the flywheel in Radians (denoted with &theta;): in essence the distance the flywheel has traveled (i.e. the number of Radians the flywheel has rotated) since the start of the session. As the impulse-givers are evenly spread over the flywheel, this can easily be measured by counting the number of impulses, **Number of Impulses** and multiply it with the **angular displacement** between two **impulses** (i.e. 2π/(*number of impulse providers on the flywheel*));
+* The **Angular Distance** of the flywheel in Radians (denoted with &theta;): in essence the distance the flywheel has traveled (i.e. the number of Radians the flywheel has rotated) since the start of the session;
 
 * The **Time since start** of the flywheel in seconds (denoted with t): in essence the time the flywheel has been spinning since the start of the session. This can easily be measured by summarising the **time between an impulse**;
 
@@ -96,6 +96,8 @@ Being limited to the time between impulses, or *currentDt*, means we can't measu
 Dealing with noise and deviations is an dominant issue, especially because we have to deal with many types of machines. Aside from implementing noise reduction, we also focus on using robust calculations: calculations that don't deliver radically different results when a small measurement error is introduced in the measurement of *currentDt*. We typically avoid things like derived functions when possible, as deriving over small values of *currentDt* typically produce huge deviations in the resulting estimate. We sometimes even do this at the cost of inaccuracy with respect to the perfect theoretical model, as long as the deviation is systematic in one direction, to prevent estimates to become too unstable for practical use.
 
 ### Determining the "Angular Position" of the flywheel
+
+As the impulse-givers are evenly spread over the flywheel, this can easily be measured by counting the number of impulses, **Number of Impulses** and multiply it with the **angular displacement** between two **impulses** (i.e. 2π/(*number of impulse providers on the flywheel*))
 
 Missed impulses is an issue
 
