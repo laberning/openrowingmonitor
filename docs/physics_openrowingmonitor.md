@@ -54,7 +54,7 @@ Combined, we consider a *Drive* followed by a *Recovery* a **Stroke**. In the ca
 
 ## Leading design principles of the rowing engine
 
-As described in [the architecture](Architecture.md), the rowing engine is the core of Open Rowing Monitor and consists of three major parts: 
+As described in [the architecture](Architecture.md), the rowing engine is the core of Open Rowing Monitor and consists of three major parts:
 
 * `Flywheel.js`, which determines rotational metrics,
 * `Rower.js`, which transforms rotational metrics in a rowing state and linear metrics,
