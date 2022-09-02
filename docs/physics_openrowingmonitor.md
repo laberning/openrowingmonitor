@@ -77,7 +77,7 @@ Open Rowing Monitor needs to keep track of several metrics about the flywheel an
 
 * The **Angular Distance** of the flywheel in Radians (denoted with &theta;): in essence the distance the flywheel has traveled (i.e. the number of Radians the flywheel has rotated) since the start of the session;
 
-* The **Time since start** of the flywheel in seconds (denoted with t): in essence the time the flywheel has been spinning since the start of the session. This can easily be measured by summarising the **time between an impulse**;
+* The **Time since start** of the flywheel in seconds (denoted with t): in essence the time the flywheel has been spinning since the start of the session;
 
 * The **Angular Velocity** of the flywheel in Radians/second (denoted with &omega;): in essence the number of (partial) rotations of the flywheel per second;
 
@@ -102,6 +102,8 @@ As the impulse-givers are evenly spread over the flywheel, this can easily be me
 Missed impulses is an issue
 
 ### Determining the "Time since start" of the flywheel
+
+This can easily be measured by summarising the **time between an impulse**. Noise has little impact here.
 
 ### Determining the "Angular Velocity" of the flywheel
 
