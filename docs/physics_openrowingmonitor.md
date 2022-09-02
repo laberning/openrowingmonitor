@@ -43,6 +43,14 @@ stateDiagram-v2
 <!-- markdownlint-disable-next-line no-emphasis-as-header -->
 *Basic phases of a rowing stroke*
 
+On an indoor rower, the rowing cycle will always start with a stroke, followed by a recovery. We define them as follows:
+
+* The **Drive phase**, where the rower pulls on the handle
+
+* The **Recovery Phase**, where the rower returns to his starting position
+
+Combined, we consider a *Drive* followed by a *Recovery* a **Stroke**. In the calculation of several metrics, the requirement is that it should include *a* *Drive* and *a* *Recovery*, but order isn't a strict requirement for some metrics [[2]](#2). We call such combination of a *Drive* and *Recovery* without perticular order a **Cycle**, which allows us to calculate these metrics twice per *stroke*.
+
 ## Relevant rotational metrics
 
 Typically, measurements are done in the rotational part of the rower, on the flywheel. There is a magnetic reed sensor or optical sensor that will measure time between either magnets or reflective stripes, which gives an **Impulse** each time a magnet or stripe passes. Depending on the **number of impulse providers** (i.e. the number of magnets or stripes), the number of impulses per rotation increases, increasing the resolution of the measurement. By measuring the **time between impulses**, deductions about speed and acceleration of the flywheel can be made, and thus the effort of the rower.
@@ -68,16 +76,6 @@ Open Rowing Monitor needs to keep track of several metrics about the flywheel an
 * *estimated* **Linear Velocity** of the boat (in Meters/Second): the speed at which the boat is expected to travel.
 
 * *estimated* **power produced** by the rower (in Watts): the power the rower produced during the stroke.
-
-### Terminology used in describing the rowing stroke and its phases
-
-On an indoor rower, the rowing cycle will always start with a stroke, followed by a recovery. We define them as follows:
-
-* The **Drive phase**, where the rower pulls on the handle
-
-* The **Recovery Phase**, where the rower returns to his starting position
-
-Combined, we consider a *Drive* followed by a *Recovery* a **Stroke**. In the calculation of several metrics, the requirement is that it should include *a* *Drive* and *a* *Recovery*, but order isn't a strict requirement for some metrics [[2]](#2). We call such combination of a *Drive* and *Recovery* without perticular order a **Cycle**, which allows us to calculate these metrics twice per *stroke*.
 
 ## What a rowing machine actually measures
 
