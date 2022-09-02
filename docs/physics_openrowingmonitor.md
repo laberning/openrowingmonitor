@@ -7,12 +7,9 @@ Please note that this text is used as a rationale for design decissions in Open 
 
 ## Basic concepts
 
-@@@
-
-Before we analyze the physics of a rowing engine, we first need to define the basic concepts. First we describe the physical systems, then we define the motions in the rowing stroke.
+Before we analyze the physics of a rowing engine, we first need to define the basic concepts. First we identify the key physical systems at play, then we define the key phases in the rowing stroke.
 
 ### Physical systems in a rower
-
 A rowing machine effectively has two fundamental movements: a **linear** (the rower moving up and down, or a boat moving forward) and a **rotational** where the energy that the rower inputs in the system is absorbed through a flywheel (either a solid one, or a liquid one).
 
 <img src="img/physics/indoorrower.png" width="700">
@@ -30,11 +27,25 @@ There are several types of rowers:
 
 * **Magnetic resistance**: where the resistance is constant
 
-There are also hybrid rowers, which combine air resistance and magnetic resistance. The differences in physical behavior can be significant, for example a magnetic rower has a constant resistance while a air/water rower's resistance is dependent on the flywheel's speed. As the key principle is the same for all these rowers (some mass is made to spin and drag brings its speed down), we treat them the same.
+There are also hybrid rowers, which combine air resistance and magnetic resistance. The differences in physical behavior can be significant, for example a magnetic rower has a constant resistance while a air/water rower's resistance is dependent on the flywheel's speed. As the key principle is the same for all these rowers (some mass is made to spin and drag brings its speed down), we currently treat them the same.
 
-Typically, measurements are done in the rotational part of the rower, on the flywheel. There is a reed sensor or optical sensor that will measure time between either magnets or reflective stripes, which gives an **Impulse** each time a magnet or stripe passes. Depending on the **number of impulse providers** (i.e. the number of magnets or stripes), the number of impulses per rotation increases, increasing the resolution of the measurement. By measuring the **time between impulses**, deductions about speed and acceleration of the flywheel can be made, and thus the effort of the rower.
+### Phases in the rowing stroke
 
-#### Relevant rotational metrics
+What seperates rowing from many other sports is its discontinous nature: for example, in Cycling the force constantly shifts between left and right leg, but remains relatively constant throughout the rotation. In rowing, a stroke begins with a powerful *Drive* phase, which is followed by an unpowered *Recovery*. Visually, it can be depicted as follows:
+
+```mermaid
+stateDiagram-v2
+  direction LR
+  Drive --> Recovery
+  Recovery --> Drive
+```
+
+<!-- markdownlint-disable-next-line no-emphasis-as-header -->
+*Basic phases of a rowing stroke*
+
+## Relevant rotational metrics
+
+Typically, measurements are done in the rotational part of the rower, on the flywheel. There is a magnetic reed sensor or optical sensor that will measure time between either magnets or reflective stripes, which gives an **Impulse** each time a magnet or stripe passes. Depending on the **number of impulse providers** (i.e. the number of magnets or stripes), the number of impulses per rotation increases, increasing the resolution of the measurement. By measuring the **time between impulses**, deductions about speed and acceleration of the flywheel can be made, and thus the effort of the rower.
 
 Open Rowing Monitor needs to keep track of several metrics about the flywheel and its state, including
 
