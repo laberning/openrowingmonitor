@@ -67,23 +67,17 @@ Although the physics is well-understood and even well-described publicly (see [[
 
 * Be as close to the results of the Concept2 when possible and realistic, as they are considered the golden standard in indoor rowing metrics.
 
-@@@@@@@@
-
 ## Relevant rotational metrics
 
-Typically, measurements are done in the rotational part of the rower, on the flywheel. There is a magnetic reed sensor or optical sensor that will measure time between either magnets or reflective stripes, which gives an **Impulse** each time a magnet or stripe passes. Depending on the **number of impulse providers** (i.e. the number of magnets or stripes), the number of impulses per rotation increases, increasing the resolution of the measurement. By measuring the **time between impulses**, deductions about speed and acceleration of the flywheel can be made, and thus the effort of the rower.
+Typically, measurements are done in the rotational part of the rower, on the flywheel. There is a magnetic reed sensor or optical sensor that will measure time between either magnets or reflective stripes, which gives an **Impulse** each time a magnet or stripe passes. For example, when the flywheel rotates on a NordicTrack RX800, the passing of a magnet on the flywheel triggers a reed-switch, that delivers a pulse to our Raspberry Pi.
 
-As mentioned above, most rowers depend on measuring the **time between impulses**, triggered by some impulse giver (magnet or light) on the flywheel. For example, when the flywheel rotates on a NordicTrack RX800, the passing of a magnet on the flywheel triggers a reed-switch, that delivers a pulse to our Raspberry Pi. We measure the time between two subsequent impulses and call this *currentDt*: the time between two impulses. *currentDt* is the basis for all our calculations.
-
-The following picture shows the time between impulses through time:
-![Measurements of flywheel](img/physics/flywheelmeasurement.png)
-*Measurements of flywheel*
-
-Here, it is clear that the flywheel first accelerates (i.e. the time between impulses become smaller) and then decelerates (i.e. the time between impulses become bigger), which is typical for the rowing motion.
+Depending on the **number of impulse providers** (i.e. the number of magnets or stripes), the number of impulses per rotation increases, increasing the resolution of the measurement. By measuring the **time between impulses**, deductions about angular velocity and acceleration of the flywheel can be made. As described in [the architecture](Architecture.md), Open Rowing Monitor's `GpioTimerService.js` measures the time between two subsequent impulses and reports this as a stream of *currentDt* values: the time between two subsequent impulses. *currentDt* is the basis for all our angular calculations.
 
 Using the time between impulses, or *currentDt* as it is called internally in Open Rowing Monitor, means we can't measure anything directly aside from *angular displacement* (i.e. the number of impulses generated), and that we have to accept some noise in measurements. For example, as we don't measure torque on the flywheel directly, we can't determine where the flywheel exactly accelerates/decelerates, we can only detect a change in the times between impulses. In essence, we only can conclude that an acceleration has taken place somewhere near a specific impulse, but we can't be certain about where the acceleration exactly has taken place and we can only estimate how big the force must have been. Additionally, small vibrations in the chassis due to tiny unbalance in the flywheel can lead to small deviations in measurements. This kind of deviations in our measurement can make many subsequent derived calculation on this measurement too volatile. This is why we explicitly distinguish between *measurements* and *estimates* based on these measurements in this document, to clearly indicate their potential volatility.
 
-Dealing with noise and deviations is an dominant issue, especially because we have to deal with many types of machines. Aside from implementing a lot of noise reduction, we also focus on using robust calculations: calculations that don't deliver radically different results when a small measurement error is introduced in the measurement of *currentDt*. We typically avoid things like derived functions when possible, as deriving over small values of *currentDt* typically produce huge deviations in the resulting estimate. We sometimes even do this at the cost of inaccuracy with respect to the perfect theoretical model, as long as the deviation is systematic in one direction, to prevent estimates to become too unstable for practical use.
+@@@@@@@@
+
+Dealing with noise and deviations is an dominant issue, especially because we have to deal with many types of machines. Aside from implementing noise reduction, we also focus on using robust calculations: calculations that don't deliver radically different results when a small measurement error is introduced in the measurement of *currentDt*. We typically avoid things like derived functions when possible, as deriving over small values of *currentDt* typically produce huge deviations in the resulting estimate. We sometimes even do this at the cost of inaccuracy with respect to the perfect theoretical model, as long as the deviation is systematic in one direction, to prevent estimates to become too unstable for practical use.
 
 Open Rowing Monitor needs to keep track of several metrics about the flywheel and its state, including
 
@@ -99,7 +93,13 @@ Open Rowing Monitor needs to keep track of several metrics about the flywheel an
 
 * The *estimated* **drag factor** of the flywheel: the level af (air/water/magnet) resistence encountered by the flywheel, as a result of a damper setting.
 
-## Determining the rotational metrics
+* Detecting power on the flywheel
+
+The following picture shows the time between impulses through time:
+![Measurements of flywheel](img/physics/flywheelmeasurement.png)
+*Measurements of flywheel*
+
+Here, it is clear that the flywheel first accelerates (i.e. the time between impulses become smaller) and then decelerates (i.e. the time between impulses become bigger), which is typical for the rowing motion.
 
 These metrics are typically determined in the `pushValue` function of `engine/Flywheel.js`
 
@@ -172,6 +172,8 @@ As the left-hand of the equation only contains constants and the dragfactor, and
 As the slope of the line *currentDt* over *time* is equal to (k \* 2&pi;) / (I \* Impulses Per Rotation), the drag thus can be determined through
 
 > k = slope \* (I \* Impulses Per Rotation) / 2&pi;
+
+### Detecting power on the flywheel
 
 ## Relevant linear metrics
 
