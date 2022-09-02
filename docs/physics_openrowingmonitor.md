@@ -10,6 +10,7 @@ Please note that this text is used as a rationale for design decissions in Open 
 Before we analyze the physics of a rowing engine, we first need to define the basic concepts. First we identify the key physical systems at play, then we define the key phases in the rowing stroke.
 
 ### Physical systems in a rower
+
 A rowing machine effectively has two fundamental movements: a **linear** (the rower moving up and down, or a boat moving forward) and a **rotational** where the energy that the rower inputs in the system is absorbed through a flywheel (either a solid one, or a liquid one) [[1]](#1).
 
 <img src="img/physics/indoorrower.png" width="700">
