@@ -71,7 +71,7 @@ Although the physics is well-understood and even well-described publicly (see [[
 
 Typically, measurements are done in the rotational part of the rower, on the flywheel. There is a magnetic reed sensor or optical sensor that will measure time between either magnets or reflective stripes, which gives an **Impulse** each time a magnet or stripe passes. For example, when the flywheel rotates on a NordicTrack RX800, the passing of a magnet on the flywheel triggers a reed-switch, that delivers a pulse to our Raspberry Pi.
 
-Depending on the **number of impulse providers** (i.e. the number of magnets or stripes), the number of impulses per rotation increases, increasing the resolution of the measurement. By measuring the **time between impulses**, deductions about angular velocity and acceleration of the flywheel can be made. As described in [the architecture](Architecture.md), Open Rowing Monitor's `GpioTimerService.js` measures the time between two subsequent impulses and reports this as a stream of *currentDt* values: the time between two subsequent impulses. *currentDt* is the basis for all our angular calculations.
+Depending on the **number of impulse providers** (i.e. the number of magnets or stripes), the number of impulses per rotation increases, increasing the resolution of the measurement. By measuring the **time between impulses**, deductions about angular velocity and acceleration of the flywheel can be made. As described in [the architecture](Architecture.md), Open Rowing Monitor's `GpioTimerService.js` measures the time between two subsequent impulses and reports this as a stream of *currentDt* values: the time between two subsequent impulses. *currentDt* is the basis for all our angular calculations. These calculations are typically performed in the `pushValue` function of `engine/Flywheel.js`
 
 Open Rowing Monitor needs to keep track of several metrics about the flywheel and its state, including
 
@@ -94,8 +94,6 @@ Being limited to the time between impulses, or *currentDt*, means we can't measu
 @@@@@@@@
 
 Dealing with noise and deviations is an dominant issue, especially because we have to deal with many types of machines. Aside from implementing noise reduction, we also focus on using robust calculations: calculations that don't deliver radically different results when a small measurement error is introduced in the measurement of *currentDt*. We typically avoid things like derived functions when possible, as deriving over small values of *currentDt* typically produce huge deviations in the resulting estimate. We sometimes even do this at the cost of inaccuracy with respect to the perfect theoretical model, as long as the deviation is systematic in one direction, to prevent estimates to become too unstable for practical use.
-
-These metrics are typically determined in the `pushValue` function of `engine/Flywheel.js`
 
 ### Determining the "Angular Position" of the flywheel
 
