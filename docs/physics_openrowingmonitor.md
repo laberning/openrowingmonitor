@@ -92,9 +92,7 @@ Open Rowing Monitor needs to keep track of several metrics about the flywheel an
 
 Being limited to the time between impulses, or *currentDt*, means we can't measure these metrics directly, and that we have to accept some deviations in these measurements as they are reported in discrete intervals. 
 
-Additionally, small mechanical deviations, vibrations in the chassis (due to tiny unbalance in the flywheel) and latency inside the software stack can lead to small deviations the measurement of *currentDt*. Dealing with these deviations is an dominant issue, especially because we have to deal with a wide range machines. Aside from implementing noise reduction, we also focus on using robust calculations: calculations that don't deliver radically different results when a small measurement error is introduced in the measurement of *currentDt*. We typically avoid things like derived functions based on single values, as deriving over small values of *currentDt* typically produce huge deviations in the resulting estimate. We sometimes even do this at the cost of inaccuracy with respect to the perfect theoretical mode, to prevent estimates to become too unstable for practical use. This is why we explicitly distinguish between *measurements* and *estimates* based on these measurements in this document, to clearly indicate their potential volatility.
-
-@@@@@@@@
+Additionally, small mechanical deviations, vibrations in the chassis (due to tiny unbalance in the flywheel) and latency inside the software stack can lead to small deviations the measurement of *currentDt*. Dealing with these deviations is an dominant issue, especially because we have to deal with a wide range machines. Aside from implementing noise reduction, we also focus on using robust calculations: calculations that don't deliver radically different results when a small measurement error is introduced in the measurement of *currentDt*. We typically avoid things like direct deriviations based on single values, as directly deriving over small values of *currentDt* with small errors typically produce huge deviations in the resulting estimate. As an alternative, we use (robust) regression over multiple values, and use the deriviations of the resulting function instead. We do this at the cost of reducing the accuracy of the data, as this approach dampens real occuring peaks in the stroke data. However, this inaccuracy with respect to the perfect theoretical model, is needed to prevent estimates to become too unstable for practical use or which can only be used with heavy smoothing later on (typically across strokes).
 
 ### Determining the "Angular Position" of the flywheel
 
@@ -102,12 +100,14 @@ As the impulse-givers are evenly spread over the flywheel, this can be robustly 
 
 In theory, there are two threats here:
 
-* Potentially missed impulses due to sticking sensors or too short intervals for th Raspberry Pi to detect them. So far, this hasn't happened.
+* Potentially missed impulses due to sticking sensors or too short intervals for the Raspberry Pi to detect them. So far, this hasn't happened.
 * Ghost impulses, typically caused by **debounce** effects of the sensor. Up till now, some reports have been seen of this, where the best resolution was a better mechanical construction of magnets and sensors.
 
 ### Determining the "Time since start" of the flywheel
 
 This can easily be measured by summarising the **time between an impulse**. Noise has little to no impact.
+
+@@@@@@@@
 
 ### Determining the "Angular Velocity" of the flywheel
 
