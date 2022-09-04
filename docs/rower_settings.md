@@ -4,7 +4,7 @@ This guide helps you to adjust the rowing monitor specifically for a new type of
 
 ## Why we need rower specific settings
 
-No rowing machine is the same, and some physical construction parameters are important for the Rowing Monitor to be known to be able to understand your rowing stroke. By far, the easiest way to configure your rower is to select your rower profile from `config/rowerProfiles.js` and put its name in `config.js` (i.e. `rowerSettings: rowerProfiles.Concept2_RowErg`). The rowers mentioned there are maintained by us for OpenRowingMonitor and we also structurally test OpenRowingMonitor with samples of these machines and updates setings when needed. For you as a user, this has the benefit that updates in our software are automatically implemented, including updating the settings. So if you make a rower profile for your machine, please send the profile and some raw data (explained below) to us as well so we can maintain it for you.
+No rowing machine is the same, and some physical construction parameters are important for the Rowing Monitor to be known to be able to understand your rowing stroke. By far, the easiest way to configure your rower is to select your rower profile from `config/rowerProfiles.js` and put its name in `config/config.js` (i.e. `rowerSettings: rowerProfiles.Concept2_RowErg`). The rowers mentioned there are maintained by us for OpenRowingMonitor and we also structurally test OpenRowingMonitor with samples of these machines and updates setings when needed. For you as a user, this has the benefit that updates in our software are automatically implemented, including updating the settings. So if you make a rower profile for your machine, please send the profile and some raw data (explained below) to us as well so we can maintain it for you.
 
 If you want something special, or if your rower isn't in there, this guide will help you set it up. Please note that determining these settings is quite labor-intensive, and typically some hard rowing is involved. If you find suitable settings for a new type of rower, please send in the data and settings, so we can add it to OpenRowingMonitor and make other users happy as well.
 
@@ -43,7 +43,56 @@ When OpenRowingMonitor records a log (set setting createRawDataFiles to `true`),
 
 Please note that changing the noise filtering and stroke detection settings will affect your calculated dragFactor. So it is best to start with rowing a few strokes to determine settings for noise filtering and stroke detection, and then move on to the other settings.
 
-### Getting an insight into the inner workings of OpenRowingMonitor
+### Check that Open Rowing Monitor works
+
+First check you need to do is to check the status of the Open Rowing Monitor service, which you can do with the command:
+
+  ```zsh
+  sudo systemctl status openrowingmonitor
+  ```
+
+Which typically results in the following response (with some additional logging):
+
+  ```zsh
+  ● openrowingmonitor.service - Open Rowing Monitor
+       Loaded: loaded (/lib/systemd/system/openrowingmonitor.service; enabled; vendor preset: enabled)
+       Active: active (running) since Sun 2022-09-04 10:27:31 CEST; 12h ago
+     Main PID: 755 (npm start)
+        Tasks: 48 (limit: 8986)
+          CPU: 6min 48.869s
+       CGroup: /system.slice/openrowingmonitor.service
+               ├─755 npm start
+               ├─808 sh /tmp/start-6f31a085.sh
+               ├─809 node app/server.js
+               ├─866 /usr/bin/node ./app/gpio/GpioTimerService.js
+               └─872 /usr/bin/node ./app/ble/CentralService.js
+  ```
+
+Please note that the process numbers will differ.
+
+### Making sure the hardware works as intended
+
+First, we need to look if the data is recieved well and has sufficient quality to be used. You can change `config/config.js` by
+
+  ```zsh
+  sudo nano /opt/openrowingmonitor/config/config.js
+  ```
+
+Here, you can change the setting for **createRawDataFiles** by setting:
+
+ ```js
+ createRawDataFiles: true,
+ ```
+
+You can use the following commands on the command line to restart after a config change (to activate new settings):
+
+  ```zsh
+  sudo systemctl restart openrowingmonitor
+  ```
+
+After rowing a bit, there should be a csv file created with raw data. Please read this data in Excel (it is in US format), to check if it is sufficiently clean.
+
+### Getting an insight into the inner workings of Open Rowing Monitor
 
 When installed, OpenRowingMonitor will not flood the log with messages. However, when testing it is great to see what OpenRowingMonitor is doing. So first thing to do is to set the following in the settings:
 
@@ -57,13 +106,11 @@ When installed, OpenRowingMonitor will not flood the log with messages. However,
    },
  ```
 
-You can use the following commands on the command line to restart (to activate new settings) and retrieve the logs after changing the config:
+Show the log output of a service:
 
-restart after config a change to activate it: `sudo systemctl restart openrowingmonitor`
-
-Get the status of the OpenRowingMonitor service: `sudo systemctl status openrowingmonitor`
-
-Show the log output of a service: `sudo journalctl -u openrowingmonitor`
+  ```zsh
+  sudo journalctl -u openrowingmonitor
+  ```
 
 ### Getting the metrics right
 
