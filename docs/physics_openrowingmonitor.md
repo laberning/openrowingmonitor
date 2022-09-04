@@ -90,21 +90,24 @@ Open Rowing Monitor needs to keep track of several metrics about the flywheel an
 
 * Detecting power on the flywheel
 
-Being limited to the time between impulses, or *currentDt*, means we can't measure these metrics directly, and that we have to accept some noise in measurements.  Additionally, small vibrations in the chassis due to tiny unbalance in the flywheel can lead to small deviations in measurements. This kind of deviations in our measurement can make many subsequent derived calculation on this measurement too volatile. This is why we explicitly distinguish between *measurements* and *estimates* based on these measurements in this document, to clearly indicate their potential volatility.
+Being limited to the time between impulses, or *currentDt*, means we can't measure these metrics directly, and that we have to accept some deviations in these measurements as they are reported in discrete intervals. 
+
+Additionally, small mechanical deviations, vibrations in the chassis (due to tiny unbalance in the flywheel) and latency inside the software stak can lead to small deviations the measurement of *currentDt*. Dealing with these deviations is an dominant issue, especially because we have to deal with a wide range machines. Aside from implementing noise reduction, we also focus on using robust calculations: calculations that don't deliver radically different results when a small measurement error is introduced in the measurement of *currentDt*. We typically avoid things like derived functions based on single values, as deriving over small values of *currentDt* typically produce huge deviations in the resulting estimate. We sometimes even do this at the cost of inaccuracy with respect to the perfect theoretical mode, to prevent estimates to become too unstable for practical use. This is why we explicitly distinguish between *measurements* and *estimates* based on these measurements in this document, to clearly indicate their potential volatility.
 
 @@@@@@@@
 
-Dealing with noise and deviations is an dominant issue, especially because we have to deal with many types of machines. Aside from implementing noise reduction, we also focus on using robust calculations: calculations that don't deliver radically different results when a small measurement error is introduced in the measurement of *currentDt*. We typically avoid things like derived functions when possible, as deriving over small values of *currentDt* typically produce huge deviations in the resulting estimate. We sometimes even do this at the cost of inaccuracy with respect to the perfect theoretical model, as long as the deviation is systematic in one direction, to prevent estimates to become too unstable for practical use.
-
 ### Determining the "Angular Position" of the flywheel
 
-As the impulse-givers are evenly spread over the flywheel, this can easily be measured by counting the number of impulses, **Number of Impulses** and multiply it with the **angular displacement** between two **impulses** (i.e. 2π/(*number of impulse providers on the flywheel*))
+As the impulse-givers are evenly spread over the flywheel, this can be robustly measured by counting the total number of impulses, **Number of Impulses**, and multiply it with the **angular displacement** between two **impulses** (i.e. 2π/(*number of impulse providers on the flywheel*)).
 
-Missed impulses is an issue
+In theory, there are two threats here:
+
+* Potentially missed impulses due to sticking sensors or too short intervals for th Raspberry Pi to detect them. So far, this hasn't happened.
+* Ghost impulses, typically caused by **debounce** effects of the sensor. Up till now, some reports have been seen of this, where the best resolution was a better mechanical construction of magnets and sensors.
 
 ### Determining the "Time since start" of the flywheel
 
-This can easily be measured by summarising the **time between an impulse**. Noise has little impact here.
+This can easily be measured by summarising the **time between an impulse**. Noise has little to no impact.
 
 ### Determining the "Angular Velocity" of the flywheel
 
