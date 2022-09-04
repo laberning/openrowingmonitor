@@ -84,9 +84,9 @@ Open Rowing Monitor needs to keep track of several metrics about the flywheel an
 
 * The **Angular Acceleration** of the flywheel in Radians/second<sup>2</sup> (denoted with &alpha;): the acceleration/deceleration of the flywheel;
 
-* the **Torque** of the flywheel
-
 * The *estimated* **drag factor** of the flywheel: the level af (air/water/magnet) resistence encountered by the flywheel, as a result of a damper setting.
+
+* the **Torque** of the flywheel
 
 * Detecting power on the flywheel
 
@@ -130,8 +130,6 @@ This makes &alpha; dependent on &omega;, which was determined in a robust manner
 
 We can estimate &omega; and &alpha; by performing Quadratic Regression on the line where time is on the x-axis and &theta; on the y-axis. As Quadratic Regression resolves the coefficients of y = *a* x<sup>2</sup> + *b* x + *c*, the *a* coefficient equals ½&alpha;, and the *b* coefficient equals &omega;<sub>0</sub>. The derived function of this function (i.e. y' = 2*a*x + *b*) determines the slope at a specific *x* and thus the function &omega;<sub>t</sub> = &alpha;t + &omega;<sub>0</sub> can easily robustly be derived from the same calculation as well based on the same coefficients.
 
-### Determining the "Torque" of the flywheel
-
 ### Determining the "drag factor" of the flywheel
 
 In the recovery phase, the only force exerted on the flywheel is the (air-/water-/magnetic-)resistance. Thus we can calculate the Drag factor of the Flywheel based on the deceleration through the entire recovery phase through formula 7.2 [[1]](#1):
@@ -169,6 +167,8 @@ As the left-hand of the equation only contains constants and the dragfactor, and
 As the slope of the line *currentDt* over *time* is equal to (k \* 2&pi;) / (I \* Impulses Per Rotation), the drag thus can be determined through
 
 > k = slope \* (I \* Impulses Per Rotation) / 2&pi;
+
+### Determining the "Torque" of the flywheel
 
 ### Detecting power on the flywheel
 
