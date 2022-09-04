@@ -107,21 +107,19 @@ In theory, there are two threats here:
 
 This can easily be measured by summarising the **time between an impulse**. Noise has little to no impact.
 
-@@@@@@@@
+### Determining the "Angular Velocity" and "Angular Acceleration" of the flywheel
 
-### Determining the "Angular Velocity" of the flywheel
-
-The traditional approach uses:
+The traditional approach [[1]](#1), [[14]](#14) suggeste a numerical approach to Angular Velocity &omega;:
 
 > &omega; = &Delta;&theta; / &Delta;t
 
-In our approximation, we map time versus distance, where the velocity is determined the specific point's slope.
+From a more robust perspective, &omega; is the the first derivative of the function between *time* and the angular position &theta;.
 
-### Determining the "Angular Acceleration" of the flywheel
-
-The traditional approach [[1]](#1), [[14]](#14) would be:
+The traditional approach [[1]](#1), [[14]](#14) Angular Acceleration &alpha; would be:
 
 > &alpha; = &Delta;&omega; / &Delta;t
+
+@@@@@@@@
 
 However, this formula is dependent on *currentDt*, which is suspect to noise, which would be reintroduced through this parameter. Following [[8]](#8),[[14]](#14) there is an alternative approach to Angular Acceleration:
 
@@ -477,7 +475,7 @@ Reducing extreme values while maintaining the true data volatility is a subject 
 
 <a id="7">[7]</a> Nomath, "Fan blade Physics and a Peek inside C2's Black Box" <https://www.c2forum.com/viewtopic.php?f=7&t=194719>
 
-<a id="8">[8]</a> Nomath, "Rotational Kinematics" <https://physics.info/rotational-kinematics/>
+<a id="8">[8]</a> "Rotational Kinematics" <https://physics.info/rotational-kinematics/>
 
 <a id="9">[9]</a> Wikipedia, Linear regression <https://en.wikipedia.org/wiki/Linear_regression>
 
