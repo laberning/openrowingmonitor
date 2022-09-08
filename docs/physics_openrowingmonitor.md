@@ -86,9 +86,9 @@ Open Rowing Monitor needs to keep track of several metrics about the flywheel an
 
 * The *estimated* **drag factor** of the flywheel: the level af (air/water/magnet) resistence encountered by the flywheel, as a result of a damper setting.
 
-* the **Torque** of the flywheel
+* The **Torque** of the flywheel in kg \* m<sup>2</sup> \* s<sup>-2</sup> (denoted with &tau;): the momentum of force on the flywheel.
 
-* Detecting power on the flywheel
+* Detecting power on the flywheel: whether there is a force on the flywheel.
 
 Being limited to the time between impulses, *currentDt*, as only measurement means we can't measure any of these metrics directly, and that we have to accept some deviations in these measurements as they are reported in discrete intervals.
 
