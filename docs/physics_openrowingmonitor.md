@@ -165,11 +165,11 @@ As the slope of the line *currentDt* over *time since start* is equal to (k \* 2
 
 The torque &tau; on the flywheel can be determined based on formula 8.1 [[1]](#1):
 
-> &tau; = I ( &Delta;&omega; / &Delta;t ) + D
+> &tau; = I \* ( &Delta;&omega; / &Delta;t ) + D
 
-As &alpha; = &Delta;&omega; and D = k * &omega;<sup>2</sup>(formula 3.4, [[1]](#1)), we can simplify this further by:
+As &alpha; = &Delta;&omega; and D = k \* &omega;<sup>2</sup>(formula 3.4, [[1]](#1)), we can simplify this further by:
 
-> &tau; = I * &alpha; + k * &omega;<sup>2</sup>
+> &tau; = I \* &alpha; + k \* &omega;<sup>2</sup>
 
 @@@@@@@@
 
