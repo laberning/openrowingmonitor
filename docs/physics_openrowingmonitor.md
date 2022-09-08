@@ -56,9 +56,9 @@ Combined, we consider a *Drive* followed by a *Recovery* a **Stroke**. In the ca
 
 As described in [the architecture](Architecture.md), the rowing engine is the core of Open Rowing Monitor and consists of three major parts:
 
-* `Flywheel.js`, which determines rotational metrics,
-* `Rower.js`, which transforms rotational metrics in a rowing state and linear metrics,
-* `RowingStatistics.js`, which manages session state, session metrics and optimizes metrics for presentation.
+* `engine/Flywheel.js`, which determines rotational metrics,
+* `engine/Rower.js`, which transforms rotational metrics in a rowing state and linear metrics,
+* `engine/RowingStatistics.js`, which manages session state, session metrics and optimizes metrics for presentation.
 
 Although the physics is well-understood and even well-described publicly (see [[1]](#1),[[2]](#2),[[3]](#3) and [[4]](#4)), applying these formulae in a practical solution for multiple rowers delivering reliable results is quite challenging. Especially small errors, noise, tends to produce visible effects on the recorded metrics. Therefore, in our design of the physics engine, we obey the following principles (see also [the architecture document](Architecture.md)):
 
@@ -72,7 +72,7 @@ Although the physics is well-understood and even well-described publicly (see [[
 
 Typically, measurements are done in the rotational part of the rower, on the flywheel. There is a magnetic reed sensor or optical sensor that will measure time between either magnets or reflective stripes, which gives an **Impulse** each time a magnet or stripe passes. For example, when the flywheel rotates on a NordicTrack RX800, the passing of a magnet on the flywheel triggers a reed-switch, that delivers a pulse to our Raspberry Pi.
 
-Depending on the **number of impulse providers** (i.e. the number of magnets or stripes), the number of impulses per rotation increases, increasing the resolution of the measurement. As described in [the architecture](Architecture.md), Open Rowing Monitor's `GpioTimerService.js` measures the time between two subsequent impulses and reports as a *currentDt* value. The constant stream of *currentDt* values is the basis for all our angular calculations, which are typically performed in the `pushValue` function of `engine/Flywheel.js`.
+Depending on the **number of impulse providers** (i.e. the number of magnets or stripes), the number of impulses per rotation increases, increasing the resolution of the measurement. As described in [the architecture](Architecture.md), Open Rowing Monitor's `GpioTimerService.js` measures the time between two subsequent impulses and reports as a *currentDt* value. The constant stream of *currentDt* values is the basis for all our angular calculations, which are typically performed in the `pushValue()` function of `engine/Flywheel.js`.
 
 Open Rowing Monitor needs to keep track of several metrics about the flywheel and its state, including:
 
@@ -125,7 +125,7 @@ Summarizing, both Angular Velocity &omega; and Angular Acceleration &alpha; are 
 
 ### Determining the "drag factor" of the flywheel
 
-In the recovery phase, the only force exerted on the flywheel is the (air-/water-/magnetic-)resistance. Thus we can calculate the Drag factor of the Flywheel based on the drag-based deceleration through the recovery phase [[1]](#1).
+In the recovery phase, the only force exerted on the flywheel is the (air-/water-/magnetic-)resistance. Thus we can calculate the Drag factor of the Flywheel based on the drag-based deceleration through the recovery phase [[1]](#1). This calculation is performed in the `markRecoveryPhaseCompleted()` function of `engine/Flywheel.js`.
 
 A numerical approach is presented by through [[1]](#1) in formula 7.2:
 
@@ -171,17 +171,47 @@ As &alpha; = &Delta;&omega; / &Delta;t and D = k \* &omega;<sup>2</sup> (formula
 
 > &tau; = I \* &alpha; + k \* &omega;<sup>2</sup>
 
-@@@@@@@@
+### Detecting force on the flywheel
 
-### Detecting power on the flywheel
-
-We don't measure torque on the flywheel directly, we can't determine where the flywheel exactly accelerates/decelerates, we can only detect a change in the times between impulses. In essence, we only can conclude that an acceleration has taken place somewhere near a specific impulse, but we can't be certain about where the acceleration exactly has taken place and we can only estimate how big the force must have been.
+One of the key elements of rowing is detecting the stroke phases and thus calculate the associated metrics. From the perspective of Open Rowing Monitor, there only is a stream of *CurrentDt*'s, which should form the basis of this detection:
 
 The following picture shows the time between impulses through time:
 ![Measurements of flywheel](img/physics/flywheelmeasurement.png)
 *Measurements of flywheel*
 
-Here, it is clear that the flywheel first accelerates (i.e. the time between impulses become smaller) and then decelerates (i.e. the time between impulses become bigger), which is typical for the rowing motion.
+Open Rowing Monitor combines two types of force detection, which work independently: *simple force detection* and *advanced stroke detection*. Both can detect a stroke accuratly, and the combination has proven its use.
+
+In `engine/Flywheel.js`, two functions provide force detection:
+
+* isUnpowered(): which indicates that the simple or the advanced force detection indicate that a force is absent;
+* isPowered(): which indicates that both the simple or the advanced force detection indicate that a force is present.
+
+The choice for the logical relations between the two types of force detection is based on testing: where a sudden presence of force on a flywheel (i.e. the start of a drive) is quite easily and consistently detected, its abscence is more difficult. In practice, the beginning of a drive is easily recognised as strong leg muscles excert much force onto the flywheel in a very short period of time. The end of the drive is more difficult to assess, as the dragforce of the flywheel increases with its speed, and the weaker arm muscles have taken over, making the transition to the recovery much harder to detect. In theory, in the end of the drive phase the drag force might be bigger than the force from the arms, resulting in an overall negative torque.
+
+In the remainder of this paragraph, we describe the underlying physics of these force detection methods.
+
+#### Simple force detection
+
+One of the key indicator is the acceleration/decelleration of the flywheel. Looking at a simple visualisation of the rowing stroke, we try to achieve the following:
+
+![Impulses, impulse lengths and rowing cycle phases](img/physics/rowingcycle.png)
+*Impulses, impulse lengths and rowing cycle phases*
+
+Here we plot the *currentDt* against its sequence number. So, a high *currentDt* means a long time between impulses (so a low *angular velocity*), and a low *currentDt* means that there is a short time between impulses (so a high *angular velocity*).
+
+Here, it is clear that the flywheel first accelerates (i.e. the time between impulses become smaller), suggesting a powered flywheel. Next it decelerates (i.e. the time between impulses become bigger), which suggests an unpowered flywheel. This pattern is typical for the rowing motion.
+
+The simple force detection looks at the slope of *currentDt* over time: roughly speaking, a descending slope indicates a powered flywheel, an ascending slope indicates an unpowered flywheel. When observed more closely, when this slope approximates the slope used for the before described drag calculation, it is unpowered, and otherwise it is powered.
+
+#### Advanced force detection
+
+#### A note about detection accuracy
+
+Open Rowing Monitor only will get impulses at discrete points in time. As Open Rowing Monitor doesn't measure torque on the flywheel directly, it can't determine where the flywheel exactly accelerates/decelerates as there is no continous measurement. Open Rowing Monitor can only detect a change in the times across several impulses, but it can't detect the exact time of torque change. In essence, at best we only can conclude that the torque has changes somewhere near a specific impulse, but we can't be certain about where the acceleration exactly has taken place and we can only estimate how big the force must have been.
+
+@@@@@@@@
+
+
 
 ## Relevant linear metrics
 
@@ -207,12 +237,7 @@ From theory [[14]](#14)) and practical application [[16]](#16). we know the hand
 
 ## Detecting the stroke and recovery phase
 
-On an indoor rower, the rowing cycle will always start with a stroke, followed by a recovery. Looking at a stroke, our monitor gets the following data from its sensor:
-
-![Impulses, impulse lengths and rowing cycle phases](img/physics/rowingcycle.png)
-*Impulses, impulse lengths and rowing cycle phases*
-
-Here we plot the *currentDt* (time between impulses) against its sequence number. So, a high *currentDt* means a long time between impulses (so a low *angular velocity*), and a low *currentDt* means that there is a short time between impulses (so a high *angular velocity*). As this figure also shows, we split the rowing cycle in two distinct phases:
+On an indoor rower, the rowing cycle will always start with a stroke, followed by a recovery. This results in the follwing phases
 
 * The **Drive phase**, where the rower pulls on the handle, some force on the flywheel is excerted and the flywheel is accelerating or at least not decelerating in accordance with the drag;
 
