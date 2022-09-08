@@ -155,7 +155,7 @@ Since we are multiplying *currentDt* with a constant factor (i.e. Impulses Per R
 
 As the left-hand of the equation only contains constants and the dragfactor, and the right-hand a division of two delta's, we can use regression to calculate the drag. The drag factor is effectively determined by the slope of the line created by *time since start* on the *x*-axis and the corresponding *CurrentDt* on the *y*-axis, for each recovery phase.
 
-This slope can be determined through linear regression (see [[5]](#5) and [[6]](#6)) for the collection of datapoints for a specific recovery phase. This approach also brings this calculation as close as possible to the raw data, and doesn't use individual *currentDt*'s as a divider, which are explicit design goals to reduce data volatility. Although simple linear regression (OLS) isn't robust in nature, its algorithm has proven to be sufficiently robust to be applied, especially when filtering on low R<sup>2</sup>.
+This slope can be determined through linear regression (see [[5]](#5) and [[6]](#6)) for the collection of datapoints for a specific recovery phase. This approach also brings this calculation as close as possible to the raw data, and doesn't use individual *currentDt*'s as a divider, which are explicit design goals to reduce data volatility. Although simple linear regression (OLS) isn't robust in nature, its algorithm has proven to be sufficiently robust to be applied, especially when filtering on low R<sup>2</sup>. On a Concept2, the typical R<sup>2</sup> is around 0.96 for steady state rowing.
 
 As the slope of the line *currentDt* over *time since start* is equal to (k \* 2&pi;) / (I \* Impulses Per Rotation), the drag thus can be determined through
 
@@ -179,18 +179,18 @@ The following picture shows the time between impulses through time:
 ![Measurements of flywheel](img/physics/flywheelmeasurement.png)
 *Measurements of flywheel*
 
-Open Rowing Monitor combines two types of force detection, which work independently: *simple force detection* and *advanced stroke detection*. Both can detect a stroke accuratly, and the combination has proven its use.
+Open Rowing Monitor combines two types of force detection, which work independently: *basic force detection* and *advanced stroke detection*. Both can detect a stroke accuratly, and the combination has proven its use.
 
 In `engine/Flywheel.js`, two functions provide force detection:
 
-* isUnpowered(): which indicates that the simple or the advanced force detection indicate that a force is absent;
-* isPowered(): which indicates that both the simple or the advanced force detection indicate that a force is present.
+* `isUnpowered()`: which indicates that the simple or the advanced force detection indicate that a force is absent;
+* `isPowered()`: which indicates that both the simple or the advanced force detection indicate that a force is present.
 
-The choice for the logical relations between the two types of force detection is based on testing: where a sudden presence of force on a flywheel (i.e. the start of a drive) is quite easily and consistently detected, its abscence is more difficult. In practice, the beginning of a drive is easily recognised as strong leg muscles excert much force onto the flywheel in a very short period of time. The end of the drive is more difficult to assess, as the dragforce of the flywheel increases with its speed, and the weaker arm muscles have taken over, making the transition to the recovery much harder to detect. In theory, in the end of the drive phase the drag force might be bigger than the force from the arms, resulting in an overall negative torque.
+The choice for the logical relations between the two types of force detection is based on testing: where a sudden presence of force on a flywheel (i.e. the start of a drive) is quite easily and consistently detected, its abscence has proven to be more difficult. In practice, the beginning of a drive is easily recognised as strong leg muscles excert much force onto the flywheel in a very short period of time. The end of the drive is more difficult to assess, as the dragforce of the flywheel increases with its speed, and the weaker arm muscles have taken over, making the transition to the recovery much harder to detect. In theory, in the end of the drive phase the drag force might be bigger than the force from the arms, resulting in an overall negative torque.
 
 In the remainder of this paragraph, we describe the underlying physics of these force detection methods.
 
-#### Simple force detection
+#### Basic force detection
 
 One of the key indicator is the acceleration/decelleration of the flywheel. Looking at a simple visualisation of the rowing stroke, we try to achieve the following:
 
@@ -201,17 +201,28 @@ Here we plot the *currentDt* against its sequence number. So, a high *currentDt*
 
 Here, it is clear that the flywheel first accelerates (i.e. the time between impulses become smaller), suggesting a powered flywheel. Next it decelerates (i.e. the time between impulses become bigger), which suggests an unpowered flywheel. This pattern is typical for the rowing motion.
 
-The simple force detection looks at the slope of *currentDt* over time: roughly speaking, a descending slope indicates a powered flywheel, an ascending slope indicates an unpowered flywheel. When observed more closely, when this slope approximates the slope used for the before described drag calculation, it is unpowered, and otherwise it is powered.
+The simple force detection uses this approach by looking at the slope of *currentDt* over time. Given that the *Angular Displacement* between impulses is fixed, we can deduct some things simply from looking at the subsequent *time between impulses*, *currentDt*. When the *currentDt* shortens, *Angular Velocity* is increasing, and thus the flywheel is accelerating (i.e. we are in the drive phase of the rowing cycle). When times between subsequent impulses become longer, the *Angular Velocity* is decreasing and thus the flywheel is decelerating (i.e. we are the recovery phase of the rowing cycle). As a rough but very robust approximation, a descending (negative) slope indicates a powered flywheel, an (positive) ascending slope indicates an unpowered flywheel. This approach seems to be similar to the implementation used by industry leaders like Concept2. Concept2 are generally considered the golden standard when it comes to metrics, and they state (see [this Concept2 FAQ](https://www.concept2.com/service/software/ergdata/faqs): 'Drive time is measured by the amount of time the flywheel is accelerating. Note: It is possible that the athlete may pull on the handle and not accelerate the flywheel due to no energy being put into it and therefore no effective effort. This portion of the handle pull is not measured.'
+
+A more nuanced, but more vulnerable, approach is to compare the slope of this function with the typical slope encountered during the recovery phase of the stroke (which routinely is determined during the drag calculation). When the flywheel is unpowered, the slope will be close to the recovery slope, and otherwise it is powered. This is a more accurate, but more vulnerable, approach, as small deviations could lead to missed strokes. It is noted that practical testing has shown that this works reliably for many machines.
 
 #### Advanced force detection
+
+The more advanced, but more vulnerable approach depends on the calculated torque. When looking at *CurrentDt* and Torque over time, we get the following picture:
+
+![Average curves of a rowing machine](img/physics/currentdtandacceleration.png)
+*Average currentDt (red) and Acceleration (blue) of a single stroke on a rowing machine*
+
+In this graph, we plot *currentDt* and Torque against the time in the stroke. As soon as the Torque of the flywheel becomes below the 0, the *currentDt* begins to lengthen again (i.e. the flywheel is decelerating). As indicated earlier, this is the trigger for the basic force detection algorithm (i.e. when minumumRecoverySlope  is set to 0): when the *currentDt* starts to lengthen, the drive-phase is considered complete.
+
+However, from the acceleration/deceleration curve it is also clear that despite the deceleration, there is still a force present: the Torque-curve hasn't reached its stable minimum despite crossing 0. This is due to the pull still continuing through the arms: the net force is negative due to a part drive-phase (the arm-movement) delivering weaker forces than the drag-forces of the flywheel. Despite being weaker than the other forces on the flywheel, the rower is still working. In this specific example, at around 0.52 sec the rower's force was weaker than all drag-forces combined. However, only at 0,67 seconds (thus approx. 150 ms later) the net force reaches its stable bottom: the only force present is the drag from the flywheel. Getting closer to this moment is a goal.
+
+We do this by setting a minimum Torque (through setting minumumForceBeforeStroke) before a Drive phase can be initiated.
 
 #### A note about detection accuracy
 
 Open Rowing Monitor only will get impulses at discrete points in time. As Open Rowing Monitor doesn't measure torque on the flywheel directly, it can't determine where the flywheel exactly accelerates/decelerates as there is no continous measurement. Open Rowing Monitor can only detect a change in the times across several impulses, but it can't detect the exact time of torque change. In essence, at best we only can conclude that the torque has changes somewhere near a specific impulse, but we can't be certain about where the acceleration exactly has taken place and we can only estimate how big the force must have been.
 
 @@@@@@@@
-
-
 
 ## Relevant linear metrics
 
@@ -259,18 +270,9 @@ stateDiagram-v2
 
 ### Basic stroke detection
 
-Given that the *Angular Displacement* between impulses is fixed, we can deduct some things simply from looking at the subsequent *time between impulses*, *currentDt*. When the *currentDt* shortens, *Angular Velocity* is increasing, and thus the flywheel is accelerating (i.e. we are in the drive phase of the rowing cycle). When times between subsequent impulses become longer, the *Angular Velocity* is decreasing and thus the flywheel is decelerating (i.e. we are the recovery phase of the rowing cycle). This is the robust implementation of a stroke (implemented in MovingFlankDetector's implementation of isFlywheelPowered and isFlywheelUnpowered for naturalDeceleration = 0 in `engine/MovingFlankDetector.js`), which is similar to the implementation used by industry leaders like Concept2. Concept2 are generally considered the golden standard when it comes to metrics, and they state (see [this Concept2 FAQ](https://www.concept2.com/service/software/ergdata/faqs): 'Drive time is measured by the amount of time the flywheel is accelerating. Note: It is possible that the athlete may pull on the handle and not accelerate the flywheel due to no energy being put into it and therefore no effective effort. This portion of the handle pull is not measured.')
+
 
 ### Advanced stroke detection
-
-Looking at the average curve of an actual rowing machine (this example is based on averaging 300 strokes), we see the following:
-
-![Average curves of a rowing machine](img/physics/currentdtandacceleration.png)
-*Average currentDt (red) and Acceleration (blue) of a single stroke on a rowing machine*
-
-In this graph, we plot *currentDt* against the time in the stroke, averaged over 300 strokes. As *currentDt* is (reversely) related to angular velocity, we can calculate the angular acceleration/deceleration. In essence, as soon as the acceleration becomes below the 0, the currentDt begins to lengthen again (i.e. the flywheel is decelerating). As indicated earlier, this is the trigger for the robust stroke detection algorithm (i.e. the one used when naturalDeceleration is set to 0): when the *currentDt* starts to lengthen, the drive-phase is considered complete.
-
-However, from the acceleration/deceleration curve it is also clear that despite the deceleration, there is still a force present: the deceleration-curve hasn't reached its stable minimum despite crossing 0. This is due to the pull still continuing through the arms: the net force is negative due to a part drive-phase (the arm-movement) delivering weaker forces than the drag-forces of the flywheel. Despite being weaker than the other forces on the flywheel, the rower is still working. In this specific example, at around 0.52 sec the rower's force was weaker than all drag-forces combined. However, only at 0,67 seconds (thus approx. 150 ms later) the net force reaches its stable bottom: the only force present is the drag from the flywheel. Getting closer to this moment is a goal.
 
 By specifying the expected natural deceleration of the flywheel (naturalDeceleration, which in this case is around 8 Rad/s<sup>2</sup>) in the configuration of the rower, the stroke starts earlier and ends later (implemented in MovingFlankDetector's implementation of isFlywheelPowered and isFlywheelUnpowered for naturalDeceleration < 0 in `engine/MovingFlankDetector.js`). Please note: as several derived metrics depend on the length of the drive phase or the exact timing of that moment (like the drag factor when calculated dynamically), these are likely to change when this setting is changed. For a more in-depth explanation, see [here for more details](physics_openrowingmonitor.md#a-closer-look-at-the-effects-of-the-various-drive-and-recovery-phase-detection).
 
