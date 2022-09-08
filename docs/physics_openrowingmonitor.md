@@ -131,7 +131,7 @@ A numerical approach is presented by through [[1]](#1) in formula 7.2:
 
 > k = -I \* &Delta;(1/&omega;) / &Delta;t
 
-Again, &Delta;t introduces a type of undesired volatility. Testing has shown that even when &Delta;t is chosen to span the entire recovery phase, reducing the effect of single values of *CurrentDt*, the calculated drag factor is too unstable.
+Again, &Delta;t introduces a type of undesired volatility. Testing has shown that even when &Delta;t is chosen to span the entire recovery phase, reducing the effect of single values of *CurrentDt*, the calculated drag factor is still too unstable.
 
 To make this calculation more robust, we again turn to regression methods (as suggested by [[7]](#7)).  By transforming formula 7.2 to the definition of the slope of a line, we get the following:
 
