@@ -57,7 +57,9 @@ Combined, we consider a *Drive* followed by a *Recovery* a **Stroke**. In the ca
 As described in [the architecture](Architecture.md), the rowing engine is the core of Open Rowing Monitor and consists of three major parts:
 
 * `engine/Flywheel.js`, which determines rotational metrics,
+
 * `engine/Rower.js`, which transforms rotational metrics in a rowing state and linear metrics,
+
 * `engine/RowingStatistics.js`, which manages session state, session metrics and optimizes metrics for presentation.
 
 Although the physics is well-understood and even well-described publicly (see [[1]](#1),[[2]](#2),[[3]](#3) and [[4]](#4)), applying these formulae in a practical solution for multiple rowers delivering reliable results is quite challenging. Especially small errors, noise, tends to produce visible effects on the recorded metrics. Therefore, in our design of the physics engine, we obey the following principles (see also [the architecture document](Architecture.md)):
@@ -184,6 +186,7 @@ Open Rowing Monitor combines two types of force detection, which work independen
 In `engine/Flywheel.js`, two functions provide force detection:
 
 * `isUnpowered()`: which indicates that the simple or the advanced force detection indicate that a force is absent;
+
 * `isPowered()`: which indicates that both the simple or the advanced force detection indicate that a force is present.
 
 The choice for the logical relations between the two types of force detection is based on testing: where a sudden presence of force on a flywheel (i.e. the start of a drive) is quite easily and consistently detected, its abscence has proven to be more difficult. In practice, the beginning of a drive is easily recognised as strong leg muscles excert much force onto the flywheel in a very short period of time. The end of the drive is more difficult to assess, as the dragforce of the flywheel increases with its speed, and the weaker arm muscles have taken over, making the transition to the recovery much harder to detect. In theory, in the end of the drive phase the drag force might be bigger than the force from the arms, resulting in an overall negative torque.
@@ -222,15 +225,23 @@ We do this by setting a minimum Torque (through setting minumumForceBeforeStroke
 
 Open Rowing Monitor only will get impulses at discrete points in time. As Open Rowing Monitor doesn't measure torque on the flywheel directly, it can't determine where the flywheel exactly accelerates/decelerates as there is no continous measurement. Open Rowing Monitor can only detect a change in the times across several impulses, but it can't detect the exact time of torque change. In essence, at best we only can conclude that the torque has changes somewhere near a specific impulse, but we can't be certain about where the acceleration exactly has taken place and we can only estimate how big the force must have been.
 
-@@@@@@@@
-
 ## Relevant linear metrics
 
-* The *estimated* **Linear Distance** of the boat (in Meters): the distance the boat is expected to travel;
+Knowing that *Time since start*, Angular Velocity &omega;, Angular Acceleration &alpha;, flywheel Torque &tau; and dragfactor k have been determined in a robust manner by `engine/Flywheel.js`, `engine/Rower.js` can now transform these key rotational metrics in linear metrics. The following metrics need to be determined:
 
-* *estimated* **Linear Velocity** of the boat (in Meters/Second): the speed at which the boat is expected to travel.
+* The estimated **Linear Distance** of the boat (in Meters): the distance the boat is expected to travel;
 
-* *estimated* **power produced** by the rower (in Watts): the power the rower produced during the stroke.
+* The estimated **Linear Velocity** of the boat (in Meters/Second): the speed at which the boat is expected to travel.
+
+* The estimated **power produced** by the rower (in Watts): the power the rower produced during the stroke.
+
+* The estimated **force on the handle**
+
+* The estimated speed of the handle**
+
+* The estimated power on the handle**
+
+@@@@@@@@
 
 ### Linear distance
 
@@ -248,7 +259,7 @@ From theory [[14]](#14)) and practical application [[16]](#16). we know the hand
 
 ## Detecting the stroke and recovery phase
 
-On an indoor rower, the rowing cycle will always start with a stroke, followed by a recovery. This results in the follwing phases
+Knowing that `engine/Flywheel.js` has determined whether there is a force on the flywheel, `engine/Rower.js` can now transform this into the phase of the rowing stroke. On an indoor rower, the rowing cycle will always start with a stroke, followed by a recovery. This results in the follwing phases:
 
 * The **Drive phase**, where the rower pulls on the handle, some force on the flywheel is excerted and the flywheel is accelerating or at least not decelerating in accordance with the drag;
 
@@ -267,18 +278,6 @@ stateDiagram-v2
 
 <!-- markdownlint-disable-next-line no-emphasis-as-header -->
 *Finite state machine of rowing cycle*
-
-### Basic stroke detection
-
-
-
-### Advanced stroke detection
-
-By specifying the expected natural deceleration of the flywheel (naturalDeceleration, which in this case is around 8 Rad/s<sup>2</sup>) in the configuration of the rower, the stroke starts earlier and ends later (implemented in MovingFlankDetector's implementation of isFlywheelPowered and isFlywheelUnpowered for naturalDeceleration < 0 in `engine/MovingFlankDetector.js`). Please note: as several derived metrics depend on the length of the drive phase or the exact timing of that moment (like the drag factor when calculated dynamically), these are likely to change when this setting is changed. For a more in-depth explanation, see [here for more details](physics_openrowingmonitor.md#a-closer-look-at-the-effects-of-the-various-drive-and-recovery-phase-detection).
-
-Testing shows that setting a value close to the natural deceleration provides more accurate results very reliably. However, some rowers might contain a lot of noise in their data, making this approach infeasible (hence the fallback option of naturalDeceleration = 0)
-
-This approach is a better approximation than the acceleration/deceleration approach, but still is not perfect. For example, drag-force of the the rower presented in the above graph slowly reduces. This is expected, as the drag-force is speed dependent. For a pure air-rower, the best theoretical approach would be to see if the drag-force is the only force present by calculating the expected drag-force using the current speed and the drag factor (making the stroke detection completely independent on speed). Testing has shown that this approach is too prone to errors, as it requires another derivation with respect to *currentDt*, making it too volatile. Above this, hybrid rower behave differently as well: dependent on the speed, the balance shifts between the speed-dependent air-resistance drag-force and the speed-independent magnetic resistance force. To make the solution robust and broadly applicable, this approach has been abandoned.
 
 ## Measurements during the recovery phase
 
@@ -383,48 +382,6 @@ There are some additional options for the frequency of metric calculations:
 * To allow for a very frequent update of the monitor, and allow for testing for typical end-criteria for trainings that change quite quickly (i.e. absolute distance, elapsed time), we calculate these for each new *currentDt*;
 
 * As we can only calculate the drag factor at the end of the recovery phase, we can only (retrospectively) apply it to the realized linear distance of that same recovery phase. Therefore, we we need to report absolute time and distance from the `RowingEngine` in `engine/RowingEngine.js`);
-
-## A closer look at the effects of the various Drive and Recovery phase detection
-
-In this section, we will answer the question whether Concept2 made a big error in their stroke detection, and thus that using *naturalDeceleration* is set to 0 is inferior to actually setting it to a different value. The short answer is that Concept2 has made a perfectly acceptable tradeoff between reliability of the stroke detection and precision of some metrics.
-
-Effectively, Open Rowing Monitor can use two different methods of stroke detection. When *naturalDeceleration* is set to 0, it will detect an acceleration/deceleration directly based on *currentDt*, similar to Concept2. When *naturalDeceleration* is set to a negative number, it will consider that number as the minimum level of deceleration (in Rad/s<sup>2</sup>). The later is more volatile, as described above, but some consider this desirable when possible.
-
-Our practical experiments show that assuming the recovery-phase started too early doesn't affect measurements per se. In theory, the calculation of speed and power do not depend directly on phase detection, they do depend on the total number of impulses and the drag factor. It is in fact the automatic update of the drag factor that is dependent on the correct detection of the stroke. The drag factor can be pinned down if needed by setting *autoAdjustDragFactor* to "false". If set to true, it might affect measurements of both distance and power, where we will discuss the knock-on effects.
-
-### Effects on the automatically calculated drag factor
-
-The most important measurement that is affected by stroke detection errors is the calculation of the drag factor.
-
-Our robust implementation of the drag factor is:
-
-> DragFactor = FlywheelInertia \* ( 1 / AngularVelocity<sub>start</sub> - 1 / AngularVelocity<sub>end</sub>) \* RecoveryLength
-
-Looking at the effect of erroneously starting the recovery early and ending it late, it affects two variables:
-
-* Recovery length will *systematically* become too long (approx. 200 ms from our experiments)
-
-* The Angular Velocity will *systematically* become too high as the flywheel already starts to decelerate at the end of the drive phase, which we mistakenly consider the start of the recovery (in our tests this was approx. 83,2 Rad/sec instead of 82,7 Rad/sec). A similar thing can happen at the begin of the recovery phase when the rower doesn't have an explosive Drive.
-
-Example calculations based on several tests show that this results in a systematically too high estimate of the drag factor. As these errors are systematic, it is safe to assume these will be fixed by the calibration of the power and distance corrections (i.e. the estimate of the *FlywheelInertia* and the *MagicConstant*). Thus, as long as the user calibrates the rower to provide credible data for his setting of *naturalDeceleration*, there will be no issues.
-
-Please note that this does imply that changing the *naturalDeceleration* when the *autoAdjustDragFactor* is set to true (thus drag is automatically calculated) will require a recalibration of the power and distance measurements.
-
-### Knock-on Effects on the Power calculation
-
-Question is what the effect of this deviation of the drag factor is on the power calculation. The power is calculated as follows:
-
-> P= k \* &omega;<sup>3</sup>
-
-Here, the drag factor is affected upwards. Here the average speed is determined by measuring the angular displacement and divided by the time, being affected in the following manner:
-
-* Time spend in the Drive phase is *systematically* too short
-
-* Angular displacement in the Drive phase will *systematically* be too short
-
-These effects do not cancel out: in essence the flywheel decelerates at the end of the drive phase, which we mistakenly include in the recovery phase. This means that on average, the average speed is systematically too high: it misses some slower speed at the end of the drive. As all factors of the power calculation are systematically overestimating, the result will be a systematic overestimation.
-
-Again, this is a systematic (overestimation) of the power, which will be systematically corrected by the Inertia setting.
 
 ## A mathematical perspective on key metrics
 
