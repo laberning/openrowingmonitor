@@ -64,7 +64,7 @@ Although the physics is well-understood and even well-described publicly (see [[
 
 * stay as close to the original data as possible (thus depend on direct measurements as much as possible) instead of heavily depend on derived data. This means that there are two absolute values we try to stay close to as much as possible: the **time between an impulse** and the **Number of Impulses**, where we consider **Number of Impulses** most reliable, and **time between an impulse** reliable but containing noise (the origin and meaning of these metrics, as well the effects of this approach are explained later);
 
-* use robust calculations wherever possible (i.e. not depend on a single measurements, extrapolations or derivative functions, etc.) to reduce effects of measurement errors. When we do need to calculate a derived function, we choose to use a robust linear regression method to reduce the impact of noise;
+* use robust calculations wherever possible (i.e. not depend on a single measurements, extrapolations, derivation, etc.) to reduce effects of measurement errors. A typical issue is the role of *CurrentDt*, which is often used as a divisor with small numers as &Delta;t, increasing the effect of measurement errors in most metrics. When we do need to calculate a derived function, we choose to use a robust linear regression method to reduce the impact of noise and than use the function to calculate the derived function;
 
 * Be as close to the results of the Concept2 when possible and realistic, as they are considered the golden standard in indoor rowing metrics.
 
@@ -90,9 +90,13 @@ Open Rowing Monitor needs to keep track of several metrics about the flywheel an
 
 * Detecting power on the flywheel
 
-Being limited to the time between impulses, or *currentDt*, means we can't measure these metrics directly, and that we have to accept some deviations in these measurements as they are reported in discrete intervals. 
+Being limited to the time between impulses, *currentDt*, as only measurement means we can't measure any of these metrics directly, and that we have to accept some deviations in these measurements as they are reported in discrete intervals.
 
 Additionally, small mechanical deviations, vibrations in the chassis (due to tiny unbalance in the flywheel) and latency inside the software stack can lead to small deviations the measurement of *currentDt*. Dealing with these deviations is an dominant issue, especially because we have to deal with a wide range machines. Aside from implementing noise reduction, we also focus on using robust calculations: calculations that don't deliver radically different results when a small measurement error is introduced in the measurement of *currentDt*. We typically avoid things like direct deriviations based on single values, as directly deriving over small values of *currentDt* with small errors typically produce huge deviations in the resulting estimate. As an alternative, we use (robust) regression over multiple values, and use the deriviations of the resulting function instead. We do this at the cost of reducing the accuracy of the data, as this approach tends to dampen real occuring peaks in the stroke data. However, this inaccuracy with respect to the perfect theoretical model is needed to prevent estimates to become too unstable for practical use or which can only be used with heavy smoothing later on in the process (typically smoothing across strokes by `engine/RowingStatistics.js`).
+
+### Determining the "Time since start" of the flywheel
+
+This can easily be measured by summarising the **time between an impulse**. Noise has little to no impact to this metric as on average the noise cancels out.
 
 ### Determining the "Angular Position" of the flywheel
 
@@ -103,51 +107,37 @@ In theory, there are two threats here:
 * Potentially missed impulses due to sticking sensors or too short intervals for the Raspberry Pi to detect them. So far, this hasn't happened.
 * Ghost impulses, typically caused by **debounce** effects of the sensor. Up till now, some reports have been seen of this, where the best resolution was a better mechanical construction of magnets and sensors.
 
-### Determining the "Time since start" of the flywheel
-
-This can easily be measured by summarising the **time between an impulse**. Noise has little to no impact.
-
 ### Determining the "Angular Velocity" and "Angular Acceleration" of the flywheel
 
-The traditional approach [[1]](#1), [[14]](#14) suggeste a numerical approach to Angular Velocity &omega;:
+The traditional approach [[1]](#1), [[8]](#8), [[14]](#14) suggeste a numerical approach to Angular Velocity &omega;:
 
 > &omega; = &Delta;&theta; / &Delta;t
 
-From a more robust perspective, &omega; is the the first derivative of the function between *time* and the angular position &theta;.
+This formula is dependent on &Delta;t, which is suspect to noise, making this numerical approach to the calculation of &omega; volatile. From a more robust perspective, we approach &omega; as the the first derivative of the function between *time since start* and the angular position &theta;, where we use a robust regression algorithm to determine the function and thus the first derivative.
 
-The traditional approach [[1]](#1), [[14]](#14) Angular Acceleration &alpha; would be:
+The traditional numerical approach [[1]](#1), [[8]](#8), [[14]](#14) Angular Acceleration &alpha; would be:
 
 > &alpha; = &Delta;&omega; / &Delta;t
 
-@@@@@@@@
+Again, the presence of &Delta;t would make this alculation of &alpha; volatile. From a more robust perspective, we approach &alpha; as the the second derivative of the function between *time since start* and the angular position &theta;, where we use a robust regression algorithm to determine the function and thus the second derivative.
 
-However, this formula is dependent on *currentDt*, which is suspect to noise, which would be reintroduced through this parameter. Following [[8]](#8),[[14]](#14) there is an alternative approach to Angular Acceleration:
-
-> 2&alpha; = &Delta;(&omega;<sup>2</sup>) / &Delta;&theta;
-
-This makes &alpha; dependent on &omega;, which was determined in a robust manner, and &theta; where deviations are discrete and thus easier to detect. Thus we can determine &alpha; in a robust manner by Linear Regression by determining the slope of the line where &theta; on the x-axis and &omega;<sup>2</sup> is the y-axis. However, [[14]](#14) also provides
-
-> &theta; = ½&alpha;t<sup>2</sup> + &omega;<sub>0</sub>t + &theta;<sub>0</sub>
-
-We can estimate &omega; and &alpha; by performing Quadratic Regression on the line where time is on the x-axis and &theta; on the y-axis. As Quadratic Regression resolves the coefficients of y = *a* x<sup>2</sup> + *b* x + *c*, the *a* coefficient equals ½&alpha;, and the *b* coefficient equals &omega;<sub>0</sub>. The derived function of this function (i.e. y' = 2*a*x + *b*) determines the slope at a specific *x* and thus the function &omega;<sub>t</sub> = &alpha;t + &omega;<sub>0</sub> can easily robustly be derived from the same calculation as well based on the same coefficients.
+Summarizing, both Angular Velocity &omega; and Angular Acceleration &alpha; are determined through the same regression algorithm, where the first derivative of the function represents the Angular Velocity &omega; and the second derivative represents the Angular Acceleration &alpha;.
 
 ### Determining the "drag factor" of the flywheel
 
-In the recovery phase, the only force exerted on the flywheel is the (air-/water-/magnetic-)resistance. Thus we can calculate the Drag factor of the Flywheel based on the deceleration through the entire recovery phase through formula 7.2 [[1]](#1):
+In the recovery phase, the only force exerted on the flywheel is the (air-/water-/magnetic-)resistance. Thus we can calculate the Drag factor of the Flywheel based on the drag-based deceleration through the recovery phase [[1]](#1).
+
+A numerical approach is presented by through [[1]](#1) in formula 7.2:
 
 > k = -I \* &Delta;(1/&omega;) / &Delta;t
 
-However, our testing has shown this approach is too volatile to be useful (see [these test results](https://github.com/JaapvanEkris/openrowingmonitor/blob/docs/Engine_Validation.md#validation-of-the-drag-factor-calculation)). In essence, this formula isn't robust due to the effects of small variation in *currentDT* upon both *t* and &omega;. Even when &Delta;t is chosen to span the entire recovery phase, small deviations in *currentDt* result in volaility of the measured drag factor, which results in an unstable drag factor. To make this calculation more robust, we need to take a more fundamental approach.
+Again, &Delta;t introduces a type of undesired volatility. Testing has shown that even when &Delta;t is chosen to span the entire recovery phase, reducing the effect of single values of *CurrentDt*, the calculated drag factor is too unstable.
 
-Such a more fundamental approach is found in the method used by [[7]](#7), where the dragfactor is determined through the slope of the relation between inverse of the angular velocity &omega; and time. This depends on a different perspective on formula 7.2 [[1]](#1), which states:
-
-> k = I \* &Delta;(1/&omega;) / &Delta;t
-
-This can be transformed as the definition of the slope of a line, by reformulating this formula as:
+To make this calculation more robust, we again turn to regression methods (as suggested by [[7]](#7)).  By transforming formula 7.2 to the definition of the slope of a line, we get the following:
 
 > k / I = &Delta;(1/&omega;) / &Delta;t
 
-Thus k/I represents the slope of the graph depicted by time on the *x*-axis and 1/&omega; on the *y*-axis, during the recovery phase of the stroke. However, this formula can be simplified further, as the angular velocity &omega; is determined by:
+Thus k/I represents the slope of the graph depicted by *time since start* on the *x*-axis and 1/&omega; on the *y*-axis, during the recovery phase of the stroke. However, this formula can be simplified further, as the angular velocity &omega; is determined by:
 
 > &omega; = (2&pi; / Impulses Per Rotation) / currentDt
 
@@ -163,13 +153,25 @@ Since we are multiplying *currentDt* with a constant factor (i.e. Impulses Per R
 
 > (k \* 2&pi;) / (I \* Impulses Per Rotation) = &Delta;currentDt / &Delta;t
 
-As the left-hand of the equation only contains constants and the dragfactor, and the right-hand a division of two delta's, we can determine the dragfactor through linear regression (see [[5]](#5) and [[6]](#6)) for the collection of datapoints. The drag factor is effectively determined by the slope of the line created by *time* on the *x*-axis and the corresponding *CurrentDt* on the *y*-axis, for each recovery phase. This slope can be determined in a robust manner through linear regression. This approach also brings this calculation as close as possible to the raw data, and doesn't use individual *currentDt*'s as a divider, which are explicit design goals to reduce data volatility.
+As the left-hand of the equation only contains constants and the dragfactor, and the right-hand a division of two delta's, we can use regression to calculate the drag. The drag factor is effectively determined by the slope of the line created by *time since start* on the *x*-axis and the corresponding *CurrentDt* on the *y*-axis, for each recovery phase.
 
-As the slope of the line *currentDt* over *time* is equal to (k \* 2&pi;) / (I \* Impulses Per Rotation), the drag thus can be determined through
+This slope can be determined through linear regression (see [[5]](#5) and [[6]](#6)) for the collection of datapoints for a specific recovery phase. This approach also brings this calculation as close as possible to the raw data, and doesn't use individual *currentDt*'s as a divider, which are explicit design goals to reduce data volatility. Although simple linear regression (OLS) isn't robust in nature, its algorithm has proven to be sufficiently robust to be applied, especially when filtering on low R<sup>2</sup>.
+
+As the slope of the line *currentDt* over *time since start* is equal to (k \* 2&pi;) / (I \* Impulses Per Rotation), the drag thus can be determined through
 
 > k = slope \* (I \* Impulses Per Rotation) / 2&pi;
 
 ### Determining the "Torque" of the flywheel
+
+The torque &tau; on the flywheel can be determined based on formula 8.1 [[1]](#1):
+
+> &tau; = I ( &Delta;&omega; / &Delta;t ) + D
+
+As &alpha; = &Delta;&omega; and D = k * &omega;<sup>2</sup>(formula 3.4, [[1]](#1)), we can simplify this further by:
+
+> &tau; = I * &alpha; + k * &omega;<sup>2</sup>
+
+@@@@@@@@
 
 ### Detecting power on the flywheel
 
