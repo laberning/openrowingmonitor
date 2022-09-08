@@ -80,9 +80,9 @@ Open Rowing Monitor needs to keep track of several metrics about the flywheel an
 
 * The **Time since start** of the flywheel in seconds (denoted with t): in essence the time the flywheel has been spinning since the start of the session;
 
-* The **Angular Velocity** of the flywheel in Radians/second (denoted with &omega;): in essence the number of (partial) rotations of the flywheel per second;
+* The **Angular Velocity** of the flywheel in Radians \* s<sup>-1</sup> (denoted with &omega;): in essence the number of (partial) rotations of the flywheel per second;
 
-* The **Angular Acceleration** of the flywheel in Radians/second<sup>2</sup> (denoted with &alpha;): the acceleration/deceleration of the flywheel;
+* The **Angular Acceleration** of the flywheel in Radians \* s<sup>-2</sup> (denoted with &alpha;): the acceleration/deceleration of the flywheel;
 
 * The *estimated* **drag factor** of the flywheel: the level af (air/water/magnet) resistence encountered by the flywheel, as a result of a damper setting.
 
