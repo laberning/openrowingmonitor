@@ -269,7 +269,7 @@ An alternative approach is given in [[1]](#1), [[2]](#2) and [[3]](#3), which de
 
 > $$ \overline{P} = k \* \overline{\omega}^3 $$
 
-Where $\overline{P}$ is the average power and $\overline{\omega}$ is the average angular velocity during the stroke. Here, the average speed can be determined in a robust manner (i.e. &Delta;&theta; / &Delta;t for sufficiently large &Delta;t).
+Where $\overline{P}$ is the average power and $\overline{\omega}$ is the average angular velocity during the stroke. Here, the average speed can be determined in a robust manner (i.e. ${&Delta;&theta; \over &Delta;t} for sufficiently large &Delta;t).
 
 Dave Venrooy indicates that this formula is accurate with a 5% margin [[3]](#3). Testing this on live data confirms this behavior. Academic research on the accuracy of the Concept 2 RowErg PM5's power measurements [[15]](#15) shows that:
 
@@ -277,7 +277,7 @@ Dave Venrooy indicates that this formula is accurate with a 5% margin [[3]](#3).
 
 * For stable steady state rowing, the results of this approach are quite reliable;
 
-* For unstable rowing, the power calcuation is not reliable. The article seems to suggest that this is cused by ommitting the element of I \* (&Delta;&omega; / &Delta;t) \* &omega;, essentially assuming that &Delta;&omega; is near zero across strokes. This is problematic at moments of deliberate acceleration across strokes (like starts and sprints), where &Delta;&omega; can be very significant, and at unstable rowing, where there also can be a sigificant &Delta;&omega; present across strokes.
+* For unstable rowing, the power calcuation is not reliable. The article seems to suggest that this is cused by ommitting the element of ${I \* ({&Delta;&omega; \over &Delta;t}) \* &omega;}$, essentially assuming that &Delta;&omega; is near zero across strokes. This is problematic at moments of deliberate acceleration across strokes (like starts and sprints), where &Delta;&omega; can be very significant, and at unstable rowing, where there also can be a sigificant &Delta;&omega; present across strokes.
 
 Still, we currently choose to use $\overline{P}$ = k \* $\overline{&omega;}$<sup>3</sup> for all power calculations, for several reasons:
 
