@@ -92,6 +92,8 @@ You can use the following commands on the command line to restart after a config
 
 After rowing a bit, there should be a csv file created with raw data. Please read this data in Excel (it is in US format), to check if it is sufficiently clean.
 
+<img src="img/CurrentDt_curve.jpg" width="700">
+
 ### Getting an insight into the inner workings of Open Rowing Monitor
 
 When installed, OpenRowingMonitor will not flood the log with messages. However, when testing it is great to see what OpenRowingMonitor is doing. So first thing to do is to set the following in the settings:
