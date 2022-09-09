@@ -321,17 +321,19 @@ Here, as k can slightly change from cycle to cycle, this calculation should be p
 
 ### Handle Force
 
-From theory [[13]](#13)) and practical application [[14]](#14). we know the handle force is equal to:
+From theory [[12]](#12)) and practical application [[7]](#7), we know the handle force is equal to:
 
-flywheel.torque() / sprocketRadius
+> $$ F<sub>Handle/sub> = {&tau; \over r}
+
+Where r is the radius of the sprocket.
 
 ### Handle Velocity
 
-&omega; * sprocketRadius
+> $$ s<sub>Handle/sub> = &omega; \* r
 
 ### Handle Power
 
-flywheel.torque() * flywheel.angularVelocity()
+> P<sub>Handle/sub> = &tau; * &omega;
 
 ## Detecting the stroke phase
 
@@ -433,7 +435,7 @@ Reducing extreme values while maintaining the true data volatility is a subject 
 
 <a id="7">[7]</a> Nomath, "Fan blade Physics and a Peek inside C2's Black Box" <https://www.c2forum.com/viewtopic.php?f=7&t=194719>
 
-<a id="8">[8]</a> "Rotational Kinematics" <https://physics.info/rotational-kinematics/>
+<a id="8">[8]</a> Glenn Elert, The Physics Hypertextbook, "Rotational Kinematics" <https://physics.info/rotational-kinematics/>
 
 <a id="9">[9]</a> Wikipedia, "Linear regression" <https://en.wikipedia.org/wiki/Linear_regression>
 
@@ -441,7 +443,7 @@ Reducing extreme values while maintaining the true data volatility is a subject 
 
 <a id="11">[11]</a> Incomplete Theil-Sen Regression <https://www.fon.hum.uva.nl/praat/manual/theil_regression.html>
 
-<a id="12">[12]</a> Glenn Elert, The Physics Hypertextbook, "Rotational Kinematics" <https://physics.info/rotational-kinematics/>
+<a id="12">[12]</a> Glenn Elert, The Physics Hypertextbook, "Rotational Dynamics" <(https://physics.info/rotational-dynamics/)>
 
 <a id="13">[13]</a> Glenn Elert, The Physics Hypertextbook, "Rotational Energy" <https://physics.info/rotational-energy/>
 
