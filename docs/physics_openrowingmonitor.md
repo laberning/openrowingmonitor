@@ -241,9 +241,11 @@ Knowing that *Time since start*, Angular Velocity &omega;, Angular Acceleration 
 
 * The estimated **Linear Distance** of the boat (in Meters): the distance the boat is expected to travel;
 
-* The estimated **force on the handle** (in Newtons): the force excerted on the handle/chain/belt of the rower;
+* The estimated **Drive length** (in meters): the estimated distance travelled by the handle during the drive phase;
 
 * The estimated **speed of the handle** (in m/s): the speed the handle/chain/belt of the rower;
+
+* The estimated **force on the handle** (in Newtons): the force excerted on the handle/chain/belt of the rower;
 
 * The estimated **power on the handle** (in Watts): the power on the handle/chain/belt of the rower;
 
@@ -340,9 +342,9 @@ Where r is the radius of the sprocket in meters and &theta; the angular distance
 
 ### Handle Velocity
 
-As the distance travelled by the handle is ${s_{Handle} = &theta; * r}$, we can decuct:
+As the distance travelled by the handle is ${u_{Handle} = &theta; * r}$, we can decuct:
 
-> $$ s_{Handle} = &omega; \* r $$
+> $$ u_{Handle} = &omega; \* r $$
 
 Here, &omega; can be the instantanous or average angular velocity of the flyhweel in Radians, and r is the radius of the sprocket (in meters).
 
