@@ -269,7 +269,7 @@ An alternative approach is given in [[1]](#1), [[2]](#2) and [[3]](#3), which de
 
 Where $\overline{P}$ is the average power and $\overline{\omega}$ is the average angular velocity during the stroke. Here, the average speed can be determined in a robust manner (i.e. &Delta;&theta; / &Delta;t for sufficiently large &Delta;t).
 
-As Dave Venrooy indicates this is accurate with a 5% margin. Testing this on live data confirms this behavior. Academic research on the accuracy of the Concept 2 RowErg PM5's power measurements [[17]](#17) shows that:
+Dave Venrooy indicates that this formula is accurate with a 5% margin [[3]](#3). Testing this on live data confirms this behavior. Academic research on the accuracy of the Concept 2 RowErg PM5's power measurements [[17]](#17) shows that:
 
 * It seems that Concept 2 is also using this simplified formula, or something quite similar, in the PM5;
 
@@ -277,7 +277,7 @@ As Dave Venrooy indicates this is accurate with a 5% margin. Testing this on liv
 
 * For unstable rowing, the power calcuation is not reliable. The article seems to suggest that this is cused by ommitting the element of I \* (&Delta;&omega; / &Delta;t) \* &omega;, essentially assuming that &Delta;&omega; is near zero across strokes. This is problematic at moments of deliberate acceleration across strokes (like starts and sprints), where &Delta;&omega; can be very significant, and at unstable rowing, where there also can be a sigificant &Delta;&omega; present across strokes.
 
-Still, we currently choose to use $ \overline{P} = k \* $\overline{&omega;}^3 $ for all power calculations, for several reasons:
+Still, we currently choose to use $\overline{P}$ = k \* $\overline{&omega;}$<sup>3</sup> for all power calculations, for several reasons:
 
 * Despite its flaws, Concept 2's PM5 is widely regarded as the golden standard in rowing. For us, we rather stay close to this golden standard than make a change without the guarantee of delivering more accurate and useable results than Concept 2's PM5. Especially volatility due to measurement errors might make data less useable;
 
@@ -295,17 +295,17 @@ Given these advantages and that in practice it won't have a practical implicatio
 
 In [[1]](#1) and [[2]](#2), it is described that power on a Concept 2 is determined through (formula 9.1):
 
-> $$ P = k \* <span style="text-decoration:overline">&omega;</span>^3 = c \* <span style="text-decoration:overline">u</span>^3 $$
+> $$ \overline{P} = k \* \overline{\omega}^3 = c \* \overline{u}^3 $$
 
-Where c is a constant, <span style="text-decoration:overline">&omega;</span> the average angular velocity and <span style="text-decoration:overline">u</span> is the average linear velocity, making this formula the essential pivot between rotational and linear velocity and distance.
+Where c is a constant, $\overline{\omega}$ the average angular velocity and $\overline{u}$ is the average linear velocity, making this formula the essential pivot between rotational and linear velocity and distance.
 
 However, in [[1]](#1) and [[2]](#2), it is suggested that power on a Concept 2 might be determined through (formula 9.4, [[1]](#1)):
 
-> $$ P = 4.31 \* u^{2.75} $$
+> $$ \overline{P} = 4.31 \* \overline{u}^{2.75} $$
 
-Based on a simple experiment, downloading the exported data of several rowing sessions from Concept 2's logbook, and comparing the reported velocity and power, it can easily be determined that P = c \* u<sup>3</sup> offers a much better fit the data than P = 4.31 \* u<sup>2.75</sup>. Thus we choose to use formula 9.1. Baed on this, we thus adopt formula 9.1 (from [[1]](#1)) for the calculation of linear velocity u:
+Based on a simple experiment, downloading the exported data of several rowing sessions from Concept 2's logbook, and comparing the reported velocity and power, it can easily be determined that $\overline{P}$ = c \* $\overline{u}$<sup>3</sup> offers a much better fit the data than $\overline{P}$ = 4.31 \* $\overline{u}$<sup>2.75</sup>. Thus we choose to use formula 9.1. Baed on this, we thus adopt formula 9.1 (from [[1]](#1)) for the calculation of linear velocity u:
 
-> $$ u = ({k \over C})^{1/3} * <span style="text-decoration:overline">&omega;</span> $$
+> $$ \overline{u} = ({k \over C})^{1/3} * \overline{\omega} $$
 
 As k can slightly change from cycle to cycle, this calculation should be performed for each cycle. It should be noted that this formula is also robust against missed strokes: a missed drive or recovery phase will lump two strokes together, but as the Average Angular Velocity <span style="text-decoration:overline">&omega;</span> will average out across these strokes. Although undesired behaviour in itself, it will isolate linear velocity calculations from the stroke detection in practice.
 
