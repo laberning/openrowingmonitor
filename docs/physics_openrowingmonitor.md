@@ -141,7 +141,7 @@ To make this calculation more robust, we again turn to regression methods (as su
 
 Thus k/I represents the slope of the graph depicted by *time since start* on the *x*-axis and 1/&omega; on the *y*-axis, during the recovery phase of the stroke. However, this formula can be simplified further, as the angular velocity &omega; is determined by:
 
-> &omega; = (2&pi; / Impulses Per Rotation) / currentDt
+> &omega; = {({2&pi; \over Impulses Per Rotation}) \over currentDt}
 
 thus making:
 
@@ -167,9 +167,9 @@ As the slope of the line *currentDt* over *time since start* is equal to (k \* 2
 
 The torque &tau; on the flywheel can be determined based on formula 8.1 [[1]](#1):
 
-> &tau; = I \* ( &Delta;&omega; / &Delta;t ) + D
+> &tau; = I \* ({&Delta;&omega; \over &Delta;t}) + D
 
-As &alpha; = &Delta;&omega; / &Delta;t and D = k \* &omega;<sup>2</sup> (formula 3.4, [[1]](#1)), we can simplify this further by:
+As &alpha; = {&Delta;&omega; \over &Delta;t} and D = k \* &omega;<sup>2</sup> (formula 3.4, [[1]](#1)), we can simplify this further by:
 
 > &tau; = I \* &alpha; + k \* &omega;<sup>2</sup>
 
@@ -247,17 +247,17 @@ As the only source for adding energy to the rotational part of the rower is the 
 
 We can calculate the energy added to the flywheel through [[1]](#1), formula 8.2:
 
-> &Delta;E = I \* (&Delta;&omega; / &Delta;t) \* &Delta;&theta; + k \* &omega;<sup>2</sup> \* &Delta;&theta;
+> &Delta;E = I \* ({&Delta;&omega; \over &Delta;t}) \* &Delta;&theta; + k \* &omega;<sup>2</sup> \* &Delta;&theta;
 
 The power then becomes [[1]](#1), formula 8.3:
 
-> P = &Delta;E / &Delta;t
+> P = &Delta;E \over &Delta;t
 
 Combining these formulae, makes
 
-> P = I \* (&Delta;&omega; / &Delta;t) \* &omega; + k \* &omega;<sup>3</sup>
+> P = I \* ({&Delta;&omega; \over &Delta;t}) \* &omega; + k \* &omega;<sup>3</sup>
 
-Although this is an easy implementable algorithm by calculating a running sum of this function (see [[3]](#3), and more specifically [[4]](#4)). However, the presence of the many small &omega;'s makes the outcome of this calculation quite volatile, even despite the robust underlying calculation for &omega;.
+Although this is an easy technical implementable algorithm by calculating a running sum of this function (see [[3]](#3), and more specifically [[4]](#4)). However, the presence of the many small &omega;'s makes the outcome of this calculation quite volatile, even despite the robust underlying calculation for &omega;. Calculating this across the stroke might be an option, but the presence of &Delta;&omega; would make the power calculation highly dependent on both accurate stroke detection and the accurate determination of instantanous &omega;.
 
 An alternative approach is given in [[1]](#1), [[2]](#2) and [[3]](#3), which describe that power on a Concept 2 is determined through ([[1]](#1) formula 9.1), which proposes:
 
