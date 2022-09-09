@@ -113,13 +113,13 @@ In theory, there are two threats here:
 
 The traditional approach [[1]](#1), [[8]](#8), [[13]](#13) suggeste a numerical approach to Angular Velocity &omega;:
 
-> &omega; = &Delta;&theta; / &Delta;t
+> $$ &omega; = {&Delta;&theta; \over &Delta;t} $$
 
 This formula is dependent on &Delta;t, which is suspect to noise, making this numerical approach to the calculation of &omega; volatile. From a more robust perspective, we approach &omega; as the the first derivative of the function between *time since start* and the angular position &theta;, where we use a robust regression algorithm to determine the function and thus the first derivative.
 
 The traditional numerical approach [[1]](#1), [[8]](#8), [[13]](#13) Angular Acceleration &alpha; would be:
 
-> &alpha; = &Delta;&omega; / &Delta;t
+> $$ &alpha; = {&Delta;&omega; \over &Delta;t} $$
 
 Again, the presence of &Delta;t would make this alculation of &alpha; volatile. From a more robust perspective, we approach &alpha; as the the second derivative of the function between *time since start* and the angular position &theta;, where we use a robust regression algorithm to determine the function and thus the second derivative.
 
@@ -129,15 +129,19 @@ Summarizing, both Angular Velocity &omega; and Angular Acceleration &alpha; are 
 
 In the recovery phase, the only force exerted on the flywheel is the (air-/water-/magnetic-)resistance. Thus we can calculate the Drag factor of the Flywheel based on the drag-based deceleration through the recovery phase [[1]](#1). This calculation is performed in the `markRecoveryPhaseCompleted()` function of `engine/Flywheel.js`.
 
-A numerical approach is presented by through [[1]](#1) in formula 7.2:
+A first numerical approach is presented by through [[1]](#1) in formula 7.2a:
 
-> k = -I \* &Delta;(1/&omega;) / &Delta;t
+> $$ k = - I \* {&Delta;&omega; \over &Delta;t} * {1 \over &Delta;&omega;<sup>2</sup>} $$
 
-Again, &Delta;t introduces a type of undesired volatility. Testing has shown that even when &Delta;t is chosen to span the entire recovery phase, reducing the effect of single values of *CurrentDt*, the calculated drag factor is still too unstable.
+Where the resulting k should be averaged across the rotations of the flywheel. The downside of this approach is that it introduces &Delta;t in the drag calculation, making this calculation potentially volatile. Our practical experience based on testing confirms this. An alternative numerical approach is presented by through [[1]](#1) in formula 7.2b:
+
+> $$ k = -I \* {&Delta;({1 \over &omega;}) \over &Delta;t} $$
+
+Where this is calculated across the entire recovery phase. Again, the presence of &Delta;t potentially introduces a type of undesired volatility. Testing has shown that even when &Delta;t is chosen to span the entire recovery phase reliably, reducing the effect of single values of *CurrentDt*, the calculated drag factor is still too unstable to be used as is: it typically requires averaging across strokes to prevent drag poisoning.
 
 To make this calculation more robust, we again turn to regression methods (as suggested by [[7]](#7)).  By transforming formula 7.2 to the definition of the slope of a line, we get the following:
 
-> k / I = &Delta;(1/&omega;) / &Delta;t
+> $$ { k \over I } = {&Delta;({1 \over &omega;}) \over &Delta;t} $$
 
 Thus k/I represents the slope of the graph depicted by *time since start* on the *x*-axis and 1/&omega; on the *y*-axis, during the recovery phase of the stroke. However, this formula can be simplified further, as the angular velocity &omega; is determined by:
 
@@ -145,15 +149,15 @@ Thus k/I represents the slope of the graph depicted by *time since start* on the
 
 thus making:
 
-> k / I = &Delta;(1/((2&pi; / Impulses Per Rotation) / currentDt)) / &Delta;t
+> $$ { k \over I } = {&Delta;({1 \over {({2&pi; \over Impulses Per Rotation}) \over currentDt}}) \over &Delta;t} $$
 
 removing the division, results in
 
-> k / I = &Delta;(currentDt \* (Impulses Per Rotation / 2&pi;)) / &Delta;t
+> $$ { k \over I } = &Delta;(currentDt \* {Impulses Per Rotation \over 2&pi;}) / &Delta;t $$
 
 Since we are multiplying *currentDt* with a constant factor (i.e. Impulses Per Rotation / 2&pi;), we can further simplify the formula by moving this multiplication outside the slope-calculation. Effectively, making the formula:
 
-> (k \* 2&pi;) / (I \* Impulses Per Rotation) = &Delta;currentDt / &Delta;t
+> $$ {k \* 2&pi; \over I \* Impulses Per Rotation} = {&Delta;currentDt \over &Delta;t} $$
 
 As the left-hand of the equation only contains constants and the dragfactor, and the right-hand a division of two delta's, we can use regression to calculate the drag. The drag factor is effectively determined by the slope of the line created by *time since start* on the *x*-axis and the corresponding *CurrentDt* on the *y*-axis, for each recovery phase.
 
