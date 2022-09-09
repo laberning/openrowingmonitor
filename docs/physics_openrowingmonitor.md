@@ -153,7 +153,7 @@ thus making:
 
 removing the division, results in
 
-> $$ { k \over I } = &Delta;(currentDt \* {Impulses Per Rotation \over 2&pi;}) / &Delta;t $$
+> $$ { k \over I } = {&Delta;(currentDt \* {Impulses Per Rotation \over 2&pi;}) \over &Delta;t} $$
 
 Since we are multiplying *currentDt* with a constant factor (i.e. Impulses Per Rotation / 2&pi;), we can further simplify the formula by moving this multiplication outside the slope-calculation. Effectively, making the formula:
 
@@ -165,17 +165,17 @@ This slope can be determined through linear regression (see [[5]](#5) and [[6]](
 
 As the slope of the line *currentDt* over *time since start* is equal to (k \* 2&pi;) / (I \* Impulses Per Rotation), the drag thus can be determined through
 
-> k = slope \* (I \* Impulses Per Rotation) / 2&pi;
+> $$ k = {slope \* (I \* Impulses Per Rotation) \over 2&pi;} $$
 
 ### Determining the "Torque" of the flywheel
 
 The torque &tau; on the flywheel can be determined based on formula 8.1 [[1]](#1):
 
-> &tau; = I \* ({&Delta;&omega; \over &Delta;t}) + D
+> $$ &tau; = I \* ({&Delta;&omega; \over &Delta;t}) + D $$
 
 As &alpha; = {&Delta;&omega; \over &Delta;t} and D = k \* &omega;<sup>2</sup> (formula 3.4, [[1]](#1)), we can simplify this further by:
 
-> &tau; = I \* &alpha; + k \* &omega;<sup>2</sup>
+> $$ &tau; = I \* &alpha; + k \* &omega;<sup>2</sup> $$
 
 ### Detecting force on the flywheel
 
@@ -251,21 +251,21 @@ As the only source for adding energy to the rotational part of the rower is the 
 
 We can calculate the energy added to the flywheel through [[1]](#1), formula 8.2:
 
-> &Delta;E = I \* ({&Delta;&omega; \over &Delta;t}) \* &Delta;&theta; + k \* &omega;<sup>2</sup> \* &Delta;&theta;
+> $$ &Delta;E = I \* ({&Delta;&omega; \over &Delta;t}) \* &Delta;&theta; + k \* &omega;<sup>2</sup> \* &Delta;&theta; $$
 
 The power then becomes [[1]](#1), formula 8.3:
 
-> P = &Delta;E \over &Delta;t
+> $$ P = {&Delta;E \over &Delta;t} $$
 
 Combining these formulae, makes
 
-> P = I \* ({&Delta;&omega; \over &Delta;t}) \* &omega; + k \* &omega;<sup>3</sup>
+> $$ P = I \* ({&Delta;&omega; \over &Delta;t}) \* &omega; + k \* &omega;<sup>3</sup> $$
 
 Although this is an easy technical implementable algorithm by calculating a running sum of this function (see [[3]](#3), and more specifically [[4]](#4)). However, the presence of the many small &omega;'s makes the outcome of this calculation quite volatile, even despite the robust underlying calculation for &omega;. Calculating this across the stroke might be an option, but the presence of &Delta;&omega; would make the power calculation highly dependent on both accurate stroke detection and the accurate determination of instantanous &omega;.
 
 An alternative approach is given in [[1]](#1), [[2]](#2) and [[3]](#3), which describe that power on a Concept 2 is determined through ([[1]](#1) formula 9.1), which proposes:
 
-> <span style="text-decoration:overline">P</span> = k \* <span style="text-decoration:overline">&omega;</span><sup>3</sup>
+> $$ <span style="text-decoration:overline">P</span> = k \* <span style="text-decoration:overline">&omega;</span><sup>3</sup> $$
 
 Where <span style="text-decoration:overline">P</span> is the average power and <span style="text-decoration:overline">&omega;</span> is the average angular velocity during the stroke. Here, the average speed can be determined in a robust manner (i.e. &Delta;&theta; / &Delta;t for sufficiently large &Delta;t).
 
@@ -295,17 +295,17 @@ Given these advantages and that in practice it won't have a practical implicatio
 
 In [[1]](#1) and [[2]](#2), it is described that power on a Concept 2 is determined through (formula 9.1):
 
-> P = k \* <span style="text-decoration:overline">&omega;</span><sup>3</sup> = c \* <span style="text-decoration:overline">u</span><sup>3</sup>
+> $$ P = k \* <span style="text-decoration:overline">&omega;</span><sup>3</sup> = c \* <span style="text-decoration:overline">u</span><sup>3</sup> $$
 
 Where c is a constant, <span style="text-decoration:overline">&omega;</span> the average angular velocity and <span style="text-decoration:overline">u</span> is the average linear velocity, making this formula the essential pivot between rotational and linear velocity and distance.
 
 However, in [[1]](#1) and [[2]](#2), it is suggested that power on a Concept 2 might be determined through (formula 9.4, [[1]](#1)):
 
-> P = 4.31 \* u<sup>2.75</sup>
+> $$ P = 4.31 \* u<sup>2.75</sup> $$
 
 Based on a simple experiment, downloading the exported data of several rowing sessions from Concept 2's logbook, and comparing the reported velocity and power, it can easily be determined that P = c \* u<sup>3</sup> offers a much better fit the data than P= 4.31 \* u<sup>2.75</sup>. Thus we choose to use formula 9.1. Baed on this, we thus adopt formula 9.1 (from [[1]](#1)) for the calculation of linear velocity u:
 
-> u = (k / C)<sup>1/3</sup> * <span style="text-decoration:overline">&omega;</span>
+> $$ u = ({k \over C})<sup>1/3</sup> * <span style="text-decoration:overline">&omega;</span> $$
 
 As k can slightly change from cycle to cycle, this calculation should be performed for each cycle. It should be noted that this formula is also robust against missed strokes: a missed drive or recovery phase will lump two strokes together, but as the Average Angular Velocity <span style="text-decoration:overline">&omega;</span> will average out across these strokes. Although undesired behaviour in itself, it will isolate linear velocity calculations from the stroke detection in practice.
 
@@ -313,7 +313,7 @@ As k can slightly change from cycle to cycle, this calculation should be perform
 
 [[1]](#1)'s formula 9.3 provides a formula for Linear distance as well:
 
-> s = (k / C)<sup>1/3</sup> * &theta;
+> $$ s = ({k \over C})<sup>1/3</sup> * &theta; $$
 
 Here, as k can slightly change from cycle to cycle, this calculation should be performed at least once for each cycle. As &theta; isn't dependent on stroke state, it can easily be recalculated throughout the stroke, providing the user with direct feedback of his stroke. It should be noted that this formula is also robust against missed strokes: a missed drive or recovery phase will lump two strokes together, but as the angular displacement &theta; is stroke independent, it will not be affected by it. Although undesired behaviour in itself, it will isolate linear distance calculations from the stroke detection in practice.
 
