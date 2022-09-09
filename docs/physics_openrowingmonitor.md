@@ -265,9 +265,9 @@ An alternative approach is given in [[1]](#1), [[2]](#2) and [[3]](#3), which de
 
 Where <span style="text-decoration:overline">P</span> is the average power and <span style="text-decoration:overline">&omega;</span> is the average angular velocity during the stroke. Here, the average speed can be determined in a robust manner (i.e. &Delta;&theta; / &Delta;t for sufficiently large &Delta;t).
 
-As Dave Venrooy indicates this is accurate with a 5% margin. Testing this on live data confirms this behavior. Research on the Concept 2 RowErg PM5 [[17]](#17) shows that:
+As Dave Venrooy indicates this is accurate with a 5% margin. Testing this on live data confirms this behavior. Academic research on the accuracy of the Concept 2 RowErg PM5's power measurements [[17]](#17) shows that:
 
-* It seems that Concept 2 is also using this formula, or something quite similar, in the PM5;
+* It seems that Concept 2 is also using this simplified formula, or something quite similar, in the PM5;
 
 * For stable steady state rowing, the results of this approach are quite reliable;
 
@@ -275,9 +275,9 @@ As Dave Venrooy indicates this is accurate with a 5% margin. Testing this on liv
 
 Still, we currently choose to use <span style="text-decoration:overline">P</span> = k \* <span style="text-decoration:overline">&omega;</span><sup>3</sup> for all power calculations, for several reasons:
 
-* Despite its flaws, Concept 2's PM5 is widely regarded as the golden standard in rowing. For us, we rather stay close to this golden standard than make a change without the guarantee of being better than Concept 2's PM5;
+* Despite its flaws, Concept 2's PM5 is widely regarded as the golden standard in rowing. For us, we rather stay close to this golden standard than make a change without the guarantee of delivering more accurate and useable results than Concept 2's PM5. Especially volatility due to measurement errors might make data less useable;
 
-* As the *flywheelinertia* I is mostly guessed based on its effects on the Power outcome anyway (as nobody is willing to take his rower apart for this), the 5% error wouldn't matter much in most practical applications: the *flywheelinertia* will simply become 5% more to get to the same power in the display.
+* As the *flywheelinertia* I is mostly guessed based on its effects on the Power outcome anyway (as most users aren't willing to take their rower apart for callibration purposses), a systematic error wouldn't matter much in most practical applications as it is corrected in the callibration of a monitor: the *flywheelinertia* will simply become 5% more to get to the same power in the display.
 
 * The simpler algorithm removes the instantaneous angular velocities at the flanks are removed from the power measurement, making this calculation more robust against "unexpected" behavior of the rowing machine (like the cavitation-like effects found in water based Rowers);
 
@@ -285,15 +285,15 @@ Still, we currently choose to use <span style="text-decoration:overline">P</span
 
 * Given the stability of the measurements, it might be a realistic option for users to remove the filter in the presentation layer completely by setting *numOfPhasesForAveragingScreenData* to 2, making the monitor much more responsive to user actions.
 
-Given these advantages and that in practice it won't have a practical implications for users, we have chosen to use the robust implementation.
+Given these advantages and that in practice it won't have a practical implications for users, we have chosen to use the robust implementation. It should be noted that this definition is also robust against missed strokes: a missed drive or recovery phase will lump two strokes together, but as the Average Angular Velocity <span style="text-decoration:overline">&omega;</span> will average out across these strokes, it will not be affected in practice.
 
 ### Linear Velocity
 
 In [[1]](#1) and [[2]](#2), it is described that power on a Concept 2 is determined through (formula 9.1):
 
-> P = k \* &omega;<sup>3</sup> = c \* u<sup>3</sup>
+> P = k \* <span style="text-decoration:overline">&omega;</span><sup>3</sup> = c \* <span style="text-decoration:overline">u</span><sup>3</sup>
 
-Where c is a constant and u is the linear velocity, making this formular the essential pivot between rotational and linear velocity and distance.
+Where c is a constant, <span style="text-decoration:overline">&omega;</span> the average angular velocity and <span style="text-decoration:overline">u</span> is the average linear velocity, making this formula the essential pivot between rotational and linear velocity and distance.
 
 However, in [[1]](#1) and [[2]](#2), it is suggested that power on a Concept 2 might be determined through (formula 9.4, [[1]](#1)):
 
@@ -301,13 +301,19 @@ However, in [[1]](#1) and [[2]](#2), it is suggested that power on a Concept 2 m
 
 Based on a simple experiment, downloading the exported data of several rowing sessions from Concept 2's logbook, and comparing the reported velocity and power, it can easily be determined that P = c \* u<sup>3</sup> offers a much better fit the data than P= 4.31 \* u<sup>2.75</sup>. Thus we choose to use formula 9.1. Baed on this, we thus adopt formula 9.1 (from [[1]](#1)) for the calculation of linear velocity u:
 
-> u = (k / C)<sup>1/3</sup> * &omega;
+> u = (k / C)<sup>1/3</sup> * <span style="text-decoration:overline">&omega;</span>
 
-@@@@@@@@
+As k can slightly change from cycle to cycle, this calculation should be performed for each cycle. It should be noted that this formula is also robust against missed strokes: a missed drive or recovery phase will lump two strokes together, but as the Average Angular Velocity <span style="text-decoration:overline">&omega;</span> will average out across these strokes. Although undesired behaviour in itself, it will isolate linear velocity calculations from the stroke detection in practice.
 
 ### Linear distance
 
-(k / C)<sup>1/3</sup> * &theta;
+[[1]](#1)'s formula 9.3 provides a formula for Linear distance as well:
+
+> s = (k / C)<sup>1/3</sup> * &theta;
+
+Here, as k can slightly change from cycle to cycle, this calculation should be performed at least once for each cycle. As &theta; isn't dependent on stroke state, it can easily be recalculated throughout the stroke, providing the user with direct feedback of his stroke. It should be noted that this formula is also robust against missed strokes: a missed drive or recovery phase will lump two strokes together, but as the angular displacement &theta; is stroke independent, it will not be affected by it. Although undesired behaviour in itself, it will isolate linear distance calculations from the stroke detection in practice.
+
+@@@@@@@@
 
 ### Handle Force
 
@@ -344,26 +350,6 @@ stateDiagram-v2
 
 <!-- markdownlint-disable-next-line no-emphasis-as-header -->
 *Finite state machine of rowing cycle*
-
-## Measurements during the recovery phase
-
-By applying [[1]](#1) formula 9.4 to calculate the linear speed, we obtain the following formula, replacing [[1]](#1)'s formula 9.2:
-
-> u=((k \* &omega;<sup>0.25</sup>) / 4.31)<sup>1/2.75</sup> &omega;
-
-By applying [[1]](#1) formula 9.4 to calculate the linear speed, we obtain the following formula, replacing [[1]](#1)'s formula 9.3:
-
-> s=((k \* &omega;<sup>0.25</sup>) / 4.31)<sup>1/2.75</sup> &theta;
-
-## Measurements during the drive phase
-
-As above, we use the following fomula for determining the linear speed:
-
-> u=((k \* &omega;<sup>0.25</sup>) / 4.31)<sup>1/2.75</sup> &omega;
-
-As above, we use the following fomula for determining the linear distance:
-
-> s=((k \* &omega;<sup>0.25</sup>) / 4.31)<sup>1/2.75</sup> &theta;
 
 ## A mathematical perspective on key metrics
 
