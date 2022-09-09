@@ -267,27 +267,25 @@ Where <span style="text-decoration:overline">P</span> is the average power and <
 
 As Dave Venrooy indicates this is accurate with a 5% margin. Testing this on live data confirms this behavior. Research on the Concept 2 RowErg PM5 [[17]](#17) shows that:
 
-* Concept 2 is also using this formula in the PM5;
+* It seems that Concept 2 is also using this formula, or something quite similar, in the PM5;
 
-* For stable steady state rowing, the results are quite reliable;
+* For stable steady state rowing, the results of this approach are quite reliable;
 
-* For unstable rowing, the power calcuation is not reliable, as it ommits the element of I \* (&Delta;&omega; / &Delta;t) \* &omega;, essentially assuming that &Delta;&omega; is near zero across strokes. This is problematic at moments of acceleration across strokes (like starts and sprints), where &Delta;&omega; can be very significant, and at unstable rowing, where there also is a sigificant &Delta;&omega; is present across strokes.
+* For unstable rowing, the power calcuation is not reliable. The article seems to suggest that this is cused by ommitting the element of I \* (&Delta;&omega; / &Delta;t) \* &omega;, essentially assuming that &Delta;&omega; is near zero across strokes. This is problematic at moments of deliberate acceleration across strokes (like starts and sprints), where &Delta;&omega; can be very significant, and at unstable rowing, where there also can be a sigificant &Delta;&omega; present across strokes.
 
 Still, we currently choose to use <span style="text-decoration:overline">P</span> = k \* <span style="text-decoration:overline">&omega;</span><sup>3</sup> for all power calculations, for several reasons:
 
-* We set out to deliver @@
+* Despite its flaws, Concept 2's PM5 is widely regarded as the golden standard in rowing. For us, we rather stay close to this golden standard than make a change without the guarantee of being better than Concept 2's PM5;
 
-* As the *flywheelinertia* I is mostly guessed based on its effects on the Power outcome anyway (as nobody is willing to take his rower apart for this), the 5% error wouldn't matter much anyway: the *flywheelinertia* will simply become 5% more to get to the same power in the display. Therefore, we choose to use the simpler more robust algorithm, as it has some advantages:
+* As the *flywheelinertia* I is mostly guessed based on its effects on the Power outcome anyway (as nobody is willing to take his rower apart for this), the 5% error wouldn't matter much in most practical applications: the *flywheelinertia* will simply become 5% more to get to the same power in the display.
 
-* In essence the instantaneous angular velocities at the flanks are removed from the power measurement, making it more robust against "unexpected" behavior of the rowers (like the cavitation-like effects found in LiquidFlywheel Rowers). Regardless of settings, only instantaneous angular velocities that affect displayed data are the start and begin of each phase;
+* The simpler algorithm removes the instantaneous angular velocities at the flanks are removed from the power measurement, making this calculation more robust against "unexpected" behavior of the rowing machine (like the cavitation-like effects found in water based Rowers);
 
-* Setting *autoAdjustDragFactor* to "false" effectively removes/disables all calculations with instantaneous angular velocities (only average velocity is calculated over the entire phase, which typically is not on a single measurement), making Open Rowing Monitor an option for rowers with noisy data or otherwise unstable/unreliable measurements;
+* It allows the user to set *autoAdjustDragFactor* to "false", effectively removing/disabling all linear metrics with instantaneous angular velocities (only average velocity is calculated over the entire phase, which typically is not on a single measurement), making Open Rowing Monitor an viable option for rowers with noisy data or otherwise unstable/unreliable measurements;
 
-* Given the stability of the measurements, it might be a realistic option for users to remove the filter in the presentation layer completely by setting *numOfPhasesForAveragingScreenData* to 1, making the monitor much more responsive to user actions.
+* Given the stability of the measurements, it might be a realistic option for users to remove the filter in the presentation layer completely by setting *numOfPhasesForAveragingScreenData* to 2, making the monitor much more responsive to user actions.
 
 Given these advantages and that in practice it won't have a practical implications for users, we have chosen to use the robust implementation.
-
-@@@@@@@@
 
 ### Linear Velocity
 
@@ -295,13 +293,17 @@ In [[1]](#1) and [[2]](#2), it is described that power on a Concept 2 is determi
 
 > P = k \* &omega;<sup>3</sup> = c \* u<sup>3</sup>
 
-Where c is a constant and u is the linear velocity, making this formular the essential pivot between rotational and linear metrics. 
+Where c is a constant and u is the linear velocity, making this formular the essential pivot between rotational and linear velocity and distance.
 
-In [[1]](#1) and [[2]](#2), it is described that power on a Concept 2 is determined through (formula 9.4):
+However, in [[1]](#1) and [[2]](#2), it is suggested that power on a Concept 2 might be determined through (formula 9.4, [[1]](#1)):
 
-> P= 4.31 \* u<sup>2.75</sup>
+> P = 4.31 \* u<sup>2.75</sup>
 
-(k / C)<sup>1/3</sup> * &omega;
+Based on a simple experiment, downloading the exported data of several rowing sessions from Concept 2's logbook, and comparing the reported velocity and power, it can easily be determined that P = c \* u<sup>3</sup> offers a much better fit the data than P= 4.31 \* u<sup>2.75</sup>. Thus we choose to use formula 9.1. Baed on this, we thus adopt formula 9.1 (from [[1]](#1)) for the calculation of linear velocity u:
+
+> u = (k / C)<sup>1/3</sup> * &omega;
+
+@@@@@@@@
 
 ### Linear distance
 
