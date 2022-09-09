@@ -297,7 +297,7 @@ In [[1]](#1) and [[2]](#2), it is described that power on a Concept 2 is determi
 
 > $$ \overline{P} = k \* \overline{\omega}^3 = c \* \overline{u}^3 $$
 
-Where c is a constant (according to [[1]](#1) typically 2.8), $\overline{\omega}$ the average angular velocity and $\overline{u}$ is the average linear velocity, making this formula the essential pivot between rotational and linear velocity and distance.
+Where c is a constant (2.8 according to [[1]](#1)), $\overline{\omega}$ the average angular velocity and $\overline{u}$ is the average linear velocity, making this formula the essential pivot between rotational and linear velocity and distance.
 
 However, in [[1]](#1) and [[2]](#2), it is suggested that power on a Concept 2 might be determined through (formula 9.4, [[1]](#1)):
 
@@ -307,7 +307,7 @@ Based on a simple experiment, downloading the exported data of several rowing se
 
 > $$ \overline{u} = ({k \over C})^{1/3} * \overline{\omega} $$
 
-As k can slightly change from cycle to cycle, this calculation should be performed for each cycle. It should be noted that this formula is also robust against missed strokes: a missed drive or recovery phase will lump two strokes together, but as the Average Angular Velocity <span style="text-decoration:overline">&omega;</span> will average out across these strokes. Although undesired behaviour in itself, it will isolate linear velocity calculations from the stroke detection in practice.
+As both k and &omega; can change from cycle to cycle, this calculation should be performed for each cycle. It should be noted that this formula is also robust against missed strokes: a missed drive or recovery phase will lump two strokes together, but as the Average Angular Velocity $\overline{\omega}$ will average out across these strokes. Although undesired behaviour in itself, it will isolate linear velocity calculations from errors in the stroke detection in practice.
 
 ### Linear distance
 
@@ -315,9 +315,7 @@ As k can slightly change from cycle to cycle, this calculation should be perform
 
 > $$ s = ({k \over C})^{1/3} * &theta; $$
 
-Here, as k can slightly change from cycle to cycle, this calculation should be performed at least once for each cycle. As &theta; isn't dependent on stroke state, it can easily be recalculated throughout the stroke, providing the user with direct feedback of his stroke. It should be noted that this formula is also robust against missed strokes: a missed drive or recovery phase will lump two strokes together, but as the angular displacement &theta; is stroke independent, it will not be affected by it. Although undesired behaviour in itself, it will isolate linear distance calculations from the stroke detection in practice.
-
-@@@@@@@@
+Here, as k can slightly change from cycle to cycle, this calculation should be performed at least once for each cycle. As &theta; isn't dependent on stroke state and changes constantly, it could be recalculated continously throughout the stroke, providing the user with direct feedback of his stroke. It should be noted that this formula is also robust against missed strokes: a missed drive or recovery phase will lump two strokes together, but as the angular displacement &theta; is stroke independent, it will not be affected by it at all. Although undesired behaviour in itself, it will isolate linear distance calculations from errors in the stroke detection in practice.
 
 ### Handle Force
 
@@ -327,13 +325,17 @@ From theory [[12]](#12)) and practical application [[7]](#7), we know the handle
 
 Where r is the radius of the sprocket.
 
+@@@@@@@@
+
 ### Handle Velocity
+
+As 
 
 > $$ s_{Handle} = &omega; \* r $$
 
 ### Handle Power
 
-> P_{Handle} = &tau; * &omega; $$
+> $$ P_{Handle} = &tau; * &omega; $$
 
 ## Detecting the stroke phase
 
