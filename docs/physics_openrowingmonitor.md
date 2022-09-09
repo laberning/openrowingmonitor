@@ -269,7 +269,7 @@ An alternative approach is given in [[1]](#1), [[2]](#2) and [[3]](#3), which de
 
 > $$ \overline{P} = k \* \overline{\omega}^3 $$
 
-Where $\overline{P}$ is the average power and $\overline{\omega}$ is the average angular velocity during the stroke. Here, the average speed can be determined in a robust manner (i.e. ${&Delta;&theta; \over &Delta;t} for sufficiently large &Delta;t).
+Where $\overline{P}$ is the average power and $\overline{\omega}$ is the average angular velocity during the stroke. Here, the average speed can be determined in a robust manner (i.e. ${&Delta;&theta; \over &Delta;t}$ for sufficiently large &Delta;t).
 
 Dave Venrooy indicates that this formula is accurate with a 5% margin [[3]](#3). Testing this on live data confirms this behavior. Academic research on the accuracy of the Concept 2 RowErg PM5's power measurements [[15]](#15) shows that:
 
