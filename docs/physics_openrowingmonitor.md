@@ -245,17 +245,29 @@ Knowing that *Time since start*, Angular Velocity &omega;, Angular Acceleration 
 
 ### Linear distance
 
+Math.pow((flywheel.dragFactor() / rowerSettings.magicConstant), 1.0 / 3.0) * baseAngularDisplacement
+
 ### Linear Velocity
 
+Math.pow((flywheel.dragFactor() / rowerSettings.magicConstant), 1.0 / 3.0) * baseAngularVelocity
+
 ### Power produced
+
+flywheel.dragFactor() * Math.pow((recoveryPhaseAngularDisplacement + drivePhaseAngularDisplacement) / cycleDuration, 3.0)
 
 ### Handle Force
 
 From theory [[14]](#14)) and practical application [[16]](#16). we know the handle force is equal to:
 
+flywheel.torque() / sprocketRadius
+
 ### Handle Velocity
 
+flywheel.angularVelocity() * sprocketRadius
+
 ### Handle Power
+
+flywheel.torque() * flywheel.angularVelocity()
 
 ## Detecting the stroke phase
 
