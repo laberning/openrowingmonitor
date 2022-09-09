@@ -141,7 +141,7 @@ To make this calculation more robust, we again turn to regression methods (as su
 
 Thus k/I represents the slope of the graph depicted by *time since start* on the *x*-axis and 1/&omega; on the *y*-axis, during the recovery phase of the stroke. However, this formula can be simplified further, as the angular velocity &omega; is determined by:
 
-> &omega; = {({2&pi; \over Impulses Per Rotation}) \over currentDt}
+> $$ &omega; = {({2&pi; \over Impulses Per Rotation}) \over currentDt} $$
 
 thus making:
 
