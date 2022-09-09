@@ -277,7 +277,7 @@ As Dave Venrooy indicates this is accurate with a 5% margin. Testing this on liv
 
 * For unstable rowing, the power calcuation is not reliable. The article seems to suggest that this is cused by ommitting the element of I \* (&Delta;&omega; / &Delta;t) \* &omega;, essentially assuming that &Delta;&omega; is near zero across strokes. This is problematic at moments of deliberate acceleration across strokes (like starts and sprints), where &Delta;&omega; can be very significant, and at unstable rowing, where there also can be a sigificant &Delta;&omega; present across strokes.
 
-Still, we currently choose to use <span style="text-decoration:overline">P</span> = k \* <span style="text-decoration:overline">&omega;</span><sup>3</sup> for all power calculations, for several reasons:
+Still, we currently choose to use $\overline{P} = k \* $\overline{&omega;}^3$ for all power calculations, for several reasons:
 
 * Despite its flaws, Concept 2's PM5 is widely regarded as the golden standard in rowing. For us, we rather stay close to this golden standard than make a change without the guarantee of delivering more accurate and useable results than Concept 2's PM5. Especially volatility due to measurement errors might make data less useable;
 
@@ -289,7 +289,7 @@ Still, we currently choose to use <span style="text-decoration:overline">P</span
 
 * Given the stability of the measurements, it might be a realistic option for users to remove the filter in the presentation layer completely by setting *numOfPhasesForAveragingScreenData* to 2, making the monitor much more responsive to user actions.
 
-Given these advantages and that in practice it won't have a practical implications for users, we have chosen to use the robust implementation. It should be noted that this definition is also robust against missed strokes: a missed drive or recovery phase will lump two strokes together, but as the Average Angular Velocity <span style="text-decoration:overline">&omega;</span> will average out across these strokes, it will not be affected in practice.
+Given these advantages and that in practice it won't have a practical implications for users, we have chosen to use the robust implementation. It should be noted that this definition is also robust against missed strokes: a missed drive or recovery phase will lump two strokes together, but as the Average Angular Velocity $\overline{&omega;}$ will average out across these strokes, it will not be affected in practice.
 
 ### Linear Velocity
 
