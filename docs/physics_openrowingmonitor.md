@@ -269,7 +269,7 @@ An alternative approach is given in [[1]](#1), [[2]](#2) and [[3]](#3), which de
 
 Where $\overline{P}$ is the average power and $\overline{\omega}$ is the average angular velocity during the stroke. Here, the average speed can be determined in a robust manner (i.e. &Delta;&theta; / &Delta;t for sufficiently large &Delta;t).
 
-Dave Venrooy indicates that this formula is accurate with a 5% margin [[3]](#3). Testing this on live data confirms this behavior. Academic research on the accuracy of the Concept 2 RowErg PM5's power measurements [[17]](#17) shows that:
+Dave Venrooy indicates that this formula is accurate with a 5% margin [[3]](#3). Testing this on live data confirms this behavior. Academic research on the accuracy of the Concept 2 RowErg PM5's power measurements [[15]](#15) shows that:
 
 * It seems that Concept 2 is also using this simplified formula, or something quite similar, in the PM5;
 
@@ -279,13 +279,16 @@ Dave Venrooy indicates that this formula is accurate with a 5% margin [[3]](#3).
 
 Still, we currently choose to use $\overline{P}$ = k \* $\overline{&omega;}$<sup>3</sup> for all power calculations, for several reasons:
 
-* Despite its flaws, Concept 2's PM5 is widely regarded as the golden standard in rowing. For us, we rather stay close to this golden standard than make a change without the guarantee of delivering more accurate and useable results than Concept 2's PM5. Especially volatility due to measurement errors might make data less useable;
+* Despite its flaws, Concept 2's PM5 is widely regarded as the golden standard in rowing. For us, we rather stay close to this golden standard than make a change without the guarantee of delivering more accurate and robust results than Concept 2's PM5;
 
-* As the *flywheelinertia* I is mostly guessed based on its effects on the Power outcome anyway (as most users aren't willing to take their rower apart for callibration purposses), a systematic error wouldn't matter much in most practical applications as it is corrected in the callibration of a monitor: the *flywheelinertia* will simply become 5% more to get to the same power in the display.
+* The simpler algorithm removes any dependence on instantaneous angular velocities &omega; at the flanks of the stroke from the power calculation and subsequent linear calculations. This makes the power calculation (and thus any subsequent calculations that are based on it) more robust against "unexpected" behavior of the rowing machine. There are several underlying causes for the need to remove this dependence:
+  * First of all, measurement errors in *CurrentDt* could introduce variations in &Delta;&omega; across the cycle and thus in all dependent linear metrics;
+  * Secondly, water rowers are known to experience cavitation effects at the end of the Drive Phase due to poor technique, leading to extremely volatile results;
+  * Last, the determination of &Delta;&omega; across a stroke heavily depends on a very repeatable stroke detection that minimizes &Delta;&omega; to 0 during a stable stroke during steady state rowing. Such a repeatable stroke detection across the many types of rowing machines in itself is difficult to achieve;
 
-* The simpler algorithm removes the instantaneous angular velocities at the flanks are removed from the power measurement, making this calculation more robust against "unexpected" behavior of the rowing machine (like the cavitation-like effects found in water based Rowers);
+* As the *flywheelinertia* I is mostly guessed based on its effects on the Power outcome anyway (as most users aren't willing to take their rower apart for callibration purposses), a systematic error wouldn't matter much in most practical applications as it is corrected during the callibration of a monitor: the *flywheelinertia* will simply be modified to get to the correct power in the display.
 
-* It allows the user to set *autoAdjustDragFactor* to "false", effectively removing/disabling all linear metrics with instantaneous angular velocities (only average velocity is calculated over the entire phase, which typically is not on a single measurement), making Open Rowing Monitor an viable option for rowers with noisy data or otherwise unstable/unreliable measurements;
+* It allows the user to removing/disabling all instantaneous angular velocities from linear metric calculations (i.e. only using average velocity calculated over the entire phase, which doesn't depend on a single measurement) by setting *autoAdjustDragFactor* to "false". This makes Open Rowing Monitor a viable option for rowers with noisy data or otherwise unstable/unreliable individual measurements;
 
 * Given the stability of the measurements, it might be a realistic option for users to remove the filter in the presentation layer completely by setting *numOfPhasesForAveragingScreenData* to 2, making the monitor much more responsive to user actions.
 
@@ -409,6 +412,20 @@ Incomplete Quadratic Theil-Sen delivered more noisy results than Incomplete Line
 
 ## Open Issues, Known problems and Regrettable design decissions
 
+### Use of simplified power calculation
+
+The power calculation is the bridge connecting the linear and rotational energy systems of an ergometer. However, from a robustness perspective, we optimised this formula. The complete formula for power throughout a stroke can be deduced from formulae 8.2 and 8.3 [[1]](#1), which lead to:
+
+> $$ P = I \* ({&Delta;&omega; \over &Delta;t}) \* &omega; + k \* &omega;^3 $$
+
+A simplified formula is provided by [[1]](#1) (formula 9.1), [[2]](#2) and [[3]](#3):
+
+> $$ \overline{P} = k \* \overline{\omega}^3 $$
+
+Open Rowing Monitor uses the latter simplified version. As shown by academic research [[15]](#15), this is sufficiently reliable and accurate providing that that &omega; doesn't vary much across subsequent strokes. When there is a significant acceleration or decelleration of the flywheel across subsequent strokes (at the start, during acceleration in sprints or due to stroke-by-stroke variation), the calculated power starts to deviate from the externally applied power.
+
+Currently, this is an accepted issue, as the simplified formula has the huge benefit of being much more robust against errors in both the *CurrentDt*/&omega; measurement and the stroke detection algorithm. As Concept 2 seems to have taken shortcut in a thoroughly matured product [[15]](#15), we are not inclined to change this quickly. Especially as the robustness of both the &omega; calculation and stroke phase detection varies across types of rowing machines, it is an improvement that should be handled with extreme caution.
+
 ### Use of Quadratic Theil-Senn regression for determining &alpha; and &omega; based on time and &theta;
 
 The underlying assumption of this approach is that the Angular Accelration &alpha; is constant, which in rowing it certainly won't be as the force will vary based on the position in the Drive phase (hence the powercurve). For us, it represents a huge improvement from both the traditional numerical approach (as taken by [[1]](#1) and [[4]](#4)) and the linear regression methods used by earlier approaches of Open Rowing Monitor. As the number of datapoints in a *Flanklength* in the relation to the total number of datapoints in a stroke is small, we consider this is a decent approximation while maintaining an sufficiently efficient algorithm to be able to process all data in the datastream in time.
@@ -451,4 +468,4 @@ Reducing extreme values while maintaining the true data volatility is a subject 
 
 <a id="14">[14]</a> Dave Vernooy, ErgWare source code V0.6 <https://github.com/dvernooy/ErgWare/blob/master/v0.6/Standard_version/source/main.c>
 
-<a id="17">[17]</a> Gunnar Treff, Lennart Mentz, Benjamin Mayer and Kay Winkert, "Initial Evaluation of the Concept-2 Rowing Ergometer's Accuracy Using a Motorized Test Rig" <https://www.researchgate.net/publication/358107352_Initial_Evaluation_of_the_Concept-2_Rowing_Ergometer%27s_Accuracy_Using_a_Motorized_Test_Rig>
+<a id="15">[15]</a> Gunnar Treff, Lennart Mentz, Benjamin Mayer and Kay Winkert, "Initial Evaluation of the Concept-2 Rowing Ergometer's Accuracy Using a Motorized Test Rig" <https://www.researchgate.net/publication/358107352_Initial_Evaluation_of_the_Concept-2_Rowing_Ergometer%27s_Accuracy_Using_a_Motorized_Test_Rig>
