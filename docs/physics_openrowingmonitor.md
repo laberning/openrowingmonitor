@@ -235,11 +235,11 @@ Knowing that *Time since start*, Angular Velocity &omega;, Angular Acceleration 
 
 * The estimated **Linear Distance** of the boat (in Meters): the distance the boat is expected to travel;
 
-* The estimated **force on the handle** (in Newtons):
+* The estimated **force on the handle** (in Newtons): the force excerted on the handle/chain/belt of the rower;
 
-* The estimated **speed of the handle** (in m/s):
+* The estimated **speed of the handle** (in m/s): the speed the handle/chain/belt of the rower;
 
-* The estimated **power on the handle** (in Watts):
+* The estimated **power on the handle** (in Watts): the power on the handle/chain/belt of the rower;
 
 ### Power produced
 
