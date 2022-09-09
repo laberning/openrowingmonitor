@@ -247,11 +247,15 @@ As the only source for adding energy to the rotational part of the rower is the 
 
 We can calculate the energy added to the flywheel through [[1]](#1), formula 8.2:
 
-> &Delta;E = I \* (&Delta;&omega; / &Delta;t)&Delta;&theta; + k \* &omega;<sup>2</sup> \* &Delta;&theta;
+> &Delta;E = I \* (&Delta;&omega; / &Delta;t) \* &Delta;&theta; + k \* &omega;<sup>2</sup> \* &Delta;&theta;
 
 The power then becomes [[1]](#1), formula 8.3:
 
 > P = &Delta;E / &Delta;t
+
+Combining these formulae, makes
+
+> P = I \* (&Delta;&omega; / &Delta;t) \* &omega; + k \* &omega;<sup>3</sup>
 
 Although this is an easy implementable algorithm by calculating a running sum of this function (see [[3]](#3), and more specifically [[4]](#4)). However, the presence of the many small &omega;'s makes the outcome of this calculation quite volatile, even despite the robust underlying calculation for &omega;.
 
@@ -267,7 +271,7 @@ As Dave Venrooy indicates this is accurate with a 5% margin. Testing this on liv
 
 * For stable steady state rowing, the results are quite reliable;
 
-* For unstable rowing, the power calcuation is not reliable, as it ommits the element of I \* (&Delta;&omega; / &Delta;t)&Delta;&theta;. Ths is problematic at moments of acceleration (like starts), where &Delta;&omega; can be very significant, and at unstable rowing, where a sigificant &Delta;&omega; is present across strokes.
+* For unstable rowing, the power calcuation is not reliable, as it ommits the element of I \* (&Delta;&omega; / &Delta;t) \* &omega;, essentially assuming that &Delta;&omega; is near zero across strokes. This is problematic at moments of acceleration across strokes (like starts and sprints), where &Delta;&omega; can be very significant, and at unstable rowing, where there also is a sigificant &Delta;&omega; is present across strokes.
 
 Still, we currently choose to use <span style="text-decoration:overline">P</span> = k \* <span style="text-decoration:overline">&omega;</span><sup>3</sup> for all power calculations, for several reasons:
 
