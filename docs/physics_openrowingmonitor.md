@@ -326,7 +326,7 @@ Here, as k can slightly change from cycle to cycle, this calculation should be p
 
 Given the distance travelled by the handle can be calculated from angular distance &theta; traveled by the sprocket during the Drive Phase. During the drive, the angular distance travelled by the flywheel is identical to the angular distance &theta; travelled by the flywheel during the drive phase. Thus  
 
-> $$ s_{Handle} = number of rotations of the flywheel * circumference of the sprocket $$
+> $$ s_{Handle} = \text{number of rotations of the flywheel} \* \text{circumference of the sprocket} $$
 
 The number of rotations of the flywheel = ${\theta \over 2\pi}$ and the circumference of the sprocket = r * 2\pi, where r is the radius of the sprocket that is connected to the flywheel. Thus we can translate this formula into:
 
