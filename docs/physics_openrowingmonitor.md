@@ -257,7 +257,7 @@ From theory [[14]](#14)) and practical application [[16]](#16). we know the hand
 
 ### Handle Power
 
-## Detecting the stroke and recovery phase
+## Detecting the stroke phase
 
 Knowing that `engine/Flywheel.js` has determined whether there is a force on the flywheel, `engine/Rower.js` can now transform this into the phase of the rowing stroke. On an indoor rower, the rowing cycle will always start with a stroke, followed by a recovery. This results in the follwing phases:
 
