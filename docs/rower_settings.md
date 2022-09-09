@@ -81,7 +81,7 @@ You can use the following commands on the command line to restart after a config
   sudo systemctl restart openrowingmonitor
   ```
 
-After rowing a bit, there should be a csv file created with raw data. Please read this data in Excel (it is in US format), to check if it is sufficiently clean. After loading it into Excel, you can visualise it, and probably see something similar to the following:
+After rowing a bit, there should be a csv file created with raw data. Please read this data in Excel (it is in US format, so you might need to adapt it to your local settings), to check if it is sufficiently clean. After loading it into Excel, you can visualise it, and probably see something similar to the following:
 
 <img src="img/CurrentDt_curve.jpg" width="700">
 
