@@ -323,17 +323,17 @@ Here, as k can slightly change from cycle to cycle, this calculation should be p
 
 From theory [[12]](#12)) and practical application [[7]](#7), we know the handle force is equal to:
 
-> $$ F<sub>Handle</sub> = {&tau; \over r} $$
+> $$ F_{Handle} = {&tau; \over r} $$
 
 Where r is the radius of the sprocket.
 
 ### Handle Velocity
 
-> $$ s<sub>Handle</sub> = &omega; \* r $$
+> $$ s_{Handle} = &omega; \* r $$
 
 ### Handle Power
 
-> P<sub>Handle</sub> = &tau; * &omega; $$
+> P_{Handle} = &tau; * &omega; $$
 
 ## Detecting the stroke phase
 
