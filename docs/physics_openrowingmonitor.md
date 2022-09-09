@@ -284,7 +284,7 @@ Still, we currently choose to use $\overline{P}$ = k \* $\overline{&omega;}$<sup
 * The simpler algorithm removes any dependence on instantaneous angular velocities &omega; at the flanks of the stroke from the power calculation and subsequent linear calculations. This makes the power calculation (and thus any subsequent calculations that are based on it) more robust against "unexpected" behavior of the rowing machine. There are several underlying causes for the need to remove this dependence:
   * First of all, measurement errors in *CurrentDt* could introduce variations in &Delta;&omega; across the cycle and thus in all dependent linear metrics;
   * Secondly, water rowers are known to experience cavitation effects at the end of the Drive Phase due to poor technique, leading to extremely volatile results;
-  * Last, the determination of &Delta;&omega; across a stroke heavily depends on a very repeatable stroke detection that minimizes &Delta;&omega; to 0 during a stable stroke during steady state rowing. Such a repeatable stroke detection across the many types of rowing machines in itself is difficult to achieve;
+  * Last, the determination of &Delta;&omega; across a stroke heavily depends on a very repeatable stroke detection that minimizes &Delta;&omega; to 0 during a stable series of stroke in steady state rowing. Such a repeatable stroke detection across the many types of rowing machines in itself is difficult to achieve;
 
 * As the *flywheelinertia* I is mostly guessed based on its effects on the Power outcome anyway (as most users aren't willing to take their rower apart for callibration purposses), a systematic error wouldn't matter much in most practical applications as it is corrected during the callibration of a monitor: the *flywheelinertia* will simply be modified to get to the correct power in the display.
 
@@ -320,23 +320,41 @@ As both k and &omega; can change from cycle to cycle, this calculation should be
 
 Here, as k can slightly change from cycle to cycle, this calculation should be performed at least once for each cycle. As &theta; isn't dependent on stroke state and changes constantly, it could be recalculated continously throughout the stroke, providing the user with direct feedback of his stroke. It should be noted that this formula is also robust against missed strokes: a missed drive or recovery phase will lump two strokes together, but as the angular displacement &theta; is stroke independent, it will not be affected by it at all. Although undesired behaviour in itself, it will isolate linear distance calculations from errors in the stroke detection in practice.
 
+### Drive length
+
+Given the distance travelled by the handle can be calculated from angular distance &theta; traveled by the sprocket during the Drive Phase. During the drive, the angular distance travelled by the flywheel is identical to the angular distance &theta; travelled by the flywheel during the drive phase. Thus  
+
+> $$ s_{Handle} = number of rotations of the flywheel * circumference of the sprocket
+
+The number of rotations of the flywheel = ${\theta \over 2\pi}$ and the circumference of the sprocket = r * 2\pi, where r is the radius of the sprocket that is connected to the flywheel. Thus we can translate this formula into:
+
+> $$ s_{Handle} = {\theta \over 2\pi} * r * 2\pi $$
+
+Which can be simplified into:
+
+> $$ s_{Handle} = &theta; * r $$
+
+Where r is the radius of the sprocket in meters and &theta; the angular distance travelled by the flywheel during the drive.
+
+### Handle Velocity
+
+As the distance travelled by the handle is ${s_{Handle} = &theta; * r}$, we can decuct:
+
+> $$ s_{Handle} = &omega; \* r $$
+
+Here, &omega; can be the instantanous or average angular velocity of the flyhweel in Radians, and r is the radius of the sprocket (in meters).
+
 ### Handle Force
 
 From theory [[12]](#12)) and practical application [[7]](#7), we know the handle force is equal to:
 
 > $$ F_{Handle} = {&tau; \over r} $$
 
-Where r is the radius of the sprocket.
-
-@@@@@@@@
-
-### Handle Velocity
-
-As 
-
-> $$ s_{Handle} = &omega; \* r $$
+Where r is the radius of the sprocket in meters.
 
 ### Handle Power
+
+From theory [[13]](#13)), we know that the handle Power is
 
 > $$ P_{Handle} = &tau; * &omega; $$
 
@@ -378,7 +396,7 @@ Ordinary Least Squares is by far the most efficient and can easily be applied to
 
 #### Ordinary Least Squares (OLS)
 
-Ordinary Least Squares regression (see [[5]](#5)) and [[6]](#6)) produces results that are generally acceptable and the O(N) performance is well-suited for near-real-time calculations. When implemented in a datastream, the addition of a new datapoint is O(1), and the calculation of a slope also is O(1). When using a high-pass filter on the r<sup>2</sup> to disregard any unreliably approximated data, it can also be used to produce reliable results.
+Ordinary Least Squares regression (see [[5]](#5)) and [[6]](#6)) produces results that are generally acceptable and the O(N) performance is well-suited for near-real-time calculations. When implemented in a datastream, the addition of a new datapoint is O(1), and the calculation of a slope also is O(1). When using a high-pass filter on the r<sup>2</sup> to disregard any unreliably approximated data, it can also be used to produce reliable results. See `engine/utils/OLSLinearSeries.js` for more information about the implementation.
 
 #### Theil–Sen estimator (Linear TS)
 
@@ -388,27 +406,27 @@ Although the Theil–Sen estimator has a O(N log(N)) solution available, however
 
 There also is an Incomplete Theis-Sen estimator for Linear Regression [[11]](#11), which is O(1) for the addition of new datapoints in a datastream with a fixed length window, and O(log(N)) for the determination of the slope. Our tests on real-life data show that in several cases the Incomplete Theil-Sen delivers more robust results than the full Theil-Sen estimator.
 
+#### Quadratic Theil–Sen estimator (Quadratic TS)
+
+The Theil–Sen estimator can be expanded to apply to Quadratic functions, where the implementation is O(N<sup>2</sup>). Based on a Lagrange interpolation, we can calculate the coefficients of the formula quite effectively, resulting in a robust estimation more fitting the data. See `engine/utils/FullTSQuadraticSeries.js` for more information about the background of the implementation.
+
 ### Choices for the specific algorithms
 
 #### Regression algorithm used for drag calculation
 
-For the drag-factor calculation, we observe three things:
+For the drag-factor calculation (and the closely related recovery slope detection), we observe three things:
 
 * The number of datapoints in the recovery phase isn't known in advance, and is subject to significant change due to variations in recovery time (i.e. sprints), making both the Incomplete Theil–Sen estimator and Theil–Sen estimator incapable of calculating their slopes in the stream as the efficient implementations require a fixed window. This results in a near O(N<sup>2</sup>) calculation at the start of the *Drive* phase. Given the number of datapoints often encountered (a recoveryphase on a Concept 2 contains around 200 datapoints), this is a significant issue that could disrupt the application. OLS has a O(1) complexity for continous datastreams;
 
-* In non-time critical replays of earlier recorded rowing sessions, both the Incomplete Theil–Sen estimator and Theil–Sen estimator performed worse than OLS: OLS with a high pass filter on r<sup>2</sup> resulted in a much more stable dragfactor than the Incomplete Theil–Sen estimator and Theil–Sen estimator did (see [these considerations](https://github.com/JaapvanEkris/openrowingmonitor/blob/docs/Engine_Validation.md#improvements-based-on-the-first-side-by-side-dragfactor-test)). This suggests that the OLS algorithm handles the outliers sufficiently to prevent drag poisoning.
+* In non-time critical replays of earlier recorded rowing sessions, both the Incomplete Theil–Sen estimator and Theil–Sen estimator performed worse than OLS: OLS with a high pass filter on r<sup>2</sup> resulted in a much more stable dragfactor than the Incomplete Theil–Sen estimator and Theil–Sen estimator did. This suggests that the OLS algorithm handles the outliers sufficiently to prevent drag poisoning.
 
 * Applying Quadratic OLS regression does not improve its results
 
-Therefore, we chode to apply the OLS Linear Regression model for the calculation of the dragfactor.
+Therefore, we choose to apply the OLS Linear Regression model for the calculation of the dragfactor and the related recovery slope detection.
 
 #### Regression algorithm used for Angular velocity and Angular Acceleration
 
-Incomplete Linear Theil-Sen proved more robust than OLS
-
-Complete Linear Theil-Sen delivered more noisy results than Incomplete Linear Theil-Sen
-
-Incomplete Quadratic Theil-Sen delivered more noisy results than Incomplete Linear Theil-Sen
+We determine the Angular Velocity &omega; and Angular Acceleration &alpha; based on the relation between &theta; and time. First of all, we observe that we use both the first derived function (i.e. &omega;) and the second derived function (i.e. &alpha;), making a quadratic or even a cubic regression algorithm more appropriate, as a liniear regressor would make the second derived function trivial. Practical testing has confirmed that Quadratic Theil-Senn outperformed all Linear Regression methods in terms of robustness and responsiveness. Based on extensive testing with multiple simulated rowing machines, Full Quadratic Theil-Senn has proven to deliver the best results and thus is selected to determine &omega; and &alpha;.
 
 ## Open Issues, Known problems and Regrettable design decissions
 
@@ -428,9 +446,9 @@ Currently, this is an accepted issue, as the simplified formula has the huge ben
 
 ### Use of Quadratic Theil-Senn regression for determining &alpha; and &omega; based on time and &theta;
 
-The underlying assumption of this approach is that the Angular Accelration &alpha; is constant, which in rowing it certainly won't be as the force will vary based on the position in the Drive phase (hence the powercurve). For us, it represents a huge improvement from both the traditional numerical approach (as taken by [[1]](#1) and [[4]](#4)) and the linear regression methods used by earlier approaches of Open Rowing Monitor. As the number of datapoints in a *Flanklength* in the relation to the total number of datapoints in a stroke is small, we consider this is a decent approximation while maintaining an sufficiently efficient algorithm to be able to process all data in the datastream in time.
+The underlying assumption of this approach is that the Angular Accelration &alpha; is constant, which in rowing it certainly won't be the case as the force will vary based on the position in the Drive phase (hence the powercurve). Currently, the use of Quadratic Theil-Senn regression represents a huge improvement from both the traditional numerical approach (as taken by [[1]](#1) and [[4]](#4)) and the linear regression methods used by earlier approaches of Open Rowing Monitor. As the number of datapoints in a *Flanklength* in the relation to the total number of datapoints in a stroke is small, we consider this is a decent approximation while maintaining an sufficiently efficient algorithm to be able to process all data in the datastream in time.
 
-We can inmagine there are better suited third polynomal (cubic) approaches available that can robustly calculate &alpha; and &omega; as a function of time, based on the relation between time and &theta;. However, getting these to work in a datastream with very tight limitations on CPU-time and memory is quite challenging. We also observe that in several areas the theoretical best approach did not deliver the best practical result (i.e. a "better" algorithm delivered a more noisy result for &alpha; and &omega;). Therefore, this avenue isn't investigated yet.
+We can inmagine there are better suited third polynomal (cubic) approaches available that can robustly calculate &alpha; and &omega; as a function of time, based on the relation between time and &theta;. However, getting these to work in a datastream with very tight limitations on CPU-time and memory is quite challenging. We also observe that in several areas the theoretical best approach did not deliver the best practical result (i.e. a "better" algorithm delivered a more noisy result for &alpha; and &omega;). Therefore, this avenue isn't investigated yet, but will be a continuing area of improvement.
 
 ### Use of Quadratic Theil-Senn regression and a median filter for determining &alpha; and &omega;
 
