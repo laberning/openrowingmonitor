@@ -328,7 +328,7 @@ Given the distance travelled by the handle can be calculated from angular distan
 
 > $$ s_{Handle} = \text{number of rotations of the flywheel} \* \text{circumference of the sprocket} $$
 
-The number of rotations of the flywheel = ${\theta \over 2\pi}$ and the circumference of the sprocket = r * 2\pi, where r is the radius of the sprocket that is connected to the flywheel. Thus we can translate this formula into:
+As the number of rotations of the flywheel = ${\theta \over 2\pi}$ and the circumference of the sprocket = r * 2&pi;, where r is the radius of the sprocket that is connected to the flywheel, we can translate this formula into:
 
 > $$ s_{Handle} = {\theta \over 2\pi} * r * 2\pi $$
 
