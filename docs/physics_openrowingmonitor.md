@@ -277,7 +277,7 @@ As Dave Venrooy indicates this is accurate with a 5% margin. Testing this on liv
 
 * For unstable rowing, the power calcuation is not reliable. The article seems to suggest that this is cused by ommitting the element of I \* (&Delta;&omega; / &Delta;t) \* &omega;, essentially assuming that &Delta;&omega; is near zero across strokes. This is problematic at moments of deliberate acceleration across strokes (like starts and sprints), where &Delta;&omega; can be very significant, and at unstable rowing, where there also can be a sigificant &Delta;&omega; present across strokes.
 
-Still, we currently choose to use $\overline{P} = k \* $\overline{&omega;}^3$ for all power calculations, for several reasons:
+Still, we currently choose to use $ \overline{P} = k \* $\overline{&omega;}^3 $ for all power calculations, for several reasons:
 
 * Despite its flaws, Concept 2's PM5 is widely regarded as the golden standard in rowing. For us, we rather stay close to this golden standard than make a change without the guarantee of delivering more accurate and useable results than Concept 2's PM5. Especially volatility due to measurement errors might make data less useable;
 
