@@ -265,9 +265,9 @@ Although this is an easy technical implementable algorithm by calculating a runn
 
 An alternative approach is given in [[1]](#1), [[2]](#2) and [[3]](#3), which describe that power on a Concept 2 is determined through ([[1]](#1) formula 9.1), which proposes:
 
-> $$ \overline{P} = k \* <span style="text-decoration:overline">&omega;</span>^3 $$
+> $$ \overline{P} = k \* \overline{&omega}^3 $$
 
-Where <span style="text-decoration:overline">P</span> is the average power and <span style="text-decoration:overline">&omega;</span> is the average angular velocity during the stroke. Here, the average speed can be determined in a robust manner (i.e. &Delta;&theta; / &Delta;t for sufficiently large &Delta;t).
+Where $\overline{P}$ is the average power and $\overline{&omega}$ is the average angular velocity during the stroke. Here, the average speed can be determined in a robust manner (i.e. &Delta;&theta; / &Delta;t for sufficiently large &Delta;t).
 
 As Dave Venrooy indicates this is accurate with a 5% margin. Testing this on live data confirms this behavior. Academic research on the accuracy of the Concept 2 RowErg PM5's power measurements [[17]](#17) shows that:
 
