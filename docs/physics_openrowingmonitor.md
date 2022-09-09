@@ -113,13 +113,13 @@ In theory, there are two threats here:
 
 The traditional approach [[1]](#1), [[8]](#8), [[13]](#13) suggeste a numerical approach to Angular Velocity &omega;:
 
-> $ &omega; = {&Delta;&theta; \over &Delta;t} $
+> $$ &omega; = {&Delta;&theta; \over &Delta;t} $$
 
 This formula is dependent on &Delta;t, which is suspect to noise, making this numerical approach to the calculation of &omega; volatile. From a more robust perspective, we approach &omega; as the the first derivative of the function between *time since start* and the angular position &theta;, where we use a robust regression algorithm to determine the function and thus the first derivative.
 
 The traditional numerical approach [[1]](#1), [[8]](#8), [[13]](#13) Angular Acceleration &alpha; would be:
 
-> $ &alpha; = {&Delta;&omega; \over &Delta;t} $
+> $$ &alpha; = {&Delta;&omega; \over &Delta;t} $$
 
 Again, the presence of &Delta;t would make this alculation of &alpha; volatile. From a more robust perspective, we approach &alpha; as the the second derivative of the function between *time since start* and the angular position &theta;, where we use a robust regression algorithm to determine the function and thus the second derivative.
 
@@ -131,33 +131,33 @@ In the recovery phase, the only force exerted on the flywheel is the (air-/water
 
 A first numerical approach is presented by through [[1]](#1) in formula 7.2a:
 
-> $ k = - I \* {&Delta;&omega; \over &Delta;t} * {1 \over &Delta;&omega;^2} $
+> $$ k = - I \* {&Delta;&omega; \over &Delta;t} * {1 \over &Delta;&omega;^2} $$
 
 Where the resulting k should be averaged across the rotations of the flywheel. The downside of this approach is that it introduces &Delta;t in the drag calculation, making this calculation potentially volatile. Our practical experience based on testing confirms this. An alternative numerical approach is presented by through [[1]](#1) in formula 7.2b:
 
-> $ k = -I \* {&Delta;({1 \over &omega;}) \over &Delta;t} $
+> $$ k = -I \* {&Delta;({1 \over &omega;}) \over &Delta;t} $$
 
 Where this is calculated across the entire recovery phase. Again, the presence of &Delta;t potentially introduces a type of undesired volatility. Testing has shown that even when &Delta;t is chosen to span the entire recovery phase reliably, reducing the effect of single values of *CurrentDt*, the calculated drag factor is still too unstable to be used as is: it typically requires averaging across strokes to prevent drag poisoning.
 
 To make this calculation more robust, we again turn to regression methods (as suggested by [[7]](#7)).  By transforming formula 7.2 to the definition of the slope of a line, we get the following:
 
-> $ { k \over I } = {&Delta;({1 \over &omega;}) \over &Delta;t} $
+> $$ { k \over I } = {&Delta;({1 \over &omega;}) \over &Delta;t} $$
 
 Thus k/I represents the slope of the graph depicted by *time since start* on the *x*-axis and 1/&omega; on the *y*-axis, during the recovery phase of the stroke. However, this formula can be simplified further, as the angular velocity &omega; is determined by:
 
-> $ &omega; = {({2&pi; \over Impulses Per Rotation}) \over currentDt} $
+> $$ &omega; = {({2&pi; \over Impulses Per Rotation}) \over currentDt} $$
 
 thus making:
 
-> $ { k \over I } = {&Delta;({1 \over {({2&pi; \over Impulses Per Rotation}) \over currentDt}}) \over &Delta;t} $
+> $$ { k \over I } = {&Delta;({1 \over {({2&pi; \over Impulses Per Rotation}) \over currentDt}}) \over &Delta;t} $$
 
 removing the division, results in
 
-> $ { k \over I } = {&Delta;(currentDt \* {Impulses Per Rotation \over 2&pi;}) \over &Delta;t} $
+> $$ { k \over I } = {&Delta;(currentDt \* {Impulses Per Rotation \over 2&pi;}) \over &Delta;t} $$
 
 Since we are multiplying *currentDt* with a constant factor (i.e. Impulses Per Rotation / 2&pi;), we can further simplify the formula by moving this multiplication outside the slope-calculation. Effectively, making the formula:
 
-> $ {k \* 2&pi; \over I \* Impulses Per Rotation} = {&Delta;currentDt \over &Delta;t} $
+> $$ {k \* 2&pi; \over I \* Impulses Per Rotation} = {&Delta;currentDt \over &Delta;t} $$
 
 As the left-hand of the equation only contains constants and the dragfactor, and the right-hand a division of two delta's, we can use regression to calculate the drag. The drag factor is effectively determined by the slope of the line created by *time since start* on the *x*-axis and the corresponding *CurrentDt* on the *y*-axis, for each recovery phase.
 
@@ -165,17 +165,17 @@ This slope can be determined through linear regression (see [[5]](#5) and [[6]](
 
 As the slope of the line *currentDt* over *time since start* is equal to (k \* 2&pi;) / (I \* Impulses Per Rotation), the drag thus can be determined through
 
-> $ k = {slope \* (I \* Impulses Per Rotation) \over 2&pi;} $
+> $$ k = {slope \* (I \* Impulses Per Rotation) \over 2&pi;} $$
 
 ### Determining the "Torque" of the flywheel
 
 The torque &tau; on the flywheel can be determined based on formula 8.1 [[1]](#1):
 
-> $ &tau; = I \* ({&Delta;&omega; \over &Delta;t}) + D $
+> $$ &tau; = I \* ({&Delta;&omega; \over &Delta;t}) + D $$
 
 As &alpha; = &Delta;&omega; / &Delta;t and D = k \* &omega;<sup>2</sup> (formula 3.4, [[1]](#1)), we can simplify this further by:
 
-> $ &tau; = I \* &alpha; + k \* &omega;^2 $
+> $$ &tau; = I \* &alpha; + k \* &omega;^2 $$
 
 ### Detecting force on the flywheel
 
@@ -251,21 +251,21 @@ As the only source for adding energy to the rotational part of the rower is the 
 
 We can calculate the energy added to the flywheel through [[1]](#1), formula 8.2:
 
-> $ &Delta;E = I \* ({&Delta;&omega; \over &Delta;t}) \* &Delta;&theta; + k \* &omega;^2 \* &Delta;&theta; $
+> $$ &Delta;E = I \* ({&Delta;&omega; \over &Delta;t}) \* &Delta;&theta; + k \* &omega;^2 \* &Delta;&theta; $$
 
 The power then becomes [[1]](#1), formula 8.3:
 
-> $ P = {&Delta;E \over &Delta;t} $
+> $$ P = {&Delta;E \over &Delta;t} $$
 
 Combining these formulae, makes
 
-> $ P = I \* ({&Delta;&omega; \over &Delta;t}) \* &omega; + k \* &omega;^3 $
+> $$ P = I \* ({&Delta;&omega; \over &Delta;t}) \* &omega; + k \* &omega;^3 $$
 
 Although this is an easy technical implementable algorithm by calculating a running sum of this function (see [[3]](#3), and more specifically [[4]](#4)). However, the presence of the many small &omega;'s makes the outcome of this calculation quite volatile, even despite the robust underlying calculation for &omega;. Calculating this across the stroke might be an option, but the presence of &Delta;&omega; would make the power calculation highly dependent on both accurate stroke detection and the accurate determination of instantanous &omega;.
 
 An alternative approach is given in [[1]](#1), [[2]](#2) and [[3]](#3), which describe that power on a Concept 2 is determined through ([[1]](#1) formula 9.1), which proposes:
 
-> $ <span style="text-decoration:overline">P</span> = k \* <span style="text-decoration:overline">&omega;</span>^3 $
+> $$ \overline{P} = k \* <span style="text-decoration:overline">&omega;</span>^3 $$
 
 Where <span style="text-decoration:overline">P</span> is the average power and <span style="text-decoration:overline">&omega;</span> is the average angular velocity during the stroke. Here, the average speed can be determined in a robust manner (i.e. &Delta;&theta; / &Delta;t for sufficiently large &Delta;t).
 
