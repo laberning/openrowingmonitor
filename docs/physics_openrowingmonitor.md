@@ -235,11 +235,11 @@ Knowing that *Time since start*, Angular Velocity &omega;, Angular Acceleration 
 
 * The estimated **power produced** by the rower (in Watts): the power the rower produced during the stroke.
 
-* The estimated **force on the handle**
+* The estimated **force on the handle** (in Newtons):
 
-* The estimated speed of the handle**
+* The estimated **speed of the handle** (in m/s):
 
-* The estimated power on the handle**
+* The estimated **power on the handle** (in Watts):
 
 @@@@@@@@
 
