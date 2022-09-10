@@ -293,7 +293,7 @@ test('A full session for a Concept2 RowErg should produce plausible results', as
   testSpinningTime(flywheel, 476.23309445539917)
   testAngularPosition(flywheel, 2010.2899923244997)
   // As dragFactor is static, it should remain in place
-  testDragFactor(flywheel, 0.00013132338915085592)
+  testDragFactor(flywheel, 0.00013132338915)
 })
 
 // Test behaviour after reset
