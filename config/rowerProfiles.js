@@ -101,6 +101,29 @@ export default {
     magicConstant: 2.8
   },
 
+  // Concept2 RowErg
+  Concept2_RowErg: {
+    numOfImpulsesPerRevolution: 6,
+    minimumTimeBetweenImpulses: 0.005,
+    maximumTimeBetweenImpulses: 0.022,
+    flywheelInertia: 0.10159,
+    sprocketRadius: 1.55,
+    flankLength: 11,
+    numberOfErrorsAllowed: 2,
+    minimumStrokeQuality: 0.34,
+    minumumRecoverySlope: 0.00070,
+    autoAdjustRecoverySlope: true,
+    autoAdjustRecoverySlopeMargin: 0.036,
+    minumumForceBeforeStroke: 12,
+    minimumDriveTime: 0.46,
+    minimumRecoveryTime: 0.90,
+    dragFactor: 110,
+    autoAdjustDragFactor: true,
+    minimumDragQuality: 0.83,
+    dragFactorSmoothing: 3
+  },
+
+  
   // Sportstech WRX700
   Sportstech_WRX700: {
     numOfImpulsesPerRevolution: 2,
