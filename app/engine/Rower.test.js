@@ -427,6 +427,22 @@ test('A full session for SportsTech WRX700 should produce plausible results', as
   testRecoveryDragFactor(rower, rowerProfiles.Sportstech_WRX700.dragFactor)
 })
 
+test('A full session for SportsTech WRX700 should produce plausible results', async () => {
+  const rower = createRower(deepMerge(rowerProfiles.DEFAULT, rowerProfiles.Concept2_RowErg))
+  testTotalMovingTimeSinceStart(rower, 0)
+  testTotalLinearDistanceSinceStart(rower, 0)
+  testTotalNumberOfStrokes(rower, 0)
+  testRecoveryDragFactor(rower, rowerProfiles.Concept2_RowErg.dragFactor)
+
+  await replayRowingSession(rower.handleRotationImpulse, { filename: 'recordings/Concept2_RowErg_Session_2000meters.csv', realtime: false, loop: false })
+
+  testTotalMovingTimeSinceStart(rower, 2341.3684300762125)
+  testTotalLinearDistanceSinceStart(rower, 2000)
+  testTotalNumberOfStrokes(rower, 846)
+  // As dragFactor is static, it should remain in place
+  testRecoveryDragFactor(rower, 130)
+})
+
 function testStrokeState (rower, expectedValue) {
   assert.ok(rower.strokeState() === expectedValue, `strokeState should be ${expectedValue} at ${rower.totalMovingTimeSinceStart()} sec, is ${rower.strokeState()}`)
 }
