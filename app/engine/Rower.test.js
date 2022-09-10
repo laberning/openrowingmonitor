@@ -438,7 +438,7 @@ test('A full session for a Concept2 RowErg should produce plausible results', as
 
   testTotalMovingTimeSinceStart(rower, 476.23309445539917)
   testTotalLinearDistanceSinceStart(rower, 2010.2899923244997)
-  testTotalNumberOfStrokes(rower, 846)
+  testTotalNumberOfStrokes(rower, 208)
   // As dragFactor is static, it should remain in place
   testRecoveryDragFactor(rower, 130)
 })
