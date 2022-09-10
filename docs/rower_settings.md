@@ -1,5 +1,6 @@
 # Guide for rower specific settings
 
+<!-- markdownlint-disable no-inline-html -->
 This guide helps you to adjust the rowing monitor specifically for a new type of rower or even for your specific use, when the default rowers don't suffice.
 
 ## Why we need rower specific settings
@@ -106,6 +107,7 @@ Show the log output of a service:
   ```zsh
   sudo journalctl -u openrowingmonitor
   ```
+
 This allows you to see the current state of the rower. Typically, you should find:
 
 @@@@@@@@@@@@@
