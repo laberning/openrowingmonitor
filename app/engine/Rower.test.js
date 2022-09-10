@@ -427,7 +427,7 @@ test('A full session for SportsTech WRX700 should produce plausible results', as
   testRecoveryDragFactor(rower, rowerProfiles.Sportstech_WRX700.dragFactor)
 })
 
-test('A full session for SportsTech WRX700 should produce plausible results', async () => {
+test('A full session for a Concept2 RowErg should produce plausible results', async () => {
   const rower = createRower(deepMerge(rowerProfiles.DEFAULT, rowerProfiles.Concept2_RowErg))
   testTotalMovingTimeSinceStart(rower, 0)
   testTotalLinearDistanceSinceStart(rower, 0)
@@ -436,7 +436,7 @@ test('A full session for SportsTech WRX700 should produce plausible results', as
 
   await replayRowingSession(rower.handleRotationImpulse, { filename: 'recordings/Concept2_RowErg_Session_2000meters.csv', realtime: false, loop: false })
 
-  testTotalMovingTimeSinceStart(rower, 2341.3684300762125)
+  testTotalMovingTimeSinceStart(rower, 476.23309445539917)
   testTotalLinearDistanceSinceStart(rower, 2000)
   testTotalNumberOfStrokes(rower, 846)
   // As dragFactor is static, it should remain in place
