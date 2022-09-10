@@ -291,8 +291,7 @@ test('A full session for a Concept2 RowErg should produce plausible results', as
   await replayRowingSession(flywheel.pushValue, { filename: 'recordings/Concept2_RowErg_Session_2000meters.csv', realtime: false, loop: false })
 
   testSpinningTime(flywheel, 476.23309445539917)
-  testAngularPosition(flywheel, 2010.2899923244997)
-  // As dragFactor is static, it should remain in place
+  testAngularPosition(flywheel, 55768.505588974804)
   testDragFactor(flywheel, 0.00013132338915)
 })
 
