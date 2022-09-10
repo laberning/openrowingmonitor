@@ -265,8 +265,8 @@ test('Correct Flywheel behaviour with a NordicTrack RX800', async () => {
 
   testSpinningTime(flywheel, 22.710637130999988)
   testAngularPosition(flywheel, 1446.7034169780998)
-  // As the dragfactor is dynamic, it turns to another value
-  testDragFactor(flywheel, 0.000225)
+  // As we don't detect strokes here (this is a function of Rower.js, the dragcalculation shouldn't be triggered
+  testDragFactor(flywheel, (rowerProfiles.NordicTrack_RX800.dragFactor / 1000000))
 })
 
 test('Correct Flywheel behaviour with a full session on a SportsTech WRX700', async () => {
@@ -279,6 +279,7 @@ test('Correct Flywheel behaviour with a full session on a SportsTech WRX700', as
   await replayRowingSession(flywheel.pushValue, { filename: 'recordings/WRX700_2magnets_session.csv', realtime: false, loop: false })
   testSpinningTime(flywheel, 2341.3684300762125)
   testAngularPosition(flywheel, 37337.82868791469)
+  // The dragfactor should remain static
   testDragFactor(flywheel, (rowerProfiles.Sportstech_WRX700.dragFactor / 1000000))
 })
 
@@ -292,7 +293,8 @@ test('A full session for a Concept2 RowErg should produce plausible results', as
 
   testSpinningTime(flywheel, 476.23309445539917)
   testAngularPosition(flywheel, 55768.505588974804)
-  testDragFactor(flywheel, 0.00013132338915)
+  // As we don't detect strokes here (this is a function of Rower.js, the dragcalculation shouldn't be triggered
+  testDragFactor(flywheel, (rowerProfiles.Concept2_RowErg.dragFactor / 1000000))
 })
 
 // Test behaviour after reset
