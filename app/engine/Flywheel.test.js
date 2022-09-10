@@ -286,14 +286,14 @@ test('A full session for a Concept2 RowErg should produce plausible results', as
   const flywheel = createFlywheel(deepMerge(rowerProfiles.DEFAULT, rowerProfiles.Concept2_RowErg))
   testSpinningTime(flywheel, 0)
   testAngularPosition(flywheel, 0)
-  testDragFactor(flywheel, rowerProfiles.Concept2_RowErg.dragFactor)
+  testDragFactor(flywheel, (rowerProfiles.Concept2_RowErg.dragFactor / 1000000))
 
   await replayRowingSession(flywheel.pushValue, { filename: 'recordings/Concept2_RowErg_Session_2000meters.csv', realtime: false, loop: false })
 
   testSpinningTime(flywheel, 476.23309445539917)
   testAngularPosition(flywheel, 2010.2899923244997)
   // As dragFactor is static, it should remain in place
-  testDragFactor(flywheel, 131.32338915085592)
+  testDragFactor(flywheel, 0.00013132338915085592)
 })
 
 // Test behaviour after reset
