@@ -123,7 +123,6 @@ export default {
     dragFactorSmoothing: 3
   },
 
-  
   // Sportstech WRX700
   Sportstech_WRX700: {
     numOfImpulsesPerRevolution: 2,
