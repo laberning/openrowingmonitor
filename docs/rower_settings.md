@@ -85,7 +85,7 @@ After rowing a bit, there should be a csv file created with raw data. Please rea
 
 <img src="img/CurrentDt_curve.jpg" width="700">
 
-When the line goes up, the time between impulses from the flywheel goes up, and thus the flywheel is decellerating. When the line goes down, the time between impulses decreases, and thus the flywheel is accelerating. In the first decellerating flank, we see some noise, which Open Rowing Monitor an deal with perfectly. However, looking at the bottom of the accelration curve, we see a series of heavy downward spikes. This could be start-up noise, but it also could be systematic across the rowing session. This is problematic as it throws off both stroke detection and many metrics. Typically, it signals an issue in the mechenical construction of the sensor: the fram and sensor vibrate at high speeds, resulting in much noise. Please fix this before proceeding.
+When the line goes up, the time between impulses from the flywheel goes up, and thus the flywheel is decellerating. When the line goes down, the time between impulses decreases, and thus the flywheel is accelerating. In the first decellerating flank, we see some noise, which Open Rowing Monitor an deal with perfectly. However, looking at the bottom of the first acceleration flank, we see a series of heavy downward spikes. This could be start-up noise, but it also could be systematic across the rowing session. This is problematic as it throws off both stroke detection and many metrics. Typically, it signals an issue in the mechenical construction of the sensor: the fram and sensor vibrate at high speeds, resulting in much noise. Please fix this before proceeding.
 
 ### Getting an insight into the inner workings of Open Rowing Monitor
 
