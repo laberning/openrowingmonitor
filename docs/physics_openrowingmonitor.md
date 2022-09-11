@@ -143,7 +143,7 @@ To make this calculation more robust, we again turn to regression methods (as su
 
 > $$ { k \over I } = {&Delta;({1 \over &omega;}) \over &Delta;t} $$
 
-Thus k/I represents the slope of the graph depicted by *time since start* on the *x*-axis and 1/&omega; on the *y*-axis, during the recovery phase of the stroke. However, this formula can be simplified further, as the angular velocity &omega; is determined by:
+Thus k/I represents the slope of the graph depicted by *time since start* on the *x*-axis and ${1 \over &omega;}$ on the *y*-axis, during the recovery phase of the stroke. However, this formula can be simplified further, as the angular velocity &omega; is determined by:
 
 > $$ &omega; = {({2&pi; \over Impulses Per Rotation}) \over currentDt} $$
 
@@ -155,7 +155,7 @@ removing the division, results in
 
 > $$ { k \over I } = {&Delta;(currentDt \* {Impulses Per Rotation \over 2&pi;}) \over &Delta;t} $$
 
-Since we are multiplying *currentDt* with a constant factor (i.e. Impulses Per Rotation / 2&pi;), we can further simplify the formula by moving this multiplication outside the slope-calculation. Effectively, making the formula:
+Since we are multiplying *currentDt* with a constant factor (i.e. ${Impulses Per Rotation \over 2&pi;}$), we can further simplify the formula by moving this multiplication outside the slope-calculation. Effectively, making the formula:
 
 > $$ {k \* 2&pi; \over I \* Impulses Per Rotation} = {&Delta;currentDt \over &Delta;t} $$
 
