@@ -163,7 +163,7 @@ As the left-hand of the equation only contains constants and the dragfactor, and
 
 This slope can be determined through linear regression (see [[5]](#5) and [[6]](#6)) for the collection of datapoints for a specific recovery phase. This approach also brings this calculation as close as possible to the raw data, and doesn't use individual *currentDt*'s as a divider, which are explicit design goals to reduce data volatility. Although simple linear regression (OLS) isn't robust in nature, its algorithm has proven to be sufficiently robust to be applied, especially when filtering on low R<sup>2</sup>. On a Concept2, the typical R<sup>2</sup> is around 0.96 for steady state rowing.
 
-As the slope of the line *currentDt* over *time since start* is equal to (k \* 2&pi;) / (I \* Impulses Per Rotation), the drag thus can be determined through
+As the slope of the line *currentDt* over *time since start* is equal to ${k \* 2&pi; \over I \* Impulses Per Rotation}$, the drag thus can be determined through
 
 > $$ k = slope \* {I \* Impulses Per Rotation \over 2&pi;} $$
 
