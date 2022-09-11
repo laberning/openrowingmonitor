@@ -165,7 +165,7 @@ This slope can be determined through linear regression (see [[5]](#5) and [[6]](
 
 As the slope of the line *currentDt* over *time since start* is equal to (k \* 2&pi;) / (I \* Impulses Per Rotation), the drag thus can be determined through
 
-> $$ k = {slope \* (I \* Impulses Per Rotation) \over 2&pi;} $$
+> $$ k = slope \* (I \* Impulses Per Rotation \over 2&pi;} $$
 
 ### Determining the "Torque" of the flywheel
 
