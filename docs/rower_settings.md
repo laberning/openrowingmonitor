@@ -108,7 +108,70 @@ Show the log output of a service:
   sudo journalctl -u openrowingmonitor
   ```
 
-This allows you to see the current state of the rower. Typically, you should find:
+This allows you to see the current state of the rower. Typically this will show:
+
+  ```zsh
+  Sep 12 20:37:45 roeimachine systemd[1]: Started Open Rowing Monitor.
+  Sep 12 20:38:03 roeimachine npm[751]: > openrowingmonitor@0.8.2 start
+  Sep 12 20:38:03 roeimachine npm[751]: > node app/server.js
+  Sep 12 20:38:06 roeimachine npm[802]: ==== Open Rowing Monitor 0.8.2 ====
+  Sep 12 20:38:06 roeimachine npm[802]: Setting priority for the main server thread to -5
+  Sep 12 20:38:06 roeimachine npm[802]: Session settings: distance limit none meters, time limit none seconds
+  Sep 12 20:38:06 roeimachine npm[802]: bluetooth profile: Concept2 PM5
+  Sep 12 20:38:06 roeimachine npm[802]: webserver running on port 80
+  Sep 12 20:38:06 roeimachine npm[862]: Setting priority for the Gpio-service to -7
+  Sep 12 20:38:09 roeimachine npm[802]: websocket client connected
+  ```
+
+### Setting critical parameters
+
+  ```zsh
+  Sep 12 20:45:36 roeimachine npm[802]: stroke: 0, dist: 0.0m, speed: 0.00m/s, pace: Infinity/500m, power: 0W, drive length: 1.10 m, SPM: 0.0, drive dur: NaNs, rec. dur: NaNs
+  Sep 12 20:45:38 roeimachine npm[802]: *** RECOVERY phase started at time: 1.5644 sec
+  Sep 12 20:45:40 roeimachine npm[802]: *** DRIVE phase started at time: 3.6013 sec
+  Sep 12 20:45:40 roeimachine npm[802]: *** Calculated drag factor: 105.6459, no. samples: 143, Goodness of Fit: 0.9435
+  Sep 12 20:45:40 roeimachine npm[802]: *** Calculated recovery slope: 0.001089, Goodness of Fit: 0.9435
+  Sep 12 20:45:40 roeimachine npm[802]: stroke: 1, dist: 7.5m, speed: 1.80m/s, pace: 4:38/500m, power: 17W, drive length: 1.09 m, SPM: 23.2, drive dur: 1.56s, rec. dur: 2.04s
+  Sep 12 20:45:41 roeimachine npm[802]: *** RECOVERY phase started at time: 4.5018 sec
+  Sep 12 20:45:43 roeimachine npm[802]: *** DRIVE phase started at time: 6.5907 sec
+  Sep 12 20:45:43 roeimachine npm[802]: *** Calculated drag factor: 104.1759, no. samples: 196, Goodness of Fit: 0.9675
+  Sep 12 20:45:43 roeimachine npm[802]: *** Calculated recovery slope: 0.001074, Goodness of Fit: 0.9675
+  Sep 12 20:45:43 roeimachine npm[802]: stroke: 2, dist: 17.1m, speed: 2.93m/s, pace: 2:51/500m, power: 73W, drive length: 1.18 m, SPM: 20.2, drive dur: 1.23s, rec. dur: 2.06s
+  Sep 12 20:45:44 roeimachine npm[802]: *** RECOVERY phase started at time: 7.3455 sec
+  Sep 12 20:45:46 roeimachine npm[802]: *** DRIVE phase started at time: 9.5219 sec
+  Sep 12 20:45:46 roeimachine npm[802]: *** Calculated drag factor: 103.9705, no. samples: 214, Goodness of Fit: 0.9731
+  Sep 12 20:45:46 roeimachine npm[802]: *** Calculated recovery slope: 0.001072, Goodness of Fit: 0.9731
+  Sep 12 20:45:46 roeimachine npm[802]: stroke: 3, dist: 27.2m, speed: 3.39m/s, pace: 2:28/500m, power: 109W, drive length: 1.23 m, SPM: 20.8, drive dur: 0.83s, rec. dur: 2.13s
+  Sep 12 20:45:46 roeimachine npm[802]: *** RECOVERY phase started at time: 10.2020 sec
+  Sep 12 20:45:49 roeimachine npm[802]: *** DRIVE phase started at time: 12.4851 sec
+  Sep 12 20:45:49 roeimachine npm[802]: *** Calculated drag factor: 103.7254, no. samples: 232, Goodness of Fit: 0.9770
+  Sep 12 20:45:49 roeimachine npm[802]: *** Calculated recovery slope: 0.001069, Goodness of Fit: 0.9770
+  Sep 12 20:45:49 roeimachine npm[802]: stroke: 4, dist: 37.7m, speed: 3.51m/s, pace: 2:23/500m, power: 121W, drive length: 1.16 m, SPM: 20.6, drive dur: 0.72s, rec. dur: 2.23s
+  Sep 12 20:45:49 roeimachine npm[802]: *** RECOVERY phase started at time: 13.1464 sec
+  Sep 12 20:45:52 roeimachine npm[802]: *** DRIVE phase started at time: 15.3739 sec
+  Sep 12 20:45:52 roeimachine npm[802]: *** Calculated drag factor: 103.9593, no. samples: 226, Goodness of Fit: 0.9775
+  Sep 12 20:45:52 roeimachine npm[802]: *** Calculated recovery slope: 0.001072, Goodness of Fit: 0.9775
+  Sep 12 20:45:52 roeimachine npm[802]: stroke: 5, dist: 48.0m, speed: 3.56m/s, pace: 2:21/500m, power: 126W, drive length: 1.11 m, SPM: 20.6, drive dur: 0.67s, rec. dur: 2.26s
+  Sep 12 20:45:52 roeimachine npm[802]: *** RECOVERY phase started at time: 16.1629 sec
+  Sep 12 20:45:55 roeimachine npm[802]: *** DRIVE phase started at time: 18.3141 sec
+  Sep 12 20:45:55 roeimachine npm[802]: *** Calculated drag factor: 103.3899, no. samples: 216, Goodness of Fit: 0.9764
+  Sep 12 20:45:55 roeimachine npm[802]: *** Calculated recovery slope: 0.001066, Goodness of Fit: 0.9764
+  Sep 12 20:45:55 roeimachine npm[802]: stroke: 6, dist: 58.4m, speed: 3.55m/s, pace: 2:21/500m, power: 126W, drive length: 1.22 m, SPM: 20.1, drive dur: 0.73s, rec. dur: 2.19s
+  Sep 12 20:45:55 roeimachine npm[802]: *** RECOVERY phase started at time: 19.0078 sec
+  Sep 12 20:45:58 roeimachine npm[802]: *** DRIVE phase started at time: 21.3977 sec
+  Sep 12 20:45:58 roeimachine npm[802]: *** Calculated drag factor: 102.3463, no. samples: 236, Goodness of Fit: 0.9348
+  Sep 12 20:45:58 roeimachine npm[802]: *** Calculated recovery slope: 0.001055, Goodness of Fit: 0.9348
+  Sep 12 20:45:58 roeimachine npm[802]: stroke: 7, dist: 69.1m, speed: 3.49m/s, pace: 2:23/500m, power: 119W, drive length: 1.23 m, SPM: 20.2, drive dur: 0.74s, rec. dur: 2.27s
+  Sep 12 20:45:58 roeimachine npm[802]: *** RECOVERY phase started at time: 21.9592 sec
+  Sep 12 20:46:00 roeimachine npm[802]: *** DRIVE phase started at time: 24.1939 sec
+  Sep 12 20:46:00 roeimachine npm[802]: *** Calculated drag factor: 103.4389, no. samples: 225, Goodness of Fit: 0.9705
+  Sep 12 20:46:00 roeimachine npm[802]: *** Calculated recovery slope: 0.001066, Goodness of Fit: 0.9705
+  Sep 12 20:46:00 roeimachine npm[802]: stroke: 8, dist: 78.9m, speed: 3.50m/s, pace: 2:23/500m, power: 120W, drive length: 1.04 m, SPM: 20.9, drive dur: 0.63s, rec. dur: 2.31s
+  Sep 12 20:46:01 roeimachine npm[802]: *** RECOVERY phase started at time: 24.8737 sec
+  Sep 12 20:46:03 roeimachine npm[802]: *** DRIVE phase started at time: 27.1559 sec
+  Sep 12 20:46:03 roeimachine npm[802]: *** Calculated drag factor: 103.4498, no. samples: 228, Goodness of Fit: 0.9070
+  Sep 12 20:46:03 roeimachine npm[802]: *** Calculated recovery slope: 0.001066, Goodness of Fit: 0.9070
+  ```
 
 @@@@@@@@@@@@@
 
