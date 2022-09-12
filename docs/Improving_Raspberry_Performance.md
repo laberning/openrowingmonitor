@@ -65,3 +65,5 @@ sudo systemctl disable triggerhappy.service
 Still have to look at this text: <https://wiki.linuxaudio.org/wiki/raspberrypi>
 
 ## Things you can do in OpenRowingMonitor
+
+Nothing yet, although reducing flanklength will reduce CPU-load, so running with unneccessary long flanklength isn't advised.
