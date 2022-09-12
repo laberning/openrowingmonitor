@@ -279,7 +279,7 @@ Dave Venrooy indicates that this formula is accurate with a 5% margin [[3]](#3).
 
 * For stable steady state rowing, the results of this approach are quite reliable;
 
-* For unstable rowing, the power calcuation is not reliable. The article seems to suggest that this is cused by ommitting the element of ${I \* ({&Delta;&omega; \over &Delta;t}) \* &omega;}$, essentially assuming that &Delta;&omega; is near zero across strokes. This is problematic at moments of deliberate acceleration across strokes (like starts and sprints), where &Delta;&omega; can be very significant, and at unstable rowing, where there also can be a sigificant &Delta;&omega; present across strokes.
+* For unstable rowing, the power calcuation is not reliable. The article seems to suggest that this is caused by ommitting the element of ${I \* ({&Delta;&omega; \over &Delta;t}) \* &omega;}$, essentially assuming that &Delta;&omega; is near zero across strokes. This is problematic at moments of deliberate acceleration across strokes (like starts and sprints), where &Delta;&omega; can be very significant, and at unstable rowing, where there also can be a sigificant &Delta;&omega; present across strokes.
 
 Still, we currently choose to use $\overline{P}$ = k \* $\overline{&omega;}$<sup>3</sup> for all power calculations, for several reasons:
 
