@@ -233,7 +233,7 @@ Open Rowing Monitor only will get impulses at discrete points in time. As Open R
 
 ## Relevant linear metrics
 
-Knowing that *Time since start*, Angular Velocity &omega;, Angular Acceleration &alpha;, flywheel Torque &tau; and dragfactor k have been determined in a robust manner by `engine/Flywheel.js`, `engine/Rower.js` can now transform these key rotational metrics in linear metrics. The following metrics need to be determined:
+Knowing that *Time since start*, Angular Velocity &omega;, Angular Acceleration &alpha;, flywheel Torque &tau; and dragfactor k have been determined in a robust manner by `engine/Flywheel.js`, `engine/Rower.js` can now transform these key rotational metrics in linear metrics. This is done in the `handleRotationImpulse()` function of `engine/Rower.js`, where based on the flywheel state, the relevant metrics are calculated. The following metrics need to be determined:
 
 * The estimated **power produced** by the rower (in Watts): the power the rower produced during the stroke;
 
