@@ -28,7 +28,7 @@ still to look at this text: <https://forums.raspberrypi.com/viewtopic.php?t=2287
 
 ### CPU Scaling
 
-Typically, Raspbian is configured to reduce energy consumption. Thus it uses the *ondemend* CPU governor. To get the most out of the CPU, we need to use the *performance* governor.
+Typically, Raspbian is configured to reduce energy consumption. Thus it uses the *ondemand* CPU governor. To get the most out of the CPU, we need to use the *performance* governor.
 
 First, Raspbian will interfere with settings, so we need to kill that functionality:
 
