@@ -123,7 +123,30 @@ This allows you to see the current state of the rower. Typically this will show:
   Sep 12 20:38:09 roeimachine npm[802]: websocket client connected
   ```
 
-### Setting critical parameters
+### Setting critical parameters for stroke detection
+
+There are several critical parameters that are required for Open Rowing Monitor to work. In this section, we help you set the most critical ones.
+
+#### numOfImpulsesPerRevolution
+
+**numOfImpulsesPerRevolution** tells Open Rowing Monitor how many impulses per rotation of the flywheel to expect. An inspection of the flywheel could reveal how many magnets it uses (typically a rower has 2 to 4 magnets). Although sometimes it is well-hidden, you can sometimes find it in the manual under the parts-list of your rower.
+
+#### sprocketRadius
+
+**sprocketRadius** tells Open Rowing Monitor how big the sprocket is that attaches your belt/chain to your flywheel. This setting is used in several calculations and is involved in calculating the handle force for stroke detection. Its accuracy isn't super-critical, you can change it afterwards to something more accurate, but remember that when the sprocket radius doubles, so should the *minumumForceBeforeStroke*.The default value will work OK for most rowers, but sometimes it needs to be changed for a specific rower. In the later section, we will describe how to optimally tune it.
+
+### minumumForceBeforeStroke
+**minumumForceBeforeStroke*** relates to the force on the handle 
+
+    // NOISE FILTER SETTINGS
+    // Filter Settings to reduce noise in the measured data
+    // Minimum and maximum duration between impulses in seconds during active rowing. Measurements above the maximum are filtered, so setting these liberaly
+    // might help here
+    minimumTimeBetweenImpulses: 0.014,
+    maximumTimeBetweenImpulses: 0.5,
+
+    // Smoothing determines the length of the running average for filtering the currentDt, 1 effectively turns it off
+    smoothing: 1,
 
   ```zsh
   Sep 12 20:45:36 roeimachine npm[802]: stroke: 0, dist: 0.0m, speed: 0.00m/s, pace: Infinity/500m, power: 0W, drive length: 1.10 m, SPM: 0.0, drive dur: NaNs, rec. dur: NaNs
@@ -196,7 +219,6 @@ Please note that changing the noise filtering and stroke detection settings will
 
 There are some parameters you must change to get Open Rowing Monitor to calculate the real physics with a rower. These are:
 
-* **numOfImpulsesPerRevolution**: this tells Open Rowing Monitor how many impulses per rotation of the flywheel to expect. An inspection of the flywheel could reveal how many magnets it uses (typically a rower has 2 to 4 magnets). Although sometimes it is well-hidden, you can sometimes find it in the manual under the parts-list of your rower.
 * **dragFactor**: tells Open Rowing Monitor how much damping and thus resistance your flywheel is offering. This is typically also dependent on your damper-setting (if present). Regardless if you use a static or dynamically calculated drag factor, this setting is needed as the first stroke also needs it to calculate distance, speed and power. Just as a frame of reference: the Concept2 can display this factor from the menu. Please note that the drag factor is much dependent on the physical construction of the flywheel and mechanical properties of the transmission of power to the flywheel. For a new Concept2, the Drag Factor ranges between 80 (Damper setting 1) and 220 (Damper setting 10). The NordicTrack RX-800 ranges from 150 to 450, where the 150 feels much lighter than a 150 on the Concept2.
 
 Here, some rowing and some knowledge about your rowing gets involved. Setting your damping factor is done by rowing a certain number of strokes and then seeing how much you have rowed and at what pace. If you know these metrics by hart, it just requires some rowing and adjusting to get them right. If you aren't that familiar with rowing, a good starting point is that a typical distance covered by a single stroke at 20 strokes per minute (SPM) is around 10 meters. So when you row a minute, you will have 20 strokes recorded and around 200 meters rowed. When possible, we use the [Concept Model D (or RowerErg)](https://www.concept2.com/indoor-rowers/concept2-rowerg) as a "Golden standard": when you know your pace on that machine, you can try to mimic that pace on your machine. Most gym's have one, so trying one can help you a lot in finding the right settings for your machine.
@@ -223,6 +245,10 @@ Please note that you don't need to use the dynamic drag factor to test your sett
 It must be noted that you have to make sure that your machine's measurements are sufficiently free of noise: noise in the drag calculation can have a strong influence on your speed and distance calculations and thus your results. If your rower produces stable damping values, then this could be a good option to dynamically adjust your measurements to the damper setting of your rower as it takes in account environmental conditions. When your machine's power and speed readings are too volatile it is wise to turn it off
 
 ## Settings you can tweak
+
+#### sprocketRadius (revisited)
+
+**sprocketRadius** tells Open Rowing Monitor how big the sprocket is that attaches your belt/chain to your flywheel. This setting is used in several calculations and is involved in calculating the handle force for stroke detection. Its accuracy isn't super-critical, you can change it afterwards to something more accurate, but remember that when the sprocket radius doubles, so should the *minumumForceBeforeStroke*.The default value will work OK for most rowers, but sometimes it needs to be changed for a specific rower. In the later section, we will describe how to optimally tune it.
 
 Some people want it all, and we're happy to give to you when your rower and your Raspberry Pi can handle the pain. Some interesting settings:
 
