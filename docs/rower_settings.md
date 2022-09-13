@@ -19,6 +19,8 @@ In this manual, we cover the following topics:
 
 * What reliable stroke detection should look like in the logs
 
+* Settings required to get the basic metrics right
+
 ## Why we need rower specific settings
 
 No rowing machine is the same, and some physical construction parameters are important for the Rowing Monitor to be known to be able to understand your rowing stroke. By far, the easiest way to configure your rower is to select your rower profile from `config/rowerProfiles.js` and put its name in `config/config.js` (i.e. `rowerSettings: rowerProfiles.Concept2_RowErg`). The rowers mentioned there are maintained by us for OpenRowingMonitor and we also structurally test OpenRowingMonitor with samples of these machines and updates setings when needed. For you as a user, this has the benefit that updates in our software are automatically implemented, including updating the settings. So if you make a rower profile for your machine, please send the profile and some raw data (explained below) to us as well so we can maintain it for you.
@@ -247,17 +249,31 @@ When you look in the logs, you hopefully find this:
 
 When stroke detection works well, and you row consistently on the rower with a consistent catch, the values of "SPM" (Strokes per Minute), "drive dur" (drive duration) and "rec. dur" (recovery duration) will remain relatively stable across strokes.
 
-### Things you must do to get the metrics right
+## Settings required to get the basic metrics right
 
 After getting the stroke detection right, we now turn to getting the basic linear metrics (i.e. distance, speed and power) right. There are some parameters you must change to get Open Rowing Monitor to calculate the real physics with a rower.
 
+### Setting the dragfactor
+
+**dragFactor** tells Open Rowing Monitor how much damping and thus resistance your flywheel is offering, which is an essential ingredient in calculating Power, Distance, Speed and thus pace. This is typically also dependent on your damper-setting (if present). Regardless if you use a static or dynamically calculated drag factor, this setting is needed as the first stroke also needs it to calculate distance, speed and power. Here, some rowing and some knowledge about your rowing gets involved. Setting your damping factor is done by rowing a certain number of strokes and then seeing how much you have rowed and at what pace. If you know these metrics by hart, it just requires some rowing and adjusting to get them right. If you aren't that familiar with rowing, a good starting point is that a typical distance covered by a single stroke at 20 strokes per minute (SPM) is around 10 meters. So when you row a minute, you will have 20 strokes recorded and around 200 meters rowed. When possible, we use the [Concept Model D (or RowerErg)](https://www.concept2.com/indoor-rowers/concept2-rowerg) as a "Golden standard": when you know your pace on that machine, you can try to mimic that pace on your machine. Most gym's have one, so trying one can help you a lot in finding the right settings for your machine.
+
+This results in a number, which works and can't be compared to anything else on the planet as that drag factor is highly dependent on the physical construction of the flywheel and mechanical properties of the transmission of power to the flywheel. For example, the Drag Factor for a Concept 2 ranges between 69 (Damper setting 1) and 220 (Damper setting 10). The NordicTrack RX-800 ranges from 150 to 450, where the 150 feels much lighter than a 150 on the Concept2. The Sportstech WRX700 water rower has a drag factor of 32000.
+
+### Setting the flywheel inertia
+
+**flywheelInertia** is the moment of inertia of the flywheel (in kg\*m<sup>2</sup>), which in practice influences the dynamically calculated dragfactor (and thus power, distance, speed and pace), but also the calculated force and power on the handle. A formal way to measure it is outlined in [Flywheel moment of inertia](https://dvernooy.github.io/projects/ergware/). However, the most practical way to set it is by rowing and see what kind of power is displayed on the monitor. Typical ranges are weight dependent (see [this explanation](https://www.rowingmachine-guide.com/tabata-rowing-workouts.html)), and it helps if you know your times on a reliable machine like the Concept2.
+
+The easiest way to test this value is by rowing (or simulating rowing): in the logs, the following lines will appear in debug mode:
+
+  ```zsh
+  Sep 13 20:25:24 roeimachine npm[839]: *** Calculated drag factor: 103.5829, slope: 0.001064, Goodness of Fit: 0.9809, not used because autoAdjustDragFactor is not true
+  ```
+
+If your flywheel inertia is set correctly, the calculated drag factor will be very close to the drag factor you set manually. Please look at the "Goodness of Fit" before using the data. Due to noise, the dragfactor sometimes can't be calculated accurately, which is reflected in this Goodness of Fit being low. So when comparing the calculated dragfactor with the manually determned dragfactor, use the calculated dragffactors where the Goodness of Fit is highest.
+
+Please note that this logmessage will change when autoAdjustDragFactor is set to true, but this content will always be reported in debug mode.
+
 @@@@@@@@@@@@@@@@@@
-
- These are:
-
-* **dragFactor**: tells Open Rowing Monitor how much damping and thus resistance your flywheel is offering. This is typically also dependent on your damper-setting (if present). Regardless if you use a static or dynamically calculated drag factor, this setting is needed as the first stroke also needs it to calculate distance, speed and power. Just as a frame of reference: the Concept2 can display this factor from the menu. Please note that the drag factor is much dependent on the physical construction of the flywheel and mechanical properties of the transmission of power to the flywheel. For a new Concept2, the Drag Factor ranges between 80 (Damper setting 1) and 220 (Damper setting 10). The NordicTrack RX-800 ranges from 150 to 450, where the 150 feels much lighter than a 150 on the Concept2.
-
-Here, some rowing and some knowledge about your rowing gets involved. Setting your damping factor is done by rowing a certain number of strokes and then seeing how much you have rowed and at what pace. If you know these metrics by hart, it just requires some rowing and adjusting to get them right. If you aren't that familiar with rowing, a good starting point is that a typical distance covered by a single stroke at 20 strokes per minute (SPM) is around 10 meters. So when you row a minute, you will have 20 strokes recorded and around 200 meters rowed. When possible, we use the [Concept Model D (or RowerErg)](https://www.concept2.com/indoor-rowers/concept2-rowerg) as a "Golden standard": when you know your pace on that machine, you can try to mimic that pace on your machine. Most gym's have one, so trying one can help you a lot in finding the right settings for your machine.
 
 ## Settings you COULD change for a new rower
 
@@ -282,7 +298,6 @@ Please note that changing this stroke detection will affect your calculated drag
 In reality, the drag factor of a rowing machine isn't static: it depends on air temperature, moisture, dust, (air)obstructions of the flywheel cage and sometimes even speed of the flywheel. So using a static drag factor is reliable, it isn't accurate. Open Rowing Monitor can automatically calculate the drag factor on-the-fly based on the recovery phase (see [this description of the underlying physics](physics_openrowingmonitor.md)). To do this, you need to set the following settings:
 
 * **autoAdjustDragFactor**: the Drag Factor can be calculated automatically. Setting it to true, will allow Open Rowing Monitor to automatically calculate the drag factor based on the **flywheelInertia** and the on the measured values in the stroke recovery phase.
-* **flywheelInertia**: The moment of inertia of the flywheel (in kg\*m^2), which in practice influences your power values and distance. A formal way to measure it is outlined in [Flywheel moment of inertia](https://dvernooy.github.io/projects/ergware/). However, the most practical way to set it is by rowing and see what kind of power is displayed on the monitor. Typical ranges are weight dependent (see [this explanation](https://www.rowingmachine-guide.com/tabata-rowing-workouts.html)), and it helps if you know your times on a reliable machine like the Concept2.
 
 Please note that you don't need to use the dynamic drag factor to test your settings. To see the calculated drag factor for your rowing machine, please ensure that the logging level of the RowingEngine is set to 'info' or higher. Then do some strokes on the rower and observe the calculated drag factor in the logging.
 
