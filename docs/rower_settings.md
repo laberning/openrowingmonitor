@@ -21,6 +21,8 @@ In this manual, we cover the following topics:
 
 * Settings required to get the basic metrics right
 
+* Settings you COULD change for a new rower
+
 ## Why we need rower specific settings
 
 No rowing machine is the same, and some physical construction parameters are important for the Rowing Monitor to be known to be able to understand your rowing stroke. By far, the easiest way to configure your rower is to select your rower profile from `config/rowerProfiles.js` and put its name in `config/config.js` (i.e. `rowerSettings: rowerProfiles.Concept2_RowErg`). The rowers mentioned there are maintained by us for OpenRowingMonitor and we also structurally test OpenRowingMonitor with samples of these machines and updates setings when needed. For you as a user, this has the benefit that updates in our software are automatically implemented, including updating the settings. So if you make a rower profile for your machine, please send the profile and some raw data (explained below) to us as well so we can maintain it for you.
@@ -261,7 +263,7 @@ This results in a number, which works and can't be compared to anything else on 
 
 ### Setting the flywheel inertia
 
-**flywheelInertia** is the moment of inertia of the flywheel (in kg\*m<sup>2</sup>), which in practice influences the dynamically calculated dragfactor (and thus power, distance, speed and pace), but also the calculated force and power on the handle. A formal way to measure it is outlined in [Flywheel moment of inertia](https://dvernooy.github.io/projects/ergware/). However, the most practical way to set it is by rowing and see what kind of power is displayed on the monitor. Typical ranges are weight dependent (see [this explanation](https://www.rowingmachine-guide.com/tabata-rowing-workouts.html)), and it helps if you know your times on a reliable machine like the Concept2.
+**flywheelInertia** is the moment of inertia of the flywheel (in kg\*m<sup>2</sup>), which in practice influences the dynamically calculated dragfactor (and thus power, distance, speed and pace), but also the calculated force and power on the handle. A formal way to measure it is outlined in [Flywheel moment of inertia](https://dvernooy.github.io/projects/ergware/). However, the most practical way to set it is by rowing and see if the calculated drag factor approximates the previously set dragfactor needed to get a certain pace.
 
 The easiest way to test this value is by rowing (or simulating rowing): in the logs, the following lines will appear in debug mode:
 
@@ -273,35 +275,39 @@ If your flywheel inertia is set correctly, the calculated drag factor will be ve
 
 Please note that this logmessage will change when autoAdjustDragFactor is set to true, but this content will always be reported in debug mode.
 
-@@@@@@@@@@@@@@@@@@
-
 ## Settings you COULD change for a new rower
 
 In the previous section, we've guided you to set up a real robust working rower, but it will result in more crude data. To improve the accuracy of many measurements, you could switch to a more accurate and dynamic rower. This does require a more sophisticated rower: you need quite a few data points per stroke, with much accuracy, to get this working reliably. And a lot of rowing to get these settings right is involved.
 
-### More accurate stroke detection
+### More accurate static stroke detection
 
 When **minumumRecoverySlope** is set to 0, the stroke detection looks for a consecutive increasing/decreasing impulse lengths which is extremely robust. When set to a higher value, it will detect the recovery only when that certain slope is reached or exceeded. This is relevant for more advanced metrics, like drive time, stroke length and the force curve. If your stroke detection roughly works and your logging level is set to debug, you will see lines like this in your log:
 
-```zsh
-Sep 12 20:45:55 roeimachine npm[802]: *** Calculated recovery slope: 0.001066, Goodness of Fit: 0.9764
-```
+  ```zsh
+  Sep 13 20:25:24 roeimachine npm[839]: *** Calculated drag factor: 103.5829, slope: 0.001064, Goodness of Fit: 0.9809, not used because autoAdjustDragFactor is not true
+  ```
 
-Here, the recovery slope is the calculated slope during the recovery, and the goodness of fit the quality of the data match. A higher value (say above 0.80) suggestst that the data sufficiently The easiest way to further optimise the 
-
-@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-
-Please note that changing this stroke detection will affect your calculated dragFactor.
+Here, the reported slope is the calculated slope during the recovery, and the goodness of fit the quality of the data match. A higher value (say above 0.80) suggestst that the data sufficiently. The easiest way to further optimise these settings is to select the lowest damper setting, and copy the lowest reported slope with a credible goodness of fit, with some margin (say 5%), making the minumumRecoverySlope 0.0010108.
 
 ### Dynamically adapting the drag factor
 
-In reality, the drag factor of a rowing machine isn't static: it depends on air temperature, moisture, dust, (air)obstructions of the flywheel cage and sometimes even speed of the flywheel. So using a static drag factor is reliable, it isn't accurate. Open Rowing Monitor can automatically calculate the drag factor on-the-fly based on the recovery phase (see [this description of the underlying physics](physics_openrowingmonitor.md)). To do this, you need to set the following settings:
+In reality, the drag factor of a rowing machine isn't static: it depends on air temperature, moisture, dust, (air)obstructions of the flywheel cage and sometimes even speed of the flywheel. So using a static drag factor is robust, but it isn't accurate. Open Rowing Monitor can automatically calculate the drag factor on-the-fly based on the recovery phase (see [this description of the underlying physics](physics_openrowingmonitor.md)). To do this, you need to set several settings.
 
-* **autoAdjustDragFactor**: the Drag Factor can be calculated automatically. Setting it to true, will allow Open Rowing Monitor to automatically calculate the drag factor based on the **flywheelInertia** and the on the measured values in the stroke recovery phase.
+It must be noted that you have to make sure that your machine's measurements are sufficiently free of noise: noise in the drag calculation can have a strong influence on your speed and distance calculations and thus your results. If your rower produces stable drag factor values, then this could be a good option to dynamically adjust your measurements to the damper setting of your rower as it takes in account environmental conditions. When your machine's power and speed readings are too volatile because of this dynamic calculation, it is wise to turn it off.
 
-Please note that you don't need to use the dynamic drag factor to test your settings. To see the calculated drag factor for your rowing machine, please ensure that the logging level of the RowingEngine is set to 'info' or higher. Then do some strokes on the rower and observe the calculated drag factor in the logging.
+First to change is **autoAdjustDragFactor** to "true", which tells Open Rowing Monitor that the Drag Factor must be calculated automatically. Setting it to true, will allow Open Rowing Monitor to automatically calculate the drag factor based on the already set *flywheelInertia* and the on the measured values in the stroke recovery phase.
 
-It must be noted that you have to make sure that your machine's measurements are sufficiently free of noise: noise in the drag calculation can have a strong influence on your speed and distance calculations and thus your results. If your rower produces stable damping values, then this could be a good option to dynamically adjust your measurements to the damper setting of your rower as it takes in account environmental conditions. When your machine's power and speed readings are too volatile it is wise to turn it off
+Each time the drag is calculated, we also get a quality indication from that same calculation: the "Goodness of Fit". Based on this quality indication (1.0 is best, 0.1 pretty bad), low quality drag factors are rejected to prevent the drag from being poisoned with bad data, throwing off all metrics. **minimumDragQuality** determines the minimum level of quality needed to The easiest way to set this, is by looking at the logs:
+
+  ```zsh
+  Sep 13 20:25:24 roeimachine npm[839]: *** Calculated drag factor: 103.5829, slope: 0.001064, Goodness of Fit: 0.9809, not used because autoAdjustDragFactor is not true
+  ```
+
+By selecting all these lines, you can see the "Goodness of Fit" for all calculations, see what the typical variation in "Goodness of Fit" is, and when a "Goodness of Fit" signals a deviant drag factor. Based on the logs, you should be able to set a minimumDragQuality. Please note: rejecting a dragfactor isn't much of an issue, as Open Rowing Monitor always retains the latest reliable dragfactor.
+
+Another measure to prevent sudden drag changes, is **dragFactorSmoothing**: this setting applies a median filter on a series of valid drag factors, further reducing the effect of outliers. Typically this is set to 5 strokes, but it could set to a different value if the drag calculation results in a wildly varying drag factor. 
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
 ## Settings you can tweak
 
