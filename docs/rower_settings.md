@@ -233,12 +233,9 @@ When you look in the logs, you hopefully find this:
   Sep 12 20:46:03 roeimachine npm[802]: *** Calculated recovery slope: 0.001066, Goodness of Fit: 0.9070
   ```
 
-When stroke detection works well, and you row consistently on the rower with a consistent catch, the values of "drive dur" (drive duration) and "rec. dur" (recovery duration) will remain relatively stable across strokes. 
-
-@@@@@@@@@@@@@
+When stroke detection works well, and you row consistently on the rower with a consistent catch, the values of "SPM" (Strokes per Minute), "drive dur" (drive duration) and "rec. dur" (recovery duration) will remain relatively stable across strokes. 
 
 ### Things you must do to get the metrics right
-
 
 @@@@@@@@@@@@@@@@@@
 
