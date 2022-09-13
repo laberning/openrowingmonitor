@@ -17,6 +17,8 @@ In this manual, we cover the following topics:
 
 * Critical parameters you must change or review for stroke detection
 
+* What reliable stroke detection should look like in the logs
+
 ## Why we need rower specific settings
 
 No rowing machine is the same, and some physical construction parameters are important for the Rowing Monitor to be known to be able to understand your rowing stroke. By far, the easiest way to configure your rower is to select your rower profile from `config/rowerProfiles.js` and put its name in `config/config.js` (i.e. `rowerSettings: rowerProfiles.Concept2_RowErg`). The rowers mentioned there are maintained by us for OpenRowingMonitor and we also structurally test OpenRowingMonitor with samples of these machines and updates setings when needed. For you as a user, this has the benefit that updates in our software are automatically implemented, including updating the settings. So if you make a rower profile for your machine, please send the profile and some raw data (explained below) to us as well so we can maintain it for you.
@@ -159,25 +161,27 @@ Please note that a longer *flankLength* also requires more CPU time, where the c
 
 Sometimes, a measurement is too noisy, which requires some errors in the flanks to be ignored, which can be done through the **numberOfErrorsAllowed** setting. For example, the NordicTrack RX-800 successfully uses a *flankLength* of 11 and a *numberOfErrorsAllowed* of 2, which allows quite some noise but forces quite a long flank. Setting these parameters requires a lot of tweaking and rowing.
 
-**minimumStrokeQuality** is a setting that defines the minimal goodness of fit of the beforementioned recovery slope with the datapoints. When the slope doesn't fit the data well, this will block moving to the next phase. A value of 0.1 is extrmely relaxed, where 0.95 would be extremely tight. This is set to 0.34 for most rowers, which is a working setting for all maintained rowers to date. The accuracy of this setting isn't super critical for stroke detection to work: for example, on a Concept2 values between 0.28 to 0.42 are known to give reliable stroke detection. Setting this too relaxed will result in earlier phase changes, settng this too strict will delay phase detection. This setting is primarily used to optimise the stroke detection for advanced metrics (like drive time, drive length, force curves).
+**minimumStrokeQuality** is a setting that defines the minimal goodness of fit of the beforementioned recovery slope with the datapoints. When the slope doesn't fit the data well, this will block moving to the next phase. A value of 0.1 is extrmely relaxed, where 0.95 would be extremely tight. This is set to 0.34 for most rowers, which is a working setting for all maintained rowers to date. The accuracy of this setting isn't super critical for stroke detection to work: for example, on a Concept2 values between 0.28 to 0.42 are known to give reliable stroke detection. Setting this too relaxed will result in earlier phase changes, settng this too strict will delay phase detection. This setting is primarily used to optimise the stroke detection for advanced metrics (like drive time, drive length, force curves), so unless it gets in the way, there is no immediate need to change it.
 
-#### minimumDriveTime and minimumRecoveryTime
+### minimumDriveTime and minimumRecoveryTime
 
-At the level of the stroke detection, there is some additional noise filtering, preventing noise to start a drive- or recovery-phase too early. The settings **minimumDriveTime** and **minimumRecoveryTime** determine the minimum times (in seconds) for the drive and recovery phases. Generally, the drive phase lasts at least 0.500 second, and the recovery phase 0.900 second for recreational rowers.
+At the level of the stroke detection, there is some additional noise filtering, preventing noise to start a drive- or recovery-phase too early. The settings **minimumDriveTime** and **minimumRecoveryTime** determine the minimum times (in seconds) for the drive and recovery phases. Generally, the drive phase lasts at least 0.500 second, and the recovery phase 0.900 second for recreational rowers. These settings are good for most rowers, but running in to these filters might indicate that your settings aren't perfect yet. Please note that even on well-tuned machines, sometimes noise can cause this filter to kick in. So finding several of these reports in a session, might indicate that the above settings might need adjustment.
 
 When this kicks in, you will find this in your log:
 
   ```zsh
-  sudo journalctl -u openrowingmonitor
+  Sep 12 20:46:24 roeimachine npm[839]: Time: 1012.1644 sec: Delta Time trend is upwards, suggests no power, but waiting for for drive phase length (0.0107 sec) to exceed mininimumDriveTime (0.40 sec)
   ```
 
-or:
+This typically suggests, as the lack of power occurs at 0.01 seconds into the drive time, that the drive phase is started too early. An other error you might find is the following one:
 
   ```zsh
-  sudo journalctl -u openrowingmonitor
+  Aug 16 22:38:07 roeimachine npm[1003]: Time: 25.5091 sec: Delta Time trend is downwards, suggesting power, but waiting for recoveryDuration suggests no power, but waiting for recovery phase length (0.4572 sec) to exceed minimumRecoveryTime (0.90 sec)
   ```
 
-##### What it should look like in the logs
+This typically suggests, as the issue is so late in the recovery phase, that either the recovery started to late (this typically results in a stream of similar line following this one) or it is noise.
+
+## What reliable stroke detection should look like in the logs
 
 When you look in the logs, you hopefully find this:
 
