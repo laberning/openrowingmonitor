@@ -64,7 +64,9 @@ Please note that the process identification numbers will differ.
 
 ### Making sure the hardware works as intended
 
-First, we need to look if the data is recieved well and has sufficient quality to be used. You can change `config/config.js` by
+Before you physically connect anything to anything else, **check the electric properties of the rower** you are connecting to. Skipping this might destroy your Raspberry Pi as some rowers are known to exceed the Raspberry Pi electrical properties. For example, a Concept 2 RowErg provides 15V signals to the monitor, which will destroy the GPIO-ports. Other rowers provide signals aren't directly detectable by the raspberry Pi. For example, the Concept 2 Model C provides 0.2V pulses, thus staying below the detectable 1.8V treshold that the Raspberry Pi uses. Using a scope or a voltmeter is highly recommended. Please observe that the maximum input a Raspberry Pi GPIO pin can handle is 3.3V and 0.5A, and it will switch at 1.8V (see [this overview of the Raspberry Pi electrical properties](https://raspberrypi.stackexchange.com/questions/3209/what-are-the-min-max-voltage-current-values-the-gpio-pins-can-handle)). In our [GitHub Discussions](https://github.com/laberning/openrowingmonitor/discussions) there are some people who are brilliant with electrical connections, so don't be affraid to ask for help there. When you have a working solution, please report it so that we can include it in the documentation, allowing us to help others.
+
+Next, when the electric connection has been made, we need to look if the data is recieved well and has sufficient quality to be used. You can change `config/config.js` by
 
   ```zsh
   sudo nano /opt/openrowingmonitor/config/config.js
@@ -102,7 +104,7 @@ When installed, OpenRowingMonitor will not flood the log with messages. However,
    },
  ```
 
-Show the log output of a service:
+You can look at the the log output of the OpenRowingMonitor-service by putting the following in the command-line:
 
   ```zsh
   sudo journalctl -u openrowingmonitor
@@ -122,6 +124,8 @@ This allows you to see the current state of the rower. Typically this will show:
   Sep 12 20:38:06 roeimachine npm[862]: Setting priority for the Gpio-service to -7
   Sep 12 20:38:09 roeimachine npm[802]: websocket client connected
   ```
+
+This shows that Open Rowing Monitor is running, and that bluetooth and the webserver are alive, and that the webclient has connected.
 
 ### Setting critical parameters for stroke detection
 
