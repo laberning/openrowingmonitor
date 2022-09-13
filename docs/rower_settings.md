@@ -125,7 +125,7 @@ This allows you to see the current state of the rower. Typically this will show:
   Sep 12 20:38:09 roeimachine npm[802]: websocket client connected
   ```
 
-This shows that Open Rowing Monitor is running, and that bluetooth and the webserver are alive, and that the webclient has connected.
+This shows that Open Rowing Monitor is running, and that bluetooth and the webserver are alive, and that the webclient has connected. We will use this to get some grip on Open Rowing Monitor's settings throughout the process.
 
 ### Setting critical parameters for stroke detection
 
@@ -135,22 +135,30 @@ There are several critical parameters that are required for Open Rowing Monitor 
 
 **numOfImpulsesPerRevolution** tells Open Rowing Monitor how many impulses per rotation of the flywheel to expect. An inspection of the flywheel could reveal how many magnets it uses (typically a rower has 2 to 4 magnets). Although sometimes it is well-hidden, you can sometimes find it in the manual under the parts-list of your rower.
 
-#### sprocketRadius
+#### sprocketRadius and minumumForceBeforeStroke
 
-**sprocketRadius** tells Open Rowing Monitor how big the sprocket is that attaches your belt/chain to your flywheel. This setting is used in several calculations and is involved in calculating the handle force for stroke detection. Its accuracy isn't super-critical, you can change it afterwards to something more accurate, but remember that when the sprocket radius doubles, so should the *minumumForceBeforeStroke*.The default value will work OK for most rowers, but sometimes it needs to be changed for a specific rower. In the later section, we will describe how to optimally tune it.
+**sprocketRadius** tells Open Rowing Monitor how big the sprocket is that attaches your belt/chain to your flywheel. This setting is used in several calculations and is involved in calculating the handle force for stroke detection. **minumumForceBeforeStroke*** describes the minimum force should be present on the handle before it will consider moving to a drive phase.
 
-### minumumForceBeforeStroke
-**minumumForceBeforeStroke*** relates to the force on the handle 
+Their accuracy isn't super-critical, you can change it afterwards to something more accurate, but remember that when the *sprocketRadius* doubles, so should the *minumumForceBeforeStroke*.The default value will work OK for most rowers, but sometimes it needs to be changed for a specific rower. On most rowers, there always is some noise present at the end of the drive section, and tuing these two parameters might help you remove that noisy tail. In later sections, we will describe how to optimally tune it, here your first goal is to get a working stroke detection.
 
-    // NOISE FILTER SETTINGS
-    // Filter Settings to reduce noise in the measured data
-    // Minimum and maximum duration between impulses in seconds during active rowing. Measurements above the maximum are filtered, so setting these liberaly
-    // might help here
-    minimumTimeBetweenImpulses: 0.014,
-    maximumTimeBetweenImpulses: 0.5,
+#### minimumTimeBetweenImpulses and maximumTimeBetweenImpulses
+
+**minimumTimeBetweenImpulses** and **maximumTimeBetweenImpulses** provide a bandwith where values are deemed credible during an active session. The goal here is to remove any extremely obvious errors. So take a look at the raw datafiles for several damper settings (if available on your rower) and make sure that normal rowing isn't hindered by these settings (i.e. all normal values should fall within minimumTimeBetweenImpulses and maximumTimeBetweenImpulses). Here, you should rather allow too much noise, than hurt real valid signal, as Open Rowing Monitor can handle a lot of noise by itself.
+
+When using the raw datafiles, realise that the goal is to distinguish good normal strokes from noise. So at startup it is quite accepted that the flywheel starts too slow to produce valid data during the biggest part of the first drive phase. Also at the end of a session the flywheel should spin down out of valid ranges again. Please note, *maximumTimeBetweenImpulses* is also used to detect wether the flywheel is spinning down due to lack of user input. When a *flankLength* of measurements contains sufficient values above *maximumTimeBetweenImpulses*, the flywheel is still decelerating and the *maximumStrokeTimeBeforePause* is exceeded, the rower will pause. So setting the value for *maximumTimeBetweenImpulses* too high might block this behaviour.
+
+#### Smoothing
 
     // Smoothing determines the length of the running average for filtering the currentDt, 1 effectively turns it off
     smoothing: 1,
+
+##### What it should look like in the logs
+
+When you do 
+
+  ```zsh
+  sudo journalctl -u openrowingmonitor
+  ```
 
   ```zsh
   Sep 12 20:45:36 roeimachine npm[802]: stroke: 0, dist: 0.0m, speed: 0.00m/s, pace: Infinity/500m, power: 0W, drive length: 1.10 m, SPM: 0.0, drive dur: NaNs, rec. dur: NaNs
