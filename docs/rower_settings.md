@@ -133,7 +133,7 @@ When using the raw datafiles, realise that the goal is to distinguish good norma
 
 ### Review smoothing
 
-**smoothing** is the ultimate fallback mechanism for rowers with very noisy data. For all known rowers currently maintained by Open Rowing Monitor, **NONE** needed this, so only start working with this when the raw files show you have a very noisy signal, physical measures don't work and you can't get your stroke detection to work with other means (please note that we design the mechanisms here to be robust, so they can take a hit). 
+**smoothing** is the ultimate fallback mechanism for rowers with very noisy data. For all known rowers currently maintained by Open Rowing Monitor, **NONE** needed this, so only start working with this when the raw files show you have a very noisy signal, physical measures don't work and you can't get your stroke detection to work with other means (please note that we design the mechanisms here to be robust, so they can take a hit).
 
 This is a running median filter, effectively killing any extreme values. By default, it is set to 1 (off). A value of 3 will allow it to completely ignore any single extreme values, which should do the trick for most rowers.
 
@@ -155,13 +155,25 @@ Their accuracy isn't super-critical. In later sections, we will describe how to 
 
 These settings are the core of the stroke detection and are the ones that require the most effort to get right. The most cricial settings are the *flankLength* and *numberOfErrorsAllowed*, where other metrics are much less critical.
 
+**minimumStrokeQuality** is a setting that defines the minimal goodness of fit of the beforementioned recovery slope with the datapoints. When the slope doesn't fit the data well, this will block moving to the next phase. A value of 0.1 is extrmely relaxed, where 0.95 would be extremely tight. This is set to 0.34 for most rowers, which is a working setting for all maintained rowers to date. The accuracy of this setting isn't super critical for stroke detection to work: for example, on a Concept2 values between 0.28 to 0.42 are known to give reliable stroke detection. Setting this too relaxed will result in earlier phase changes, settng this too strict will delay phase detection. This setting is primarily used to optimise the stroke detection for advanced metrics (like drive time, drive length, force curves), so unless it gets in the way, there is no immediate need to change it.
+
 The **flankLength** and **numberOfErrorsAllowed** settings determine the condition when the stroke detection is sufficiently confident that the stroke has started/ended. In essence, the stroke detection looks for a consecutive increasing/decreasing impulse lengths, and the **flankLength** determines how many consecutive flanks have to be seen before the stroke detection considers a stroke to begin or end. Generally, a *flankLength* of 3 to 4 typically works. The technical minimum is 3, the maximum is limited by CPU-time. Please note that making the flank longer does *not* change your measurement in any way: the algorithms always rely on the beginning of the flank, not at the current end. If any, increasing the *flanklength* has the side-effect that some calculations are performed with more rigour, making them more precise as they get more data. Please note that the rower itself might limit the *flankLength*: some rowers only have 4 or 5 datapoints in a drive phase, naturally limiting the number of datapoints that can be used for stroke phase detection.
 
 Please note that a longer *flankLength* also requires more CPU time, where the calculation grows exponentially as *flankLength* becomes longer. On a Raspberry Pi 4B, a *flankLength* of 12 has been succesfully used without issue. What the practical limit on a Rapberry Pi Zero 2 W is, is still a matter of investigation.
 
-Sometimes, a measurement is too noisy, which requires some errors in the flanks to be ignored, which can be done through the **numberOfErrorsAllowed** setting. For example, the NordicTrack RX-800 successfully uses a *flankLength* of 11 and a *numberOfErrorsAllowed* of 2, which allows quite some noise but forces quite a long flank. Setting these parameters requires a lot of tweaking and rowing.
+Sometimes, a measurement is too noisy, which requires some errors in the flanks to be ignored, which can be done through the **numberOfErrorsAllowed** setting. For example, the NordicTrack RX-800 successfully uses a *flankLength* of 11 and a *numberOfErrorsAllowed* of 2, which allows quite some noise but forces quite a long flank. Setting these parameters will require a lot of tweaking and rowing.
 
-**minimumStrokeQuality** is a setting that defines the minimal goodness of fit of the beforementioned recovery slope with the datapoints. When the slope doesn't fit the data well, this will block moving to the next phase. A value of 0.1 is extrmely relaxed, where 0.95 would be extremely tight. This is set to 0.34 for most rowers, which is a working setting for all maintained rowers to date. The accuracy of this setting isn't super critical for stroke detection to work: for example, on a Concept2 values between 0.28 to 0.42 are known to give reliable stroke detection. Setting this too relaxed will result in earlier phase changes, settng this too strict will delay phase detection. This setting is primarily used to optimise the stroke detection for advanced metrics (like drive time, drive length, force curves), so unless it gets in the way, there is no immediate need to change it.
+To make life a bit easier, it is possible to replay a recorded raw rowing session. To do this, uncomment and modify the following lines in `server.js`:
+
+ ```js
+replayRowingSession(handleRotationImpulse, {
+  filename: 'recordings/2021/04/rx800_2021-04-21_1845_Rowing_30Minutes_Damper8.csv', // 30 minutes, damper 10
+  realtime: false,
+  loop: false
+})
+```
+
+After changing the filename to a file that is your raw recording of your rower, you can replay it as often as you want by restarting the service. This will allow you to modify these settings and get feedback in seconds on the effects on Open Rowing Monitor.
 
 ### minimumDriveTime and minimumRecoveryTime
 
@@ -233,13 +245,15 @@ When you look in the logs, you hopefully find this:
   Sep 12 20:46:03 roeimachine npm[802]: *** Calculated recovery slope: 0.001066, Goodness of Fit: 0.9070
   ```
 
-When stroke detection works well, and you row consistently on the rower with a consistent catch, the values of "SPM" (Strokes per Minute), "drive dur" (drive duration) and "rec. dur" (recovery duration) will remain relatively stable across strokes. 
+When stroke detection works well, and you row consistently on the rower with a consistent catch, the values of "SPM" (Strokes per Minute), "drive dur" (drive duration) and "rec. dur" (recovery duration) will remain relatively stable across strokes.
 
 ### Things you must do to get the metrics right
 
+After getting the stroke detection right, we now turn to getting the basic linear metrics (i.e. distance, speed and power) right. There are some parameters you must change to get Open Rowing Monitor to calculate the real physics with a rower.
+
 @@@@@@@@@@@@@@@@@@
 
-There are some parameters you must change to get Open Rowing Monitor to calculate the real physics with a rower. These are:
+ These are:
 
 * **dragFactor**: tells Open Rowing Monitor how much damping and thus resistance your flywheel is offering. This is typically also dependent on your damper-setting (if present). Regardless if you use a static or dynamically calculated drag factor, this setting is needed as the first stroke also needs it to calculate distance, speed and power. Just as a frame of reference: the Concept2 can display this factor from the menu. Please note that the drag factor is much dependent on the physical construction of the flywheel and mechanical properties of the transmission of power to the flywheel. For a new Concept2, the Drag Factor ranges between 80 (Damper setting 1) and 220 (Damper setting 10). The NordicTrack RX-800 ranges from 150 to 450, where the 150 feels much lighter than a 150 on the Concept2.
 
@@ -249,7 +263,7 @@ Here, some rowing and some knowledge about your rowing gets involved. Setting yo
 
 In the previous section, we've guided you to set up a real robust working rower, but it will result in more crude data. To improve the accuracy of many measurements, you could switch to a more accurate and dynamic rower. This does require a more sophisticated rower: you need quite a few data points per stroke, with much accuracy, to get this working reliably. And a lot of rowing to get these settings right is involved.
 
-#### More accurate stroke detection
+### More accurate stroke detection
 
 When **minumumRecoverySlope** is set to 0, the stroke detection looks for a consecutive increasing/decreasing impulse lengths which is extremely robust. When set to a higher value, it will detect the recovery only when that certain slope is reached or exceeded. This is relevant for more advanced metrics, like drive time, stroke length and the force curve. If your stroke detection roughly works and your logging level is set to debug, you will see lines like this in your log:
 
