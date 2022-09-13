@@ -149,7 +149,7 @@ This is a running median filter, effectively killing any extreme values. By defa
 
 ### Setting critical parameters for stroke detection
 
-There are several critical parameters that are required for Open Rowing Monitor's stroke detection to work. In this section, we help you set the most critical ones.
+A key element in getting rowing data right is getting the stroke detection right, as we report many metrics on a per-stroke basis. Although we calculate most metrics in such a way that missing an individual stroke isn't a big deal, many more advanced metrics (like drive length, stroke length, powercurves) won't provide any useful data. There are several critical parameters that are required for Open Rowing Monitor's stroke detection to work. In this section, we help you set the most critical ones.
 
 #### numOfImpulsesPerRevolution
 
@@ -234,14 +234,6 @@ When you do
   ```
 
 @@@@@@@@@@@@@
-
-### Getting stroke detection right
-
-A key element in getting rowing data right is getting the stroke detection right, as we report many metrics on a per-stroke basis. The **Impulse Noise reduction settings** reduce the level of noise on the level of individual impulses. You should change these settings if you experience issues with stroke detection or the stability of the drag factor calculation. The stroke detection consists out of three types of filters:
-
-When OpenRowingMonitor records a log (set setting createRawDataFiles to `true`), you can paste the values in the first column of the "Raw Data" tab (please observe that the Raspberry uses a point as separator, and your version of Excel might expect a comma). From there, the Excel file simulates the calculations the OpenRowingMonitor makes, allowing you to play with these settings.
-
-Please note that changing the noise filtering and stroke detection settings will affect your calculated dragFactor. So it is best to start with rowing a few strokes to determine settings for noise filtering and stroke detection, and then move on to the other settings.
 
 ### Getting the metrics right
 
