@@ -170,7 +170,7 @@ At the level of the stroke detection, there is some additional noise filtering, 
 When this kicks in, you will find this in your log:
 
   ```zsh
-  Sep 12 20:46:24 roeimachine npm[839]: Time: 1012.1644 sec: Delta Time trend is upwards, suggests no power, but waiting for for drive phase length (0.0107 sec) to exceed mininimumDriveTime (0.40 sec)
+  Sep 12 20:46:24 roeimachine npm[839]: Time: 1012.1644 sec: Delta Time trend is upwards, suggests no power, but waiting for drive phase length (0.0107 sec) to exceed mininimumDriveTime (0.40 sec)
   ```
 
 This typically suggests, as the lack of power occurs at 0.01 seconds into the drive time, that the drive phase is started too early. An other error you might find is the following one:
