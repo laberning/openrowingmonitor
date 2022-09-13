@@ -73,7 +73,7 @@ function createRower (rowerSettings) {
         break
       case (_strokeState === 'Drive' && flywheel.isUnpowered()):
         // We seem to have lost power to the flywheel, but it is too early according to the settings. We stay in the Drive Phase
-        log.debug(`Time: ${flywheel.spinningTime().toFixed(4)} sec: Delta Time trend is upwards, suggests no power, but waiting for for drive phase length (${(flywheel.spinningTime() - drivePhaseStartTime).toFixed(4)} sec) to exceed minimum drive Time (${rowerSettings.minimumDriveTime} sec)`)
+        log.debug(`Time: ${flywheel.spinningTime().toFixed(4)} sec: Delta Time trend is upwards, suggests no power, but waiting for for drive phase length (${(flywheel.spinningTime() - drivePhaseStartTime).toFixed(4)} sec) to exceed minimumDriveTime (${rowerSettings.minimumDriveTime} sec)`)
         updateDrivePhase()
         break
       case (_strokeState === 'Drive'):
@@ -97,7 +97,7 @@ function createRower (rowerSettings) {
         break
       case (_strokeState === 'Recovery' && flywheel.isPowered()):
         // We see a force, but the "Recovery" phase has been too short, we stay in the "Recovery" phase
-        log.debug(`Time: ${flywheel.spinningTime().toFixed(4)} sec: Delta Time trend is downward, suggesting power, but waiting for recoveryDuration (${(flywheel.spinningTime() - recoveryPhaseStartTime).toFixed(4)} sec) to exceed minimumRecoveryTime (${rowerSettings.minimumRecoveryTime} sec)`)
+        log.debug(`Time: ${flywheel.spinningTime().toFixed(4)} sec: Delta Time trend is downwards, suggesting power, but waiting for recovery phase length (${(flywheel.spinningTime() - recoveryPhaseStartTime).toFixed(4)} sec) to exceed minimumRecoveryTime (${rowerSettings.minimumRecoveryTime} sec)`)
         updateRecoveryPhase()
         break
       case (_strokeState === 'Recovery'):
