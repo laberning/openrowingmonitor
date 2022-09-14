@@ -23,6 +23,7 @@ This guide roughly explains how to set up the rowing software and hardware.
 * Configure the network connection and enable SSH, if you use the Raspberry Pi Imager, you can automatically do this while writing the SD Card, just press `Ctrl-Shift-X`(see [here](https://www.raspberrypi.org/blog/raspberry-pi-imager-update-to-v1-6/) for a description), otherwise follow the instructions below
 * Connect the device to your network ([headless](https://www.raspberrypi.org/documentation/configuration/wireless/headless.md) or via [command line](https://www.raspberrypi.org/documentation/configuration/wireless/wireless-cli.md))
 * Enable [SSH](https://www.raspberrypi.org/documentation/remote-access/ssh/README.md)
+* Tune the OS if needed [by following this guide](Improving_Raspberry_Performance.md)
 
 ### Installation of the Open Rowing Monitor
 
@@ -84,6 +85,7 @@ How to connect this to your rowing machine is specific to your device. You need 
 
 For a specific hardware-setup, please look at:
 
+* [Concept 2 RowErg](hardware_setup_Concept2_RowErg.md)
 * [Sportstech WRX700](hardware_setup_WRX700.md)
 
 If your machine isn't listed and does not have something like this or if the sensor is not accessible, you can still build something similar quite easily. Some ideas on what to use:
