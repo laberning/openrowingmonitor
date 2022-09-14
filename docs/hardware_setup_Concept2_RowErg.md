@@ -22,10 +22,10 @@ gpio=17=pu,ip
 
 ## Rower Settings
 
-You should now adjust the rower specific parameters in `config/config.js` to suit your rowing machine. For the Concept 2 RowErg, there is a set of predefined parameters ready to use. So it suffices to add 
+You should now adjust the rower specific parameters in `config/config.js` to suit your rowing machine. For the Concept 2 RowErg, there is a set of predefined parameters ready to use. So it suffices to add
 
 ``` Properties
 rowerSettings: Concept2_RowErg
 ```
 
- to your `config/config.js` file. You can also look at `config/default.config.js` to see what other configuration parameters are available.
+to your `config/config.js` file. You can also look at `config/default.config.js` to see what other configuration parameters are available.
