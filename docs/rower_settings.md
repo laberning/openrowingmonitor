@@ -305,15 +305,15 @@ Each time the drag is calculated, we also get a quality indication from that sam
 
 By selecting all these lines, you can see the "Goodness of Fit" for all calculations, see what the typical variation in "Goodness of Fit" is, and when a "Goodness of Fit" signals a deviant drag factor. Based on the logs, you should be able to set a minimumDragQuality. Please note: rejecting a dragfactor isn't much of an issue, as Open Rowing Monitor always retains the latest reliable dragfactor.
 
-Another measure to prevent sudden drag changes, is **dragFactorSmoothing**: this setting applies a median filter on a series of valid drag factors, further reducing the effect of outliers. Typically this is set to 5 strokes, but it could set to a different value if the drag calculation results in a wildly varying drag factor. 
+Another measure to prevent sudden drag changes, is **dragFactorSmoothing**: this setting applies a median filter on a series of valid drag factors, further reducing the effect of outliers. Typically this is set to 5 strokes, but it could set to a different value if the drag calculation results in a wildly varying drag factor.
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
-## Settings you can tweak
-
-#### sprocketRadius (revisited)
+### sprocketRadius (revisited)
 
 **sprocketRadius** tells Open Rowing Monitor how big the sprocket is that attaches your belt/chain to your flywheel. This setting is used in several calculations and is involved in calculating the handle force for stroke detection. Its accuracy isn't super-critical, you can change it afterwards to something more accurate, but remember that when the sprocket radius doubles, so should the *minumumForceBeforeStroke*.The default value will work OK for most rowers, but sometimes it needs to be changed for a specific rower. In the later section, we will describe how to optimally tune it.
+
+## Settings you can tweak
 
 Some people want it all, and we're happy to give to you when your rower and your Raspberry Pi can handle the pain. Some interesting settings:
 
