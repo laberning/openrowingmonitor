@@ -309,7 +309,7 @@ Another measure to prevent sudden drag changes, is **dragFactorSmoothing**: this
 
 ### Dynamically adapting the recovery slope
 
-For a more accurate stroke detection, the *minumumRecoverySlope* is a crucial parameter. Open Rowing Monitor can automatically calculate the this recovery slope and adjust it dynamically. For this to work, *autoAdjustDragFactor* **MUST** be set to true, as the recovery slope is dependent on this automatic dragfactor calculation. If you set *autoAdjustDragFactor* to true, this option can be activated by setting *autoAdjustRecoverySlope* to "true". 
+For a more accurate stroke detection, the *minumumRecoverySlope* is a crucial parameter. Open Rowing Monitor can automatically calculate the this recovery slope and adjust it dynamically. For this to work, *autoAdjustDragFactor* **MUST** be set to true, as the recovery slope is dependent on this automatic dragfactor calculation. If you set *autoAdjustDragFactor* to true, this option can be activated by setting *autoAdjustRecoverySlope* to "true".
 
 Setting *autoAdjustRecoverySlope* to "true" also activates one additional setting **autoAdjustRecoverySlopeMargin**. This is the margin used between the automatically calculated recovery slope and a next recovery slope. 5% (i.e. 0.05) is a pretty good margin and works well for most rowers.
 
@@ -328,6 +328,7 @@ Another use is found in the RowingData export (if used), where the peak handle f
 Some people want it all, and we're happy to give to you when your rower and your Raspberry Pi can handle the pain. Some interesting settings:
 
 * **maximumImpulseTimeBeforePause** determines the maximum time between impulses before the rowing engine considers it a pause.
+
 * **magicConstant** is a constant that is commonly used to convert flywheel revolutions to a rowed distance and speed (see [the physics of ergometers](http://eodg.atm.ox.ac.uk/user/dudhia/rowing/physics/ergometer.html#section9)). Concept2 seems to use 2.8, which they admit is an arbitrary number which came close to their expectations of a competetion boat. As this setting only affects speed/distance, this setting typically is used to change the power needed to row a certain distance or reach a certain speed. So changing this can make your rower's metrics act as sluggish as an oil tanker (much power needed for little speed), or more like a smooth eight (less power needed for more speed). So for your rower, you could set your own plausible distance for the effort you put in. Please note that the rowed distance also depends on **flywheelInertia**, so please calibrate that before changing this constant. Another note: increasing this number decreases your rowed meters, but not in a linear fashion.
 
 ## Sending in a rower profile to us
