@@ -1,26 +1,22 @@
 # The physics behind Open Rowing Monitor
 
 <!-- markdownlint-disable no-inline-html -->
-In this document we explain the physics behind the OpenRowing Monitor, to allow for independent review and software maintenance. This work wouldn't have been possible without some solid physics, described by some people with real knowledge of the subject matter. Please note that any errors in our implementation probably is on us, not them. When appropriate, we link to these sources. When possible, we also link to the source code.
+In this document we explain the physics behind the Open Rowing Monitor, to allow for independent review and software maintenance. This work wouldn't have been possible without some solid physics, described by some people with real knowledge of the subject matter. Please note that any errors in our implementation probably is on us, not them. When appropriate, we link to these sources. When possible, we also link to the source code.
 
-## Leading principles
+Please note that this text is used as a rationale for design decissions in Open Rowing Monitor. So it is of interest for people maintaining the code (as it explains why we do things the way we do) and for academics to verify of improve our solution. For these academics, we conclude with a section of open design issues. If you are interested in just using Open Rowing Monitor as-is, this might not be the text you are looking for.
 
-The physics engine is the core of Open Rowing Monitor. In our design of the physics engine, we try to:
+## Basic concepts
 
-* stay as close to the original data as possible (thus depend on direct measurements as much as possible) instead of depending on derived data. This means that there are two absolute values we try to stay close to as much as possible: the **time between an impulse** and the **Number of Impulses** (their origin and meaning is later explained);
+Before we analyze the physics of a rowing engine, we first need to define the basic concepts. First we identify the key physical systems at play, then we define the key phases in the rowing stroke.
 
-* use robust calculations wherever possible (i.e. not depend on a single measurements, extrapolations or derivative functions, etc.) to reduce effects of measurement errors.
+### Physical systems in a rower
 
-## Phases, properties and concepts in the rowing cycle
-
-Before we analyze the physics of a rowing engine, we first need to define the basic concepts.
+A rowing machine effectively has two fundamental movements: a **linear** (the rower moving up and down, or a boat moving forward) and a **rotational** where the energy that the rower inputs in the system is absorbed through a flywheel (either a solid one, or a liquid one) [[1]](#1).
 
 <img src="img/physics/indoorrower.png" width="700">
 
 <!-- markdownlint-disable-next-line no-emphasis-as-header -->
 *A basic view of an indoor rower*
-
-A rowing machine effectively has two fundamental movements: a **linear** (the rower moving up and down, or a boat moving forward) and a **rotational** where the energy that the rower inputs in the system is absorbed through a flywheel (either a solid one, or a liquid one).
 
 The linear and rotational speeds are related: the stronger/faster you pull in the linear direction, the faster the flywheel will rotate. The rotation of the flywheel simulates the effect of a boat in the water: after the stroke, the boat will continue to glide only be dampened by the drag of the boat, so does the flywheel.
 
@@ -32,244 +28,437 @@ There are several types of rowers:
 
 * **Magnetic resistance**: where the resistance is constant
 
-There are also hybrid rowers, which combine air resistance and magnetic resistance. The differences in physical behavior can be significant, for example a magnetic rower has a constant resistance while a air/water rower's resistance is dependent on the flywheel's speed. As the key principle is the same for all these rowers (some mass is made to spin and drag brings its speed down), we treat them the same.
+There are also hybrid rowers, which combine air resistance and magnetic resistance. The differences in physical behavior can be significant, for example a magnetic rower has a constant resistance while a air/water rower's resistance is dependent on the flywheel's speed. As the key principle is the same for all these rowers (some mass is made to spin and drag brings its speed down), we currently treat them the same.
 
-Typically, measurements are done in the rotational part of the rower, on the flywheel. There is a reed sensor or optical sensor that will measure time between either magnets or reflective stripes, which gives an **Impulse** each time a magnet or stripe passes. Depending on the **number of impulse providers** (i.e. the number of magnets or stripes), the number of impulses per rotation increases, increasing the resolution of the measurement. By measuring the **time between impulses**, deductions about speed and acceleration of the flywheel can be made, and thus the effort of the rower.
+### Phases in the rowing stroke
 
-## What a rowing machine actually measures
+What seperates rowing from many other sports is its discontinous nature: for example, in Cycling the force constantly shifts between left and right leg, but remains relatively constant throughout the rotation. In rowing, a stroke begins with a powerful *Drive* phase, which is followed by an unpowered *Recovery*. Visually, it can be depicted as follows:
 
-As mentioned above, most rowers depend on measuring the **time between impulses**, triggered by some impulse giver (magnet or light) on the flywheel. For example, when the flywheel rotates on a NordicTrack RX800, the passing of a magnet on the flywheel triggers a reed-switch, that delivers a pulse to our Raspberry Pi. We measure the time between two subsequent impulses and call this *currentDt*: the time between two impulses. *currentDt* is the basis for all our calculations.
+```mermaid
+stateDiagram-v2
+  direction LR
+  Drive --> Recovery
+  Recovery --> Drive
+```
 
-The following picture shows the time between impulses through time:
-![Measurements of flywheel](img/physics/flywheelmeasurement.png)
-*Measurements of flywheel*
+<!-- markdownlint-disable-next-line no-emphasis-as-header -->
+*Basic phases of a rowing stroke*
 
-Here, it is clear that the flywheel first accelerates and then decelerates, which is typical for rowing.
-
-Using *currentDt* means we can't measure anything directly aside from *angular displacement*, and that we have to accept some noise in measurements. For example, as we don't measure torque on the flywheel directly, we can't determine where the flywheel exactly accelerates/decelerates, we can only detect a change in the times between impulses. In essence, we only can conclude that an acceleration has taken place somewhere near a specific impulse, but we can't be certain about where the acceleration exactly has taken place and we can only estimate how big the force must have been. Additionally, small vibrations in the chassis due to tiny unbalance in the flywheel can lead to small deviations in measurements. This kind of noise in our measurement can make many subsequent derived calculation on this measurement too volatile, This is why we explicitly distinguish between *measurements* and *estimates* based on these measurements, to clearly indicate their potential volatility.
-
-Dealing with noise is an dominant issue, especially because we have to deal with many types of machines. Aside from implementing a lot of noise reduction, we also focus on using robust calculations: calculations that don't deliver radically different results when a small measurement error is introduced in the measurement of *currentDt*. We typically avoid things like derived functions when possible, as deriving over small values of *currentDt* typically produce huge deviations in the resulting estimate. We sometimes even do this at the cost of inaccuracy with respect to the perfect theoretical model, as long as the deviation is systematic in one direction, to prevent estimates to become too unstable for practical use.
-
-## The rowing cycle and detecting the stroke and recovery phase
-
-On an indoor rower, the rowing cycle will always start with a stroke, followed by a recovery. Looking at a stroke, our monitor gets the following data from its sensor:
-
-![Impulses, impulse lengths and rowing cycle phases](img/physics/rowingcycle.png)
-*Impulses, impulse lengths and rowing cycle phases*
-
-Here, we plot the *currentDt* (time between impulses) against its sequence number. So, a high *currentDt* means a long time between impulses (so a low *angular velocity*), and a low *currentDt* means that there is a short time between impulses (so a high *angular velocity*). As this figure also shows, we split the rowing cycle in two distinct phases:
+On an indoor rower, the rowing cycle will always start with a stroke, followed by a recovery. We define them as follows:
 
 * The **Drive phase**, where the rower pulls on the handle
 
 * The **Recovery Phase**, where the rower returns to his starting position
 
-As the rowing cycle always follows this fixed schema, Open Rowing Monitor models it as a finite state machine (implemented in `handleRotationImpulse` in `engine/RowingEngine.js`).
+Combined, we consider a *Drive* followed by a *Recovery* a **Stroke**. In the calculation of several metrics, the requirement is that it should include *a* *Drive* and *a* *Recovery*, but order isn't a strict requirement for some metrics [[2]](#2). We call such combination of a *Drive* and *Recovery* without perticular order a **Cycle**, which allows us to calculate these metrics twice per *stroke*.
 
-![Finite state machine of rowing cycle](img/physics/finitestatemachine.png)
-*Finite state machine of rowing cycle*
+## Leading design principles of the rowing engine
 
-### Basic stroke detection
+As described in [the architecture](Architecture.md), the rowing engine is the core of Open Rowing Monitor and consists of three major parts:
 
-Given that the *Angular Displacement* between impulses is fixed, we can deduct some things simply from looking at the subsequent *time between impulses*, *currentDt*. When the *currentDt* shortens, *Angular Velocity* is increasing, and thus the flywheel is accelerating (i.e. we are in the drive phase of the rowing cycle). When times between subsequent impulses become longer, the *Angular Velocity* is decreasing and thus the flywheel is decelerating (i.e. we are the recovery phase of the rowing cycle). This is the robust implementation of a stroke (implemented in MovingFlankDetector's implementation of isFlywheelPowered and isFlywheelUnpowered for naturalDeceleration = 0 in `engine/MovingFlankDetector.js`), which is similar to the implementation used by industry leaders like Concept2. Concept2 are generally considered the golden standard when it comes to metrics, and they state (see [this Concept2 FAQ](https://www.concept2.com/service/software/ergdata/faqs): 'Drive time is measured by the amount of time the flywheel is accelerating. Note: It is possible that the athlete may pull on the handle and not accelerate the flywheel due to no energy being put into it and therefore no effective effort. This portion of the handle pull is not measured.')
+* `engine/Flywheel.js`, which determines rotational metrics,
 
-### Advanced stroke detection
+* `engine/Rower.js`, which transforms rotational metrics in a rowing state and linear metrics,
 
-Looking at the average curve of an actual rowing machine (this example is based on averaging 300 strokes), we see the following:
+* `engine/RowingStatistics.js`, which manages session state, session metrics and optimizes metrics for presentation.
+
+Although the physics is well-understood and even well-described publicly (see [[1]](#1),[[2]](#2),[[3]](#3) and [[4]](#4)), applying these formulae in a practical solution for multiple rowers delivering reliable results is quite challenging. Especially small errors, noise, tends to produce visible effects on the recorded metrics. Therefore, in our design of the physics engine, we obey the following principles (see also [the architecture document](Architecture.md)):
+
+* stay as close to the original data as possible (thus depend on direct measurements as much as possible) instead of heavily depend on derived data. This means that there are two absolute values we try to stay close to as much as possible: the **time between an impulse** and the **Number of Impulses**, where we consider **Number of Impulses** most reliable, and **time between an impulse** reliable but containing noise (the origin and meaning of these metrics, as well the effects of this approach are explained later);
+
+* use robust calculations wherever possible (i.e. not depend on a single measurements, extrapolations, derivation, etc.) to reduce effects of measurement errors. A typical issue is the role of *CurrentDt*, which is often used as a divisor with small numers as &Delta;t, increasing the effect of measurement errors in most metrics. When we do need to calculate a derived function, we choose to use a robust linear regression method to reduce the impact of noise and than use the function to calculate the derived function;
+
+* Be as close to the results of the Concept2 when possible and realistic, as they are considered the golden standard in indoor rowing metrics.
+
+## Relevant rotational metrics
+
+Typically, measurements are done in the rotational part of the rower, on the flywheel. There is a magnetic reed sensor or optical sensor that will measure time between either magnets or reflective stripes, which gives an **Impulse** each time a magnet or stripe passes. For example, when the flywheel rotates on a NordicTrack RX800, the passing of a magnet on the flywheel triggers a reed-switch, that delivers a pulse to our Raspberry Pi.
+
+Depending on the **number of impulse providers** (i.e. the number of magnets or stripes), the number of impulses per rotation increases, increasing the resolution of the measurement. As described in [the architecture](Architecture.md), Open Rowing Monitor's `GpioTimerService.js` measures the time between two subsequent impulses and reports as a *currentDt* value. The constant stream of *currentDt* values is the basis for all our angular calculations, which are typically performed in the `pushValue()` function of `engine/Flywheel.js`.
+
+Open Rowing Monitor needs to keep track of several metrics about the flywheel and its state, including:
+
+* The **Angular Distance** of the flywheel in Radians (denoted with &theta;): in essence the distance the flywheel has traveled (i.e. the number of Radians the flywheel has rotated) since the start of the session;
+
+* The **Time since start** of the flywheel in seconds (denoted with t): in essence the time the flywheel has been spinning since the start of the session;
+
+* The **Angular Velocity** of the flywheel in Radians \* s<sup>-1</sup> (denoted with &omega;): in essence the number of (partial) rotations of the flywheel per second;
+
+* The **Angular Acceleration** of the flywheel in Radians \* s<sup>-2</sup> (denoted with &alpha;): the acceleration/deceleration of the flywheel;
+
+* The *estimated* **drag factor** of the flywheel: the level af (air/water/magnet) resistence encountered by the flywheel, as a result of a damper setting.
+
+* The **Torque** of the flywheel in kg \* m<sup>2</sup> \* s<sup>-2</sup> (denoted with &tau;): the momentum of force on the flywheel.
+
+* Detecting power on the flywheel: whether there is a force on the flywheel.
+
+Being limited to the time between impulses, *currentDt*, as only measurement means we can't measure any of these metrics directly, and that we have to accept some deviations in these measurements as they are reported in discrete intervals.
+
+Additionally, small mechanical deviations, vibrations in the chassis (due to tiny unbalance in the flywheel) and latency inside the software stack can lead to small deviations the measurement of *currentDt*. Dealing with these deviations is an dominant issue, especially because we have to deal with a wide range machines. Aside from implementing noise reduction, we also focus on using robust calculations: calculations that don't deliver radically different results when a small measurement error is introduced in the measurement of *currentDt*. We typically avoid things like direct deriviations based on single values, as directly deriving over small values of *currentDt* with small errors typically produce huge deviations in the resulting estimate. As an alternative, we use (robust) regression over multiple values, and use the deriviations of the resulting function instead. We do this at the cost of reducing the accuracy of the data, as this approach tends to dampen real occuring peaks in the stroke data. However, this inaccuracy with respect to the perfect theoretical model is needed to prevent estimates to become too unstable for practical use or which can only be used with heavy smoothing later on in the process (typically smoothing across strokes by `engine/RowingStatistics.js`).
+
+### Determining the "Time since start" of the flywheel
+
+This can easily be measured by summarising the **time between an impulse**. Noise has little to no impact to this metric as on average the noise cancels out.
+
+### Determining the "Angular Position" of the flywheel
+
+As the impulse-givers are evenly spread over the flywheel, this can be robustly measured by counting the total number of impulses, **Number of Impulses**, and multiply it with the **angular displacement** between two **impulses** (i.e. 2π/(*number of impulse providers on the flywheel*)).
+
+In theory, there are two threats here:
+
+* Potentially missed impulses due to sticking sensors or too short intervals for the Raspberry Pi to detect them. So far, this hasn't happened.
+* Ghost impulses, typically caused by **debounce** effects of the sensor. Up till now, some reports have been seen of this, where the best resolution was a better mechanical construction of magnets and sensors.
+
+### Determining the "Angular Velocity" and "Angular Acceleration" of the flywheel
+
+The traditional approach [[1]](#1), [[8]](#8), [[13]](#13) suggeste a numerical approach to Angular Velocity &omega;:
+
+> $$ &omega; = {&Delta;&theta; \over &Delta;t} $$
+
+This formula is dependent on &Delta;t, which is suspect to noise, making this numerical approach to the calculation of &omega; volatile. From a more robust perspective, we approach &omega; as the the first derivative of the function between *time since start* and the angular position &theta;, where we use a robust regression algorithm to determine the function and thus the first derivative.
+
+The traditional numerical approach [[1]](#1), [[8]](#8), [[13]](#13) Angular Acceleration &alpha; would be:
+
+> $$ &alpha; = {&Delta;&omega; \over &Delta;t} $$
+
+Again, the presence of &Delta;t would make this alculation of &alpha; volatile. From a more robust perspective, we approach &alpha; as the the second derivative of the function between *time since start* and the angular position &theta;, where we use a robust regression algorithm to determine the function and thus the second derivative.
+
+Summarizing, both Angular Velocity &omega; and Angular Acceleration &alpha; are determined through the same regression algorithm, where the first derivative of the function represents the Angular Velocity &omega; and the second derivative represents the Angular Acceleration &alpha;.
+
+### Determining the "drag factor" of the flywheel
+
+In the recovery phase, the only force exerted on the flywheel is the (air-/water-/magnetic-)resistance. Thus we can calculate the Drag factor of the Flywheel based on the drag-based deceleration through the recovery phase [[1]](#1). This calculation is performed in the `markRecoveryPhaseCompleted()` function of `engine/Flywheel.js`.
+
+A first numerical approach is presented by through [[1]](#1) in formula 7.2a:
+
+> $$ k = - I \* {&Delta;&omega; \over &Delta;t} * {1 \over &Delta;&omega;^2} $$
+
+Where the resulting k should be averaged across the rotations of the flywheel. The downside of this approach is that it introduces &Delta;t in the drag calculation, making this calculation potentially volatile. Our practical experience based on testing confirms this. An alternative numerical approach is presented by through [[1]](#1) in formula 7.2b:
+
+> $$ k = -I \* {&Delta;({1 \over &omega;}) \over &Delta;t} $$
+
+Where this is calculated across the entire recovery phase. Again, the presence of &Delta;t potentially introduces a type of undesired volatility. Testing has shown that even when &Delta;t is chosen to span the entire recovery phase reliably, reducing the effect of single values of *CurrentDt*, the calculated drag factor is still too unstable to be used as is: it typically requires averaging across strokes to prevent drag poisoning.
+
+To make this calculation more robust, we again turn to regression methods (as suggested by [[7]](#7)).  By transforming formula 7.2 to the definition of the slope of a line, we get the following:
+
+> $$ { k \over I } = {&Delta;({1 \over &omega;}) \over &Delta;t} $$
+
+Thus k/I represents the slope of the graph depicted by *time since start* on the *x*-axis and ${1 \over &omega;}$ on the *y*-axis, during the recovery phase of the stroke. However, this formula can be simplified further, as the angular velocity &omega; is determined by:
+
+> $$ &omega; = {({2&pi; \over Impulses Per Rotation}) \over currentDt} $$
+
+thus making:
+
+> $$ { k \over I } = {&Delta;({1 \over {({2&pi; \over Impulses Per Rotation}) \over currentDt}}) \over &Delta;t} $$
+
+removing the division, results in
+
+> $$ { k \over I } = {&Delta;(currentDt \* {Impulses Per Rotation \over 2&pi;}) \over &Delta;t} $$
+
+Since we are multiplying *currentDt* with a constant factor (i.e. ${Impulses Per Rotation \over 2&pi;}$), we can further simplify the formula by moving this multiplication outside the slope-calculation. Effectively, making the formula:
+
+> $$ {k \* 2&pi; \over I \* Impulses Per Rotation} = {&Delta;currentDt \over &Delta;t} $$
+
+As the left-hand of the equation only contains constants and the dragfactor, and the right-hand a division of two delta's, we can use regression to calculate the drag. The drag factor is effectively determined by the slope of the line created by *time since start* on the *x*-axis and the corresponding *CurrentDt* on the *y*-axis, for each recovery phase.
+
+This slope can be determined through linear regression (see [[5]](#5) and [[6]](#6)) for the collection of datapoints for a specific recovery phase. This approach also brings this calculation as close as possible to the raw data, and doesn't use individual *currentDt*'s as a divider, which are explicit design goals to reduce data volatility. Although simple linear regression (OLS) isn't robust in nature, its algorithm has proven to be sufficiently robust to be applied, especially when filtering on low R<sup>2</sup>. On a Concept2, the typical R<sup>2</sup> is around 0.96 for steady state rowing. The approach of using r<sup>2</sup> has the benefit of completely relying on metrics contained in the algorithm itself for quality control: the algorithm itself signals a bad fit due to too much noise in the calculation. Alternative approaches typically rely on cross-stroke repeatability of the drag calculation, which could ignore drag changes despite a good fit with the data. Practical experiments show that an R<sup>2</sup>-based filter outperforms any other across-stroke noise dampening filter.
+
+As the slope of the line *currentDt* over *time since start* is equal to ${k \* 2&pi; \over I \* Impulses Per Rotation}$, the drag thus can be determined through
+
+> $$ k = slope \* {I \* Impulses Per Rotation \over 2&pi;} $$
+
+### Determining the "Torque" of the flywheel
+
+The torque &tau; on the flywheel can be determined based on formula 8.1 [[1]](#1):
+
+> $$ &tau; = I \* ({&Delta;&omega; \over &Delta;t}) + D $$
+
+As ${&Delta;&omega; \over &Delta;t}$ = &alpha; and D = k \* &omega;<sup>2</sup> (formula 3.4, [[1]](#1)), we can simplify this further by:
+
+> $$ &tau; = I \* &alpha; + k \* &omega;^2 $$
+
+### Detecting force on the flywheel
+
+One of the key elements of rowing is detecting the stroke phases and thus calculate the associated metrics. From the perspective of Open Rowing Monitor, there only is a stream of *CurrentDt*'s, which should form the basis of this detection:
+
+The following picture shows the time between impulses through time:
+![Measurements of flywheel](img/physics/flywheelmeasurement.png)
+*Measurements of flywheel*
+
+Open Rowing Monitor combines two types of force detection, which work independently: *basic force detection* and *advanced stroke detection*. Both can detect a stroke accuratly, and the combination has proven its use.
+
+In `engine/Flywheel.js`, two functions provide force detection:
+
+* `isUnpowered()`: which indicates that the simple or the advanced force detection indicate that a force is absent;
+
+* `isPowered()`: which indicates that both the simple or the advanced force detection indicate that a force is present.
+
+The choice for the logical relations between the two types of force detection is based on testing: where a sudden presence of force on a flywheel (i.e. the start of a drive) is quite easily and consistently detected, its abscence has proven to be more difficult. In practice, the beginning of a drive is easily recognised as strong leg muscles excert much force onto the flywheel in a very short period of time. The end of the drive is more difficult to assess, as the dragforce of the flywheel increases with its speed, and the weaker arm muscles have taken over, making the transition to the recovery much harder to detect. In theory, in the end of the drive phase the drag force might be bigger than the force from the arms, resulting in an overall negative torque.
+
+In the remainder of this paragraph, we describe the underlying physics of these force detection methods.
+
+#### Basic force detection
+
+One of the key indicator is the acceleration/decelleration of the flywheel. Looking at a simple visualisation of the rowing stroke, we try to achieve the following:
+
+![Impulses, impulse lengths and rowing cycle phases](img/physics/rowingcycle.png)
+*Impulses, impulse lengths and rowing cycle phases*
+
+Here we plot the *currentDt* against its sequence number. So, a high *currentDt* means a long time between impulses (so a low *angular velocity*), and a low *currentDt* means that there is a short time between impulses (so a high *angular velocity*).
+
+Here, it is clear that the flywheel first accelerates (i.e. the time between impulses become smaller), suggesting a powered flywheel. Next it decelerates (i.e. the time between impulses become bigger), which suggests an unpowered flywheel. This pattern is typical for the rowing motion.
+
+The simple force detection uses this approach by looking at the slope of *currentDt* over time. Given that the *Angular Displacement* between impulses is fixed, we can deduct some things simply from looking at the subsequent *time between impulses*, *currentDt*. When the *currentDt* shortens, *Angular Velocity* is increasing, and thus the flywheel is accelerating (i.e. we are in the drive phase of the rowing cycle). When times between subsequent impulses become longer, the *Angular Velocity* is decreasing and thus the flywheel is decelerating (i.e. we are the recovery phase of the rowing cycle). As a rough but very robust approximation, a descending (negative) slope indicates a powered flywheel, an (positive) ascending slope indicates an unpowered flywheel. This approach seems to be similar to the implementation used by industry leaders like Concept2. Concept2 are generally considered the golden standard when it comes to metrics, and they state (see [this Concept2 FAQ](https://www.concept2.com/service/software/ergdata/faqs):
+
+> Drive time is measured by the amount of time the flywheel is accelerating. Note: It is possible that the athlete may pull on the handle and not accelerate the flywheel due to no energy being put into it and therefore no effective effort. This portion of the handle pull is not measured.
+
+A more nuanced, but more vulnerable, approach is to compare the slope of this function with the typical slope encountered during the recovery phase of the stroke (which routinely is determined during the drag calculation). When the flywheel is unpowered, the slope will be close to the recovery slope, and otherwise it is powered. This is a more accurate, but more vulnerable, approach, as small deviations could lead to missed strokes. It is noted that practical testing has shown that this works reliably for many machines.
+
+#### Advanced force detection
+
+The more advanced, but more vulnerable approach depends on the calculated torque. When looking at *CurrentDt* and Torque over time, we get the following picture:
 
 ![Average curves of a rowing machine](img/physics/currentdtandacceleration.png)
 *Average currentDt (red) and Acceleration (blue) of a single stroke on a rowing machine*
 
-In this graph, we plot *currentDt* against the time in the stroke, averaged over 300 strokes. As *currentDt* is (reversely) related to angular velocity, we can calculate the angular acceleration/deceleration. In essence, as soon as the acceleration becomes below the 0, the currentDt begins to lengthen again (i.e. the flywheel is decelerating). As indicated earlier, this is the trigger for the robust stroke detection algorithm (i.e. the one used when naturalDeceleration is set to 0): when the *currentDt* starts to lengthen, the drive-phase is considered complete.
+In this graph, we plot *currentDt* and Torque against the time in the stroke. As soon as the Torque of the flywheel becomes below the 0, the *currentDt* begins to lengthen again (i.e. the flywheel is decelerating). As indicated earlier, this is the trigger for the basic force detection algorithm (i.e. when minumumRecoverySlope  is set to 0): when the *currentDt* starts to lengthen, the drive-phase is considered complete.
 
-However, from the acceleration/deceleration curve it is also clear that despite the deceleration, there is still a force present: the deceleration-curve hasn't reached its stable minimum despite crossing 0. This is due to the pull still continuing through the arms: the net force is negative due to a part drive-phase (the arm-movement) delivering weaker forces than the drag-forces of the flywheel. Despite being weaker than the other forces on the flywheel, the rower is still working. In this specific example, at around 0.52 sec the rower's force was weaker than all drag-forces combined. However, only at 0,67 seconds (thus approx. 150 ms later) the net force reaches its stable bottom: the only force present is the drag from the flywheel. Getting closer to this moment is a goal.
+However, from the acceleration/deceleration curve it is also clear that despite the deceleration, there is still a force present: the Torque-curve hasn't reached its stable minimum despite crossing 0. This is due to the pull still continuing through the arms: the net force is negative due to a part drive-phase (the arm-movement) delivering weaker forces than the drag-forces of the flywheel. Despite being weaker than the other forces on the flywheel, the rower is still working. In this specific example, at around 0.52 sec the rower's force was weaker than all drag-forces combined. However, only at 0,67 seconds (thus approx. 150 ms later) the net force reaches its stable bottom: the only force present is the drag from the flywheel. Getting closer to this moment is a goal.
 
-By specifying the expected natural deceleration of the flywheel (naturalDeceleration, which in this case is around 8 Rad/S^2) in the configuration of the rower, the stroke starts earlier and ends later (implemented in MovingFlankDetector's implementation of isFlywheelPowered and isFlywheelUnpowered for naturalDeceleration < 0 in `engine/MovingFlankDetector.js`). Please note: as several derived metrics depend on the length of the drive phase or the exact timing of that moment (like the drag factor when calculated dynamically), these are likely to change when this setting is changed. For a more in-depth explanation, see [here for more details](physics_openrowingmonitor.md#a-closer-look-at-the-effects-of-the-various-drive-and-recovery-phase-detection).
+We do this by setting a minimum Torque (through setting minumumForceBeforeStroke) before a Drive phase can be initiated.
 
-Testing shows that setting a value close to the natural deceleration provides more accurate results very reliably. However, some rowers might contain a lot of noise in their data, making this approach infeasible (hence the fallback option of naturalDeceleration = 0)
+#### A note about detection accuracy
 
-This approach is a better approximation than the acceleration/deceleration approach, but still is not perfect. For example, drag-force of the the rower presented in the above graph slowly reduces. This is expected, as the drag-force is speed dependent. For a pure air-rower, the best theoretical approach would be to see if the drag-force is the only force present by calculating the expected drag-force using the current speed and the drag factor (making the stroke detection completely independent on speed). Testing has shown that this approach is too prone to errors, as it requires another derivation with respect to *currentDt*, making it too volatile. Above this, hybrid rower behave differently as well: dependent on the speed, the balance shifts between the speed-dependent air-resistance drag-force and the speed-independent magnetic resistance force. To make the solution robust and broadly applicable, this approach has been abandoned.
+Open Rowing Monitor only will get impulses at discrete points in time. As Open Rowing Monitor doesn't measure torque on the flywheel directly, it can't determine where the flywheel exactly accelerates/decelerates as there is no continous measurement. Open Rowing Monitor can only detect a change in the times across several impulses, but it can't detect the exact time of torque change. In essence, at best we only can conclude that the torque has changes somewhere near a specific impulse, but we can't be certain about where the acceleration exactly has taken place and we can only estimate how big the force must have been.
 
-## Key physical metrics during the rowing cycle
+## Relevant linear metrics
 
-There are several key metrics that underpin the performance measurement of a rowing stroke. Here, we distinguish the following concepts:
+Knowing that *Time since start*, Angular Velocity &omega;, Angular Acceleration &alpha;, flywheel Torque &tau; and dragfactor k have been determined in a robust manner by `engine/Flywheel.js`, `engine/Rower.js` can now transform these key rotational metrics in linear metrics. This is done in the `handleRotationImpulse()` function of `engine/Rower.js`, where based on the flywheel state, the relevant metrics are calculated. The following metrics need to be determined:
 
-* The **Angular Displacement** of the flywheel in Radians: in essence the distance the flywheel has traveled (i.e. the number of Radians the flywheel has rotated). As the impulse-givers are evenly spread over the flywheel, the **angular displacement** between two **impulses** is 2π/(*number of impulse providers on the flywheel*). This can easily be measured by counting the number of impulses;
+* The estimated **power produced** by the rower (in Watts): the power the rower produced during the stroke;
 
-* The **Angular Velocity** of the flywheel in Radians/second: in essence the number of (partial) rotations of the flywheel per second. As the *Angular Displacement* is fixed for a specific rowing machine, the *Angular Velocity* is (*angular displacement between impulses*) / (time between impulses);
+* The estimated **Linear Velocity** of the boat (in Meters/Second): the speed at which the boat is expected to travel;
 
-* The **Angular Acceleration** of the flywheel (in Radians/second^2): the acceleration/deceleration of the flywheel;
+* The estimated **Linear Distance** of the boat (in Meters): the distance the boat is expected to travel;
 
-* The *estimated* **Linear Distance** of the boat (in Meters): the distance the boat is expected to travel;
+* The estimated **Drive length** (in meters): the estimated distance travelled by the handle during the drive phase;
 
-* *estimated* **Linear Velocity** of the boat (in Meters/Second): the speed at which the boat is expected to travel.
+* The estimated **speed of the handle** (in m/s): the speed the handle/chain/belt of the rower;
 
-## Measurements during the recovery phase
+* The estimated **force on the handle** (in Newtons): the force excerted on the handle/chain/belt of the rower;
 
-Although not the first phase in a cycle, it is an important phase as it deducts specific information about the flywheel properties [[1]](#1). During the recovery-phase, we can *measure* the number of impulses and the length of each impulse. Some things we can easily *estimate* with a decent accuracy based on the data at the end of the recovery phase:
+* The estimated **power on the handle** (in Watts): the power on the handle/chain/belt of the rower;
 
-* The length of time between the start and end of the recovery phase
+### Power produced
 
-* The angular displacement between the start and end of the recovery
-    phase
-
-* The angular velocity at the beginning and end of the recovery phase
-
-In the recovery phase, the only force exerted on the flywheel is the (air/water/magnetic)resistance. Thus we can calculate the Drag factor of the Flywheel based on the entire phase.
-
-As [[1]](#1) describes in formula 7.2, which is also experimentally verified by Nomath on a Concept 2 [[5]](#5):
-
-> <img src="https://render.githubusercontent.com/render/math?math=k=Id(1/\omega)/dt">
-
-Or in more readable form:
-
-> <img src="https://render.githubusercontent.com/render/math?math=\textrm{DragFactor}=\textrm{FlywheelInertia}*(\frac{1}{\textrm{AngularVelocity}_{start}} - \frac{1}{\textrm{AngularVelocity}_{end}})*\textrm{RecoveryLength}">
-
-Looking at the linear speed, we use the following formula [[1]](#1), formula 9.3:
-
-> <img src="https://render.githubusercontent.com/render/math?math=s=(k/c)^{1/3}\theta">
-
-Or in more readable form:
-
-> <img src="https://render.githubusercontent.com/render/math?math=\textrm{LinearDistance}=(\textrm{DragFactor}/\textrm{MagicFactor})^{1/3}*\textrm{AngularDisplacement}">
-
-Looking at the linear speed, we use the following formula [[1]](#1), formula 9.2:
-
-> <img src="https://render.githubusercontent.com/render/math?math=u=(k/c)^{1/3}\omega">
-
-Or in more readable form:
-
-> <img src="https://render.githubusercontent.com/render/math?math=\textrm{LinearVelocity}=(\textrm{DragFactor}/\textrm{MagicFactor})^{1/3}*\textrm{AngularVelocity}">
-
-## Measurements during the drive phase
-
-During the drive-phase, we again can *measure* the number of impulses and the length of each impulse. Some things we can easily *estimate* with a decent accuracy based on the data at the end of the drive phase:
-
-* The length of time between the start and end of the drive phase
-
-* The angular displacement between the start and end of the drive phase
-
-* The angular velocity at the beginning and end of the drive phase
-
-Looking at the linear speed, we use the following formula [[1]](#1), formula 9.3:
-
-> <img src="https://render.githubusercontent.com/render/math?math=s=(k/c)^{1/3}\theta">
-
-Or in more readable form:
-
-> <img src="https://render.githubusercontent.com/render/math?math=\textrm{LinearDistance}=(\textrm{DragFactor}/\textrm{MagicFactor})^{1/3}*\textrm{AngularDisplacement}">
-
-Looking at the linear speed, we use the following formula [[1]](#1), formula 9.2:
-
-> <img src="https://render.githubusercontent.com/render/math?math=u=(k/c)^{1/3}\theta">
-
-Or in more readable form:
-
-> <img src="https://render.githubusercontent.com/render/math?math=\textrm{LinearVelocity}=(\textrm{DragFactor}/\textrm{MagicFactor})^{1/3}*\textrm{AngularVelocity}">
-
-## Power calculation
-
-In the drive phase, the rower also puts a force on the flywheel, making it accelerate.
+As the only source for adding energy to the rotational part of the rower is the linear part of the rower, the power calculation is the key calculation to translate between rotational and linear metrics.
 
 We can calculate the energy added to the flywheel through [[1]](#1), formula 8.2:
 
-> <img src="https://render.githubusercontent.com/render/math?math=dE=I(d\omega/dt)d\theta %2B k \omega^2 d\theta">
+> $$ &Delta;E = I \* ({&Delta;&omega; \over &Delta;t}) \* &Delta;&theta; + k \* &omega;^2 \* &Delta;&theta; $$
 
-Or in more readable form for each measured displacement:
+The power then becomes [[1]](#1), formula 8.3:
 
-> <img src="https://render.githubusercontent.com/render/math?math=\textrm{Energy}=\textrm{FlywheelInertia}*(\frac{\textrm{AngularVelocity}_{start} - \textrm{AngularVelocity}_{end}}{\textrm{DriveLength}})*\textrm{AngularDisplacement}">
-> <img src="https://render.githubusercontent.com/render/math?math=%2B \textrm{DragFactor}*\textrm{InstantaneousAngularVelocity}^2*\textrm{AngularDisplacement}">
+> $$ P = {&Delta;E \over &Delta;t} $$
 
-Where
+Combining these formulae, makes
 
-> <img src="https://render.githubusercontent.com/render/math?math=\textrm{InstantaneousAngularVelocity}=\textrm{AngularDisplacement}/\textrm{TimeBetweenImpulses}">
+> $$ P = I \* ({&Delta;&omega; \over &Delta;t}) \* &omega; + k \* &omega;^3 $$
 
-The power then becomes
+Although this is an easy technical implementable algorithm by calculating a running sum of this function (see [[3]](#3), and more specifically [[4]](#4)). However, the presence of the many small &omega;'s makes the outcome of this calculation quite volatile, even despite the robust underlying calculation for &omega;. Calculating this across the stroke might be an option, but the presence of &Delta;&omega; would make the power calculation highly dependent on both accurate stroke detection and the accurate determination of instantanous &omega;.
 
-> <img src="https://render.githubusercontent.com/render/math?math=P=E/\textrm{TotalCycleTime}">
+An alternative approach is given in [[1]](#1), [[2]](#2) and [[3]](#3), which describe that power on a Concept 2 is determined through ([[1]](#1) formula 9.1), which proposes:
 
-Although this is an easy implementable algorithm by calculating a running sum of this function (see [[3]](#3), and more specifically [[4]](#4)). However, the presence of the many Angular Velocities makes the outcome of this calculation quite volatile. The angulate velocity is measured through the formula:
+> $$ \overline{P} = k \* \overline{\omega}^3 $$
 
-> <img src="https://render.githubusercontent.com/render/math?math=\textrm{AngularVelocity}=\frac{2\pi}{\textrm{NumberOfImpulsegivers}*\textrm{TimeBetweenImpulses}}">
+Where $\overline{P}$ is the average power and $\overline{\omega}$ is the average angular velocity during the stroke. Here, the average speed can be determined in a robust manner (i.e. ${&Delta;&theta; \over &Delta;t}$ for sufficiently large &Delta;t).
 
-As *currentDt* tends to be small (typically much smaller than 1, typically between 0,1 and 0,0015 seconds), small errors tend to increase the Angular Velocity significantly, enlarging the effect of an error and potentially causing this volatility. An approach is to use a running average on the presentation layer (in `RowingStatistics.js`). However, when this is bypassed, data shows significant spikes of 20Watts in quite stable cycles due to small changes in the data.
+Dave Venrooy indicates that this formula is accurate with a 5% margin [[3]](#3). Testing this on live data confirms this behavior. Academic research on the accuracy of the Concept 2 RowErg PM5's power measurements [[15]](#15) shows that:
 
-An alternative approach is given by [[3]](#3), which proposes
+* It seems that Concept 2 is also using this simplified formula, or something quite similar, in the PM5;
 
-> <img src="https://render.githubusercontent.com/render/math?math=P = k\omega^3">
+* For stable steady state rowing, the results of this approach are quite reliable;
 
-Where P is the average power and ω is the average speed during the stroke. Here, the average speed can be determined in a robust manner (i.e. Angular Displacement of the Drive Phase / DriveLength).
+* For unstable rowing, the power calcuation is not reliable. The article seems to suggest that this is caused by ommitting the element of ${I \* ({&Delta;&omega; \over &Delta;t}) \* &omega;}$, essentially assuming that &Delta;&omega; is near zero across strokes. This is problematic at moments of deliberate acceleration across strokes (like starts and sprints), where &Delta;&omega; can be very significant, and at unstable rowing, where there also can be a sigificant &Delta;&omega; present across strokes.
 
-As Dave Venrooy indicates this is accurate with a 5% margin. Testing this on live data confirms this behavior (tested with a *autoAdjustDragFactor* = true, to maximize noise-effects), with three added observations:
+Still, we currently choose to use $\overline{P}$ = k \* $\overline{&omega;}$<sup>3</sup> for all power calculations, for several reasons:
 
-* The robust algorithm is structurally below the more precise measurement when it comes to total power produced in a 30 minutes or 15 minutes row on a RX800 with any damper setting;
+* Despite its flaws, Concept 2's PM5 is widely regarded as the golden standard in rowing. For us, we rather stay close to this golden standard than make a change without the guarantee of delivering more accurate and robust results than Concept 2's PM5;
 
-* The robust algorithm is indeed much less volatile: the spikes found in the more precise algorithm are much bigger than the ones found in the robust algorithm
+* The simpler algorithm removes any dependence on instantaneous angular velocities &omega; at the flanks of the stroke from the power calculation and subsequent linear calculations. This makes the power calculation (and thus any subsequent calculations that are based on it) more robust against "unexpected" behavior of the rowing machine. There are several underlying causes for the need to remove this dependence:
+  * First of all, measurement errors in *CurrentDt* could introduce variations in &Delta;&omega; across the cycle and thus in all dependent linear metrics;
+  * Secondly, water rowers are known to experience cavitation effects at the end of the Drive Phase due to poor technique, leading to extremely volatile results;
+  * Last, the determination of &Delta;&omega; across a stroke heavily depends on a very repeatable stroke detection that minimizes &Delta;&omega; to 0 during a stable series of stroke in steady state rowing. Such a repeatable stroke detection across the many types of rowing machines in itself is difficult to achieve;
 
-* A test with *numOfPhasesForAveragingScreenData* = 1 (practically bypassing the running average in the presentation layer) combined with the robust algorithm shows that the monitor is a bit more responsive but doesn't fluctuate unexpectedly.
+* As the *flywheelinertia* I is mostly guessed based on its effects on the Power outcome anyway (as most users aren't willing to take their rower apart for callibration purposses), a systematic error wouldn't matter much in most practical applications as it is corrected during the callibration of a monitor: the *flywheelinertia* will simply be modified to get to the correct power in the display.
 
-As the *flywheelinertia* is mostly guessed based on its effects on the Power outcome anyway (as nobody is willing to take his rower apart for this), the 5% error wouldn't matter much anyway: the *flywheelinertia* will simply become 5% more to get to the same power in the display. Therefore, we choose to use the simpler more robust algorithm, as it has some advantages:
+* It allows the user to removing/disabling all instantaneous angular velocities from linear metric calculations (i.e. only using average velocity calculated over the entire phase, which doesn't depend on a single measurement) by setting *autoAdjustDragFactor* to "false". This makes Open Rowing Monitor a viable option for rowers with noisy data or otherwise unstable/unreliable individual measurements;
 
-* In essence the instantaneous angular velocities at the flanks are removed from the power measurement, making it more robust against "unexpected" behavior of the rowers (like the cavitation-like effects found in LiquidFlywheel Rowers). Regardless of settings, only instantaneous angular velocities that affect displayed data are the start and begin of each phase;
+* Given the stability of the measurements, it might be a realistic option for users to remove the filter in the presentation layer completely by setting *numOfPhasesForAveragingScreenData* to 2, making the monitor much more responsive to user actions.
 
-* Setting *autoAdjustDragFactor* to "false" effectively removes/disables all calculations with instantaneous angular velocities (only average velocity is calculated over the entire phase, which typically is not on a single measurement), making Open Rowing Monitor an option for rowers with noisy data or otherwise unstable/unreliable measurements;
+Given these advantages and that in practice it won't have a practical implications for users, we have chosen to use the robust implementation. It should be noted that this definition is also robust against missed strokes: a missed drive or recovery phase will lump two strokes together, but as the Average Angular Velocity $\overline{&omega;}$ will average out across these strokes, it will not be affected in practice.
 
-* Given the stability of the measurements, it might be a realistic option for users to remove the filter in the presentation layer completely by setting *numOfPhasesForAveragingScreenData* to 1, making the monitor much more responsive to user actions.
+### Linear Velocity
 
-Given these advantages and that in practice it won't have a practical implications for users, we have chosen to use the robust implementation.
+In [[1]](#1) and [[2]](#2), it is described that power on a Concept 2 is determined through (formula 9.1):
 
-## Additional considerations for the frequency of the metrics calculations
+> $$ \overline{P} = k \* \overline{\omega}^3 = c \* \overline{u}^3 $$
 
-There are some additional options for the frequency of metric calculations:
+Where c is a constant (2.8 according to [[1]](#1)), $\overline{\omega}$ the average angular velocity and $\overline{u}$ is the average linear velocity, making this formula the essential pivot between rotational and linear velocity and distance.
 
-* An option would be to update the metrics only updated at the end of stroke, which is once every 2 to 3 seconds. This is undesirable as a typical stroke takes around 2.5 seconds to complete and covers around 10 meters. It is very desirable to update typical end-criteria for trainings that change quite quickly (i.e. absolute distance, elapsed time) more frequently than that;
+However, in [[1]](#1) and [[2]](#2), it is suggested that power on a Concept 2 might be determined through (formula 9.4, [[1]](#1)):
 
-* We additionally update the metrics (when dependent on the stroke dependent parameters, like stroke length) both at the end of the Drive and Recovery Phases, as Marinus van Holst [[2]](#2) suggests that both are valid perspectives on the stroke. This allows for a recalculation of these metrics twice per stroke;
+> $$ \overline{P} = 4.31 \* \overline{u}^{2.75} $$
 
-* To allow for a very frequent update of the monitor, and allow for testing for typical end-criteria for trainings that change quite quickly (i.e. absolute distance, elapsed time), we calculate these for each new *currentDt*;
+Based on a simple experiment, downloading the exported data of several rowing sessions from Concept 2's logbook, and comparing the reported velocity and power, it can easily be determined that $\overline{P}$ = 2.8 \* $\overline{u}$<sup>3</sup> offers a much better fit the data than $\overline{P}$ = 4.31 \* $\overline{u}$<sup>2.75</sup>. Thus we choose to use formula 9.1. Baed on this, we thus adopt formula 9.1 (from [[1]](#1)) for the calculation of linear velocity u:
 
-* As we can only calculate the drag factor at the end of the recovery phase, we can only (retrospectively) apply it to the realized linear distance of that same recovery phase. Therefore, we we need to report absolute time and distance from the `RowingEngine` in `engine/RowingEngine.js`);
+> $$ \overline{u} = ({k \over C})^{1/3} * \overline{\omega} $$
 
-## A closer look at the effects of the various Drive and Recovery phase detection
+As both k and &omega; can change from cycle to cycle, this calculation should be performed for each cycle. It should be noted that this formula is also robust against missed strokes: a missed drive or recovery phase will lump two strokes together, but as the Average Angular Velocity $\overline{\omega}$ will average out across these strokes. Although undesired behaviour in itself, it will isolate linear velocity calculations from errors in the stroke detection in practice.
 
-In this section, we will answer the question whether Concept2 made a big error in their stroke detection, and thus that using *naturalDeceleration* is set to 0 is inferior to actually setting it to a different value. The short answer is that Concept2 has made a perfectly acceptable tradeoff between reliability of the stroke detection and precision of some metrics.
+### Linear distance
 
-Effectively, Open Rowing Monitor can use two different methods of stroke detection. When *naturalDeceleration* is set to 0, it will detect an acceleration/deceleration directly based on *currentDt*, similar to Concept2. When *naturalDeceleration* is set to a negative number, it will consider that number as the minimum level of deceleration (in Rad/S^2). The later is more volatile, as described above, but some consider this desirable when possible.
+[[1]](#1)'s formula 9.3 provides a formula for Linear distance as well:
 
-Our practical experiments show that assuming the recovery-phase started too early doesn't affect measurements per se. In theory, the calculation of speed and power do not depend directly on phase detection, they do depend on the total number of impulses and the drag factor. It is in fact the automatic update of the drag factor that is dependent on the correct detection of the stroke. The drag factor can be pinned down if needed by setting *autoAdjustDragFactor* to "false". If set to true, it might affect measurements of both distance and power, where we will discuss the knock-on effects.
+> $$ s = ({k \over C})^{1/3} * &theta; $$
 
-### Effects on the automatically calculated drag factor
+Here, as k can slightly change from cycle to cycle, this calculation should be performed at least once for each cycle. As &theta; isn't dependent on stroke state and changes constantly, it could be recalculated continously throughout the stroke, providing the user with direct feedback of his stroke. It should be noted that this formula is also robust against missed strokes: a missed drive or recovery phase will lump two strokes together, but as the angular displacement &theta; is stroke independent, it will not be affected by it at all. Although undesired behaviour in itself, it will isolate linear distance calculations from errors in the stroke detection in practice.
 
-The most important measurement that is affected by stroke detection errors is the calculation of the drag factor.
+### Drive length
 
-Our robust implementation of the drag factor is:
+Given the distance travelled by the handle can be calculated from angular distance &theta; traveled by the sprocket during the Drive Phase. During the drive, the angular distance travelled by the flywheel is identical to the angular distance &theta; travelled by the flywheel during the drive phase. Thus  
 
-> <img src="https://render.githubusercontent.com/render/math?math=\textrm{DragFactor}=\textrm{FlywheelInertia}*(\frac{1}{\textrm{AngularVelocity}_{start}}-\frac{1}{\textrm{AngularVelocity}_{end}}*\textrm{RecoveryLength})">
+> $$ s_{Handle} = \text{number of rotations of the flywheel} \* \text{circumference of the sprocket} $$
 
-Looking at the effect of erroneously starting the recovery early and ending it late, it affects two variables:
+As the number of rotations of the flywheel = ${\theta \over 2\pi}$ and the circumference of the sprocket = r * 2&pi;, where r is the radius of the sprocket that is connected to the flywheel, we can translate this formula into:
 
-* Recovery length will *systematically* become too long (approx. 200 ms from our experiments)
+> $$ s_{Handle} = {\theta \over 2\pi} * r * 2\pi $$
 
-* The Angular Velocity will *systematically* become too high as the flywheel already starts to decelerate at the end of the drive phase, which we mistakenly consider the start of the recovery (in our tests this was approx. 83,2 Rad/sec instead of 82,7 Rad/sec). A similar thing can happen at the begin of the recovery phase when the rower doesn't have an explosive Drive.
+Which can be simplified into:
 
-Example calculations based on several tests show that this results in a systematically too high estimate of the drag factor. As these errors are systematic, it is safe to assume these will be fixed by the calibration of the power and distance corrections (i.e. the estimate of the *FlywheelInertia* and the *MagicConstant*). Thus, as long as the user calibrates the rower to provide credible data for his setting of *naturalDeceleration*, there will be no issues.
+> $$ s_{Handle} = &theta; * r $$
 
-Please note that this does imply that changing the *naturalDeceleration* when the *autoAdjustDragFactor* is set to true (thus drag is automatically calculated) will require a recalibration of the power and distance measurements.
+Where r is the radius of the sprocket in meters and &theta; the angular distance travelled by the flywheel during the drive.
 
-### Knock-on Effects on the Power calculation
+### Handle Velocity
 
-Question is what the effect of this deviation of the drag factor is on the power calculation. The power is calculated as follows:
+As the distance travelled by the handle is ${u_{Handle} = &theta; * r}$, we can decuct:
 
-> <img src="https://render.githubusercontent.com/render/math?math=P=k\omega^3">
+> $$ u_{Handle} = &omega; \* r $$
 
-Here, the drag factor is affected upwards. Here the average speed is determined by measuring the angular displacement and divided by the time, being affected in the following manner:
+Here, &omega; can be the instantanous or average angular velocity of the flyhweel in Radians, and r is the radius of the sprocket (in meters).
 
-* Time spend in the Drive phase is *systematically* too short
+### Handle Force
 
-* Angular displacement in the Drive phase will *systematically* be too short
+From theory [[12]](#12)) and practical application [[7]](#7), we know the handle force is equal to:
 
-These effects do not cancel out: in essence the flywheel decelerates at the end of the drive phase, which we mistakenly include in the recovery phase. This means that on average, the average speed is systematically too high: it misses some slower speed at the end of the drive. As all factors of the power calculation are systematically overestimating, the result will be a systematic overestimation.
+> $$ F_{Handle} = {&tau; \over r} $$
 
-Again, this is a systematic (overestimation) of the power, which will be systematically corrected by the Inertia setting.
+Where r is the radius of the sprocket in meters.
+
+### Handle Power
+
+From theory [[13]](#13)), we know that the handle Power is
+
+> $$ P_{Handle} = &tau; * &omega; $$
+
+## Detecting the stroke phase
+
+Knowing that `engine/Flywheel.js` has determined whether there is a force on the flywheel, `engine/Rower.js` can now transform this into the phase of the rowing stroke. On an indoor rower, the rowing cycle will always start with a stroke, followed by a recovery. This results in the follwing phases:
+
+* The **Drive phase**, where the rower pulls on the handle, some force on the flywheel is excerted and the flywheel is accelerating or at least not decelerating in accordance with the drag;
+
+* The **Recovery Phase**, where the rower returns to his starting position and the flywheel decelerates as the drag on the flywheel is slowing it down;
+
+As the rowing cycle always follows this fixed schema, Open Rowing Monitor models it as a finite state machine (implemented in `handleRotationImpulse` in `engine/Rower.js`).
+
+```mermaid
+stateDiagram-v2
+  direction LR
+  Drive --> Recovery: Flywheel<br>isn't powered
+  Drive --> Drive: Flywheel<br>is powered
+  Recovery --> Drive: Flywheel<br>is powered
+  Recovery --> Recovery: Flywheel<br>isn't powered
+```
+
+<!-- markdownlint-disable-next-line no-emphasis-as-header -->
+*Finite state machine of rowing cycle*
+
+## A mathematical perspective on key metrics
+
+### Noise Filtering algorithms applied
+
+### Linear regression algorithms applied for slope determination
+
+There are several different linear regression methods [[9]](#9). We have several requirements on the algorithm:
+
+* it has to delviver results in near-real-time scenarios in a datastream;
+
+* if possible, it has to be robust to outliers: an outlier shouldn't skew the results too much [[10]](#10).
+
+Ordinary Least Squares is by far the most efficient and can easily be applied to datastreams. However, it isn't robust. From a robustness perspective, most promissing methods are [least absolute deviations](https://en.wikipedia.org/wiki/Least_absolute_deviations), the [Theil–Sen estimator](https://en.wikipedia.org/wiki/Theil%E2%80%93Sen_estimator) and the [LASSO technique](https://en.wikipedia.org/wiki/Lasso_(statistics)). Most of these methods, except the Theil–Sen estimator, do not have a near-real-time solution. In the description of the linear regression methods, we describe the most promissing ones.
+
+#### Ordinary Least Squares (OLS)
+
+Ordinary Least Squares regression (see [[5]](#5)) and [[6]](#6)) produces results that are generally acceptable and the O(N) performance is well-suited for near-real-time calculations. When implemented in a datastream, the addition of a new datapoint is O(1), and the calculation of a slope also is O(1). When using a high-pass filter on the r<sup>2</sup> to disregard any unreliably approximated data, it can also be used to produce reliable results. See `engine/utils/OLSLinearSeries.js` for more information about the implementation.
+
+#### Theil–Sen estimator (Linear TS)
+
+Although the Theil–Sen estimator has a O(N log(N)) solution available, however we could not find a readily available solution. We did manage to develop a solution that has a O(N) impact during the addition of an additional datapoint in a datastream with a fixed length window, and O(log(N)) impact when determining the slope.
+
+#### Incomplete Theil–Sen estimator (Inc Linear TS)
+
+There also is an Incomplete Theis-Sen estimator for Linear Regression [[11]](#11), which is O(1) for the addition of new datapoints in a datastream with a fixed length window, and O(log(N)) for the determination of the slope. Our tests on real-life data show that in several cases the Incomplete Theil-Sen delivers more robust results than the full Theil-Sen estimator.
+
+#### Quadratic Theil–Sen estimator (Quadratic TS)
+
+The Theil–Sen estimator can be expanded to apply to Quadratic functions, where the implementation is O(N<sup>2</sup>). Based on a Lagrange interpolation, we can calculate the coefficients of the formula quite effectively, resulting in a robust estimation more fitting the data. See `engine/utils/FullTSQuadraticSeries.js` for more information about the background of the implementation.
+
+### Choices for the specific algorithms
+
+#### Regression algorithm used for drag calculation
+
+For the drag-factor calculation (and the closely related recovery slope detection), we observe three things:
+
+* The number of datapoints in the recovery phase isn't known in advance, and is subject to significant change due to variations in recovery time (i.e. sprints), making both the Incomplete Theil–Sen estimator and Theil–Sen estimator incapable of calculating their slopes in the stream as the efficient implementations require a fixed window. This results in a near O(N<sup>2</sup>) calculation at the start of the *Drive* phase. Given the number of datapoints often encountered (a recoveryphase on a Concept 2 contains around 200 datapoints), this is a significant issue that could disrupt the application. OLS has a O(1) complexity for continous datastreams;
+
+* In non-time critical replays of earlier recorded rowing sessions, both the Incomplete Theil–Sen estimator and Theil–Sen estimator performed worse than OLS: OLS with a high pass filter on r<sup>2</sup> resulted in a much more stable dragfactor than the Incomplete Theil–Sen estimator and Theil–Sen estimator did. This suggests that the OLS algorithm handles the outliers sufficiently to prevent drag poisoning.
+
+* Applying Quadratic OLS regression does not improve its results
+
+Therefore, we choose to apply the OLS Linear Regression model for the calculation of the dragfactor and the related recovery slope detection.
+
+#### Regression algorithm used for Angular velocity and Angular Acceleration
+
+We determine the Angular Velocity &omega; and Angular Acceleration &alpha; based on the relation between &theta; and time. First of all, we observe that we use both the first derived function (i.e. &omega;) and the second derived function (i.e. &alpha;), making a quadratic or even a cubic regression algorithm more appropriate, as a liniear regressor would make the second derived function trivial. Practical testing has confirmed that Quadratic Theil-Senn outperformed all Linear Regression methods in terms of robustness and responsiveness. Based on extensive testing with multiple simulated rowing machines, Full Quadratic Theil-Senn has proven to deliver the best results and thus is selected to determine &omega; and &alpha;.
+
+## Open Issues, Known problems and Regrettable design decissions
+
+### Use of simplified power calculation
+
+The power calculation is the bridge connecting the linear and rotational energy systems of an ergometer. However, from a robustness perspective, we optimised this formula. The complete formula for power throughout a stroke can be deduced from formulae 8.2 and 8.3 [[1]](#1), which lead to:
+
+> $$ P = I \* ({&Delta;&omega; \over &Delta;t}) \* &omega; + k \* &omega;^3 $$
+
+A simplified formula is provided by [[1]](#1) (formula 9.1), [[2]](#2) and [[3]](#3):
+
+> $$ \overline{P} = k \* \overline{\omega}^3 $$
+
+Open Rowing Monitor uses the latter simplified version. As shown by academic research [[15]](#15), this is sufficiently reliable and accurate providing that that &omega; doesn't vary much across subsequent strokes. When there is a significant acceleration or decelleration of the flywheel across subsequent strokes (at the start, during acceleration in sprints or due to stroke-by-stroke variation), the calculated power starts to deviate from the externally applied power.
+
+Currently, this is an accepted issue, as the simplified formula has the huge benefit of being much more robust against errors in both the *CurrentDt*/&omega; measurement and the stroke detection algorithm. As Concept 2 seems to have taken shortcut in a thoroughly matured product [[15]](#15), we are not inclined to change this quickly. Especially as the robustness of both the &omega; calculation and stroke phase detection varies across types of rowing machines, it is an improvement that should be handled with extreme caution.
+
+### Use of Quadratic Theil-Senn regression for determining &alpha; and &omega; based on time and &theta;
+
+The underlying assumption of this approach is that the Angular Accelration &alpha; is constant, which in rowing it certainly won't be the case as the force will vary based on the position in the Drive phase (hence the powercurve). Currently, the use of Quadratic Theil-Senn regression represents a huge improvement from both the traditional numerical approach (as taken by [[1]](#1) and [[4]](#4)) and the linear regression methods used by earlier approaches of Open Rowing Monitor. As the number of datapoints in a *Flanklength* in the relation to the total number of datapoints in a stroke is small, we consider this is a decent approximation while maintaining an sufficiently efficient algorithm to be able to process all data in the datastream in time.
+
+We can inmagine there are better suited third polynomal (cubic) approaches available that can robustly calculate &alpha; and &omega; as a function of time, based on the relation between time and &theta;. However, getting these to work in a datastream with very tight limitations on CPU-time and memory is quite challenging. We also observe that in several areas the theoretical best approach did not deliver the best practical result (i.e. a "better" algorithm delivered a more noisy result for &alpha; and &omega;). Therefore, this avenue isn't investigated yet, but will be a continuing area of improvement.
+
+### Use of Quadratic Theil-Senn regression and a median filter for determining &alpha; and &omega;
+
+For a specific flank, our regression algorithm calculates the &alpha; for the flank and the &omega;'s for each point of the flank. As a datapoint will be part of several flank calculations, we obtain several &alpha;'s and &omega;'s that are valid approximations for that specific datapoint. To obtain the most stable result, we opt for the median of all valid values for &alpha; and &omega; to calculate the definitive approximation of &alpha; and &omega; for that specific datapoint. Although this approach has proven very robust, and even necessary to prevent noise from disturbing powercurves, it is very conservative. For example, when compared to Concept 2's results, the powercurves have the same shape, but the peak values are considerable lower.
+
+Reducing extreme values while maintaining the true data volatility is a subject for further improvement.
 
 ## References
 
@@ -279,6 +468,26 @@ Again, this is a systematic (overestimation) of the power, which will be systema
 
 <a id="3">[3]</a> Dave Vernooy, "Open Source Ergometer ErgWare" <https://dvernooy.github.io/projects/ergware/>
 
-<a id="4">[4]</a> <https://github.com/dvernooy/ErgWare/blob/master/v0.5/main/main.ino>
+<a id="4">[4]</a> Dave Vernooy, ErgWare source code <https://github.com/dvernooy/ErgWare/blob/master/v0.5/main/main.ino>
 
-<a id="5">[5]</a> Fan blade Physics and a Peek inside C2's Black Box, Nomath <https://www.c2forum.com/viewtopic.php?f=7&t=194719>
+<a id="5">[5]</a> Wikipedia, "Simple Linear Regression" <https://en.wikipedia.org/wiki/Simple_linear_regression>
+
+<a id="6">[6]</a> University of Colorado, "Simple Linear Regression" <https://www.colorado.edu/amath/sites/default/files/attached-files/ch12_0.pdf>
+
+<a id="7">[7]</a> Nomath, "Fan blade Physics and a Peek inside C2's Black Box" <https://www.c2forum.com/viewtopic.php?f=7&t=194719>
+
+<a id="8">[8]</a> Glenn Elert, The Physics Hypertextbook, "Rotational Kinematics" <https://physics.info/rotational-kinematics/>
+
+<a id="9">[9]</a> Wikipedia, "Linear regression" <https://en.wikipedia.org/wiki/Linear_regression>
+
+<a id="10">[10]</a> Wikipedia, "Robust regression" <https://en.wikipedia.org/wiki/Robust_regression>
+
+<a id="11">[11]</a> Incomplete Theil-Sen Regression <https://www.fon.hum.uva.nl/praat/manual/theil_regression.html>
+
+<a id="12">[12]</a> Glenn Elert, The Physics Hypertextbook, "Rotational Dynamics" <https://physics.info/rotational-dynamics/>
+
+<a id="13">[13]</a> Glenn Elert, The Physics Hypertextbook, "Rotational Energy" <https://physics.info/rotational-energy/>
+
+<a id="14">[14]</a> Dave Vernooy, ErgWare source code V0.6 <https://github.com/dvernooy/ErgWare/blob/master/v0.6/Standard_version/source/main.c>
+
+<a id="15">[15]</a> Gunnar Treff, Lennart Mentz, Benjamin Mayer and Kay Winkert, "Initial Evaluation of the Concept-2 Rowing Ergometer's Accuracy Using a Motorized Test Rig" <https://www.researchgate.net/publication/358107352_Initial_Evaluation_of_the_Concept-2_Rowing_Ergometer%27s_Accuracy_Using_a_Motorized_Test_Rig>
