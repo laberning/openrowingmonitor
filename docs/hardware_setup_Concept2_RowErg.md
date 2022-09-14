@@ -22,4 +22,4 @@ You should now adjust the rower specific parameters in `config/config.js` to sui
 ```js
 rowerSettings: Concept2_RowErg
 ```
- to your `config.js` file. You can also look at `config/default.config.js` to see what other configuration parameters are available.
+ to your `config/config.js` file. You can also look at `config/default.config.js` to see what other configuration parameters are available.
