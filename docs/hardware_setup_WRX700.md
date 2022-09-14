@@ -18,7 +18,7 @@ The internal pull-up can be enabled as described [here](https://www.raspberrypi.
 gpio=17=pu,ip
 ```
 
-How to connect this to your rowing machine is specific to your device. You need some kind of mechanism to convert the rotation of the flywheel into impulses. The WRX700 has a reed sensor for this built-in so hooking it up is as simple as connecting the cables. This sensor had one magnet on the wheel, which gives one impulse per rotation. I simply plugged a second magnet to the opposite side of the wheel to double the resolution for more precision.
+The WRX700 has a reed sensor for this built-in so hooking the rower up to the Raspberry Pi up is as simple as connecting the cables. This sensor had one magnet on the wheel, which gives one impulse per rotation. I simply plugged a second magnet to the opposite side of the wheel to double the resolution for more precision.
 
 ![Connecting the reed sensor](img/raspberrypi_reedsensor_wiring.jpg)
 *Connecting the reed sensor*
