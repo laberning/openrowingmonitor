@@ -2,7 +2,9 @@
 
 This guide roughly explains how to set up the hardware.
 
-After the software installation, basically all that's left to do is hook up your sensor to the GPIO pins of the Raspberry Pi and configure the rowing machine specific parameters of the software.
+## Hardware setup
+
+After initial the software installation, basically all that's left to do is hook up your sensor to the GPIO pins of the Raspberry Pi and configure the rowing machine specific parameters of the software.
 
 Open Rowing Monitor reads the sensor signal from GPIO port 17 and expects it to pull on GND if the sensor is closed. To get a stable reading you should add a pull-up resistor to that pin. I prefer to use the internal resistor of the Raspberry Pi to keep the wiring simple but of course you can also go with an external circuit.
 
@@ -21,12 +23,12 @@ How to connect this to your rowing machine is specific to your device. You need 
 ![Connecting the reed sensor](img/raspberrypi_reedsensor_wiring.jpg)
 *Connecting the reed sensor*
 
-
 ## Rower Settings
 
-You should now adjust the rower specific parameters in `config/config.js` to suit your rowing machine. For the Concept 2 RowErg, there is a set of predefined parameters ready to use. So it suffices to add 
+You should now adjust the rower specific parameters in `config/config.js` to suit your rowing machine. For the Concept 2 RowErg, there is a set of predefined parameters ready to use. So it suffices to add
 
 ``` Properties
 rowerSettings: Sportstech_WRX700
 ```
- to your `config/config.js` file. You can also look at `config/default.config.js` to see what other configuration parameters are available.
+
+to your `config/config.js` file. You can also look at `config/default.config.js` to see what other configuration parameters are available.
