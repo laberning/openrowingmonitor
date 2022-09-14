@@ -23,6 +23,10 @@ In this manual, we cover the following topics:
 
 * Settings you COULD change for a new rower
 
+* Settings you can tweak
+
+* Sending in a rower profile to us
+
 ## Why we need rower specific settings
 
 No rowing machine is the same, and some physical construction parameters are important for the Rowing Monitor to be known to be able to understand your rowing stroke. By far, the easiest way to configure your rower is to select your rower profile from `config/rowerProfiles.js` and put its name in `config/config.js` (i.e. `rowerSettings: rowerProfiles.Concept2_RowErg`). The rowers mentioned there are maintained by us for OpenRowingMonitor and we also structurally test OpenRowingMonitor with samples of these machines and updates setings when needed. For you as a user, this has the benefit that updates in our software are automatically implemented, including updating the settings. So if you make a rower profile for your machine, please send the profile and some raw data (explained below) to us as well so we can maintain it for you.
