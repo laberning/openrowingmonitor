@@ -21,7 +21,12 @@ How to connect this to your rowing machine is specific to your device. You need 
 ![Connecting the reed sensor](img/raspberrypi_reedsensor_wiring.jpg)
 *Connecting the reed sensor*
 
+
 ## Rower Settings
 
-You should now adjust the rower specific parameters in `config/config.js` to suit your rowing machine. Have a look at `config/default.config.js` to see what config parameters are available.
-Also check the [Guide for rower specific settings](rower_settings.md).
+You should now adjust the rower specific parameters in `config/config.js` to suit your rowing machine. For the Concept 2 RowErg, there is a set of predefined parameters ready to use. So it suffices to add 
+
+``` Properties
+rowerSettings: Sportstech_WRX700
+```
+ to your `config/config.js` file. You can also look at `config/default.config.js` to see what other configuration parameters are available.
