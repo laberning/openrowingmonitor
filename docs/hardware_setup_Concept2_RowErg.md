@@ -7,7 +7,6 @@ This guide roughly explains how to set up the hardware.
 After the software installation, basically all that's left to do is hook up your sensor to the Raspberry Pi. However, the signal from a Concept 2 RowErg is a 15 Volt sinoid, which would destroy the Raspberry Pi's 3.3 Volts circuits. To isolate the circuits, we add an optocoupler in an non-destructive way, by rerouting the signal. Below is the wiring schematic of the Al-Zard DST-1R4P-P:
 
 ![Optocoupler wiring connecting to the Raspberry Pi](img/Concept2_Optocoupler.jpg)
-
 *Optocoupler wiring to the Raspberry Pi*
 
 On the left side, both the jack-plug and the jack-bus are 2.5mm, allowing the PM5 jackplug to be inserted and looped through if needed (allowing ORM to work side-by-side of the PM5). On the right, the connections to the Raspberry Pi are made.
