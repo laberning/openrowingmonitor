@@ -51,7 +51,7 @@ export default {
     autoAdjustRecoverySlope: false,
 
     // The margin used between the automatically calculated recovery slope and a next recovery. Don't touch unless you know what you are doing.
-    autoAdjustRecoverySlopeMargin: 0.036,
+    autoAdjustRecoverySlopeMargin: 0.05,
 
     // Error reducing settings for the rowing phase detection (in seconds)
     minimumDriveTime: 0.300, // minimum time of the drive phase
@@ -99,6 +99,28 @@ export default {
     // Also note that the rowed distance also depends on flywheelInertia, so please calibrate that before changing this constant.
     // PLEASE NOTE: Increasing this number decreases your rowed meters
     magicConstant: 2.8
+  },
+
+  // Concept2 RowErg
+  Concept2_RowErg: {
+    numOfImpulsesPerRevolution: 6,
+    minimumTimeBetweenImpulses: 0.005,
+    maximumTimeBetweenImpulses: 0.022,
+    flywheelInertia: 0.1016,
+    sprocketRadius: 1.55,
+    flankLength: 11,
+    numberOfErrorsAllowed: 2,
+    minimumStrokeQuality: 0.32,
+    minumumRecoverySlope: 0.00070,
+    autoAdjustRecoverySlope: true,
+    autoAdjustRecoverySlopeMargin: 0.05,
+    minumumForceBeforeStroke: 12.5,
+    minimumDriveTime: 0.46,
+    minimumRecoveryTime: 0.90,
+    dragFactor: 110,
+    autoAdjustDragFactor: true,
+    minimumDragQuality: 0.83,
+    dragFactorSmoothing: 3
   },
 
   // Sportstech WRX700
