@@ -277,7 +277,7 @@ Please note that this logmessage will change when autoAdjustDragFactor is set to
 
 ## Settings you COULD change for a new rower
 
-In the previous section, we've guided you to set up a real robust working rower, but it will result in more crude data. To improve the accuracy of many measurements, you could switch to a more accurate and dynamic rower. This does require a more sophisticated rower: you need quite a few data points per stroke, with much accuracy, to get this working reliably. And a lot of rowing to get these settings right is involved.
+In the previous section, we've guided you to set up a very robust working rower, but it will result in more crude data. To improve the accuracy of many measurements, you could switch to a more accurate and dynamic metric calculation. This does require a more sophisticated rower: you need quite a few data points per stroke, with much accuracy, to get this working reliably. So this setup certainly isn't for every rowing machine out there, although some options might just work. And again a lot of rowing to get these settings right is involved.
 
 ### More accurate static stroke detection
 
@@ -307,11 +307,21 @@ By selecting all these lines, you can see the "Goodness of Fit" for all calculat
 
 Another measure to prevent sudden drag changes, is **dragFactorSmoothing**: this setting applies a median filter on a series of valid drag factors, further reducing the effect of outliers. Typically this is set to 5 strokes, but it could set to a different value if the drag calculation results in a wildly varying drag factor.
 
-@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+### Dynamically adapting the recovery slope
+
+For a more accurate stroke detection, the *minumumRecoverySlope* is a crucial parameter. Open Rowing Monitor can automatically calculate the this recovery slope and adjust it dynamically. For this to work, *autoAdjustDragFactor* **MUST** be set to true, as the recovery slope is dependent on this automatic dragfactor calculation. If you set *autoAdjustDragFactor* to true, this option can be activated by setting *autoAdjustRecoverySlope* to "true". 
+
+Setting *autoAdjustRecoverySlope* to "true" also activates one additional setting **autoAdjustRecoverySlopeMargin**. This is the margin used between the automatically calculated recovery slope and a next recovery slope. 5% (i.e. 0.05) is a pretty good margin and works well for most rowers.
 
 ### sprocketRadius (revisited)
 
-**sprocketRadius** tells Open Rowing Monitor how big the sprocket is that attaches your belt/chain to your flywheel. This setting is used in several calculations and is involved in calculating the handle force for stroke detection. Its accuracy isn't super-critical, you can change it afterwards to something more accurate, but remember that when the sprocket radius doubles, so should the *minumumForceBeforeStroke*.The default value will work OK for most rowers, but sometimes it needs to be changed for a specific rower. In the later section, we will describe how to optimally tune it.
+**sprocketRadius** tells Open Rowing Monitor how big the sprocket is that attaches your belt/chain to your flywheel. Aside from being used in all handle force and speed calculations, it is also used in the drive length calculation.
+
+```zsh
+  Sep 12 20:46:00 roeimachine npm[802]: stroke: 8, dist: 78.9m, speed: 3.50m/s, pace: 2:23/500m, power: 120W, drive length: 1.04 m, SPM: 20.9, drive dur: 0.63s, rec. dur: 2.31s
+```
+
+Another use is found in the RowingData export (if used), where the peak handle force, average handle force, handle force curve, handle velocity curve and handle power curve depend on this. For the configuration we are quite focussed on drive length. Drive length is the length of the drive, in meters. For most people, it is about ${2 \over 3}$ of your own length. So changing it to fit that would be a good approach. Please note that increasing the drive length will reduce the handle force and handle power, so you can't increase this without restraint. Also remember that when the sprocket radius doubles, the *minumumForceBeforeStroke* should also be doubled.
 
 ## Settings you can tweak
 
@@ -319,9 +329,6 @@ Some people want it all, and we're happy to give to you when your rower and your
 
 * **maximumImpulseTimeBeforePause** determines the maximum time between impulses before the rowing engine considers it a pause.
 * **magicConstant** is a constant that is commonly used to convert flywheel revolutions to a rowed distance and speed (see [the physics of ergometers](http://eodg.atm.ox.ac.uk/user/dudhia/rowing/physics/ergometer.html#section9)). Concept2 seems to use 2.8, which they admit is an arbitrary number which came close to their expectations of a competetion boat. As this setting only affects speed/distance, this setting typically is used to change the power needed to row a certain distance or reach a certain speed. So changing this can make your rower's metrics act as sluggish as an oil tanker (much power needed for little speed), or more like a smooth eight (less power needed for more speed). So for your rower, you could set your own plausible distance for the effort you put in. Please note that the rowed distance also depends on **flywheelInertia**, so please calibrate that before changing this constant. Another note: increasing this number decreases your rowed meters, but not in a linear fashion.
-* **webUpdateInterval**: normally set at 1000 milliseconds, but for a more smoother experience on your monitor you can go as low as 100 ms. This makes the transition of the distance and time quite smooth, but at the price of some more network and CPU-load.
-* **numOfPhasesForAveragingScreenData**: we average the data from several stroke phases to prevent the monitor and Bluetooth devices to become fidgety. Typically, we set this value to 6, which means 3 strokes (there are two phases in each stroke). However, some Bluetooth devices do their own calculations. And sometimes you really want the feedback on your individual strokes without any punches hold back. Setting this to 1 will result in a very volatile, but direct feedback mechanism on your stroke.
-* **createRawDataFiles**: This is as raw as it gets, as setting this to `true` makes Open Rowing Monitor dump the raw impulse-lengths to a file (see [how we interpret this data](physics_openrowingmonitor.md)).
 
 ## Sending in a rower profile to us
 
