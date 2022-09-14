@@ -1,6 +1,5 @@
 'use strict'
 /*
-  Open Rowing Monitor, https://github.com/laberning/openrowingmonitor
 
   This test is a test of the Rower object, that tests wether this object fills all fields correctly, given one validated rower, (the
   Concept2 RowErg) using a validated cycle of strokes. This thoroughly tests the raw physics of the translation of Angular physics
@@ -428,6 +427,22 @@ test('A full session for SportsTech WRX700 should produce plausible results', as
   testRecoveryDragFactor(rower, rowerProfiles.Sportstech_WRX700.dragFactor)
 })
 
+test('A full session for a Concept2 RowErg should produce plausible results', async () => {
+  const rower = createRower(deepMerge(rowerProfiles.DEFAULT, rowerProfiles.Concept2_RowErg))
+  testTotalMovingTimeSinceStart(rower, 0)
+  testTotalLinearDistanceSinceStart(rower, 0)
+  testTotalNumberOfStrokes(rower, 0)
+  testRecoveryDragFactor(rower, rowerProfiles.Concept2_RowErg.dragFactor)
+
+  await replayRowingSession(rower.handleRotationImpulse, { filename: 'recordings/Concept2_RowErg_Session_2000meters.csv', realtime: false, loop: false })
+
+  testTotalMovingTimeSinceStart(rower, 476.23309445539917)
+  testTotalLinearDistanceSinceStart(rower, 2010.2767022535522)
+  testTotalNumberOfStrokes(rower, 208)
+  // As dragFactor is static, it should remain in place
+  testRecoveryDragFactor(rower, 131.32338915085592)
+})
+
 function testStrokeState (rower, expectedValue) {
   assert.ok(rower.strokeState() === expectedValue, `strokeState should be ${expectedValue} at ${rower.totalMovingTimeSinceStart()} sec, is ${rower.strokeState()}`)
 }
@@ -492,5 +507,11 @@ function testRecoveryDragFactor (rower, expectedValue) {
 function testInstantHandlePower (rower, expectedValue) {
   assert.ok(rower.instantHandlePower() === expectedValue, `instantHandlePower should be ${expectedValue} Watt at ${rower.totalMovingTimeSinceStart()} sec, is ${rower.instantHandlePower()}`)
 }
+
+/*
+function reportAll (rower) {
+  assert.ok(0, `time: ${rower.totalMovingTimeSinceStart()}, state ${rower.strokeState()}, No Strokes: ${rower.totalNumberOfStrokes()}, Lin Distance: ${rower.totalLinearDistanceSinceStart()}, cycle dur: ${rower.cycleDuration()}, cycle Lin Dist: ${rower.cycleLinearDistance()}, Lin Velocity: ${rower.cycleLinearVelocity()}, Power: ${rower.cyclePower()}, Drive Dur: ${rower.driveDuration()}, Drive Lin. Dist. ${rower.driveLinearDistance()}, Drive Length: ${rower.driveLength()}, Av. Handle Force: ${rower.driveAverageHandleForce()}, Peak Handle Force: ${rower.drivePeakHandleForce()}, Rec. Dur: ${rower.recoveryDuration()}, Dragfactor: ${rower.recoveryDragFactor()}, Inst Handle Power: ${rower.instantHandlePower()}`)
+}
+*/
 
 test.run()
