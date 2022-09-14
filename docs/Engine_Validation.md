@@ -111,46 +111,9 @@ Although OpenRowingMonitor temporarily calculates a completed distance per recor
 
 #### Results and interpretation of a first side-by-side linear distance test
 
-The first series side-by-side test are fixed distance or fixed time tests (taking at least 15 minutes), where both monitors are fed the same stream of impulses (as described above). We vary in length fortests to investigate whether the deviations change (potentially signalling temporary deviations like start-up noise) and whether the deviations remain stable across tests.
+The first series side-by-side test are fixed distance or fixed time tests (taking at least 15 minutes), where both monitors are fed the same stream of impulses (as described above). We vary in length fortests to investigate whether the deviations change (potentially signalling temporary deviations like start-up noise) and whether the deviations remain stable across tests. This test stops when both monitors have reached 4000 meters, where OpenRowingMonitor uses its traditional algorithm to calculate this criterion.
 
-This test stops when both monitors have reached 4000 meters, where OpenRowingMonitor uses its traditional algorithm to calculate this criterion. If the van Holst algorithm hasn't reached the target distance, the relative slowness will be calculated on the completed distances compared with the projected distance of the PM5, instead of the reached time.
-
-The focus in this test is on a steady-state rowing. We consider the distance sufficiently long to be able to abstract away from any differences in start-up behaviour of the two monitors. We obtained the following times:
-
-| Test | Drag factor | Target distance | #strokes on PM5| Result on PM5 | #strokes on ORM | Base algorithm result | Base algorithm Deviation | Result van Holst | van Holst Deviation |
-| :-: | --: | --: | --: | --: |--: | --: | --: | --: | --: |
-| 32 | 70 | 4,000 m | 441 | 17:31.3 | 444 | 17:36.5 | -0.49% | 3,857.0 m | -3.98% |
-| 33 | 122 | 6,000 m | 606 | 25:44.8 | 609 | 25:52.2 | -0.48% | 5,794.5 m | -3.79% |
-| 34 | 112 | 10,000 m | 1051 | 43:08.2 | 1056 | 43:20.3 | -0.47% | 9,659.2 m | -3.82% |
-| 35 | 80 | 4,000 m | 438 | 17:26.0 | 440 | 17:30.9 | -0.47% | 3,856.3 m | -3.96% |
-| 36 | 226 | 4,000 m | 403 | 17:08.8 | 404 | 17:13.7 | -0.48% | 3,861.7 m | -3.78% |
-| 38 | 212 | 4,000 m | 400 | 17:01.8 | 397 | 17:06.5 | -0.46% | 3,869.0 m | -3.70% |
-| 39 | 101 | 6,000 m | 633 | 26:10.2 | 637 | 26:18.8 | -0.55% | 5,790.8 m | -4.00% |
-| 40 | 101 | 10,000 m | 1065 | 43:02.7 | 1071 | 43:13.9 | -0.43% | 9,658.1 m | -3.77% |
-| 41 | 200 | 4,000 m | 405 | 16:54.5 | 408 | 16:59.2 | -0.46% | 3,870.3 m | -3.64% |
-| 42 | 103 | 5,000 m | 522 | 21:40.3 | 522 | 21:46.1 | -0.45% | 4,823.8 m | -3.84% |
-| 43 | 192 | 4,000 m | 410 | 17:11.1 | 412 | 17:15.9 | -0.47% | 3,863.7 m | -3.79% |
-| 44 | 90 | 4,000 m | 427 | 17:10.2 | 429 | 17:15.0 | -0.47% | 3,861.7 m | -3.78% |
-| 45 | 118 | 6,000 m | 624 | 26:02.9 | 628 | 26:10.0 | -0.45% | 5,794.1 m | -3.87% |
-| 46 | 102 | 10,000 m | 994 | 44:39.5 | 998 | 44:50.8 | -0.42% | 9,627.4 m | -4.08% |
-| 47 | 133 | 4,000 m | 415 | 17:11.9 | 417 | 17:16.9 | -0.48% | 3,863.4 m | -3.81% |
-| 48 | 183 | 4,000 m | 410 | 17:27.7 | 412 | 17:32.2 | -0.43% | 3,858.9 m | -3.89% |
-| 49 | 172 | 4,000 m | 407 | 16:43.2 | 408 | 16:48.2 | -0.50% | 3,869.4 m | -3.58% |
-| 50 | 109 | 6,000 m | 630 | 25:43.5 | 633 | 25:50.8 | -0.47% | 5,804.3 m | -3.78% |
-| 51 | 108 | 10,000 m | 983 | 44:20.9 | 989 | 44:32.5 | -0.44% | 9,638.2 m | -4.03% |
-| 52 | 159 | 4,000 m | 423 | 17:18.3 | 426 | 17:22.8 | -0.43% | 3,860.1 m | -3.81% |
-| 53 | 150 | 4,000 m | 413 | 16:55.0 | 416 | 17:00.1 | -0.50% | 3.867.8 m | -3.69% |
-| 54 | 140 | 4,000 m | 413 | 17:39.3 | 416 | 17:44.7 | -0,51% | 3,852.9 m | -4.07% |
-| 55 | 130 | 2,000 m | 219 | 9:01.0 | 221 | 9:03.9 | -0.54% | 1,924.2 m | -4,28% |
-| 56 | 150 | 4,000 m | 399 | 18:13.5 | 400 | 18:18.5 | -0.46% | 3,842.2 m | -4.28% |
-
-Here, a negative deviation indicates that the algorithm was too slow when compared to the PM5 data, a positive deviation indicates that the algorithm was too fast when compared to the PM5 data. The strokerate was nearly identical along the row, and only varied slightly between 23 and 24 SPM). The total number of strokes across the monitors was sufficiently similar at similar times.
-
-We observe that the PM5 contains several badly detected strokes: typically the retrieved data contained subsequent strokes where the stroke duration was between 0.5 and 1.5 seconds, suggesting that the stroke was split in two. OpenRowingMonitor, with its very conservative stroke detection flank of 10, did not have this problem. This error might be introduced through bad technique, as a badly timed bad transition from the back to the arms might cause this.
-
-#### Results and interpretation of the first series of side-by-side linear distance tests
-
-As these results show, the majority of the 0.47% deviation is still present. Therefore, we decide to modify the assumed *flywheel inertia* from 0.1001 kg/m<sup>2</sup> to 0.1016 kg/m<sup>2</sup>. This leads to the following results when repeating the datastreams through OpenRowingMonitor:
+This leads to the following results when repeating the datastreams through OpenRowingMonitor:
 | Test | Drag factor | Target distance | #strokes on PM5| Result on PM5 | Modified Base algorithm result | Modified Base algorithm Deviation |
 | :-: | --: | --: | --: | --: | --: | --: |
 | 32 | 70 | 4,000 m | 441 | 17:31.3 | :. | -0.% |
@@ -176,6 +139,8 @@ As these results show, the majority of the 0.47% deviation is still present. The
 | 54 | 140 | 4,000 m | 413 | 17:39.3 | :. | -0.% |
 | 55 | 130 | 2,000 m | 219 | 9:01.0 | :. | -0.% |
 | 56 | 150 | 4,000 m | 399 | 18:13.5 | :. | -0.%|
+
+Here, a negative deviation indicates that the algorithm was too slow when compared to the PM5 data, a positive deviation indicates that the algorithm was too fast when compared to the PM5 data. The strokerate was nearly identical along the row, and only varied slightly between 23 and 24 SPM). The total number of strokes across the monitors was sufficiently similar at similar times.
 
 ### Validation of the linear speed caclulation
 
