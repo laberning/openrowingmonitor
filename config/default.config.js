@@ -29,10 +29,13 @@ export default {
   // see: https://www.raspberrypi.org/documentation/configuration/config-txt/gpio.md
   gpioPin: 17,
 
-  // Experimental setting: enable this to boost the system level priority of the thread that
-  // measures the rotation speed of the flywheel. This might improve the precision of the
-  // measurements (especially on rowers with a fast spinning flywheel)
-  gpioHighPriority: false,
+  // Enable this to boost the system level priority of the thread that measures the rotation
+  // speed of the flywheel. This might improve the precision of the measurements (especially
+  // on rowers with a fast spinning flywheel).
+  // This is the Linux NICE level: minimum setting is 0, theoretical maximum setting is -19
+  // Setting this below -1 on a non-PREEMPT kernel might cause the app to crash
+  // Going beyond -7 on a PREEMPT kernel seems to kill the timing of the app
+  gpioPriority: -1,
 
   // Selects the Bluetooth Low Energy Profile
   // Supported modes: FTMS, FTMSBIKE, PM5
@@ -55,6 +58,9 @@ export default {
   // Stores the training sessions as TCX files
   createTcxFiles: true,
 
+  // Stores the (in-)stroke data in OpenRowingData CSV files
+  createRowingDataFiles: true,
+
   // Stores the raw sensor data in CSV files
   createRawDataFiles: false,
 
@@ -64,7 +70,7 @@ export default {
   // you will have to unzip the files before uploading
   gzipTcxFiles: false,
 
-  // Apply gzip compression to the ras sensor data recording files (csv.gz)
+  // Apply gzip compression to the raw sensor data recording files (csv.gz)
   gzipRawDataFiles: true,
 
   // Defines the name that is used to announce the FTMS Rower via Bluetooth Low Energy (BLE)
@@ -79,19 +85,50 @@ export default {
   // Advised is to update at least once per second, to make sure the timer moves nice and smoothly.
   // Around 100 ms results in a very smooth update experience
   // Please note that a smaller value will use more network and cpu ressources
-  webUpdateInterval: 1000,
+  webUpdateInterval: 80,
 
+  // Interval between updates of the bluetooth devices (miliseconds)
+  // Advised is to update at least once per second, as consumers expect this interval
+  // Some apps, like EXR like a more frequent interval of 200 ms to better sync the stroke
+  peripheralUpdateInterval: 1000,
+  
   // The number of stroke phases (i.e. Drive or Recovery) used to smoothen the data displayed on your
   // screens (i.e. the monitor, but also bluetooth devices, etc.). A nice smooth experience is found at 6
   // phases, a much more volatile (but more accurate and responsive) is found around 3. The minimum is 1,
   // but for recreational rowers that might feel much too restless to be useful
   numOfPhasesForAveragingScreenData: 6,
 
-  // The time between strokes in seconds before the rower considers it a pause. Default value is set to 10.
-  // It is not recommended to go below this value, as not recognizing a stroke could result in a pause
-  // (as a typical stroke is between 2 to 3 seconds for recreational rowers). Increase it when you have
-  // issues with your stroke detection and the rower is pausing unexpectedly
-  maximumStrokeTime: 10,
+  // EXPERIMENTAL: Settings used for the VO2 Max calculation that is embedded in the tcx file comments
+  userSettings: {
+
+    // The resting Heartrate of the user, to filter abnomral HR values
+    restingHR: 40,
+
+    // The maximum observed heartrate during the last year. If unknown, you can use maxHr = 220 - age
+    // This is used for filtering abnormal HR values and to project the maximum power a rower produces
+    maxHR: 190,
+
+    // The minimum power a rower can produce, used for filtering abnormal power values
+    minPower: 50,
+
+    // The maximum power a rower can produce, used for filtering abnormal power values
+    maxPower: 500,
+
+    // The effect that doubling the distance has on the maximum achievable average pace. The proposed 5 is based on Paul's law,
+    // which states that doubling the distance leads to a slowdown in pace of 5 seconds. This value can be adapted if you know
+    // your PR (this pace) on both a 1000 meters and on 2000 meters, by substracting the pace.
+    distanceCorrectionFactor: 5,
+
+    // The weight of the rower in kilograms
+    weight: 80,
+
+    // The sex of the rower, as it is needed for Concept 2's calculation
+    // This can be "male" or "female"
+    sex: 'male',
+
+    // See for this definition: https://www.concept2.com/indoor-rowers/training/calculators/vo2max-calculator
+    highlyTrained: false
+  },
 
   // The rower specific settings. Either choose a profile from config/rowerProfiles.js or
   // define the settings individually. If you find good settings for a new rowing device
