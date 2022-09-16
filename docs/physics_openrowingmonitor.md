@@ -102,7 +102,7 @@ This can easily be measured by summarising the **time between an impulse**. Nois
 
 ### Determining the "Angular Position" of the flywheel
 
-As the impulse-givers are evenly spread over the flywheel, this can be robustly measured by counting the total number of impulses, **Number of Impulses**, and multiply it with the **angular displacement** between two **impulses** (i.e. 2π/(*number of impulse providers on the flywheel*)).
+As the impulse-givers are evenly spread over the flywheel, this can be robustly measured by counting the total number of impulses, **Number of Impulses**, and multiply it with the **angular displacement** between two **impulses** (i.e. ${2&pi; \over number of impulse providers on the flywheel}$).
 
 In theory, there are two threats here:
 
@@ -123,23 +123,23 @@ The traditional numerical approach [[1]](#1), [[8]](#8), [[13]](#13) Angular Acc
 
 Again, the presence of &Delta;t would make this alculation of &alpha; volatile. From a more robust perspective, we approach &alpha; as the the second derivative of the function between *time since start* and the angular position &theta;, where we use a robust regression algorithm to determine the function and thus the second derivative.
 
-Summarizing, both Angular Velocity &omega; and Angular Acceleration &alpha; are determined through the same regression algorithm, where the first derivative of the function represents the Angular Velocity &omega; and the second derivative represents the Angular Acceleration &alpha;.
+Summarizing, both Angular Velocity &omega; and Angular Acceleration &alpha; are determined through the same regression algorithm based on the derivatives of the function between *time since start* and the angular position &theta;, where the first derivative of the function represents the Angular Velocity &omega; and the second derivative represents the Angular Acceleration &alpha;.
 
 ### Determining the "drag factor" of the flywheel
 
-In the recovery phase, the only force exerted on the flywheel is the (air-/water-/magnetic-)resistance. Thus we can calculate the Drag factor of the Flywheel based on the drag-based deceleration through the recovery phase [[1]](#1). This calculation is performed in the `markRecoveryPhaseCompleted()` function of `engine/Flywheel.js`.
+In the recovery phase, the only force exerted on the flywheel is the (air-/water-/magnetic-)resistance. Thus we can calculate the *drag factor of the flywheel* based on deceleration through the recovery phase [[1]](#1). This calculation is performed in the `markRecoveryPhaseCompleted()` function of `engine/Flywheel.js`.
 
 A first numerical approach is presented by through [[1]](#1) in formula 7.2a:
 
 > $$ k = - I \* {&Delta;&omega; \over &Delta;t} * {1 \over &Delta;&omega;^2} $$
 
-Where the resulting k should be averaged across the rotations of the flywheel. The downside of this approach is that it introduces &Delta;t in the drag calculation, making this calculation potentially volatile. Our practical experience based on testing confirms this. An alternative numerical approach is presented by through [[1]](#1) in formula 7.2b:
+Where the resulting k should be averaged across the rotations of the flywheel. The downside of this approach is that it introduces &Delta;t in the divider of the drag calculation, making this calculation potentially volatile. Our practical experience based on testing confirms this valatility. An alternative numerical approach is presented by through [[1]](#1) in formula 7.2b:
 
 > $$ k = -I \* {&Delta;({1 \over &omega;}) \over &Delta;t} $$
 
-Where this is calculated across the entire recovery phase. Again, the presence of &Delta;t potentially introduces a type of undesired volatility. Testing has shown that even when &Delta;t is chosen to span the entire recovery phase reliably, reducing the effect of single values of *CurrentDt*, the calculated drag factor is still too unstable to be used as is: it typically requires averaging across strokes to prevent drag poisoning.
+Where this is calculated across the entire recovery phase. Again, the presence of &Delta;t in the divider potentially introduces a type of undesired volatility. Testing has shown that even when &Delta;t is chosen to span the entire recovery phase reliably, reducing the effect of single values of *CurrentDt*, the calculated drag factor is more stable but still is too unstable to be used as is: it typically requires averaging across strokes to prevent drag poisoning.
 
-To make this calculation more robust, we again turn to regression methods (as suggested by [[7]](#7)).  By transforming formula 7.2 to the definition of the slope of a line, we get the following:
+To make this calculation more robust, we again turn to regression methods (as suggested by [[7]](#7)).  We can transform formula 7.2 to the definition of the slope of a line, by doing the following:
 
 > $$ { k \over I } = {&Delta;({1 \over &omega;}) \over &Delta;t} $$
 
@@ -159,13 +159,13 @@ Since we are multiplying *currentDt* with a constant factor (i.e. ${Impulses Per
 
 > $$ {k \* 2&pi; \over I \* Impulses Per Rotation} = {&Delta;currentDt \over &Delta;t} $$
 
-As the left-hand of the equation only contains constants and the dragfactor, and the right-hand a division of two delta's, we can use regression to calculate the drag. The drag factor is effectively determined by the slope of the line created by *time since start* on the *x*-axis and the corresponding *CurrentDt* on the *y*-axis, for each recovery phase.
-
-This slope can be determined through linear regression (see [[5]](#5) and [[6]](#6)) for the collection of datapoints for a specific recovery phase. This approach also brings this calculation as close as possible to the raw data, and doesn't use individual *currentDt*'s as a divider, which are explicit design goals to reduce data volatility. Although simple linear regression (OLS) isn't robust in nature, its algorithm has proven to be sufficiently robust to be applied, especially when filtering on low R<sup>2</sup>. On a Concept2, the typical R<sup>2</sup> is around 0.96 for steady state rowing. The approach of using r<sup>2</sup> has the benefit of completely relying on metrics contained in the algorithm itself for quality control: the algorithm itself signals a bad fit due to too much noise in the calculation. Alternative approaches typically rely on cross-stroke repeatability of the drag calculation, which could ignore drag changes despite a good fit with the data. Practical experiments show that an R<sup>2</sup>-based filter outperforms any other across-stroke noise dampening filter.
-
-As the slope of the line *currentDt* over *time since start* is equal to ${k \* 2&pi; \over I \* Impulses Per Rotation}$, the drag thus can be determined through
+As the left-hand of the equation only contains constants and the dragfactor, and the right-hand a division of two delta's, we can use regression to calculate the drag. As the slope of the line *currentDt* over *time since start* is equal to ${k \* 2&pi; \over I \* Impulses Per Rotation}$, the drag thus can be determined through
 
 > $$ k = slope \* {I \* Impulses Per Rotation \over 2&pi;} $$
+
+As this formula shows, the drag factor is effectively determined by the slope of the line created by *time since start* on the *x*-axis and the corresponding *CurrentDt* on the *y*-axis, for each recovery phase.
+
+This slope can be determined through linear regression (see [[5]](#5) and [[6]](#6)) for the collection of datapoints for a specific recovery phase. This approach also brings this calculation as close as possible to the raw data, and doesn't use individual *currentDt*'s as a divider, which are explicit design goals to reduce data volatility. Although simple linear regression (OLS) isn't robust in nature, its algorithm has proven to be sufficiently robust to be applied, especially when filtering on low R<sup>2</sup>. On a Concept2, the typical R<sup>2</sup> is around 0.96 for steady state rowing. The approach of using r<sup>2</sup> has the benefit of completely relying on metrics contained in the algorithm itself for quality control: the algorithm itself signals a bad fit due to too much noise in the calculation. Alternative approaches typically rely on cross-stroke repeatability of the drag calculation, which could ignore drag changes despite a good fit with the data. Practical experiments show that an R<sup>2</sup>-based filter outperforms any other across-stroke noise dampening filter.
 
 ### Determining the "Torque" of the flywheel
 
@@ -176,6 +176,8 @@ The torque &tau; on the flywheel can be determined based on formula 8.1 [[1]](#1
 As ${&Delta;&omega; \over &Delta;t}$ = &alpha; and D = k \* &omega;<sup>2</sup> (formula 3.4, [[1]](#1)), we can simplify this further by:
 
 > $$ &tau; = I \* &alpha; + k \* &omega;^2 $$
+
+As &alpha; and &omega; have been derived in a robust manner, and there are no alternative more robust approaches to determining instant &tau; that allows for handle force curves, we consider this the best attainable result. Testing shows that the results are quite useable.
 
 ### Detecting force on the flywheel
 
@@ -214,6 +216,8 @@ The simple force detection uses this approach by looking at the slope of *curren
 
 A more nuanced, but more vulnerable, approach is to compare the slope of this function with the typical slope encountered during the recovery phase of the stroke (which routinely is determined during the drag calculation). When the flywheel is unpowered, the slope will be close to the recovery slope, and otherwise it is powered. This is a more accurate, but more vulnerable, approach, as small deviations could lead to missed strokes. It is noted that practical testing has shown that this works reliably for many machines.
 
+In Open Rowing Monitor, the settings allow for using the more robust ascending/descending approach (by setting *minumumRecoverySlope* to 0), for a more accurate approach (by setting *minumumRecoverySlope* to a static value) or even a dynamic approach (by setting *autoAdjustRecoverySlope* to true)
+
 #### Advanced force detection
 
 The more advanced, but more vulnerable approach depends on the calculated torque. When looking at *CurrentDt* and Torque over time, we get the following picture:
@@ -221,11 +225,11 @@ The more advanced, but more vulnerable approach depends on the calculated torque
 ![Average curves of a rowing machine](img/physics/currentdtandacceleration.png)
 *Average currentDt (red) and Acceleration (blue) of a single stroke on a rowing machine*
 
-In this graph, we plot *currentDt* and Torque against the time in the stroke. As soon as the Torque of the flywheel becomes below the 0, the *currentDt* begins to lengthen again (i.e. the flywheel is decelerating). As indicated earlier, this is the trigger for the basic force detection algorithm (i.e. when minumumRecoverySlope  is set to 0): when the *currentDt* starts to lengthen, the drive-phase is considered complete.
+In this graph, we plot *currentDt* and Torque against the time in the stroke. As soon as the Torque of the flywheel becomes below the 0, the *currentDt* begins to lengthen again (i.e. the flywheel is decelerating). As indicated earlier, this is the trigger for the basic force detection algorithm (i.e. when *minumumRecoverySlope*  is set to 0): when the *currentDt* starts to lengthen, the drive-phase is considered complete.
 
 However, from the acceleration/deceleration curve it is also clear that despite the deceleration, there is still a force present: the Torque-curve hasn't reached its stable minimum despite crossing 0. This is due to the pull still continuing through the arms: the net force is negative due to a part drive-phase (the arm-movement) delivering weaker forces than the drag-forces of the flywheel. Despite being weaker than the other forces on the flywheel, the rower is still working. In this specific example, at around 0.52 sec the rower's force was weaker than all drag-forces combined. However, only at 0,67 seconds (thus approx. 150 ms later) the net force reaches its stable bottom: the only force present is the drag from the flywheel. Getting closer to this moment is a goal.
 
-We do this by setting a minimum Torque (through setting minumumForceBeforeStroke) before a Drive phase can be initiated.
+We do this by setting a minimum Torque (through setting *minumumForceBeforeStroke*) before a Drive phase can be initiated.
 
 #### A note about detection accuracy
 
@@ -287,12 +291,12 @@ Still, we currently choose to use $\overline{P}$ = k \* $\overline{&omega;}$<sup
 
 * The simpler algorithm removes any dependence on instantaneous angular velocities &omega; at the flanks of the stroke from the power calculation and subsequent linear calculations. This makes the power calculation (and thus any subsequent calculations that are based on it) more robust against "unexpected" behavior of the rowing machine. There are several underlying causes for the need to remove this dependence:
   * First of all, measurement errors in *CurrentDt* could introduce variations in &Delta;&omega; across the cycle and thus in all dependent linear metrics;
-  * Secondly, water rowers are known to experience cavitation effects at the end of the Drive Phase due to poor technique, leading to extremely volatile results;
+  * Secondly, water rowers are known to experience cavitation effects at the end of the Drive Phase when used with sub-optimal technique, leading to extremely volatile results;
   * Last, the determination of &Delta;&omega; across a stroke heavily depends on a very repeatable stroke detection that minimizes &Delta;&omega; to 0 during a stable series of stroke in steady state rowing. Such a repeatable stroke detection across the many types of rowing machines in itself is difficult to achieve;
 
 * As the *flywheelinertia* I is mostly guessed based on its effects on the Power outcome anyway (as most users aren't willing to take their rower apart for callibration purposses), a systematic error wouldn't matter much in most practical applications as it is corrected during the callibration of a monitor: the *flywheelinertia* will simply be modified to get to the correct power in the display.
 
-* It allows the user to removing/disabling all instantaneous angular velocities from linear metric calculations (i.e. only using average velocity calculated over the entire phase, which doesn't depend on a single measurement) by setting *autoAdjustDragFactor* to "false". This makes Open Rowing Monitor a viable option for rowers with noisy data or otherwise unstable/unreliable individual measurements;
+* It allows the user to removing/disabling all instantaneous angular velocities from linear metric calculations (i.e. only using average angular velocity calculated over the entire phase, which doesn't depend on a single measurement) by setting *autoAdjustDragFactor* to "false". This makes Open Rowing Monitor a viable option for rowers with noisy data or otherwise unstable/unreliable individual measurements;
 
 * Given the stability of the measurements, it might be a realistic option for users to remove the filter in the presentation layer completely by setting *numOfPhasesForAveragingScreenData* to 2, making the monitor much more responsive to user actions.
 
@@ -310,7 +314,7 @@ However, in [[1]](#1) and [[2]](#2), it is suggested that power on a Concept 2 m
 
 > $$ \overline{P} = 4.31 \* \overline{u}^{2.75} $$
 
-Based on a simple experiment, downloading the exported data of several rowing sessions from Concept 2's logbook, and comparing the reported velocity and power, it can easily be determined that $\overline{P}$ = 2.8 \* $\overline{u}$<sup>3</sup> offers a much better fit the data than $\overline{P}$ = 4.31 \* $\overline{u}$<sup>2.75</sup>. Thus we choose to use formula 9.1. Baed on this, we thus adopt formula 9.1 (from [[1]](#1)) for the calculation of linear velocity u:
+Based on a simple experiment, downloading the exported data of several rowing sessions from Concept 2's logbook, and comparing the reported velocity and power, it can easily be determined that $\overline{P}$ = 2.8 \* $\overline{u}$<sup>3</sup> offers a much better fit with the data than $\overline{P}$ = 4.31 \* $\overline{u}$<sup>2.75</sup> provides. Therefore, we choose to use formula 9.1. Baed on this, we thus adopt formula 9.1 (from [[1]](#1)) for the calculation of linear velocity u:
 
 > $$ \overline{u} = ({k \over C})^{1/3} * \overline{\omega} $$
 
@@ -318,11 +322,11 @@ As both k and &omega; can change from cycle to cycle, this calculation should be
 
 ### Linear distance
 
-[[1]](#1)'s formula 9.3 provides a formula for Linear distance as well:
+[[1]](#1)'s formula 9.3 provides a formula for linear distance:
 
 > $$ s = ({k \over C})^{1/3} * &theta; $$
 
-Here, as k can slightly change from cycle to cycle, this calculation should be performed at least once for each cycle. As &theta; isn't dependent on stroke state and changes constantly, it could be recalculated continously throughout the stroke, providing the user with direct feedback of his stroke. It should be noted that this formula is also robust against missed strokes: a missed drive or recovery phase will lump two strokes together, but as the angular displacement &theta; is stroke independent, it will not be affected by it at all. Although undesired behaviour in itself, it will isolate linear distance calculations from errors in the stroke detection in practice.
+Here, as k can slightly change from cycle to cycle, this calculation should be performed at least once for each cycle. As &theta; isn't dependent on stroke state and changes constantly, it could be recalculated continously throughout the stroke, providing the user with direct feedback of his stroke. It should be noted that this formula is also robust against missed strokes: a missed drive or recovery phase will lump two strokes together, but as the angular displacement &theta; is stroke independent, it will not be affected by it at all. Although missing strokes is undesired behaviour, this approach isolates linear distance calculations from errors in the stroke detection in practice.
 
 ### Drive length
 
@@ -388,6 +392,8 @@ stateDiagram-v2
 
 ### Noise Filtering algorithms applied
 
+For noise filtering, we use a moving median filter, which has the benefit of removing outliers completely. This is more robust than the moving average, where the effect of outliers is reduced, but not removed.
+
 ### Linear regression algorithms applied for slope determination
 
 There are several different linear regression methods [[9]](#9). We have several requirements on the algorithm:
@@ -422,7 +428,7 @@ For the drag-factor calculation (and the closely related recovery slope detectio
 
 * The number of datapoints in the recovery phase isn't known in advance, and is subject to significant change due to variations in recovery time (i.e. sprints), making both the Incomplete Theil–Sen estimator and Theil–Sen estimator incapable of calculating their slopes in the stream as the efficient implementations require a fixed window. This results in a near O(N<sup>2</sup>) calculation at the start of the *Drive* phase. Given the number of datapoints often encountered (a recoveryphase on a Concept 2 contains around 200 datapoints), this is a significant issue that could disrupt the application. OLS has a O(1) complexity for continous datastreams;
 
-* In non-time critical replays of earlier recorded rowing sessions, both the Incomplete Theil–Sen estimator and Theil–Sen estimator performed worse than OLS: OLS with a high pass filter on r<sup>2</sup> resulted in a much more stable dragfactor than the Incomplete Theil–Sen estimator and Theil–Sen estimator did. This suggests that the OLS algorithm handles the outliers sufficiently to prevent drag poisoning.
+* In non-time critical replays of earlier recorded rowing sessions, both the Incomplete Theil–Sen estimator and Theil–Sen estimator performed worse than OLS: OLS with a high pass filter on r<sup>2</sup> resulted in a much more stable dragfactor than the Incomplete Theil–Sen estimator and Theil–Sen estimator did. This suggests that the OLS algorithm combined with a requirement for a sufficiently high r<sup>2</sup> handles the outliers sufficiently to prevent drag poisoning.
 
 * Applying Quadratic OLS regression does not improve its results
 
@@ -450,13 +456,13 @@ Currently, this is an accepted issue, as the simplified formula has the huge ben
 
 ### Use of Quadratic Theil-Senn regression for determining &alpha; and &omega; based on time and &theta;
 
-The underlying assumption of this approach is that the Angular Accelration &alpha; is constant, which in rowing it certainly won't be the case as the force will vary based on the position in the Drive phase (hence the powercurve). Currently, the use of Quadratic Theil-Senn regression represents a huge improvement from both the traditional numerical approach (as taken by [[1]](#1) and [[4]](#4)) and the linear regression methods used by earlier approaches of Open Rowing Monitor. As the number of datapoints in a *Flanklength* in the relation to the total number of datapoints in a stroke is small, we consider this is a decent approximation while maintaining an sufficiently efficient algorithm to be able to process all data in the datastream in time.
+Abandoning the numerical approach for a regression based approach has resulted with a huge improvement in metric robustness. So far, we were able to implement Quadratic Theil-Senn regression and get reliable and robust results. The underlying assumption of this Quadratic approach is that the Angular Accelration &alpha; is constant, or at constant by approximation in the flank under measurment. In rowing this probably won't be the case as the force will vary based on the position in the Drive phase (hence the need for a forcecurve). Currently, the use of Quadratic Theil-Senn regression represents a huge improvement from both the traditional numerical approach (as taken by [[1]](#1) and [[4]](#4)) used by earlier approaches of Open Rowing Monitor. As the number of datapoints in a *Flanklength* in the relation to the total number of datapoints in a stroke is small, we consider this is a decent approximation while maintaining an sufficiently efficient algorithm to be able to process all data in the datastream in time.
 
-We can inmagine there are better suited third polynomal (cubic) approaches available that can robustly calculate &alpha; and &omega; as a function of time, based on the relation between time and &theta;. However, getting these to work in a datastream with very tight limitations on CPU-time and memory is quite challenging. We also observe that in several areas the theoretical best approach did not deliver the best practical result (i.e. a "better" algorithm delivered a more noisy result for &alpha; and &omega;). Therefore, this avenue isn't investigated yet, but will be a continuing area of improvement.
+We can inmagine there are better suited third polynomal (cubic) approaches available that can robustly calculate &alpha; and &omega; as a function of time, based on the relation between time and &theta;. However, getting these to work in a datastream with very tight limitations on CPU-time and memory across many configurations is quite challenging. We also observe that in several areas the theoretical best approach did not deliver the best practical result (i.e. a "better" algorithm delivered a more noisy result for &alpha; and &omega;). Therefore, this avenue isn't investigated yet, but will be a continuing area of improvement.
 
 ### Use of Quadratic Theil-Senn regression and a median filter for determining &alpha; and &omega;
 
-For a specific flank, our regression algorithm calculates the &alpha; for the flank and the &omega;'s for each point of the flank. As a datapoint will be part of several flank calculations, we obtain several &alpha;'s and &omega;'s that are valid approximations for that specific datapoint. To obtain the most stable result, we opt for the median of all valid values for &alpha; and &omega; to calculate the definitive approximation of &alpha; and &omega; for that specific datapoint. Although this approach has proven very robust, and even necessary to prevent noise from disturbing powercurves, it is very conservative. For example, when compared to Concept 2's results, the powercurves have the same shape, but the peak values are considerable lower.
+For a specific flank, our quadratic regression algorithm calculates a single &alpha; for the entire flank and the individual &omega;'s for each point on that flank. As a datapoint will be part of several flank calculations, we obtain several &alpha;'s and &omega;'s that are valid approximations for that specific datapoint. To obtain the most stable result, we opt for the median of all valid values for &alpha; and &omega; to calculate the definitive approximation of &alpha; and &omega; for that specific datapoint. Although this approach has proven very robust, and even necessary to prevent noise from disturbing powercurves, it is very conservative. For example, when compared to Concept 2's results, the powercurves have the same shape, but the peak values are considerable lower.
 
 Reducing extreme values while maintaining the true data volatility is a subject for further improvement.
 
