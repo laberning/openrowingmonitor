@@ -7,19 +7,21 @@
 <!-- markdownlint-disable-next-line no-inline-html -->
 <img width="200" height="200" align="left" src="img/openrowingmonitor_icon.png" class="dropcap">
 
-A free and open source performance monitor for rowing machines. It upgrades almost any rowing machine into a smart trainer that can be used with training applications and games.
+Open Rowing Monitor is a free and open source performance monitor for rowing machines. It upgrades almost any rowing machine into a smart trainer that can be used with training applications and games.
 
-Open Rowing Monitor is a Node.js application that runs on a Raspberry Pi and measures the rotation of the rower's flywheel (or similar) to calculate rowing specific metrics, such as power, split time, speed, stroke rate, distance and calories. It can share these metrics for controling games and record these metrics for further analysis.
+It is a Node.js application that runs on a Raspberry Pi and measures the rotation of the rower's flywheel (or similar) to calculate rowing specific metrics, such as power, split time, speed, stroke rate, distance and calories. It can share these metrics for controling games and record these metrics for further analysis.
 
 It is currently developed and tested with a Sportstech WRX700 water-rower and a Concept2 air-rower. In the past, it was also tested extensively on a NordicTrack RX-800 hybrid air/magnetic rower. But it should run fine with any rowing machine that uses some kind of damping mechanism, as long as you can add something to measure the speed of the flywheel. It has shown to work well with DIY rowing machines like the [Openergo](https://openergo.webs.com), providing the construction is decent.
 
 ## Features
 
-The following items describe most of the current features.
+Open Rowing Monitor aims to provide you with metrics directly, connect to apps and games via bluetooth and allow you to export your data to the analysis tool of your choice. The following items describe most of the current features in more detail.
 
 ### Rowing Metrics
 
-Open Rowing Monitor implements a physics model to simulate the typical metrics of a rowing boat based on the pull on the handle. The physics model can be tuned to the specifics of a rower by changing some model parameters in the configuration file. Open Rowing Monitor displays the following key metrics on the user interfaces:
+Open Rowing Monitor implements a physics model to simulate the typical metrics of a rowing boat based on the pull on the handle. The physics model can be tuned to the specifics of a rower by changing some model parameters in the configuration file, where we also provide these settings for machines known to us.
+
+Open Rowing Monitor displays the following key metrics on the user interfaces:
 
 * Distance rowed (meters)
 * Training Duration
@@ -43,27 +45,25 @@ If you connect a physical screen directly to the Raspberry Pi, then this interfa
 
 ### Bluetooth Low Energy (BLE)
 
-Open Rowing Monitor also implements different Bluetooth Low Energy (BLE) protocols so you can use your rowing machine with different fitness applications.
+Open Rowing Monitor also implements different Bluetooth Low Energy (BLE) protocols so you can use your rowing machine with different fitness applications. Some apps use the Fitness Machine Service (FTMS), which is a standardized GATT protocol for different types of fitness machines. Other apps prefer to see a Concept 2 PM5. Open Rowing Monitor currently supports the following Bluetooth protocols:
 
-Fitness Machine Service (FTMS) is a standardized GATT protocol for different types of fitness machines. Open Rowing Monitor currently supports the following Bluetooth protocols:
-
-* **FTMS Rower:** This is the FTMS profile for rowing machines and supports all rowing specific metrics (such as stroke rate). So far not many training applications for this profile exist, but the market is evolving. I've successfully tested it with [EXR](https://www.exrgame.com), [MyHomeFit](https://myhomefit.de) and [Kinomap](https://www.kinomap.com).
+* **FTMS Rower:** This is the FTMS profile for rowing machines and supports all rowing specific metrics (such as stroke rate). So far not many training applications for this profile exist, but the market is evolving. We've successfully tested it with [EXR](https://www.exrgame.com), [MyHomeFit](https://myhomefit.de) and [Kinomap](https://www.kinomap.com).
 
 * **FTMS Indoor Bike:** This FTMS profile is used by Smart Bike Trainers and widely adopted by training applications for bike training. It does not support rowing specific metrics. But it can present metrics such as power and distance to the biking application and use cadence for stroke rate. So why not use your virtual rowing bike to row up a mountain in [Zwift](https://www.zwift.com), [Bkool](https://www.bkool.com), [The Sufferfest](https://thesufferfest.com) or similar :-)
 
-* **Concept2 PM:** Open Rowing Monitor also implements part of the Concept2 PM Bluetooth Smart Communication Interface Definition. This is still work in progress and only implements the most common parts of the spec, so it will not work with all applications that support C2 rowing machines. It currently works with all the samples from [The Erg Arcade](https://ergarcade.com), i.e. you can [row in the clouds](https://ergarcade.github.io/mrdoob-clouds/). This also works very well with [EXR](https://www.exrgame.com).
+* **Concept2 PM:** Open Rowing Monitor also implements part of the Concept2 PM Bluetooth Smart Communication Interface Definition. This is still work in progress and only implements the most common parts of the spec, so it is not guaranteed to work with all applications that support C2 rowing machines. It currently works with all the samples from [The Erg Arcade](https://ergarcade.com), for example you can [row in the clouds](https://ergarcade.github.io/mrdoob-clouds/). The PM5 simulation works  well with [EXR](https://www.exrgame.com).
 
 ### Export of Training Sessions
 
 Open Rowing Monitor is based on the idea that metrics should be easily accessible for further analysis. Therefore, Open Rowing Monitor can create the following files:
 
-* **Training Center XML files (TCX)**: These are XML-files that contain the most essential metrics of a rowing session. You can upload these files to training platforms like [Strava](https://www.strava.com), [Garmin Connect](https://connect.garmin.com) or [Trainingpeaks](https://trainingpeaks.com) to track your training sessions;
+* **Training Center XML files (TCX)**: These are XML-files that contain the most essential metrics of a rowing session. Most training analysis tools will accept a tcx-file. You can upload these files to training platforms like [Strava](https://www.strava.com), [Garmin Connect](https://connect.garmin.com) or [Trainingpeaks](https://trainingpeaks.com) to track your training sessions;
 
-* **RowingData** files, which are comma-seperated files with all metrics RowingData understands. These can be used with [RowingData](https://pypi.org/project/rowingdata/) to display your results locally, or uploaded to [RowsAndAll](https://rowsandall.com/) for a webbased analysis (including dynamic in-stroke metrics). The csv-files can also be processed manually in Excel, allowing your own custom analysis. This is the most extensive set of metrics that Open Rowing Monitor can produce. Please note that for visualising in-stroke metrics (i.e. force, power and handle speed curves) you need a yearly subscription;
+* **RowingData** files, which are comma-seperated files with all metrics Open Rowing Monitor can produce. These can be used with [RowingData](https://pypi.org/project/rowingdata/) to display your results locally, or uploaded to [RowsAndAll](https://rowsandall.com/) for a webbased analysis (including dynamic in-stroke metrics). The csv-files can also be processed manually in Excel, allowing your own custom analysis. This is the most extensive set of metrics that Open Rowing Monitor can produce. Please note that for visualising in-stroke metrics in [RowsAndAll](https://rowsandall.com/) (i.e. force, power and handle speed curves), you need a yearly subscription;
 
-* **Raw flywheel measurements of the flywheel**, also in CSV files. These files are great to start your own exploration of your rowing style and also to learn about the specifics of your rowing machine (some Excel files that can help with this are included in the `docs` folder).
+* **Raw flywheel measurements of the flywheel**, also in CSV files. These files are great to start to learn about the specifics of your rowing machine (some Excel visualistion can help with this).
 
-Uploading your sessions to Strava is an integrated feature, for all other platforms this is currently a manual step, and uploading to [RowsAndAll](https://rowsandall.com/) can be automated through their e-mail interface. The installer can also set up a network share that contains all training data so it is easy to grab the files from there and manually upload them to the training platform of your choice.
+Uploading your sessions to Strava is an integrated feature, for all other platforms this is currently a manual step. Uploading to [RowsAndAll](https://rowsandall.com/) can be automated through their e-mail interface, see [this description](https://rowsandall.com/rowers/developers/). The Open rowing Monito installer can also set up a network share that contains all training data so it is easy to grab the files from there and manually upload them to the training platform of your choice.
 
 ## Installation
 
