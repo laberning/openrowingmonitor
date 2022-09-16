@@ -91,10 +91,10 @@ export default {
   // Advised is to update at least once per second, as consumers expect this interval
   // Some apps, like EXR like a more frequent interval of 200 ms to better sync the stroke
   peripheralUpdateInterval: 1000,
-  
+
   // The number of stroke phases (i.e. Drive or Recovery) used to smoothen the data displayed on your
   // screens (i.e. the monitor, but also bluetooth devices, etc.). A nice smooth experience is found at 6
-  // phases, a much more volatile (but more accurate and responsive) is found around 3. The minimum is 1,
+  // phases, a much more volatile (but more accurate and responsive) is found around 3. The minimum is 2,
   // but for recreational rowers that might feel much too restless to be useful
   numOfPhasesForAveragingScreenData: 6,
 
