@@ -67,7 +67,8 @@ else
   OSID="undefined"
 fi
 
-if [[ $OSID != "raspbian" ]]; then
+if [[ $OSID != "raspbian" ]] && [[ $OSID != "debian" ]]; then
+  # Please note: Raspbian Lite 64Bit will identify as "debian"
   print
   cancel "This script currently only works on Raspberry Pi OS, you will have to do a manual installation."
 fi
