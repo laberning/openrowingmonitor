@@ -11,7 +11,7 @@ import zlib from 'zlib'
 import fs from 'fs/promises'
 import xml2js from 'xml2js'
 import config from '../tools/ConfigManager.js'
-import { createVoMax } from './VO2Max.js'
+import { createVoMax } from './VO2max.js'
 import { promisify } from 'util'
 const gzip = promisify(zlib.gzip)
 
