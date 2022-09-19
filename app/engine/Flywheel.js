@@ -8,7 +8,7 @@
   solely depend on times and angular positions before the flank (as they are to be certain to belong to a specific
   drive or recovery phase).
 
-  Please note: The array contains a buffer of flankLenght measured currentDt's, BEFORE they are actually processed
+  Please note: The array contains a buffer of flankLength measured currentDt's, BEFORE they are actually processed
 
   Please note2: This implements Linear regression to obtain the drag factor. We deliberatly DO NOT include the flank data
   as we don't know wether they will belong to a Drive or Recovery phase. So we include things which we know for certain that
