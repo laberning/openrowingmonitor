@@ -1,6 +1,6 @@
 'use strict'
 /*
-  Open Rowing Monitor, https://github.com/jaapvanekris/openrowingmonitor
+  Open Rowing Monitor, https://github.com/laberning/openrowingmonitor
 
   This creates a series with a maximum number of values
   It allows for determining the Average, Median, Number of Positive, number of Negative
