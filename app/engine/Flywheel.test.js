@@ -47,10 +47,13 @@ test('Correct Flywheel behaviour at initialisation', () => {
 })
 
 // Test behaviour for one datapoint
+// ToDo: Add additional test for testing the behaviour after a single datapoint
 
 // Test behaviour for perfect upgoing flank
+// ToDo: Add additional test to test isDwelling, isUnpowered and isPowered with an upgoing flank
 
 // Test behaviour for perfect downgoing flank
+// ToDo: Add additional test to test isDwelling, isUnpowered and isPowered with an downgoing flank
 
 // Test behaviour for perfect stroke
 test('Correct Flywheel behaviour for a noisefree stroke', () => {
@@ -147,14 +150,19 @@ test('Correct Flywheel behaviour for a noisefree stroke', () => {
 })
 
 // Test behaviour for noisy upgoing flank
+// ToDo: Add additional test to test isDwelling, isUnpowered and isPowered with an upgoing flank
 
 // Test behaviour for noisy downgoing flank
+// ToDo: Add additional test to test isDwelling, isUnpowered and isPowered with an downgoing flank
 
 // Test behaviour for noisy stroke
+// ToDo: Add additional test to test isDwelling, isUnpowered and isPowered with an upgoing and downgoing flank
 
 // Test drag factor calculation
+// ToDo: Add additional test to test dragfactor calculation
 
 // Test Dynamic stroke detection
+// ToDo: Add additional test to test isDwelling, isUnpowered and isPowered with an upgoing and downgoing flank with dynamic stroke detection
 
 // Test behaviour for not maintaining metrics
 test('Correct Flywheel behaviour at maintainStateOnly', () => {
@@ -298,6 +306,7 @@ test('A full session for a Concept2 RowErg should produce plausible results', as
 })
 
 // Test behaviour after reset
+// ToDo: Add additional test to test isDwelling, isUnpowered and isPowered after a reset
 
 function testDeltaTime (flywheel, expectedValue) {
   assert.ok(flywheel.deltaTime() === expectedValue, `deltaTime should be ${expectedValue} sec at ${flywheel.spinningTime()} sec, is ${flywheel.deltaTime()}`)
