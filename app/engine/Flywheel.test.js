@@ -1,6 +1,6 @@
 'use strict'
 /*
-  Open Rowing Monitor, https://github.com/jaapvanekris/openrowingmonitor
+  Open Rowing Monitor, https://github.com/laberning/openrowingmonitor
 */
 import { test } from 'uvu'
 import * as assert from 'uvu/assert'
