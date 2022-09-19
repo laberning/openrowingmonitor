@@ -61,9 +61,12 @@ function createFlywheel (rowerSettings) {
 
   function pushValue (dataPoint) {
     if (dataPoint <= rowerSettings.minimumTimeBetweenImpulses || dataPoint > (1.7 * lastKnownGoodDatapoint)) {
-      // Remove the completely deviating currentDt's, which typically are found after a long pause
-      // TODO: Omgaan met waarden boven 2 * rowerSettings.maximumTimeBetweenImpulses
-      // TODO: Omgaan met waarden boven 2 * vorige waarde --> extra impuls er tussen!
+      // ToDo: Remove the completely wildly outlying currentDt's
+      // This code contains an open design issue, where this code typically is used in three situations
+      // * At the (re)start of the session, where CurrentDt includes the pause time (which van be minutes to hours). So values above maximumStrokeTimeBeforePause should be ignored completely
+      // * As deviating too long currentDt's, typically when an impuls is missed (i.e. currentDt is around 2 * lastKnownGoodDatapoint). The best solution would be to inject an additional impuls and stop messing with currentDt's
+      // * When values are too small, potentially due to bounce effects in the reed switch.
+      // The below code is extremely crude, but it blunts the effcts of the first two issues. Handling the skipping of metric updates has knock-on effects in RowingStatistics.js, so here we still need to find an elegant solution.
       dataPoint = 1.7 * lastKnownGoodDatapoint
     }
 
@@ -125,8 +128,6 @@ function createFlywheel (rowerSettings) {
 
     // And finally calculate the torque
     _torqueAtBeginFlank = (rowerSettings.flywheelInertia * _angularAccelerationAtBeginFlank + drag.clean() * Math.pow(_angularVelocityAtBeginFlank, 2))
-
-    // fs.appendFile('exports/RegressionData.csv', `${totalTimeSpinning};${_deltaTimeBeforeFlank};${_angularVelocityBeforeFlank};${_angularAccelerationBeforeFlank};${expAngAcc.median()};${_torqueBeforeFlank}\n`, (err) => { if (err) log.error(err) })  // REMOVE ME!!!!
   }
 
   function maintainStateOnly () {
