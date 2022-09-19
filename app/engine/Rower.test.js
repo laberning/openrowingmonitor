@@ -59,7 +59,8 @@ test('Correct rower behaviour at initialisation', () => {
   testInstantHandlePower(rower, 0)
 })
 
-// Test behaviour for one datapoint
+// Test behaviour for one series of datapoint
+// ToDo: add detailed test with a series of datapoints describng a complete stroke
 
 // Test behaviour for three perfect identical strokes, including settingling behaviour of metrics
 test('Correct Rower behaviour for three noisefree strokes with dynamic dragfactor and stroke detection', () => {
@@ -344,22 +345,22 @@ test('Correct Rower behaviour for three noisefree strokes with dynamic dragfacto
 })
 
 // Test behaviour for noisy upgoing flank
+// ToDo: add detailed test with a series of datapoints describng a complete upgoing flank
 
 // Test behaviour for noisy downgoing flank
+// ToDo: add detailed test with a series of datapoints describng a complete downgoing flank
 
 // Test behaviour for noisy stroke
-
-// Test behaviour after reset
-
-// Test behaviour for one datapoint
-
-// Test behaviour for noisy stroke
+// ToDo: add detailed test with a series of datapoints describng a complete upgoing and downgoing flank
 
 // Test drag factor calculation
+// ToDo: add a test to test the dragfactor calculation (can be reused from Flywheel.test.js)
 
 // Test Dynamic stroke detection
+// ToDo: add a test to test the dynamic stroke detection (can be reused from Flywheel.test.js)
 
 // Test behaviour after reset
+// ToDo: add detailed test with a series of datapoints followed by a reset
 
 // Test behaviour with real-life data
 
@@ -439,7 +440,7 @@ test('A full session for a Concept2 RowErg should produce plausible results', as
   testTotalMovingTimeSinceStart(rower, 476.23309445539917)
   testTotalLinearDistanceSinceStart(rower, 2010.3424000711038)
   testTotalNumberOfStrokes(rower, 208)
-  // As dragFactor is static, it should remain in place
+  // As dragFactor isn't static, it should be updated
   testRecoveryDragFactor(rower, 131.33631595360725)
 })
 
