@@ -4,7 +4,7 @@
 
   This keeps an array, which we can ask for an moving average
 
-  Please note: The array contains maxLenght values
+  Please note: The array contains maxLength values
 */
 
 import { createSeries } from './Series.js'
