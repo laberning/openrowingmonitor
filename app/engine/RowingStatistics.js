@@ -319,7 +319,7 @@ function createRowingStatistics (config, session) {
 
   // converts a timeStamp in seconds to a human readable hh:mm:ss format
   function secondsToTimeString (secondsTimeStamp) {
-    if (secondsTimeStamp === Infinity) return 'âˆž'
+    if (secondsTimeStamp === Infinity) return '∞'
     const hours = Math.floor(secondsTimeStamp / 60 / 60)
     const minutes = Math.floor(secondsTimeStamp / 60) - (hours * 60)
     const seconds = Math.floor(secondsTimeStamp % 60)
