@@ -88,7 +88,13 @@ After rowing a bit, there should be a csv file created with raw data. Please rea
 
 When the line goes up, the time between impulses from the flywheel goes up, and thus the flywheel is decellerating. When the line goes down, the time between impulses decreases, and thus the flywheel is accelerating. In the first decellerating flank, we see some noise, which Open Rowing Monitor an deal with perfectly. However, looking at the bottom of the first acceleration flank, we see a series of heavy downward spikes. This could be start-up noise, but it also could be systematic across the rowing session. This is problematic as it throws off both stroke detection and many metrics. Typically, it signals an issue in the mechenical construction of the sensor: the fram and sensor vibrate at high speeds, resulting in much noise.
 
-A specific issue to be aware of is *debounce*, which typically is seen as a valid signal followed by a very short spike. This suggests that the sensor picks up the magnet twice. Better magnet aligning helps here, but sometimes it is inherent to cheaper sensors.
+A specific issue to watch ut for are systemic errors in the magnet placement. For exmple, these 18 pulses from a Concept2 RowErg show a systematic error, that follows a 6 impulse cycle. As the RowErg has 6 magnets, it is very likely that it is caused by magnets not being perfectly aligned (for example due to production tollerances):
+
+<img src="img/Concept2_RowErg_Construction_tolerances.jpg" width="700">
+
+Open Rowing Monitor can handle this kind of systematic error, as long as the *FlankLength* (described later) is set to at least two full rotations (in this case, 12 magnets).
+
+Another specific issue to be aware of is *debounce*, which typically is seen as a valid signal followed by a very short spike. This suggests that the sensor picks up the magnet twice. Better magnet aligning could help here, and sometimes replacing the sensor for a more advanced model could help as well.
 
 Please fix any mechanical issues before proceeding.
 
