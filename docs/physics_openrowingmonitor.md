@@ -460,6 +460,12 @@ Abandoning the numerical approach for a regression based approach has resulted w
 
 We can inmagine there are better suited third polynomal (cubic) approaches available that can robustly calculate &alpha; and &omega; as a function of time, based on the relation between time and &theta;. However, getting these to work in a datastream with very tight limitations on CPU-time and memory across many configurations is quite challenging. We also observe that in several areas the theoretical best approach did not deliver the best practical result (i.e. a "better" algorithm delivered a more noisy result for &alpha; and &omega;). Therefore, this avenue isn't investigated yet, but will be a continuing area of improvement.
 
+We also observe specific issues, which could result in overfitting the dataset, nihilating its noise reduction effect. As the following sample of three rotations of a Concept2 flywheel shows, due to production tolerances or deliberate design constructs, there are **systematic** errors in the data due to magnet placement or magnet polarity. This results in systematic issues in the datastream:
+
+<img src="img/Concept2_RowErg_Construction_tolerances.jpg" width="700">
+
+Fitting a quadratic curve with at least two full rotations of data (in this case, 12 datapoints) seems to reduce the noise to very acceptable levels. In our view, fitting a third-degree polynomial would result in a better fit with these systematic errors, but resulting in a much less robust signal.
+
 ### Use of Quadratic Theil-Senn regression and a median filter for determining &alpha; and &omega;
 
 For a specific flank, our quadratic regression algorithm calculates a single &alpha; for the entire flank and the individual &omega;'s for each point on that flank. As a datapoint will be part of several flank calculations, we obtain several &alpha;'s and &omega;'s that are valid approximations for that specific datapoint. To obtain the most stable result, we opt for the median of all valid values for &alpha; and &omega; to calculate the definitive approximation of &alpha; and &omega; for that specific datapoint. Although this approach has proven very robust, and even necessary to prevent noise from disturbing powercurves, it is very conservative. For example, when compared to Concept 2's results, the powercurves have the same shape, but the peak values are considerable lower.
