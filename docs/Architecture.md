@@ -15,17 +15,19 @@ The choice has been made to use JavaScript to build te application, as many of t
 
 ## Main functional components
 
-We first describe the relation between the main functional components by describing the flow of the key pieces of information: the flywheel and heartrate measurements. We first follow the flow of the flywheel data, which is provided by the inteerupt driven `gpio.js`. The only information retrieved by Open Rowing Monitor is *CurrentDt*: the time between impulses. This data element is transformed in meaningful metrics in the following manner:
+We first describe the relation between the main functional components by describing the flow of the key pieces of information: the flywheel and heartrate measurements. We first follow the flow of the flywheel data, which is provided by the interrupt driven `GpioTimerService.js`. The only information retrieved by Open Rowing Monitor is *CurrentDt*: the time between impulses. This data element is transformed in meaningful metrics in the following manner:
 
 ```mermaid
 sequenceDiagram
   participant clients
-  participant gpio.js
+  participant pigpio
+  participant GpioTimerService.js
   participant server.js
   participant RowingStatistics.js
   participant Rower.js
   participant Flywheel.js
-  gpio.js-)server.js: currentDt<br>(interrupt based)
+  pigpio -)GpioTimerService.js: tick<br>(interrupt based)
+  GpioTimerService.js-)server.js: currentDt<br>(interrupt based)
   server.js-)RowingStatistics.js: currentDt<br>(interrupt based)
   RowingStatistics.js->>Rower.js: currentDt<br>(interrupt based)
   Rower.js->>Flywheel.js: currentDt<br>(interrupt based)
@@ -51,15 +53,19 @@ sequenceDiagram
   server.js-)clients: Metrics Updates<br>(State/Time based)
 ```
 
-### gpio.js
+### pigpio
 
-`gpio.js` is a small independent process, acting as an interrupt handler to the signals from the gpio-pin 17. It translates the interrupts into a stream of times between the interrups (which we call *CurrentDt*). The interrupthandler is the only part of Open Rowing Monitor that should run with extreme low latency as it determines the time between impulses. Latency in this process will present itself as noise in the measurements of *CurrentDt*. To Open Rowing Monitor it provides a stream of measurements that needed to be handled.
+`pigpio` is a wrapper around the [pigpio C library](https://github.com/joan2937/pigpio), which is an extreme high frequency monitor of the pigpio port. As the pigpio npm is just a wrapper around the C library, all time measurement is done by the high cyclic C library, making it extremely accurate. It can be configured to ignore too short pulses (thus providing a basis for debounce) and it reports the `tick` (i.e. the number of microseconds since OS bootup) when it concludes the signal is valid. It reporting is detached from its measurement, and we deliberatly use the *Alert* instead of the *Interrupt* as their documentation indicates that both types of messaging provide an identical accuracy of the `tick`, but *Alerts* do provide the functionality of a debounce filter. As the C-implementation of `pigpio` determines the accuracy of the `tick`, this is the only true time critical element of Open Rowing Monitor. Latency in this process will present itself as noise in the measurements of *CurrentDt*.
+
+### GpioTimerService.js
+
+`GpioTimerService.js` is a small independent process, acting as a data handler to the signals from `pigpio`. It translates the *Alerts* with their `tick` into a stream of times between these *Alerts* (which we call *CurrentDt*). The interrupthandler is still triggered to run with extreme low latency as the called `gpio` process will inherit its nice-level, which is extremely time critical. To Open Rowing Monitor it provides a stream of measurements that needed to be handled.
 
 ### Server.js
 
 `Server.js` orchestrates all information flows and starts/stops processes when needed. It will:
 
-* Recieve (interrupt based) GPIO timing signals from `gpio.js` and send them to the `RowingStatistics.js`;
+* Recieve (interrupt based) GPIO timing signals from `GpioTimerService.js` and send them to the `RowingStatistics.js`;
 * Recieve (interrupt based) Heartrate measurements and sent them to the `RowingStatistics.js`;
 * Recieve the metrics update messages from `RowingStatistics.js` (time-based and state-based updates of metrics) and distribut them to the webclients and blutooth periphials;
 * Handle user input (through webinterface and periphials) and instruct `RowingStatistics.js` to act accordingly;
