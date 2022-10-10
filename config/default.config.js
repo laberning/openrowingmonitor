@@ -37,6 +37,28 @@ export default {
   // Going beyond -7 on a PREEMPT kernel seems to kill the timing of the app
   gpioPriority: -1,
 
+  // GPIO polling interval: this is the interval at which the GPIO is inspected for state
+  // changes on the gpioPin, in microseconds (us).
+  // Valid values are 1 (i.e. 1,000,000 samples per second), 2 (i.e. 500,000 per second),
+  // 4 (i.e. 250,000 per second), 5 (i.e. 200,000 per second) and 10 (i.e. 100,000 per second).
+  // A high sample rate will burden your CPU more. Normal value is 5us.
+  // A raspberry pi 4 can handle a polling interval of 1 us, which results in a 16% CPU load.
+  gpioPollingInterval: 5,
+
+  // Type of flank: what flank should be detected by the GPIO detection?
+  // Valid values are 'Up' for the upward flank, 'Down' for the downward flank, 'Both' for both flanks
+  // In practice, it shouldn't matter much which flank you detect, although in the presence of debounce,
+  // a specific flank might provide better filtering capabilities.
+  // Some machines are even capable of using both, but this requires a strong symmetry in the signal.
+  gpioTriggeredFlank: 'Up',
+
+  // Minumum pulse length in microseconds. This is the minimum pulse length (i.e. a magnet should be
+  // present) before Open Rowing Monitor considers it a signal valid. Increasing this value reduces ghost readings
+  // due to bouncing reed switches etc., which typically are detected as very short measurements in the raw logs.
+  // Making this too long results in missed impulses. Both can be detected in the raw logs easily.
+  // Normal value is 50 us, but for some rowers, values up to 500 us are known to work.
+  gpioMinimumPulseLength: 50,
+
   // Selects the Bluetooth Low Energy Profile
   // Supported modes: FTMS, FTMSBIKE, PM5
   bluetoothMode: 'FTMS',
@@ -81,11 +103,11 @@ export default {
   // Most bike training applications are fine with any device name
   ftmsBikePeripheralName: 'OpenRowingBike',
 
-  // The interval for updating all web clients (i.e. the monitor) in ms.
-  // Advised is to update at least once per second, to make sure the timer moves nice and smoothly.
-  // Around 100 ms results in a very smooth update experience
+  // The interval for updating all web clients (i.e. the monitor) in miliseconds
+  // Advised is to update at least once per second (1000 ms), to make sure the timer moves nice and smoothly.
+  // Around 100 ms results in a very smooth update experience for distance as well
   // Please note that a smaller value will use more network and cpu ressources
-  webUpdateInterval: 80,
+  webUpdateInterval: 200,
 
   // Interval between updates of the bluetooth devices (miliseconds)
   // Advised is to update at least once per second, as consumers expect this interval
