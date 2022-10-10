@@ -60,14 +60,19 @@ function createFlywheel (rowerSettings) {
   maintainMetrics = true
 
   function pushValue (dataPoint) {
-    if (dataPoint <= rowerSettings.minimumTimeBetweenImpulses || dataPoint > (1.7 * lastKnownGoodDatapoint)) {
-      // ToDo: Remove the completely wildly outlying currentDt's
-      // This code contains an open design issue, where this code typically is used in three situations
-      // * At the (re)start of the session, where CurrentDt includes the pause time (which van be minutes to hours). So values above maximumStrokeTimeBeforePause should be ignored completely
-      // * As deviating too long currentDt's, typically when an impuls is missed (i.e. currentDt is around 2 * lastKnownGoodDatapoint). The best solution would be to inject an additional impuls and stop messing with currentDt's
-      // * When values are too small, potentially due to bounce effects in the reed switch.
-      // The below code is extremely crude, but it blunts the effcts of the first two issues. Handling the skipping of metric updates has knock-on effects in RowingStatistics.js, so here we still need to find an elegant solution.
-      dataPoint = 1.7 * lastKnownGoodDatapoint
+    if (dataPoint > rowerSettings.maximumStrokeTimeBeforePause || dataPoint < 0) {
+      // This typicaly happends after a cold start or a pause, we need to fix this as it throws off all timekeeping calculations
+      dataPoint = currentDt.clean()
+    }
+
+    if (dataPoint > rowerSettings.maximumTimeBetweenImpulses) {
+      // This shouldn't happen, but let's log it to clarify there is some issue going on here
+      log.debug(`*** WARNING: currentDt of ${dataPoint} sec is above maximumTimeBetweenImpulses (${rowerSettings.maximumTimeBetweenImpulses} sec)`)
+    }
+
+    if (dataPoint < rowerSettings.minimumTimeBetweenImpulses) {
+      // This shouldn't happen, but let's log it to clarify there is some issue going on here
+      log.debug(`*** WARNING: currentDt of ${dataPoint} sec is above minimumTimeBetweenImpulses (${rowerSettings.minimumTimeBetweenImpulses} sec)`)
     }
 
     currentDt.push(dataPoint)
