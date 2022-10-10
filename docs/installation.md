@@ -83,7 +83,7 @@ How to connect this to your rowing machine is specific to your device. You need 
 * [Concept 2 RowErg](hardware_setup_Concept2_RowErg.md)
 * [Sportstech WRX700](hardware_setup_WRX700.md)
 
-If your machine isn't listed, you can still follow this generic manual. 
+If your machine isn't listed, you can still follow this generic manual.
 
 ![Connecting the reed sensor](img/raspberrypi_reedsensor_wiring.jpg)
 *Connecting the reed sensor*
