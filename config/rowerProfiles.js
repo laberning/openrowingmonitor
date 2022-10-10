@@ -33,9 +33,7 @@ export default {
     // STROKE DETECTION SETTINGS
     // Flank length determines the minimum number of consecutive increasing/decreasing measuments that are needed before the stroke detection
     // considers a drive phase change
-    // numberOfErrorsAllowed allows for a more noisy approach, but shouldn't be needed
     flankLength: 3,
-    numberOfErrorsAllowed: 1,
 
     // This is the minimum force that has to be on the handle before ORM considers it a stroke, in Newtons. So this is about 2 Kg or 4.4 Lbs.
     minumumForceBeforeStroke: 20,
@@ -106,15 +104,14 @@ export default {
     numOfImpulsesPerRevolution: 6,
     minimumTimeBetweenImpulses: 0.005,
     maximumTimeBetweenImpulses: 0.022,
-    flywheelInertia: 0.1016,
-    sprocketRadius: 1.55,
-    flankLength: 11,
-    numberOfErrorsAllowed: 2,
-    minimumStrokeQuality: 0.32,
+    flywheelInertia: 0.10163,
+    sprocketRadius: 1.5,
+    flankLength: 12,
+    minimumStrokeQuality: 0.50,
     minumumRecoverySlope: 0.00070,
     autoAdjustRecoverySlope: true,
-    autoAdjustRecoverySlopeMargin: 0.05,
-    minumumForceBeforeStroke: 12.5,
+    autoAdjustRecoverySlopeMargin: 0.035,
+    minumumForceBeforeStroke: 0,
     minimumDriveTime: 0.46,
     minimumRecoveryTime: 0.90,
     dragFactor: 110,
@@ -152,7 +149,6 @@ export default {
     flywheelInertia: 0.180,
     dragFactor: 225,
     flankLength: 11,
-    numberOfErrorsAllowed: 2,
     minimumStrokeQuality: 0.34,
     minumumRecoverySlope: 0.001,
     autoAdjustRecoverySlope: true,
