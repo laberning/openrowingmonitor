@@ -328,7 +328,7 @@ test('Correct Rower behaviour for three noisefree strokes with dynamic dragfacto
   testStrokeState(rower, 'WaitingForDrive')
   testTotalMovingTimeSinceStart(rower, 1.1137102920000004)
   testTotalNumberOfStrokes(rower, 3)
-  testTotalLinearDistanceSinceStart(rower, 4.433576850630673)
+  testTotalLinearDistanceSinceStart(rower, 4.482375436621591)
   testCycleDuration(rower, 0.36002684500000015)
   testCycleLinearDistance(rower, 1.6103533377002601)
   testCycleLinearVelocity(rower, 4.472870176389929)
@@ -437,7 +437,7 @@ test('A full session for a Concept2 RowErg should produce plausible results', as
   await replayRowingSession(rower.handleRotationImpulse, { filename: 'recordings/Concept2_RowErg_Session_2000meters.csv', realtime: false, loop: false })
 
   testTotalMovingTimeSinceStart(rower, 476.21730295999913)
-  testTotalLinearDistanceSinceStart(rower, 2010.3424000711038)
+  testTotalLinearDistanceSinceStart(rower, 2009.860311629258)
   testTotalNumberOfStrokes(rower, 208)
   // As dragFactor isn't static, it should be updated
   testRecoveryDragFactor(rower, 131.33631595360725)
