@@ -138,11 +138,11 @@ test('Correct Flywheel behaviour for a noisefree stroke', () => {
   flywheel.pushValue(0.021131862)
   flywheel.pushValue(0.021209919)
   testDeltaTime(flywheel, 0.02089567)
-  testSpinningTime(flywheel, 0.45261901530000004)
+  testSpinningTime(flywheel, 0.45433115300000004)
   testAngularPosition(flywheel, 40.84070449666731)
-  testAngularVelocity(flywheel, 82.8344307883191)
-  testAngularAcceleration(flywheel, -31.179572048417487)
-  testTorque(flywheel, -2.431802912439266)
+  testAngularVelocity(flywheel, 88.98063578530606)
+  testAngularAcceleration(flywheel, -25.426721357529768)
+  testTorque(flywheel, -1.750916781277248)
   testDragFactor(flywheel, 0.0001)
   testIsDwelling(flywheel, true)
   testIsUnpowered(flywheel, true)
@@ -271,7 +271,7 @@ test('Correct Flywheel behaviour with a NordicTrack RX800', async () => {
   // Inject 10 strokes
   await replayRowingSession(flywheel.pushValue, { filename: 'recordings/RX800.csv', realtime: false, loop: false })
 
-  testSpinningTime(flywheel, 22.710637130999988)
+  testSpinningTime(flywheel, 22.65622640199999)
   testAngularPosition(flywheel, 1446.7034169780998)
   // As we don't detect strokes here (this is a function of Rower.js, the dragcalculation shouldn't be triggered
   testDragFactor(flywheel, (rowerProfiles.NordicTrack_RX800.dragFactor / 1000000))
@@ -285,7 +285,7 @@ test('Correct Flywheel behaviour with a full session on a SportsTech WRX700', as
 
   // Inject 846 strokes
   await replayRowingSession(flywheel.pushValue, { filename: 'recordings/WRX700_2magnets_session.csv', realtime: false, loop: false })
-  testSpinningTime(flywheel, 2341.3684300762125)
+  testSpinningTime(flywheel, 2342.741183077012)
   testAngularPosition(flywheel, 37337.82868791469)
   // The dragfactor should remain static
   testDragFactor(flywheel, (rowerProfiles.Sportstech_WRX700.dragFactor / 1000000))
@@ -299,7 +299,7 @@ test('A full session for a Concept2 RowErg should produce plausible results', as
 
   await replayRowingSession(flywheel.pushValue, { filename: 'recordings/Concept2_RowErg_Session_2000meters.csv', realtime: false, loop: false })
 
-  testSpinningTime(flywheel, 476.23309445539917)
+  testSpinningTime(flywheel, 476.21730295999913)
   testAngularPosition(flywheel, 55768.505588974804)
   // As we don't detect strokes here (this is a function of Rower.js, the dragcalculation shouldn't be triggered
   testDragFactor(flywheel, (rowerProfiles.Concept2_RowErg.dragFactor / 1000000))
