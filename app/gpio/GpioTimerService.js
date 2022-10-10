@@ -16,9 +16,9 @@ log.setLevel(config.loglevel.default)
 
 export function createGpioTimerService () {
   // Import the settings from the settings file
-  let triggeredFlank = config.gpioTriggeredFlank
-  let pollingInterval = config.gpioPollingInterval
-  let minimumPulseLength = config.gpioMinimumPulseLength
+  const triggeredFlank = config.gpioTriggeredFlank
+  const pollingInterval = config.gpioPollingInterval
+  const minimumPulseLength = config.gpioMinimumPulseLength
 
   if (config.gpioPriority) {
     // setting top (near-real-time) priority for the Gpio process, as we don't want to miss anything
@@ -39,13 +39,13 @@ export function createGpioTimerService () {
   // Configure the sensor readings for one of the Gpio pins of Raspberry Pi
   const sensor = new Gpio(
     config.gpioPin, {
-    mode: Gpio.INPUT,
-    pullUpDown: Gpio.PUD_UP,
-    alert: true
-  })
+      mode: Gpio.INPUT,
+      pullUpDown: Gpio.PUD_UP,
+      alert: true
+    })
 
   // Set a minumum time a level must be stable before an alert event is emitted.
-  sensor.glitchFilter(minimumPulseLength);
+  sensor.glitchFilter(minimumPulseLength)
   log.debug(`Gpio-service: pin number ${config.gpioPin}, polling interval ${pollingInterval} us, triggered on ${triggeredFlank} flank, minimal pulse time ${minimumPulseLength} us`)
 
   // set the default value
@@ -53,7 +53,7 @@ export function createGpioTimerService () {
 
   // Define the alert handler
   sensor.on('alert', (level, currentTick) => {
-    if ((triggeredFlank === 'Both') || (triggeredFlank === 'Down' && level === 0) || (triggeredFlank === 'Up' &&  level === 1)) {
+    if ((triggeredFlank === 'Both') || (triggeredFlank === 'Down' && level === 0) || (triggeredFlank === 'Up' && level === 1)) {
       const currentDt = ((currentTick >> 0) - (previousTick >> 0)) / 1e6
       previousTick = currentTick
       process.send(currentDt)
