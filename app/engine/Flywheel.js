@@ -48,7 +48,6 @@ function createFlywheel (rowerSettings) {
   let _angularAccelerationBeforeFlank
   let _torqueAtBeginFlank
   let _torqueBeforeFlank
-  let lastKnownGoodDatapoint
   let inRecoveryPhase
   let maintainMetrics
   let totalNumberOfImpulses
@@ -76,7 +75,6 @@ function createFlywheel (rowerSettings) {
     }
 
     currentDt.push(dataPoint)
-    lastKnownGoodDatapoint = currentDt.clean()
 
     if (maintainMetrics && (_deltaTime.length() >= flankLength)) {
       // If we maintain metrics, update the angular position, spinning time of the flywheel and the associated metrics,
@@ -247,7 +245,7 @@ function createFlywheel (rowerSettings) {
   }
 
   function deltaTimesAbove (threshold) {
-    if (_deltaTime.numberOfYValuesEqualOrBelow(threshold) <= rowerSettings.numberOfErrorsAllowed && _deltaTime.length() >= flankLength) {
+    if (_deltaTime.numberOfYValuesAbove(threshold) === flankLength) {
       return true
     } else {
       return false
@@ -312,7 +310,6 @@ function createFlywheel (rowerSettings) {
     currentRawTime = 0
     currentAngularDistance = 0
     _deltaTime.push(0, 0)
-    lastKnownGoodDatapoint = rowerSettings.maximumTimeBetweenImpulses
     _angularDistance.push(0, 0)
     _deltaTimeBeforeFlank = 0
     _angularVelocityBeforeFlank = 0
