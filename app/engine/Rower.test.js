@@ -18,7 +18,6 @@ const baseConfig = {
   numOfImpulsesPerRevolution: 6,
   smoothing: 1,
   flankLength: 11,
-  numberOfErrorsAllowed: 2,
   minimumStrokeQuality: 0.30,
   minumumRecoverySlope: 0,
   autoAdjustRecoverySlope: true,
@@ -327,7 +326,7 @@ test('Correct Rower behaviour for three noisefree strokes with dynamic dragfacto
   rower.handleRotationImpulse(0.021131862)
   rower.handleRotationImpulse(0.021209919)
   testStrokeState(rower, 'WaitingForDrive')
-  testTotalMovingTimeSinceStart(rower, 1.1025003730000005)
+  testTotalMovingTimeSinceStart(rower, 1.1137102920000004)
   testTotalNumberOfStrokes(rower, 3)
   testTotalLinearDistanceSinceStart(rower, 4.433576850630673)
   testCycleDuration(rower, 0.36002684500000015)
@@ -405,11 +404,11 @@ test('sample data for NordicTrack RX800 should produce plausible results', async
 
   await replayRowingSession(rower.handleRotationImpulse, { filename: 'recordings/RX800.csv', realtime: false, loop: false })
 
-  testTotalMovingTimeSinceStart(rower, 22.710637130999988)
-  testTotalLinearDistanceSinceStart(rower, 79.38045196125364)
+  testTotalMovingTimeSinceStart(rower, 22.65622640199999)
+  testTotalLinearDistanceSinceStart(rower, 79.38045196124911)
   testTotalNumberOfStrokes(rower, 10)
   // As dragFactor is dynamic, it should have changed
-  testRecoveryDragFactor(rower, 486.7027417634664)
+  testRecoveryDragFactor(rower, 486.7027417632875)
 })
 
 test('A full session for SportsTech WRX700 should produce plausible results', async () => {
@@ -421,7 +420,7 @@ test('A full session for SportsTech WRX700 should produce plausible results', as
 
   await replayRowingSession(rower.handleRotationImpulse, { filename: 'recordings/WRX700_2magnets_session.csv', realtime: false, loop: false })
 
-  testTotalMovingTimeSinceStart(rower, 2341.3684300762125)
+  testTotalMovingTimeSinceStart(rower, 2342.741183077012)
   testTotalLinearDistanceSinceStart(rower, 8410.330084026222)
   testTotalNumberOfStrokes(rower, 846)
   // As dragFactor is static, it should remain in place
@@ -437,7 +436,7 @@ test('A full session for a Concept2 RowErg should produce plausible results', as
 
   await replayRowingSession(rower.handleRotationImpulse, { filename: 'recordings/Concept2_RowErg_Session_2000meters.csv', realtime: false, loop: false })
 
-  testTotalMovingTimeSinceStart(rower, 476.23309445539917)
+  testTotalMovingTimeSinceStart(rower, 476.21730295999913)
   testTotalLinearDistanceSinceStart(rower, 2010.3424000711038)
   testTotalNumberOfStrokes(rower, 208)
   // As dragFactor isn't static, it should be updated
