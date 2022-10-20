@@ -64,7 +64,7 @@ function createRower (rowerSettings) {
       case (_strokeState === 'WaitingForDrive'):
         // We can't change into the "Drive" phase since we are waiting for a drive phase, but there isn't a clear force exerted on the flywheel. So, there is nothing more to do
         break
-      case (_strokeState === 'Drive' && flywheel.isUnpowered() && ((flywheel.spinningTime() - drivePhaseStartTime) >= rowerSettings.minimumDriveTime)):
+      case (_strokeState === 'Drive' && ((flywheel.spinningTime() - drivePhaseStartTime) >= rowerSettings.minimumDriveTime) && flywheel.isUnpowered()):
         // We change into the "Recovery" phase since we have been long enough in the Drive phase, and we see a clear lack  of power exerted on the flywheel
         log.debug(`*** RECOVERY phase started at time: ${flywheel.spinningTime().toFixed(4)} sec`)
         _strokeState = 'Recovery'
@@ -80,14 +80,14 @@ function createRower (rowerSettings) {
         // We stay in the "Drive" phase as the decceleration is lacking
         updateDrivePhase()
         break
-      case (_strokeState === 'Recovery' && flywheel.isDwelling() && (flywheel.spinningTime() - drivePhaseStartTime) >= rowerSettings.maximumStrokeTimeBeforePause):
+      case (_strokeState === 'Recovery' && (flywheel.spinningTime() - drivePhaseStartTime) >= rowerSettings.maximumStrokeTimeBeforePause) && flywheel.isDwelling()):
         // The Flywheel is spinning too slowly to create valid CurrentDt's and the last Drive started over maximumStrokeTime ago, we consider it a pause
         log.debug(`*** PAUSED rowing at time: ${flywheel.spinningTime().toFixed(4)} sec, rower hasn't moved in ${(flywheel.spinningTime() - drivePhaseStartTime).toFixed(4)} seconds and flywheel is dwelling`)
         flywheel.maintainStateOnly()
         _strokeState = 'WaitingForDrive'
         endRecoveryPhase()
         break
-      case (_strokeState === 'Recovery' && flywheel.isPowered() && ((flywheel.spinningTime() - recoveryPhaseStartTime) >= rowerSettings.minimumRecoveryTime)):
+      case (_strokeState === 'Recovery' && ((flywheel.spinningTime() - recoveryPhaseStartTime) >= rowerSettings.minimumRecoveryTime) && flywheel.isPowered()):
         // We change into the "Drive" phase since we have been long enough in the Recovery phase, and we see a clear force
         // exerted on the flywheel
         log.debug(`*** DRIVE phase started at time: ${flywheel.spinningTime().toFixed(4)} sec`)
