@@ -80,7 +80,7 @@ function createRower (rowerSettings) {
         // We stay in the "Drive" phase as the decceleration is lacking
         updateDrivePhase()
         break
-      case (_strokeState === 'Recovery' && (flywheel.spinningTime() - drivePhaseStartTime) >= rowerSettings.maximumStrokeTimeBeforePause) && flywheel.isDwelling()):
+      case (_strokeState === 'Recovery' && ((flywheel.spinningTime() - drivePhaseStartTime) >= rowerSettings.maximumStrokeTimeBeforePause) && flywheel.isDwelling()):
         // The Flywheel is spinning too slowly to create valid CurrentDt's and the last Drive started over maximumStrokeTime ago, we consider it a pause
         log.debug(`*** PAUSED rowing at time: ${flywheel.spinningTime().toFixed(4)} sec, rower hasn't moved in ${(flywheel.spinningTime() - drivePhaseStartTime).toFixed(4)} seconds and flywheel is dwelling`)
         flywheel.maintainStateOnly()
