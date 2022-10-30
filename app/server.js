@@ -31,9 +31,9 @@ for (const [loggerName, logLevel] of Object.entries(config.loglevel)) {
 
 log.info(`==== Open Rowing Monitor ${process.env.npm_package_version || ''} ====\n`)
 
-if (config.gpioPriority) {
-  // setting a higher (near-real-time?) priority for the main process, as we don't want to block the GPIO thread
-  const mainPriority = Math.min((config.gpioPriority + 2), 0)
+if (config.appPriority) {
+  // setting the (near-real-time?) priority for the main process, to prevent blocking the GPIO thread
+  const mainPriority = Math.min((config.appPriority), 0)
   log.debug(`Setting priority for the main server thread to ${mainPriority}`)
   try {
     // setting priority of current process
