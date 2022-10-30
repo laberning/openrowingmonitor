@@ -29,13 +29,15 @@ export default {
   // see: https://www.raspberrypi.org/documentation/configuration/config-txt/gpio.md
   gpioPin: 17,
 
-  // Enable this to boost the system level priority of the thread that measures the rotation
+  // Enable this to boost or reduce the system level priority of the thread that measures the rotation
   // speed of the flywheel. This might improve the precision of the measurements (especially
   // on rowers with a fast spinning flywheel).
-  // This is the Linux NICE level: minimum setting is 0, theoretical maximum setting is -19
+  // This is the Linux NICE level: minimum setting is +19, theoretical maximum setting is -20
   // Setting this below -1 on a non-PREEMPT kernel might cause the app to crash
   // Going beyond -7 on a PREEMPT kernel seems to kill the timing of the app
-  gpioPriority: -1,
+  // 0 keeps the systems default value.
+  // Also note that you will require root permissions if you set anything other than 0 here
+  gpioPriority: 0,
 
   // GPIO polling interval: this is the interval at which the GPIO is inspected for state
   // changes on the gpioPin, in microseconds (us).
