@@ -205,7 +205,7 @@ webServer.on('messageReceived', async (message, client) => {
       workoutUploader.upload(client)
       break
     case 'shutdown':
-      shutdown()
+      await shutdown()
       break
     case 'stravaAuthorizationCode':
       workoutUploader.stravaAuthorizationCode(message.data)
