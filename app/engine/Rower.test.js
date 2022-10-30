@@ -67,7 +67,6 @@ test('Correct Rower behaviour for three noisefree strokes with dynamic dragfacto
     numOfImpulsesPerRevolution: 6,
     smoothing: 1,
     flankLength: 11,
-    numberOfErrorsAllowed: 2,
     minimumStrokeQuality: 0.30,
     minumumRecoverySlope: 0,
     autoAdjustRecoverySlope: true,

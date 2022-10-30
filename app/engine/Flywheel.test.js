@@ -14,7 +14,6 @@ const baseConfig = {
   numOfImpulsesPerRevolution: 6,
   smoothing: 1,
   flankLength: 11,
-  numberOfErrorsAllowed: 2,
   minimumStrokeQuality: 0.30,
   minumumRecoverySlope: 0,
   autoAdjustRecoverySlope: true,
