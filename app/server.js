@@ -52,7 +52,7 @@ const session = {
   targetTime: 0 // Target time in seconds
 }
 
-log.info(`Session settings: distance limit ${(session.targetDistance > 0 ? session.targetDistance : 'none')} meters, time limit ${(session.targetTime > 0 ? session.targetTime : 'none')} secondss\n`)
+log.info(`Session settings: distance limit: ${(session.targetDistance > 0 ? `${session.targetDistance} meters` : 'none')}, time limit: ${(session.targetTime > 0 ? `${session.targetTime} seconds` : 'none')}\n`)
 
 const peripheralManager = createPeripheralManager()
 
