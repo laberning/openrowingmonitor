@@ -61,14 +61,13 @@ print
 print "You should only run this script on a SD Card that contains Raspberry Pi OS (Lite)"
 print "and does not contain any important data."
 
-if [[ -f "/etc/os-release" ]]; then
-  OSID=$(grep -oP '(?<=^ID=).+' /etc/os-release | tr -d '"')
+if [[ -f "/proc/device-tree/model" ]]; then
+  MODEL=$(tr -d '\0' < /proc/device-tree/model)
 else
-  OSID="undefined"
+  MODEL="undefined"
 fi
 
-if [[ $OSID != "raspbian" ]] && [[ $OSID != "debian" ]]; then
-  # Please note: Raspbian Lite 64Bit will identify as "debian"
+if [[ $MODEL != Raspberry* ]]; then
   print
   cancel "This script currently only works on Raspberry Pi OS, you will have to do a manual installation."
 fi
