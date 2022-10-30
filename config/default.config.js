@@ -61,6 +61,16 @@ export default {
   // Normal value is 50 us, but for some rowers, values up to 500 us are known to work.
   gpioMinimumPulseLength: 50,
 
+  // Enable this to boost or reduce the system level priority of the thread that processes the flywheel and HR data
+  // Although this process is not time critical per se, it could get caught up in Linux housekeeping tasks, preventing
+  // it to process data in a timely manner.
+  // This is the Linux NICE level: minimum setting is +19, theoretical maximum setting is -20
+  // Setting this below -1 on a non-PREEMPT kernel might cause the app to crash
+  // Going beyond -5 on a PREEMPT kernel seems to kill the timing of the app
+  // 0 keeps the systems default value.
+  // Also note that you will require root permissions if you set anything other than 0 here
+  appPriority: 0,
+
   // Selects the Bluetooth Low Energy Profile
   // Supported modes: FTMS, FTMSBIKE, PM5
   bluetoothMode: 'FTMS',
