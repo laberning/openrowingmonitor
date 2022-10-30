@@ -11,7 +11,7 @@ import zlib from 'zlib'
 import fs from 'fs/promises'
 import xml2js from 'xml2js'
 import config from '../tools/ConfigManager.js'
-import { createVoMax } from './VO2max.js'
+import { createVO2max } from './VO2max.js'
 import { promisify } from 'util'
 const gzip = promisify(zlib.gzip)
 
@@ -136,11 +136,11 @@ function createWorkoutRecorder () {
     const drag = workout.strokes.reduce((sum, s) => sum + s.dragFactor, 0) / strokes.length
 
     // VO2Max calculation for the remarks section
-    let vomaxoutput = 'UNDEFINED'
-    const VOMax = createVoMax(config)
-    const VOMaxResult = VOMax.calculateVOMax(strokes)
-    if (VOMaxResult > 10 && VOMaxResult < 60) {
-      vomaxoutput = `${VOMaxResult.toFixed(1)} mL/(kg*min)`
+    let VO2maxoutput = 'UNDEFINED'
+    const VO2max = createVO2max(config)
+    const VO2maxResult = VO2max.calculateVO2max(strokes)
+    if (VO2maxResult > 10 && VO2maxResult < 60) {
+      VO2maxoutput = `${VO2maxResult.toFixed(1)} mL/(kg*min)`
     }
 
     // Addition of HRR data
@@ -174,8 +174,8 @@ function createWorkoutRecorder () {
                 Calories: Math.round(lastStroke.totalCalories),
                 /* ToDo Fix issue with IF-statement not being accepted here?
                 if (lastStroke.heartrate !== undefined && lastStroke.heartrate > 30) {
-                  AverageHeartRateBpm: VOMax.averageObservedHR(),
-                  MaximumHeartRateBpm: VOMax.maxObservedHR,
+                  AverageHeartRateBpm: VO2max.averageObservedHR(),
+                  MaximumHeartRateBpm: VO2max.maxObservedHR,
                   //AverageHeartRateBpm: { Value: (workout.strokes.reduce((sum, s) => sum + s.heartrate, 0) / workout.strokes.length).toFixed(2) },
                   //MaximumHeartRateBpm: { Value: Math.round(workout.strokes.map((stroke) => stroke.power).reduce((acc, heartrate) => Math.max(acc, heartrate))) },
                 }
@@ -216,7 +216,7 @@ function createWorkoutRecorder () {
                 }
               }
             ],
-            Notes: `Indoor Rowing, Drag factor: ${drag.toFixed(1)} 10-6 N*m*s2, Estimated VO2Max: ${vomaxoutput}${hrrAdittion}`
+            Notes: `Indoor Rowing, Drag factor: ${drag.toFixed(1)} 10-6 N*m*s2, Estimated VO2Max: ${VO2maxoutput}${hrrAdittion}`
           }
         },
         Author: {

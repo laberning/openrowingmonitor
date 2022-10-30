@@ -10,51 +10,51 @@ import { createBucketedLinearSeries } from './utils/BucketedLinearSeries.js'
 import loglevel from 'loglevel'
 const log = loglevel.getLogger('RowingEngine')
 
-function createVoMax (config) {
+function createVO2max (config) {
   const bucketedLinearSeries = createBucketedLinearSeries(config)
   const minimumValidBrackets = 5.0
   const offset = 90
 
-  function calculateVOMax (metrics) {
-    let projectedVOTwoMax = 0
-    let interpolatedVOTwoMax = 0
+  function calculateVO2max (metrics) {
+    let projectedVO2max = 0
+    let interpolatedVO2max = 0
 
     if (metrics[0].heartrate !== undefined && metrics[metrics.length - 1].heartrate !== undefined && metrics[metrics.length - 1].heartrate >= config.userSettings.restingHR) {
-      projectedVOTwoMax = extrapolatedVOMax(metrics)
+      projectedVO2max = extrapolatedVO2max(metrics)
     }
 
-    interpolatedVOTwoMax = interpolatedVOMax(metrics)
+    interpolatedVO2max = calculateInterpolatedVO2max(metrics)
 
-    if (projectedVOTwoMax >= 10 && projectedVOTwoMax <= 60 && interpolatedVOTwoMax >= 10 && interpolatedVOTwoMax <= 60) {
+    if (projectedVO2max >= 10 && projectedVO2max <= 60 && interpolatedVO2max >= 10 && interpolatedVO2max <= 60) {
       // Both VO2Max calculations have delivered a valid and credible result
-      log.debug(`--- VO2Max calculation delivered two credible results Extrapolated VO2Max: ${projectedVOTwoMax.toFixed(1)} and Interpolated VO2Max: ${interpolatedVOTwoMax.toFixed(1)}`)
-      return ((projectedVOTwoMax + interpolatedVOTwoMax) / 2)
+      log.debug(`--- VO2Max calculation delivered two credible results Extrapolated VO2Max: ${projectedVO2max.toFixed(1)} and Interpolated VO2Max: ${interpolatedVO2max.toFixed(1)}`)
+      return ((projectedVO2max + interpolatedVO2max) / 2)
     } else {
       // One of the calculations has delivered an invalid result
-      if (interpolatedVOTwoMax >= 10 && interpolatedVOTwoMax <= 60) {
+      if (interpolatedVO2max >= 10 && interpolatedVO2max <= 60) {
         // Interpolation has delivered a credible result
-        log.debug(`--- VO2Max calculation delivered one credible result, the Interpolated VO2Max: ${interpolatedVOTwoMax.toFixed(1)}. The Extrapolated VO2Max: ${projectedVOTwoMax.toFixed(1)} was unreliable`)
-        return interpolatedVOTwoMax
+        log.debug(`--- VO2Max calculation delivered one credible result, the Interpolated VO2Max: ${interpolatedVO2max.toFixed(1)}. The Extrapolated VO2Max: ${projectedVO2max.toFixed(1)} was unreliable`)
+        return interpolatedVO2max
       } else {
         // Interpolation hasn't delivered a credible result
-        if (projectedVOTwoMax >= 10 && projectedVOTwoMax <= 60) {
+        if (projectedVO2max >= 10 && projectedVO2max <= 60) {
           // Extrapolation did deliver a credible result
-          log.debug(`--- VO2Max calculation delivered one credible result, the Extrapolated VO2Max: ${projectedVOTwoMax.toFixed(1)}. Interpolated VO2Max: ${interpolatedVOTwoMax.toFixed(1)} was unreliable`)
-          return projectedVOTwoMax
+          log.debug(`--- VO2Max calculation delivered one credible result, the Extrapolated VO2Max: ${projectedVO2max.toFixed(1)}. Interpolated VO2Max: ${interpolatedVO2max.toFixed(1)} was unreliable`)
+          return projectedVO2max
         } else {
           // No credible results at all!
-          log.debug(`--- VO2Max calculation did not deliver any credible results Extrapolated VO2Max: ${projectedVOTwoMax.toFixed(1)}, Interpolated VO2Max: ${interpolatedVOTwoMax.toFixed(1)}`)
+          log.debug(`--- VO2Max calculation did not deliver any credible results Extrapolated VO2Max: ${projectedVO2max.toFixed(1)}, Interpolated VO2Max: ${interpolatedVO2max.toFixed(1)}`)
           return 0
         }
       }
     }
   }
 
-  function extrapolatedVOMax (metrics) {
+  function extrapolatedVO2max (metrics) {
     // This implements the extrapolation-based VO2Max determination
     // Which is based on the extrapolated maximum power output based on the correlation between heartrate and power,
     // Underlying formula's can be found here: https://sportcoaching.co.nz/how-does-garmin-calculate-vo2-max/
-    let ProjectedVOTwoMax
+    let ProjectedVO2max
     let i = 0
     while (i < metrics.length && metrics[i].totalMovingTime < offset) {
       // We skip the first timeperiod as it only depicts the change from a resting HR to a working HR
@@ -72,20 +72,20 @@ function createVoMax (config) {
     if (bucketedLinearSeries.numberOfSamples() >= minimumValidBrackets) {
       const projectedPower = bucketedLinearSeries.projectX(config.userSettings.maxHR)
       if (projectedPower <= config.userSettings.maxPower && projectedPower >= bucketedLinearSeries.maxEncounteredY()) {
-        ProjectedVOTwoMax = ((14.72 * projectedPower) + 250.39) / config.userSettings.weight
-        log.debug(`--- VO2Max Goodness of Fit: ${bucketedLinearSeries.goodnessOfFit().toFixed(6)}, projected power ${projectedPower.toFixed(1)} Watt, extrapolated VO2Max: ${ProjectedVOTwoMax.toFixed(1)}`)
+        ProjectedVO2max = ((14.72 * projectedPower) + 250.39) / config.userSettings.weight
+        log.debug(`--- VO2Max Goodness of Fit: ${bucketedLinearSeries.goodnessOfFit().toFixed(6)}, projected power ${projectedPower.toFixed(1)} Watt, extrapolated VO2Max: ${ProjectedVO2max.toFixed(1)}`)
       } else {
-        ProjectedVOTwoMax = ((14.72 * bucketedLinearSeries.maxEncounteredY()) + 250.39) / config.userSettings.weight
-        log.debug(`--- VO2Max maximum encountered power: ${bucketedLinearSeries.maxEncounteredY().toFixed(1)} Watt, extrapolated VO2Max: ${ProjectedVOTwoMax.toFixed(1)}`)
+        ProjectedVO2max = ((14.72 * bucketedLinearSeries.maxEncounteredY()) + 250.39) / config.userSettings.weight
+        log.debug(`--- VO2Max maximum encountered power: ${bucketedLinearSeries.maxEncounteredY().toFixed(1)} Watt, extrapolated VO2Max: ${ProjectedVO2max.toFixed(1)}`)
       }
     } else {
       log.debug(`--- VO2Max extrapolation failed as there were not enough valid brackets: ${bucketedLinearSeries.numberOfSamples()}`)
-      ProjectedVOTwoMax = 0
+      ProjectedVO2max = 0
     }
-    return ProjectedVOTwoMax
+    return ProjectedVO2max
   }
 
-  function interpolatedVOMax (metrics) {
+  function calculateInterpolatedVO2max (metrics) {
     // This is based on research done by concept2, https://www.concept2.com/indoor-rowers/training/calculators/vo2max-calculator,
     // which determines the VO2Max based on the 2K speed
     const distance = metrics[metrics.length - 1].totalLinearDistance
@@ -155,11 +155,11 @@ function createVoMax (config) {
   }
 
   return {
-    calculateVOMax,
+    calculateVO2max,
     averageObservedHR,
     maxObservedHR,
     reset
   }
 }
 
-export { createVoMax }
+export { createVO2max }
