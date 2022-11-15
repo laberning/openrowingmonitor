@@ -150,7 +150,7 @@ function createRowingStatistics (config, session) {
   // clear the metrics in case the user pauses rowing
   function pauseTraining () {
     log.debug('*** Paused rowing ***')
-    rower.stopMoving()
+    rower.pauseMoving()
     cycleDuration.reset()
     cycleDistance.reset()
     cyclePower.reset()
