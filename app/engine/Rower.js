@@ -299,6 +299,12 @@ function createRower (rowerSettings) {
     _strokeState = 'WaitingForDrive'
   }
 
+  function pauseMoving () {
+    log.debug(`*** PAUSE MOVING command recieved by RowingEngine at time: ${flywheel.spinningTime().toFixed(4)} sec, distance: ${preliminaryTotalLinearDistance.toFixed(2)} meters`)
+    flywheel.maintainStateOnly()
+    _strokeState = 'WaitingForDrive'
+  }
+
   function stopMoving () {
     log.debug(`*** STOP MOVING command recieved by RowingEngine at time: ${flywheel.spinningTime().toFixed(4)} sec, distance: ${preliminaryTotalLinearDistance.toFixed(2)} meters`)
     flywheel.maintainStateOnly()
@@ -330,6 +336,7 @@ function createRower (rowerSettings) {
   return {
     handleRotationImpulse,
     allowMovement,
+    pauseMoving,
     stopMoving,
     strokeState,
     totalNumberOfStrokes,
