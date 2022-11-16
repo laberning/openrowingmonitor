@@ -73,7 +73,7 @@ sequenceDiagram
 
 ### RowingStatistics.js
 
-`RowingStatistics.js` recieves *currentDt* updates, forwards them to `Rower.js` and subsequently inspects `Rower.js` for the resulting strokestate and associated metrics. Based on this inspection, it updates the finite state machine of the sessionstate and the associated metrics (i.e. linear velocity, linear distance, power, etc.). 
+`RowingStatistics.js` recieves *currentDt* updates, forwards them to `Rower.js` and subsequently inspects `Rower.js` for the resulting strokestate and associated metrics. Based on this inspection, it updates the finite state machine of the sessionstate and the associated metrics (i.e. linear velocity, linear distance, power, etc.).
 
 #### sessionStates in RowingStatistics.js
 
