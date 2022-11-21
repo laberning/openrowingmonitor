@@ -179,5 +179,5 @@ export default {
     minumumRecoverySlope: 0.125,
     flywheelInertia: 0.72,
     dragFactor: 32000
-  },
+  }
 }
