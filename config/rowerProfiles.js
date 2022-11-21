@@ -99,7 +99,7 @@ export default {
     magicConstant: 2.8
   },
 
-  // Concept2 RowErg
+  // Concept2 RowErg, Model D, E and RowErg
   Concept2_RowErg: {
     numOfImpulsesPerRevolution: 6,
     minimumTimeBetweenImpulses: 0.005,
@@ -120,21 +120,34 @@ export default {
     dragFactorSmoothing: 3
   },
 
-  // Sportstech WRX700
-  Sportstech_WRX700: {
-    numOfImpulsesPerRevolution: 2,
-    minimumTimeBetweenImpulses: 0.005,
-    maximumTimeBetweenImpulses: 0.5,
-    minumumRecoverySlope: 0.125,
-    flywheelInertia: 0.72,
-    dragFactor: 32000
-  },
-
   // DKN R-320 Air Rower
   DKN_R320: {
     numOfImpulsesPerRevolution: 1,
     flywheelInertia: 0.94,
     dragFactor: 8522
+  },
+
+  // Force USA R3 Air Rower
+  ForceUSA_R3: {
+    numOfImpulsesPerRevolution: 6,
+    minimumTimeBetweenImpulses: 0.005,
+    maximumTimeBetweenImpulses: 0.022,
+    flywheelInertia: 0.1015,
+    flankLength: 10,
+    dragFactor: 135,
+    autoAdjustDragFactor: true,
+    // new engine settings
+    sprocketRadius: 1.5,
+    minimumStrokeQuality: 0.50,
+    minumumRecoverySlope: 0.00070,
+    autoAdjustRecoverySlope: true,
+    autoAdjustRecoverySlopeMargin: 0.035,
+    minumumForceBeforeStroke: 20,
+    minimumDriveTime: 0.46,
+    minimumRecoveryTime: 0.80,
+    minimumDragQuality: 0.83,
+    dragFactorSmoothing: 3,
+    maximumStrokeTimeBeforePause: 4
   },
 
   // NordicTrack RX800 Air Rower
@@ -156,5 +169,15 @@ export default {
     minumumForceBeforeStroke: 80,
     minimumDriveTime: 0.30,
     minimumRecoveryTime: 0.90
-  }
+  },
+
+  // Sportstech WRX700
+  Sportstech_WRX700: {
+    numOfImpulsesPerRevolution: 2,
+    minimumTimeBetweenImpulses: 0.005,
+    maximumTimeBetweenImpulses: 0.5,
+    minumumRecoverySlope: 0.125,
+    flywheelInertia: 0.72,
+    dragFactor: 32000
+  },
 }
