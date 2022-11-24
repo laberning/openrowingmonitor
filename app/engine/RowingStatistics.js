@@ -78,6 +78,8 @@ function createRowingStatistics (config, session) {
         break
       case (sessionStatus !== 'Stopped' && rower.strokeState() === 'Stopped'):
         sessionStatus = 'Stopped'
+        // We need to emit the metrics AFTER the sessionstatus changes to anything other than "Rowing", which forces most merics to zero
+        // This is intended behaviour, as the rower/flywheel indicate the rower has stopped somehow
         stopTraining()
         break
       case (sessionStatus === 'Rowing' && rower.strokeState() === 'WaitingForDrive'):
@@ -146,9 +148,12 @@ function createRowingStatistics (config, session) {
   function stopTraining () {
     rower.stopMoving()
     lastStrokeState = 'Stopped'
-    // We need to emit the metrics BEFORE the sessionstatus changes to anything other than "Rowing", as it forces most merics to zero
+    // Emitting the metrics BEFORE the sessionstatus changes to anything other than "Rowing" forces most merics to zero
+    // As there are more than one way to this method, we FIRST emit the metrics and then set them to zero
+    // If they need to be forced to zero (as the flywheel seems to have stopped), this status has to be set before the call
     emitMetrics('rowingStopped')
     sessionStatus = 'Stopped'
+    postExerciseHR.splice(0, postExerciseHR.length)
     measureRecoveryHR()
   }
 
@@ -164,6 +169,8 @@ function createRowingStatistics (config, session) {
     // We need to emit the metrics BEFORE the sessionstatus changes to anything other than "Rowing", as it forces most merics to zero
     emitMetrics('rowingPaused')
     sessionStatus = 'Paused'
+    postExerciseHR.splice(0, postExerciseHR.length)
+    measureRecoveryHR()
   }
 
   function resetTraining () {
@@ -181,7 +188,7 @@ function createRowingStatistics (config, session) {
     cyclePower.reset()
     strokeCalories = 0
     strokeWork = 0
-    postExerciseHR = []
+    postExerciseHR.splice(0, postExerciseHR.length)
     cycleLinearVelocity.reset()
     lastStrokeState = 'WaitingForDrive'
     emitMetrics('rowingPaused')
