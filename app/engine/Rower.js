@@ -226,6 +226,10 @@ function createRower (rowerSettings) {
     return flywheel.spinningTime()
   }
 
+  function lastStrokeTime () {
+    return drivePhaseStartTime
+  }
+
   function totalLinearDistanceSinceStart () {
     return Math.max(preliminaryTotalLinearDistance, totalLinearDistance)
   }
@@ -340,6 +344,7 @@ function createRower (rowerSettings) {
     stopMoving,
     strokeState,
     totalNumberOfStrokes,
+    lastStrokeTime,
     totalMovingTimeSinceStart,
     totalLinearDistanceSinceStart,
     cycleDuration,
