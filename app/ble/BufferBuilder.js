@@ -47,6 +47,21 @@ export default class BufferBuilder {
     this._dataArray.push(buffer)
   }
 
+  writeUInt32LE (value) {
+    const _value = value || 0
+    const buffer = Buffer.alloc(4)
+    if (value > 0xffffffff || value < 0) {
+      log.warn(new RangeError(`The value of "value" is out of range. It must be >= 0 and <= ${0xffffffff}. Received ${value}`))
+    } else {
+      try {
+        buffer.writeUint32LE(_value)
+      } catch (error) {
+        log.warn(error)
+      }
+    }
+    this._dataArray.push(buffer)
+  }
+
   getBuffer () {
     return Buffer.concat(this._dataArray)
   }
