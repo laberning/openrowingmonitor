@@ -103,14 +103,20 @@ export class DashboardActions extends AppElement {
 
   peripheralMode () {
     const value = this.appState?.config?.peripheralMode
-    if (value === 'PM5') {
-      return 'C2 PM5'
-    } else if (value === 'FTMSBIKE') {
-      return 'FTMS Bike'
-    } else if (value === 'FTMS') {
-      return 'FTMS Rower'
-    } else {
-      return ''
+
+    switch (value) {
+      case 'PM5':
+        return 'C2 PM5'
+      case 'FTMSBIKE':
+        return 'FTMS Bike'
+      case 'CSC':
+        return 'CSC'
+      case 'CPS':
+        return 'CPS'
+      case 'FTMS':
+        return 'FTMS Rower'
+      default:
+        return ''
     }
   }
 
