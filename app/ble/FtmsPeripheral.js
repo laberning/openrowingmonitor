@@ -13,14 +13,15 @@
 */
 import bleno from '@abandonware/bleno'
 import FitnessMachineService from './ftms/FitnessMachineService.js'
-// import DeviceInformationService from './ftms/DeviceInformationService.js'
 import config from '../tools/ConfigManager.js'
 import log from 'loglevel'
+import DeviceInformationService from './common/DeviceInformationService.js'
+import AdvertisingDataBuilder from './common/AdvertisingDataBuilder.js'
 
 function createFtmsPeripheral (controlCallback, options) {
   const peripheralName = options?.simulateIndoorBike ? config.ftmsBikePeripheralName : config.ftmsRowerPeripheralName
   const fitnessMachineService = new FitnessMachineService(options, controlPointCallback)
-  // const deviceInformationService = new DeviceInformationService()
+  const deviceInformationService = new DeviceInformationService()
 
   bleno.on('stateChange', (state) => {
     triggerAdvertising(state)
@@ -29,8 +30,7 @@ function createFtmsPeripheral (controlCallback, options) {
   bleno.on('advertisingStart', (error) => {
     if (!error) {
       bleno.setServices(
-        // [fitnessMachineService, deviceInformationService],
-        [fitnessMachineService],
+        [fitnessMachineService, deviceInformationService],
         (error) => {
           if (error) log.error(error)
         })
@@ -85,10 +85,13 @@ function createFtmsPeripheral (controlCallback, options) {
   function triggerAdvertising (eventState) {
     const activeState = eventState || bleno.state
     if (activeState === 'poweredOn') {
-      bleno.startAdvertising(
-        peripheralName,
-        // [fitnessMachineService.uuid, deviceInformationService.uuid],
-        [fitnessMachineService.uuid],
+      const advertisingBuilder = new AdvertisingDataBuilder([fitnessMachineService.uuid])
+      advertisingBuilder.setShortName(peripheralName)
+      advertisingBuilder.setLongName(peripheralName)
+
+      bleno.startAdvertisingWithEIRData(
+        advertisingBuilder.buildAppearanceData(),
+        advertisingBuilder.buildScanData(),
         (error) => {
           if (error) log.error(error)
         }
