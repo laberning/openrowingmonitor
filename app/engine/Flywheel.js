@@ -56,11 +56,11 @@ function createFlywheel (rowerSettings) {
   let currentRawTime
   let currentAngularDistance
   reset()
-  maintainMetrics = true
 
   function pushValue (dataPoint) {
     if (dataPoint > rowerSettings.maximumStrokeTimeBeforePause || dataPoint < 0) {
       // This typicaly happends after a cold start or a pause, we need to fix this as it throws off all timekeeping calculations
+      log.debug(`*** WARNING: currentDt of ${dataPoint} sec isn't between 0 and maximumStrokeTimeBeforePause (${rowerSettings.maximumStrokeTimeBeforePause} sec)`)
       dataPoint = currentDt.clean()
     }
 
@@ -227,6 +227,16 @@ function createFlywheel (rowerSettings) {
     }
   }
 
+  function isAboveMinimumSpeed () {
+    // Check if the flywheel has reached its minimum speed. We conclude this based on all CurrentDt's in the flank are below
+    // the maximum, indicating a sufficiently fast flywheel
+    if (deltaTimesEqualorBelow(rowerSettings.maximumTimeBetweenImpulses)) {
+      return true
+    } else {
+      return false
+    }
+  }
+
   function isUnpowered () {
     if ((deltaTimeSlopeAbove(minumumRecoverySlope.clean()) || torqueAbsent()) && _deltaTime.length() >= flankLength) {
       // We reached the minimum number of increasing currentDt values
@@ -246,6 +256,14 @@ function createFlywheel (rowerSettings) {
 
   function deltaTimesAbove (threshold) {
     if (_deltaTime.numberOfYValuesAbove(threshold) === flankLength) {
+      return true
+    } else {
+      return false
+    }
+  }
+
+  function deltaTimesEqualorBelow (threshold) {
+    if (_deltaTime.numberOfYValuesEqualOrBelow(threshold) === flankLength) {
       return true
     } else {
       return false
@@ -332,6 +350,7 @@ function createFlywheel (rowerSettings) {
     torque,
     dragFactor,
     isDwelling,
+    isAboveMinimumSpeed,
     isUnpowered,
     isPowered
   }
