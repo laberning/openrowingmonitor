@@ -110,9 +110,9 @@ export class DashboardActions extends AppElement {
       case 'FTMSBIKE':
         return 'FTMS Bike'
       case 'CSC':
-        return 'CSC'
+        return 'BLE Bike Speed + Cadence'
       case 'CPS':
-        return 'CPS'
+        return 'BLE Bike Power'
       case 'FTMS':
         return 'FTMS Rower'
       default:
