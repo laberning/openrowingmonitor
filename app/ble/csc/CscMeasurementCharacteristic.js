@@ -61,7 +61,7 @@ export default class CyclingSpeedCadenceMeasurementCharacteristic extends bleno.
       bufferBuilder.writeUInt16LE(Math.round(data.totalNumberOfStrokes))
 
       // last stroke time time (ushort with 1024 resolution, resetting in every 64sec)
-      bufferBuilder.writeUInt16LE(Math.round(data.lastStrokeTime * 1024) % Math.pow(2, 16))
+      bufferBuilder.writeUInt16LE(Math.round(data.driveLastStartTime * 1024) % Math.pow(2, 16))
 
       const buffer = bufferBuilder.getBuffer()
       if (buffer.length > this._subscriberMaxValueSize) {

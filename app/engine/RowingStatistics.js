@@ -30,7 +30,7 @@ function createRowingStatistics (config, session) {
   let totalLinearDistance = 0.0
   let totalMovingTime = 0
   let totalNumberOfStrokes = 0
-  let lastStrokeTime = 0
+  let driveLastStartTime = 0
   let strokeCalories = 0
   let strokeWork = 0
   const calories = createOLSLinearSeries()
@@ -182,7 +182,7 @@ function createRowingStatistics (config, session) {
     totalMovingTime = 0
     totalLinearDistance = 0.0
     totalNumberOfStrokes = -1
-    lastStrokeTime = 0
+    driveLastStartTime = 0
     distanceOverTime.reset()
     driveDuration.reset()
     cycleDuration.reset()
@@ -231,7 +231,7 @@ function createRowingStatistics (config, session) {
   // initiated when the stroke state changes
   function handleRecoveryEnd () {
     totalNumberOfStrokes = rower.totalNumberOfStrokes()
-    lastStrokeTime = rower.lastStrokeTime()
+    driveLastStartTime = rower.driveLastStartTime()
     recoveryDuration.push(rower.recoveryDuration())
     dragFactor = rower.recoveryDragFactor()
 
@@ -298,7 +298,7 @@ function createRowingStatistics (config, session) {
       sessionStatus,
       strokeState: rower.strokeState(),
       totalMovingTime: totalMovingTime > 0 ? totalMovingTime : 0,
-      lastStrokeTime: lastStrokeTime > 0 ? lastStrokeTime : 0,
+      driveLastStartTime: driveLastStartTime > 0 ? driveLastStartTime : 0,
       totalMovingTimeFormatted: session.targetTime > 0 ? secondsToTimeString(Math.round(Math.max(session.targetTime - totalMovingTime), 0)) : secondsToTimeString(Math.round(totalMovingTime)),
       totalNumberOfStrokes: totalNumberOfStrokes > 0 ? totalNumberOfStrokes : 0,
       totalLinearDistance: totalLinearDistance > 0 ? totalLinearDistance : 0, // meters
