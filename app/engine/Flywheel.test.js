@@ -76,8 +76,12 @@ test('Correct Flywheel behaviour for a noisefree stroke', () => {
   flywheel.pushValue(0.011062297)
   flywheel.pushValue(0.011051853)
   flywheel.pushValue(0.010973313)
+  testIsAboveMinimumSpeed(flywheel, false)
   flywheel.pushValue(0.010919756)
+  testIsAboveMinimumSpeed(flywheel, true)
+  flywheel.maintainStateAndMetrics()
   flywheel.pushValue(0.01086431)
+  testIsAboveMinimumSpeed(flywheel, true)
   flywheel.pushValue(0.010800864)
   flywheel.pushValue(0.010956987)
   flywheel.pushValue(0.010653396)
@@ -240,6 +244,7 @@ test('Correct Flywheel behaviour with a SportsTech WRX700', async () => {
   testDragFactor(flywheel, (rowerProfiles.Sportstech_WRX700.dragFactor / 1000000))
 
   // Inject 16 strokes
+  flywheel.maintainStateAndMetrics()
   await replayRowingSession(flywheel.pushValue, { filename: 'recordings/WRX700_2magnets.csv', realtime: false, loop: false })
   testSpinningTime(flywheel, 46.302522627)
   testAngularPosition(flywheel, 741.4158662471912)
@@ -253,6 +258,7 @@ test('Correct Flywheel behaviour with a DKN R-320', async () => {
   testDragFactor(flywheel, (rowerProfiles.DKN_R320.dragFactor / 1000000))
 
   // Inject 10 strokes
+  flywheel.maintainStateAndMetrics()
   await replayRowingSession(flywheel.pushValue, { filename: 'recordings/DKNR320.csv', realtime: false, loop: false })
 
   testSpinningTime(flywheel, 22.249536391000003)
@@ -268,6 +274,7 @@ test('Correct Flywheel behaviour with a NordicTrack RX800', async () => {
   testDragFactor(flywheel, (rowerProfiles.NordicTrack_RX800.dragFactor / 1000000))
 
   // Inject 10 strokes
+  flywheel.maintainStateAndMetrics()
   await replayRowingSession(flywheel.pushValue, { filename: 'recordings/RX800.csv', realtime: false, loop: false })
 
   testSpinningTime(flywheel, 22.65622640199999)
@@ -283,6 +290,7 @@ test('Correct Flywheel behaviour with a full session on a SportsTech WRX700', as
   testDragFactor(flywheel, (rowerProfiles.Sportstech_WRX700.dragFactor / 1000000))
 
   // Inject 846 strokes
+  flywheel.maintainStateAndMetrics()
   await replayRowingSession(flywheel.pushValue, { filename: 'recordings/WRX700_2magnets_session.csv', realtime: false, loop: false })
   testSpinningTime(flywheel, 2342.741183077012)
   testAngularPosition(flywheel, 37337.82868791469)
@@ -296,6 +304,7 @@ test('A full session for a Concept2 RowErg should produce plausible results', as
   testAngularPosition(flywheel, 0)
   testDragFactor(flywheel, (rowerProfiles.Concept2_RowErg.dragFactor / 1000000))
 
+  flywheel.maintainStateAndMetrics()
   await replayRowingSession(flywheel.pushValue, { filename: 'recordings/Concept2_RowErg_Session_2000meters.csv', realtime: false, loop: false })
 
   testSpinningTime(flywheel, 476.21730295999913)
@@ -333,6 +342,10 @@ function testTorque (flywheel, expectedValue) {
 
 function testDragFactor (flywheel, expectedValue) {
   assert.ok(flywheel.dragFactor() === expectedValue, `Drag Factor should be ${expectedValue} N*m*s^2 at ${flywheel.spinningTime()} sec, is ${flywheel.dragFactor()}`)
+}
+
+function testIsAboveMinimumSpeed (flywheel, expectedValue) {
+  assert.ok(flywheel.isAboveMinimumSpeed() === expectedValue, `isAboveMinimumSpeed should be ${expectedValue} at ${flywheel.spinningTime()} sec, is ${flywheel.isAboveMinimumSpeed()}`)
 }
 
 function testIsDwelling (flywheel, expectedValue) {

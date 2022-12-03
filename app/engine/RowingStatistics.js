@@ -299,7 +299,7 @@ function createRowingStatistics (config, session) {
       strokeState: rower.strokeState(),
       totalMovingTime: totalMovingTime > 0 ? totalMovingTime : 0,
       driveLastStartTime: driveLastStartTime > 0 ? driveLastStartTime : 0,
-      totalMovingTimeFormatted: session.targetTime > 0 ? secondsToTimeString(Math.round(Math.max(session.targetTime - totalMovingTime), 0)) : secondsToTimeString(Math.round(totalMovingTime)),
+      totalMovingTimeFormatted: session.targetTime > 0 ? secondsToTimeString(Math.round(Math.max(session.targetTime - totalMovingTime, 0))) : secondsToTimeString(Math.round(totalMovingTime)),
       totalNumberOfStrokes: totalNumberOfStrokes > 0 ? totalNumberOfStrokes : 0,
       totalLinearDistance: totalLinearDistance > 0 ? totalLinearDistance : 0, // meters
       totalLinearDistanceFormatted: session.targetDistance > 0 ? Math.max(session.targetDistance - totalLinearDistance, 0) : totalLinearDistance,
@@ -355,6 +355,7 @@ function createRowingStatistics (config, session) {
   return Object.assign(emitter, {
     handleHeartrateMeasurement,
     handleRotationImpulse,
+    pause: pauseTraining,
     stop: stopTraining,
     resume: allowResumeTraining,
     reset: resetTraining
