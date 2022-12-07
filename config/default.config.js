@@ -68,11 +68,16 @@ export default {
   // Setting this below -1 on a non-PREEMPT kernel might cause the app to crash
   // Going beyond -5 on a PREEMPT kernel seems to kill the timing of the app
   // 0 keeps the systems default value.
+  // Please make sure the app has a less high priority than gpioPriority
   // Also note that you will require root permissions if you set anything other than 0 here
   appPriority: 0,
 
-  // Selects the Bluetooth Low Energy Profile
-  // Supported modes: FTMS, FTMSBIKE, PM5, CSC, CPS
+  // Selects the Bluetooth Low Energy Profile that is broadcasted to external peripherals and apps. Supported modes:
+  // - PM5: the Concept2 PM5 emulator (not functionally complete yet)
+  // - FTMS: the FTMS profile for rowing machines
+  // - FTMSBIKE: The FTMS profile is used by Smart Bike Trainers (please note: the speed and power are still aimed for rowing, NOT for a bike!)
+  // - CPS: The BLE Cycling Power Profile simulates a bike for more modern Garmin watches
+  // - CSC: The BLE Cycling Speed and Cadence Profile simulates a bike for older Garmin watches
   bluetoothMode: 'FTMS',
 
   // Turn this on if you want support for Bluetooth Low Energy heart rate monitors
@@ -84,6 +89,31 @@ export default {
   // - Garmin USB or USB2 ANT+ or an off-brand clone of it (ID 0x1008)
   // - Garmin mini ANT+ (ID 0x1009)
   heartrateMonitorANT: false,
+
+  // Defines the name that is used to announce the FTMS Rower via Bluetooth Low Energy (BLE)
+  // Some rowing training applications expect that the rowing device is announced with a certain name
+  ftmsRowerPeripheralName: 'OpenRowingMonitor',
+
+  // Defines the name that is used to announce the FTMS Bike via Bluetooth Low Energy (BLE)
+  // Most bike training applications are fine with any device name
+  ftmsBikePeripheralName: 'OpenRowingBike',
+
+  // The interval for updating all web clients (i.e. the monitor) in miliseconds
+  // Advised is to update at least once per second (1000 ms), to make sure the timer moves nice and smoothly.
+  // Around 100 ms results in a very smooth update experience for distance as well
+  // Please note that a smaller value will use more network and cpu ressources
+  webUpdateInterval: 200,
+
+  // Interval between updates of the bluetooth devices (miliseconds)
+  // Advised is to update at least once per second, as consumers expect this interval
+  // Some apps, like EXR like a more frequent interval of 200 ms to better sync the stroke
+  peripheralUpdateInterval: 1000,
+
+  // The number of stroke phases (i.e. Drive or Recovery) used to smoothen the data displayed on your
+  // screens (i.e. the monitor, but also bluetooth devices, etc.) and recorded data. A nice smooth experience is found at 6
+  // phases, a much more volatile (but more accurate and responsive) is found around 3. The minimum is 2,
+  // but for recreational rowers that might feel much too restless to be useful
+  numOfPhasesForAveragingScreenData: 6,
 
   // The directory in which to store user specific content
   // currently this directory holds the recorded training sessions
@@ -106,31 +136,6 @@ export default {
 
   // Apply gzip compression to the raw sensor data recording files (csv.gz)
   gzipRawDataFiles: true,
-
-  // Defines the name that is used to announce the FTMS Rower via Bluetooth Low Energy (BLE)
-  // Some rowing training applications expect that the rowing device is announced with a certain name
-  ftmsRowerPeripheralName: 'OpenRowingMonitor',
-
-  // Defines the name that is used to announce the FTMS Bike via Bluetooth Low Energy (BLE)
-  // Most bike training applications are fine with any device name
-  ftmsBikePeripheralName: 'OpenRowingBike',
-
-  // The interval for updating all web clients (i.e. the monitor) in miliseconds
-  // Advised is to update at least once per second (1000 ms), to make sure the timer moves nice and smoothly.
-  // Around 100 ms results in a very smooth update experience for distance as well
-  // Please note that a smaller value will use more network and cpu ressources
-  webUpdateInterval: 200,
-
-  // Interval between updates of the bluetooth devices (miliseconds)
-  // Advised is to update at least once per second, as consumers expect this interval
-  // Some apps, like EXR like a more frequent interval of 200 ms to better sync the stroke
-  peripheralUpdateInterval: 1000,
-
-  // The number of stroke phases (i.e. Drive or Recovery) used to smoothen the data displayed on your
-  // screens (i.e. the monitor, but also bluetooth devices, etc.). A nice smooth experience is found at 6
-  // phases, a much more volatile (but more accurate and responsive) is found around 3. The minimum is 2,
-  // but for recreational rowers that might feel much too restless to be useful
-  numOfPhasesForAveragingScreenData: 6,
 
   // EXPERIMENTAL: Settings used for the VO2 Max calculation that is embedded in the tcx file comments
   userSettings: {
