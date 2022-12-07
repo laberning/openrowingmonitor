@@ -72,7 +72,7 @@ export default {
   appPriority: 0,
 
   // Selects the Bluetooth Low Energy Profile
-  // Supported modes: FTMS, FTMSBIKE, PM5
+  // Supported modes: FTMS, FTMSBIKE, PM5, CSC, CPS
   bluetoothMode: 'FTMS',
 
   // Turn this on if you want support for Bluetooth Low Energy heart rate monitors

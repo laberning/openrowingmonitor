@@ -99,6 +99,25 @@ export default {
     magicConstant: 2.8
   },
 
+  // Cheap Clone of Concept2 RowErg Model D
+  // https://zocobodyfit.ro/produs/aparat-de-vaslit-zoco-body-fit-air-rower-pliabil-ecran-lcd-eficient-si-util-negru/
+  Generic_Air_Rower: {
+    numOfImpulsesPerRevolution: 1,
+    sprocketRadius: 1.55,
+    minimumTimeBetweenImpulses: 0.007,
+    smoothing: 1,
+    flankLength: 6,
+    minumumForceBeforeStroke: 2,
+    minimumStrokeQuality: 0.6,
+    minimumDriveTime: 0.200, // minimum time of the drive phase
+    minimumRecoveryTime: 0.600, // minimum time of the recovery phase
+    dragFactor: 108,
+    autoAdjustDragFactor: true,
+    dragFactorSmoothing: 1,
+    minimumDragQuality: 0.97,
+    flywheelInertia: 0.073,
+    maximumStrokeTimeBeforePause: 6.0
+  },
   // Concept2 RowErg, Model D, E and RowErg
   Concept2_RowErg: {
     numOfImpulsesPerRevolution: 6,

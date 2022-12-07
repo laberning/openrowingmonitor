@@ -11,7 +11,7 @@ export const APP_STATE = {
   // contains all the rowing metrics that are delivered from the backend
   metrics: {},
   config: {
-    // currently can be FTMS, FTMSBIKE or PM5
+    // currently can be FTMS, FTMSBIKE, PM5, CSC, CPS
     peripheralMode: '',
     // true if upload to strava is enabled
     stravaUploadEnabled: false,
