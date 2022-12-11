@@ -48,7 +48,6 @@ function createFlywheel (rowerSettings) {
   let _angularAccelerationBeforeFlank
   let _torqueAtBeginFlank
   let _torqueBeforeFlank
-  let lastKnownGoodDatapoint
   let inRecoveryPhase
   let maintainMetrics
   let totalNumberOfImpulses
@@ -331,7 +330,6 @@ function createFlywheel (rowerSettings) {
     currentRawTime = 0
     currentAngularDistance = 0
     _deltaTime.push(0, 0)
-    lastKnownGoodDatapoint = rowerSettings.maximumTimeBetweenImpulses
     _angularDistance.push(0, 0)
     _deltaTimeBeforeFlank = 0
     _angularVelocityBeforeFlank = 0
