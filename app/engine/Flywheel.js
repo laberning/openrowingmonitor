@@ -56,11 +56,11 @@ function createFlywheel (rowerSettings) {
   let currentRawTime
   let currentAngularDistance
   reset()
+  maintainMetrics = true
 
   function pushValue (dataPoint) {
     if (dataPoint > rowerSettings.maximumStrokeTimeBeforePause || dataPoint < 0) {
       // This typicaly happends after a cold start or a pause, we need to fix this as it throws off all timekeeping calculations
-      log.debug(`*** WARNING: currentDt of ${dataPoint} sec isn't between 0 and maximumStrokeTimeBeforePause (${rowerSettings.maximumStrokeTimeBeforePause} sec)`)
       dataPoint = currentDt.clean()
     }
 
@@ -87,7 +87,7 @@ function createFlywheel (rowerSettings) {
       _angularAccelerationBeforeFlank = _angularAccelerationAtBeginFlank
       _torqueBeforeFlank = _torqueAtBeginFlank
 
-      // Feed the drag calculation,  as we didn't reset the Semaphore in the previous cycle based on the current flank
+      // Feed the drag calculation, as we didn't reset the Semaphore in the previous cycle based on the current flank
       if (inRecoveryPhase) {
         recoveryDeltaTime.push(totalTimeSpinning, _deltaTimeBeforeFlank)
       }
@@ -108,7 +108,7 @@ function createFlywheel (rowerSettings) {
     currentCleanTime += currentDt.clean()
     _angularDistance.push(currentCleanTime, currentAngularDistance)
 
-    // Let's update the matrix and  calculate the angular velocity and acceleration
+    // Let's update the matrix and calculate the angular velocity and acceleration
     if (_angularVelocityMatrix.length >= flankLength) {
       // The angularVelocityMatrix has reached its maximum length
       _angularVelocityMatrix.shift()
@@ -218,19 +218,9 @@ function createFlywheel (rowerSettings) {
   }
 
   function isDwelling () {
-    // Check if the flywheel is spinning down beyond a recovry phase indicating that the rower has stopped rowing
+    // Check if the flywheel is spinning down beyond a recovery phase indicating that the rower has stopped rowing
     // We conclude this based on all CurrentDt's in the flank are above the maximum, indicating a spinning down flywheel
     if (deltaTimeSlopeAbove(0) && deltaTimesAbove(rowerSettings.maximumTimeBetweenImpulses)) {
-      return true
-    } else {
-      return false
-    }
-  }
-
-  function isAboveMinimumSpeed () {
-    // Check if the flywheel has reached its minimum speed. We conclude this based on all CurrentDt's in the flank are below
-    // the maximum, indicating a sufficiently fast flywheel
-    if (deltaTimesEqualorBelow(rowerSettings.maximumTimeBetweenImpulses)) {
       return true
     } else {
       return false
@@ -262,19 +252,12 @@ function createFlywheel (rowerSettings) {
     }
   }
 
-  function deltaTimesEqualorBelow (threshold) {
-    if (_deltaTime.numberOfYValuesEqualOrBelow(threshold) === flankLength) {
-      return true
-    } else {
-      return false
-    }
-  }
-
   function deltaTimeSlopeBelow (threshold) {
     // This is a typical indication that the flywheel is accelerating. We use the slope of successive currentDt's
-    // A (more) negative slope indicates a powered flywheel. When set to 0, it determines whether the DeltaT's are decreasing
+    // As this acceleration is far from linear, the GoodnessOfFit indication can't be depended on, and thus should be omitted
+    // A (more) negative slope indicates CurrentDt becoming smaller and thus a powered flywheel. When set to 0, it determines whether the DeltaT's are decreasing
     // When set to a value below 0, it will become more stringent. In automatic, a percentage of the current slope (i.e. dragfactor) is used
-    if (_deltaTime.slope() < threshold && _deltaTime.goodnessOfFit() >= strokedetectionMinimalGoodnessOfFit && _deltaTime.length() >= flankLength) {
+    if (_deltaTime.slope() < threshold && _deltaTime.length() >= flankLength) {
       return true
     } else {
       return false
@@ -283,7 +266,7 @@ function createFlywheel (rowerSettings) {
 
   function deltaTimeSlopeAbove (threshold) {
     // This is a typical indication that the flywheel is deccelerating. We use the slope of successive currentDt's
-    // A (more) positive slope indicates a unpowered flywheel. When set to 0,  it determines whether the DeltaT's are increasing
+    // A (more) positive slope indicates a unpowered flywheel. When set to 0, it determines whether the DeltaT's are increasing
     // When set to a value below 0, it will become more stringent as it will detect a power inconsistent with the drag
     // Typically, a percentage of the current slope (i.e. dragfactor) is use
     if (_deltaTime.slope() >= threshold && _deltaTime.goodnessOfFit() >= strokedetectionMinimalGoodnessOfFit && _deltaTime.length() >= flankLength) {
@@ -350,9 +333,9 @@ function createFlywheel (rowerSettings) {
     torque,
     dragFactor,
     isDwelling,
-    isAboveMinimumSpeed,
     isUnpowered,
-    isPowered
+    isPowered,
+    reset // added to ensure timer is reset when user pushes reset button on web client
   }
 }
 
