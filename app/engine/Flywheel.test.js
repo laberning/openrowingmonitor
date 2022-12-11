@@ -57,6 +57,7 @@ test('Correct Flywheel behaviour at initialisation', () => {
 // Test behaviour for perfect stroke
 test('Correct Flywheel behaviour for a noisefree stroke', () => {
   const flywheel = createFlywheel(baseConfig)
+  flywheel.maintainStateAndMetrics()
   testDeltaTime(flywheel, 0)
   testSpinningTime(flywheel, 0)
   testAngularPosition(flywheel, 0)
@@ -166,6 +167,7 @@ test('Correct Flywheel behaviour for a noisefree stroke', () => {
 // Test behaviour for not maintaining metrics
 test('Correct Flywheel behaviour at maintainStateOnly', () => {
   const flywheel = createFlywheel(baseConfig)
+  flywheel.maintainStateAndMetrics()
   testDeltaTime(flywheel, 0)
   testSpinningTime(flywheel, 0)
   testAngularPosition(flywheel, 0)
@@ -240,6 +242,7 @@ test('Correct Flywheel behaviour with a SportsTech WRX700', async () => {
   testDragFactor(flywheel, (rowerProfiles.Sportstech_WRX700.dragFactor / 1000000))
 
   // Inject 16 strokes
+  flywheel.maintainStateAndMetrics()
   await replayRowingSession(flywheel.pushValue, { filename: 'recordings/WRX700_2magnets.csv', realtime: false, loop: false })
   testSpinningTime(flywheel, 46.302522627)
   testAngularPosition(flywheel, 741.4158662471912)
@@ -253,6 +256,7 @@ test('Correct Flywheel behaviour with a DKN R-320', async () => {
   testDragFactor(flywheel, (rowerProfiles.DKN_R320.dragFactor / 1000000))
 
   // Inject 10 strokes
+  flywheel.maintainStateAndMetrics()
   await replayRowingSession(flywheel.pushValue, { filename: 'recordings/DKNR320.csv', realtime: false, loop: false })
 
   testSpinningTime(flywheel, 22.249536391000003)
@@ -268,6 +272,7 @@ test('Correct Flywheel behaviour with a NordicTrack RX800', async () => {
   testDragFactor(flywheel, (rowerProfiles.NordicTrack_RX800.dragFactor / 1000000))
 
   // Inject 10 strokes
+  flywheel.maintainStateAndMetrics()
   await replayRowingSession(flywheel.pushValue, { filename: 'recordings/RX800.csv', realtime: false, loop: false })
 
   testSpinningTime(flywheel, 22.65622640199999)
@@ -283,6 +288,7 @@ test('Correct Flywheel behaviour with a full session on a SportsTech WRX700', as
   testDragFactor(flywheel, (rowerProfiles.Sportstech_WRX700.dragFactor / 1000000))
 
   // Inject 846 strokes
+  flywheel.maintainStateAndMetrics()
   await replayRowingSession(flywheel.pushValue, { filename: 'recordings/WRX700_2magnets_session.csv', realtime: false, loop: false })
   testSpinningTime(flywheel, 2342.741183077012)
   testAngularPosition(flywheel, 37337.82868791469)
@@ -296,8 +302,8 @@ test('A full session for a Concept2 RowErg should produce plausible results', as
   testAngularPosition(flywheel, 0)
   testDragFactor(flywheel, (rowerProfiles.Concept2_RowErg.dragFactor / 1000000))
 
+  flywheel.maintainStateAndMetrics()
   await replayRowingSession(flywheel.pushValue, { filename: 'recordings/Concept2_RowErg_Session_2000meters.csv', realtime: false, loop: false })
-
   testSpinningTime(flywheel, 591.0432650000008)
   testAngularPosition(flywheel, 65961.92655232249)
   // As we don't detect strokes here (this is a function of Rower.js, the dragcalculation shouldn't be triggered
