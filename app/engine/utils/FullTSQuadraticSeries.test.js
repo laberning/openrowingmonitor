@@ -188,80 +188,80 @@ test('Quadratic Approximation on function y = 4 * Math.pow(x, 2) + 4 * x + 4, wi
   testCoefficientC(dataSeries, -195)
   dataSeries.push(-8, 229)
   testCoefficientA(dataSeries, 4)
-  testCoefficientB(dataSeries, 4.666666666666666)
-  testCoefficientC(dataSeries, -48.333333333333336)
+  testCoefficientB(dataSeries, 4)
+  testCoefficientC(dataSeries, 3.6666666666666643) // This is quite acceptable as ORM ignores the C
   dataSeries.push(-7, 171)
   testCoefficientA(dataSeries, 3.666666666666667)
-  testCoefficientB(dataSeries, -2.3333333333333335)
-  testCoefficientC(dataSeries, -22.666666666666668)
+  testCoefficientB(dataSeries, -1.8333333333333335)
+  testCoefficientC(dataSeries, -20.916666666666682)
   dataSeries.push(-6, 125)
   testCoefficientA(dataSeries, 4)
-  testCoefficientB(dataSeries, 4.533333333333333)
-  testCoefficientC(dataSeries, 4)
+  testCoefficientB(dataSeries, 4)
+  testCoefficientC(dataSeries, 3.799999999999997) // This is quite acceptable as ORM ignores the C
   dataSeries.push(-5, 83)
   testCoefficientA(dataSeries, 4)
-  testCoefficientB(dataSeries, 3.3333333333333335)
-  testCoefficientC(dataSeries, 3)
+  testCoefficientB(dataSeries, 4)
+  testCoefficientC(dataSeries, 4)
   dataSeries.push(-4, 53)
   testCoefficientA(dataSeries, 4)
-  testCoefficientB(dataSeries, 4.4)
-  testCoefficientC(dataSeries, 3)
+  testCoefficientB(dataSeries, 4)
+  testCoefficientC(dataSeries, 3.8571428571428577) // This is quite acceptable as ORM ignores the C
   dataSeries.push(-3, 27)
   testCoefficientA(dataSeries, 4)
-  testCoefficientB(dataSeries, 3.5999999999999996)
-  testCoefficientC(dataSeries, 3)
+  testCoefficientB(dataSeries, 4)
+  testCoefficientC(dataSeries, 4)
   dataSeries.push(-2, 13)
   testCoefficientA(dataSeries, 4)
-  testCoefficientB(dataSeries, 4.285714285714286)
-  testCoefficientC(dataSeries, 4.428571428571429)
+  testCoefficientB(dataSeries, 4)
+  testCoefficientC(dataSeries, 3.8888888888888893) // This is quite acceptable as ORM ignores the C
   dataSeries.push(-1, 3)
   testCoefficientA(dataSeries, 4)
-  testCoefficientB(dataSeries, 3.7142857142857144)
-  testCoefficientC(dataSeries, 3)
+  testCoefficientB(dataSeries, 4)
+  testCoefficientC(dataSeries, 4)
   dataSeries.push(0, 5)
   testCoefficientA(dataSeries, 4)
-  testCoefficientB(dataSeries, 4.253968253968254)
-  testCoefficientC(dataSeries, 5)
+  testCoefficientB(dataSeries, 4)
+  testCoefficientC(dataSeries, 4)
   dataSeries.push(1, 11)
   testCoefficientA(dataSeries, 4)
-  testCoefficientB(dataSeries, 3.7777777777777777)
-  testCoefficientC(dataSeries, 3.857142857142857)
+  testCoefficientB(dataSeries, 4)
+  testCoefficientC(dataSeries, 4)
   dataSeries.push(2, 29)
   testCoefficientA(dataSeries, 4)
-  testCoefficientB(dataSeries, 4.222222222222222)
-  testCoefficientC(dataSeries, 3.933333333333333)
+  testCoefficientB(dataSeries, 4)
+  testCoefficientC(dataSeries, 4)
   dataSeries.push(3, 51)
   testCoefficientA(dataSeries, 4)
-  testCoefficientB(dataSeries, 3.888888888888889)
-  testCoefficientC(dataSeries, 4.022222222222222)
+  testCoefficientB(dataSeries, 4)
+  testCoefficientC(dataSeries, 4)
   dataSeries.push(4, 85)
   testCoefficientA(dataSeries, 4)
   testCoefficientB(dataSeries, 4)
-  testCoefficientC(dataSeries, 4.022222222222222)
+  testCoefficientC(dataSeries, 4)
   dataSeries.push(5, 123)
   testCoefficientA(dataSeries, 4)
   testCoefficientB(dataSeries, 4)
-  testCoefficientC(dataSeries, 3.933333333333333)
+  testCoefficientC(dataSeries, 4)
   dataSeries.push(6, 173)
   testCoefficientA(dataSeries, 4)
   testCoefficientB(dataSeries, 4)
-  testCoefficientC(dataSeries, 4.111111111111111)
+  testCoefficientC(dataSeries, 4)
   dataSeries.push(7, 227)
   testCoefficientA(dataSeries, 4)
   testCoefficientB(dataSeries, 4)
-  testCoefficientC(dataSeries, 3.933333333333333)
+  testCoefficientC(dataSeries, 4)
   dataSeries.push(8, 293)
   testCoefficientA(dataSeries, 4)
   testCoefficientB(dataSeries, 4)
-  testCoefficientC(dataSeries, 4.111111111111111)
+  testCoefficientC(dataSeries, 4)
   dataSeries.push(9, 363)
   testCoefficientA(dataSeries, 4)
   testCoefficientB(dataSeries, 4)
-  testCoefficientC(dataSeries, 3.933333333333333)
+  testCoefficientC(dataSeries, 4)
   dataSeries.push(10, 444)
   testCoefficientA(dataSeries, 4)
   testCoefficientB(dataSeries, 4)
-  testCoefficientC(dataSeries, 4.111111111111111) // We consider this quite acceptable as ORM ignores the C coefficient anyways
+  testCoefficientC(dataSeries, 4)
 })
 
 test('Quadratic Approximation on function y = 4 * Math.pow(x, 2) + 4 * x + 4, with some noise (+/- 1) and spikes (+/- 9)', () => {
@@ -276,64 +276,64 @@ test('Quadratic Approximation on function y = 4 * Math.pow(x, 2) + 4 * x + 4, wi
   dataSeries.push(-5, 83)
   dataSeries.push(-4, 53)
   testCoefficientA(dataSeries, 4)
-  testCoefficientB(dataSeries, 4.4)
-  testCoefficientC(dataSeries, 3)
+  testCoefficientB(dataSeries, 4)
+  testCoefficientC(dataSeries, 3.8571428571428577)
   dataSeries.push(-3, 37) // FIRST SPIKE +9
   testCoefficientA(dataSeries, 4)
-  testCoefficientB(dataSeries, 4.666666666666666) // Coefficient B seems to take a hit anyway
-  testCoefficientC(dataSeries, 12.644444444444446) // We get a 12.6 instead of 4, which is quite acceptable (especially since ORM ignores the C)
+  testCoefficientB(dataSeries, 4)
+  testCoefficientC(dataSeries, 4)
   dataSeries.push(-2, 3) // SECOND SPIKE -9
   testCoefficientA(dataSeries, 4)
-  testCoefficientB(dataSeries, 4.342857142857143)
-  testCoefficientC(dataSeries, 3)
+  testCoefficientB(dataSeries, 4.142857142857142) // Coefficient B seems to take a hit anyway
+  testCoefficientC(dataSeries, 5.9999999999999964) // We get a 5.9999999999999964 instead of 4, which is quite acceptable (especially since ORM ignores the C)
   dataSeries.push(-1, 3)
   testCoefficientA(dataSeries, 4)
-  testCoefficientB(dataSeries, 3.8476190476190473) // Coefficient B seems to take a hit anyway
-  testCoefficientC(dataSeries, 2.3333333333333335) // We get a 2.3333333333333357 instead of 4, which is quite acceptable (especially since ORM ignores the C)
+  testCoefficientB(dataSeries, 4)
+  testCoefficientC(dataSeries, 4)
   dataSeries.push(0, 5)
   testCoefficientA(dataSeries, 4)
-  testCoefficientB(dataSeries, 4.2253968253968255)
-  testCoefficientC(dataSeries, 4.238095238095238)
+  testCoefficientB(dataSeries, 4)
+  testCoefficientC(dataSeries, 4)
   dataSeries.push(1, 11)
   testCoefficientA(dataSeries, 4)
   testCoefficientB(dataSeries, 4)
-  testCoefficientC(dataSeries, 3.72) // We get a 3.719999999999997 instead of 4, which is quite acceptable (especially since ORM ignores the C)
+  testCoefficientC(dataSeries, 4)
   dataSeries.push(2, 29)
   testCoefficientA(dataSeries, 4)
-  testCoefficientB(dataSeries, 4.165079365079365)
-  testCoefficientC(dataSeries, 5) // We get a 5 instead of 4, which is quite acceptable (especially since ORM ignores the C)
+  testCoefficientB(dataSeries, 4)
+  testCoefficientC(dataSeries, 4)
   dataSeries.push(3, 51)
   testCoefficientA(dataSeries, 4)
   testCoefficientB(dataSeries, 4)
-  testCoefficientC(dataSeries, 3.648888888888889) // This is quite acceptable as ORM ignores the C
+  testCoefficientC(dataSeries, 4)
   dataSeries.push(4, 85)
   testCoefficientA(dataSeries, 4)
-  testCoefficientB(dataSeries, 4.156190476190476)
-  testCoefficientC(dataSeries, 3.648888888888889) // This is quite acceptable as ORM ignores the C
+  testCoefficientB(dataSeries, 4)
+  testCoefficientC(dataSeries, 4)
   dataSeries.push(5, 123)
   testCoefficientA(dataSeries, 4)
   testCoefficientB(dataSeries, 4)
-  testCoefficientC(dataSeries, 3.72) // This is quite acceptable as ORM ignores the C
+  testCoefficientC(dataSeries, 4)
   dataSeries.push(6, 173)
   testCoefficientA(dataSeries, 4)
-  testCoefficientB(dataSeries, 4.152380952380953)
-  testCoefficientC(dataSeries, 4.111111111111111) // This is quite acceptable as ORM ignores the C
+  testCoefficientB(dataSeries, 4)
+  testCoefficientC(dataSeries, 4)
   dataSeries.push(7, 227)
   testCoefficientA(dataSeries, 4)
   testCoefficientB(dataSeries, 4)
-  testCoefficientC(dataSeries, 3.7885714285714287) // This is quite acceptable as ORM ignores the C
+  testCoefficientC(dataSeries, 4)
   dataSeries.push(8, 293)
   testCoefficientA(dataSeries, 4)
-  testCoefficientB(dataSeries, 3.8666666666666663)
-  testCoefficientC(dataSeries, 3.4380952380952383) // This is quite acceptable as ORM ignores the C
+  testCoefficientB(dataSeries, 4)
+  testCoefficientC(dataSeries, 3) // This is quite acceptable as ORM ignores the C
   dataSeries.push(9, 363)
   testCoefficientA(dataSeries, 4)
   testCoefficientB(dataSeries, 4)
-  testCoefficientC(dataSeries, 3.72) // We get a 3 instead of 4, which is quite acceptable (especially since ORM ignores the C)
+  testCoefficientC(dataSeries, 4) // We get a 3 instead of 4, which is quite acceptable (especially since ORM ignores the C)
   dataSeries.push(10, 444)
   testCoefficientA(dataSeries, 4)
-  testCoefficientB(dataSeries, 4.16)
-  testCoefficientC(dataSeries, 4.533333333333333)
+  testCoefficientB(dataSeries, 4)
+  testCoefficientC(dataSeries, 4)
 })
 
 test('Quadratic TS Estimation should be decent for standard real-life example from MathBits with some noise', () => {
@@ -353,8 +353,8 @@ test('Quadratic TS Estimation should be decent for standard real-life example fr
   dataSeries.push(60, 231.4)
   dataSeries.push(64, 180.4)
   testCoefficientA(dataSeries, -0.17785023090944152) // In the example, the TI084 results in -0.1737141137, which we consider acceptably close
-  testCoefficientB(dataSeries, 15.005518925518913) // In the example, the TI084 results in 14.52117133, which we consider acceptably close
-  testCoefficientC(dataSeries, -32.561632653064834) // In the example, the TI084 results in -21.89774466, which we consider acceptably close
+  testCoefficientB(dataSeries, 15.115602960635863) // In the example, the TI084 results in 14.52117133, which we consider acceptably close
+  testCoefficientC(dataSeries, -35.639987946994665) // In the example, the TI084 results in -21.89774466, which we consider acceptably close
 })
 
 test('Quadratic TS Estimation should be decent for standard real-life example from VarsityTutors with some noise', () => {
@@ -368,8 +368,8 @@ test('Quadratic TS Estimation should be decent for standard real-life example fr
   dataSeries.push(2, 6)
   dataSeries.push(3, 14)
   testCoefficientA(dataSeries, 1.1166666666666667) // The example results in 1.1071 for OLS, which we consider acceptably close
-  testCoefficientB(dataSeries, 1.125) // The example results in 1 for OLS, which we consider acceptably close
-  testCoefficientC(dataSeries, 1) // The example results in 0.5714 for OLS, which we consider acceptably close
+  testCoefficientB(dataSeries, 0.966666666666667) // The example results in 1 for OLS, which we consider acceptably close
+  testCoefficientC(dataSeries, 0.44722222222222213) // The example results in 0.5714 for OLS, which we consider acceptably close
 })
 
 test('Quadratic TS Estimation should be decent for standard example from VTUPulse with some noise, without the vertex being part of the dataset', () => {
@@ -381,8 +381,8 @@ test('Quadratic TS Estimation should be decent for standard example from VTUPuls
   dataSeries.push(6, 6.5)
   dataSeries.push(7, 11.5)
   testCoefficientA(dataSeries, 0.9500000000000005) // The example results in 0.7642857 for OLS, which we consider acceptably close given the small sample size
-  testCoefficientB(dataSeries, -7.574999999999999) // The example results in -5.5128571 for OLS, which we consider acceptably close given the small sample size
-  testCoefficientC(dataSeries, 17.92500000000001) // The example results in 12.4285714 for OLS, which we consider acceptably close given the small sample size
+  testCoefficientB(dataSeries, -7.483333333333338) // The example results in -5.5128571 for OLS, which we consider acceptably close given the small sample size
+  testCoefficientC(dataSeries, 17.275000000000006) // The example results in 12.4285714 for OLS, which we consider acceptably close given the small sample size
 })
 
 test('Quadratic TS Estimation should be decent for standard real-life example from Uni Berlin with some noise without the vertex being part of the dataset', () => {
@@ -414,8 +414,8 @@ test('Quadratic TS Estimation should be decent for standard real-life example fr
   dataSeries.push(0.715372314, -1.20379729)
   dataSeries.push(0.681745393, -0.83059624)
   testCoefficientA(dataSeries, -3.13052236289358)
-  testCoefficientB(dataSeries, 0.8866733959812066)
-  testCoefficientC(dataSeries, 0.09073933224254299)
+  testCoefficientB(dataSeries, 1.5907039702198331)
+  testCoefficientC(dataSeries, 0.12896850914578195)
 })
 
 test('Quadratic TS Estimation should be decent for standard real-life example from Statology.org with some noise and chaotic X values', () => {
@@ -433,8 +433,8 @@ test('Quadratic TS Estimation should be decent for standard real-life example fr
   dataSeries.push(55, 44)
   dataSeries.push(60, 27)
   testCoefficientA(dataSeries, -0.10466531440162272) // The example results in -0.1012 for R after two rounds, which we consider acceptably close
-  testCoefficientB(dataSeries, 7.049898580121704) // The example results in 6.7444 for R after two rounds, which we consider acceptably close
-  testCoefficientC(dataSeries, -23.701915708812262) // The example results in 18.2536 for R after two rounds, but for ORM, this factor is irrelevant
+  testCoefficientB(dataSeries, 6.98670916642519) // The example results in 6.7444 for R after two rounds, which we consider acceptably close
+  testCoefficientC(dataSeries, -21.826295759683177) // The example results in 18.2536 for R after two rounds, but for ORM, this factor is irrelevant
 })
 
 test('Quadratic TS Estimation should be decent for standard real-life example from StatsDirect.com with some noise and chaotic X values', () => {
@@ -451,8 +451,8 @@ test('Quadratic TS Estimation should be decent for standard real-life example fr
   dataSeries.push(2400, 1956)
   dataSeries.push(2930, 1954)
   testCoefficientA(dataSeries, -0.0004480669511301859) // The example results in -0.00045 through QR decomposition by Givens rotations, which we consider acceptably close
-  testCoefficientB(dataSeries, 2.3216877058559673) // The example results in 2.39893 for QR decomposition by Givens rotations, which we consider acceptably close
-  testCoefficientC(dataSeries, -1613.0695243192479) // The example results in -1216.143887 for QR decomposition by Givens rotations, but for ORM, this factor is irrelevant
+  testCoefficientB(dataSeries, 2.373459636061883) // The example results in 2.39893 for QR decomposition by Givens rotations, which we consider acceptably close
+  testCoefficientC(dataSeries, -1178.1630473732216) // The example results in -1216.143887 for QR decomposition by Givens rotations, but for ORM, this factor is irrelevant
 })
 
 test('Quadratic Approximation with a clean function and a reset', () => {
