@@ -62,7 +62,6 @@ function createTSQuadraticSeries (maxSeriesLength = 0) {
         i++
       }
       _A = matrixMedian(A)
-      //_A = trimmedMatrixMedian(A)
 
       i = 0
       linearResidu.reset()
@@ -218,8 +217,6 @@ function createTSQuadraticSeries (maxSeriesLength = 0) {
     }
   }
 
-  // Dit is technische de mindere oplossing omdat deze delen meeneemt waar de opgevraagde mediaan niets mee van doen heeft,
-  // Maar dit lijkt wel de beste oplossing te leveren. Dit moet getest worden met productiedata
   function matrixMedian (inputMatrix) {
     if (inputMatrix.length > 1) {
       const sortedArray = [...inputMatrix.flat()].sort((a, b) => a - b)
@@ -230,25 +227,6 @@ function createTSQuadraticSeries (maxSeriesLength = 0) {
       return 0
     }
   }
-
-  // Dit is technisch de beste oplossing, maar de kunstmatige testresultaten lijken er flink op achteruit te gaan
-  function trimmedMatrixMedian (inputMatrix) {
-    if (inputMatrix.length > 1) {
-      const intermediateMatrix = []
-      let i = 0
-      while (i < inputMatrix.length) {
-        intermediateMatrix.push(inputMatrix[i].splice(0, maxSeriesLength - i))
-        i++
-      }
-      const sortedArray = [...intermediateMatrix.flat()].sort((a, b) => a - b)
-      const mid = Math.floor(sortedArray.length / 2)
-      return (sortedArray.length % 2 !== 0 ? sortedArray[mid] : ((sortedArray[mid - 1] + sortedArray[mid]) / 2))
-    } else {
-      log.error('TS Quadratic Regressor, Median calculation on empty matrix attempted!')
-      return 0
-    }
-  }
-  //
 
   function reset () {
     X.reset()
