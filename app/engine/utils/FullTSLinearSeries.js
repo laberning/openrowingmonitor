@@ -168,7 +168,7 @@ function createTSLinearSeries (maxSeriesLength = 0) {
     slopes.shift()
   }
 
-  function calculateSlope(pointOne, pointTwo) {
+  function calculateSlope (pointOne, pointTwo) {
     if (pointOne !== pointTwo && X.get(pointOne) !== X.get(pointTwo)) {
       return ((Y.get(pointTwo) - Y.get(pointOne)) / (X.get(pointTwo) - X.get(pointOne)))
     } else {
