@@ -66,7 +66,7 @@ function createTSQuadraticSeries (maxSeriesLength = 0) {
       i = 0
       linearResidu.reset()
       while (i < X.length() - 1) {
-        linearResidu.push(X.get(i), Y.get(i) - (_A * Math.pow(X.get(i),2)))
+        linearResidu.push(X.get(i), Y.get(i) - (_A * Math.pow(X.get(i), 2)))
         i++
       }
       _B = linearResidu.coefficientA()
