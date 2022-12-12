@@ -13,7 +13,7 @@
 */
 import bleno from '@abandonware/bleno'
 import FitnessMachineService from './ftms/FitnessMachineService.js'
-import config from '../tools/ConfigManager.js'
+import config from '../../tools/ConfigManager.js'
 import log from 'loglevel'
 import DeviceInformationService from './common/DeviceInformationService.js'
 import AdvertisingDataBuilder from './common/AdvertisingDataBuilder.js'

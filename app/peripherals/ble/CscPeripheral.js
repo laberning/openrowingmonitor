@@ -6,7 +6,7 @@
   a Cycling Speed and Cadence Profile
 */
 import bleno from '@abandonware/bleno'
-import config from '../tools/ConfigManager.js'
+import config from '../../tools/ConfigManager.js'
 import log from 'loglevel'
 import DeviceInformationService from './common/DeviceInformationService.js'
 import CyclingSpeedCadenceService from './csc/CyclingSpeedCadenceService.js'

@@ -6,12 +6,12 @@
   switching between them
 */
 import config from '../tools/ConfigManager.js'
-import { createFtmsPeripheral } from './FtmsPeripheral.js'
-import { createPm5Peripheral } from './Pm5Peripheral.js'
+import { createFtmsPeripheral } from './ble/FtmsPeripheral.js'
+import { createPm5Peripheral } from './ble/Pm5Peripheral.js'
 import log from 'loglevel'
 import EventEmitter from 'node:events'
-import { createCpsPeripheral } from './CpsPeripheral.js'
-import { createCscPeripheral } from './CscPeripheral.js'
+import { createCpsPeripheral } from './ble/CpsPeripheral.js'
+import { createCscPeripheral } from './ble/CscPeripheral.js'
 
 const modes = ['FTMS', 'FTMSBIKE', 'PM5', 'CSC', 'CPS']
 function createPeripheralManager () {

@@ -7,7 +7,7 @@
 */
 import { createCentralManager } from './CentralManager.js'
 import process from 'process'
-import config from '../tools/ConfigManager.js'
+import config from '../../tools/ConfigManager.js'
 import log from 'loglevel'
 
 log.setLevel(config.loglevel.default)

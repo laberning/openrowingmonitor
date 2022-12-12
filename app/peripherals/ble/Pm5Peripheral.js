@@ -2,19 +2,25 @@
 /*
   Open Rowing Monitor, https://github.com/laberning/openrowingmonitor
 
-  Creates a Bluetooth Low Energy (BLE) Peripheral with all the Services that are required for
-  a Cycling Power Profile
+  Creates a Bluetooth Low Energy (BLE) Peripheral with all the Services that are used by the
+  Concept2 PM5 rowing machine.
+
+  see: https://www.concept2.co.uk/files/pdf/us/monitors/PM5_BluetoothSmartInterfaceDefinition.pdf
 */
 import bleno from '@abandonware/bleno'
-import config from '../tools/ConfigManager.js'
+import { pm5Constants } from './pm5/Pm5Constants.js'
+import DeviceInformationService from './pm5/DeviceInformationService.js'
+import GapService from './pm5/GapService.js'
 import log from 'loglevel'
-import CyclingPowerService from './cps/CyclingPowerMeterService.js'
-import DeviceInformationService from './common/DeviceInformationService.js'
-import AdvertisingDataBuilder from './common/AdvertisingDataBuilder.js'
+import Pm5ControlService from './pm5/Pm5ControlService.js'
+import Pm5RowingService from './pm5/Pm5RowingService.js'
 
-function createCpsPeripheral () {
-  const peripheralName = `${config.ftmsRowerPeripheralName} (CPS)`
-  const cyclingPowerService = new CyclingPowerService((event) => log.debug('CPS Control Point', event))
+function createPm5Peripheral (controlCallback, options) {
+  const peripheralName = pm5Constants.name
+  const deviceInformationService = new DeviceInformationService()
+  const gapService = new GapService()
+  const controlService = new Pm5ControlService()
+  const rowingService = new Pm5RowingService()
 
   bleno.on('stateChange', (state) => {
     triggerAdvertising(state)
@@ -23,10 +29,7 @@ function createCpsPeripheral () {
   bleno.on('advertisingStart', (error) => {
     if (!error) {
       bleno.setServices(
-        [
-          cyclingPowerService,
-          new DeviceInformationService()
-        ],
+        [gapService, deviceInformationService, controlService, rowingService],
         (error) => {
           if (error) log.error(error)
         })
@@ -72,12 +75,9 @@ function createCpsPeripheral () {
   function triggerAdvertising (eventState) {
     const activeState = eventState || bleno.state
     if (activeState === 'poweredOn') {
-      const cpsAppearance = 1156
-      const advertisingData = new AdvertisingDataBuilder([cyclingPowerService.uuid], cpsAppearance, peripheralName)
-
-      bleno.startAdvertisingWithEIRData(
-        advertisingData.buildAppearanceData(),
-        advertisingData.buildScanData(),
+      bleno.startAdvertising(
+        peripheralName,
+        [gapService.uuid],
         (error) => {
           if (error) log.error(error)
         }
@@ -87,13 +87,12 @@ function createCpsPeripheral () {
     }
   }
 
+  // present current rowing metrics to C2-PM5 central
   function notifyData (type, data) {
-    if (type === 'strokeFinished' || type === 'metricsUpdate') {
-      cyclingPowerService.notifyData(data)
-    }
+    rowingService.notifyData(type, data)
   }
 
-  // CPS does not have status characteristic
+  // present current rowing status to C2-PM5 central
   function notifyStatus (status) {
   }
 
@@ -105,4 +104,4 @@ function createCpsPeripheral () {
   }
 }
 
-export { createCpsPeripheral }
+export { createPm5Peripheral }

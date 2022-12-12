@@ -10,6 +10,7 @@
 */
 import bleno from '@abandonware/bleno'
 import log from 'loglevel'
+import { ResultOpCode } from '../common/CommonOpCodes.js'
 
 // see https://www.bluetooth.com/specifications/specs/fitness-machine-service-1-0 for details
 const ControlPointOpCode = {
@@ -37,15 +38,6 @@ const ControlPointOpCode = {
   responseCode: 0x80
 }
 
-const ResultCode = {
-  reserved: 0x00,
-  success: 0x01,
-  opCodeNotSupported: 0x02,
-  invalidParameter: 0x03,
-  operationFailed: 0x04,
-  controlNotPermitted: 0x05
-}
-
 export default class FitnessMachineControlPointCharacteristic extends bleno.Characteristic {
   constructor (controlPointCallback) {
     super({
@@ -70,12 +62,12 @@ export default class FitnessMachineControlPointCharacteristic extends bleno.Char
           if (this.controlPointCallback({ name: 'requestControl' })) {
             log.debug('requestControl sucessful')
             this.controlled = true
-            callback(this.buildResponse(opCode, ResultCode.success))
+            callback(this.buildResponse(opCode, ResultOpCode.success))
           } else {
-            callback(this.buildResponse(opCode, ResultCode.operationFailed))
+            callback(this.buildResponse(opCode, ResultOpCode.operationFailed))
           }
         } else {
-          callback(this.buildResponse(opCode, ResultCode.controlNotPermitted))
+          callback(this.buildResponse(opCode, ResultOpCode.controlNotPermitted))
         }
         break
 
@@ -109,30 +101,30 @@ export default class FitnessMachineControlPointCharacteristic extends bleno.Char
         const crr = data.readUInt8(5) * 0.0001
         const cw = data.readUInt8(6) * 0.01
         if (this.controlPointCallback({ name: 'setIndoorBikeSimulationParameters', value: { windspeed, grade, crr, cw } })) {
-          callback(this.buildResponse(opCode, ResultCode.success))
+          callback(this.buildResponse(opCode, ResultOpCode.success))
         } else {
-          callback(this.buildResponse(opCode, ResultCode.operationFailed))
+          callback(this.buildResponse(opCode, ResultOpCode.operationFailed))
         }
         break
       }
 
       default:
         log.info(`opCode ${opCode} is not supported`)
-        callback(this.buildResponse(opCode, ResultCode.opCodeNotSupported))
+        callback(this.buildResponse(opCode, ResultOpCode.opCodeNotSupported))
     }
   }
 
   handleSimpleCommand (opCode, opName, callback) {
     if (this.controlled) {
       if (this.controlPointCallback({ name: opName })) {
-        const response = this.buildResponse(opCode, ResultCode.success)
+        const response = this.buildResponse(opCode, ResultOpCode.success)
         callback(response)
       } else {
-        callback(this.buildResponse(opCode, ResultCode.operationFailed))
+        callback(this.buildResponse(opCode, ResultOpCode.operationFailed))
       }
     } else {
       log.info(`initating command '${opName}' requires 'requestControl'`)
-      callback(this.buildResponse(opCode, ResultCode.controlNotPermitted))
+      callback(this.buildResponse(opCode, ResultOpCode.controlNotPermitted))
     }
   }
 

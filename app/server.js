@@ -13,12 +13,12 @@ import log from 'loglevel'
 import config from './tools/ConfigManager.js'
 import { createRowingStatistics } from './engine/RowingStatistics.js'
 import { createWebServer } from './WebServer.js'
-import { createPeripheralManager } from './ble/PeripheralManager.js'
-import { createAntManager } from './ant/AntManager.js'
+import { createPeripheralManager } from './peripherals/PeripheralManager.js'
 // eslint-disable-next-line no-unused-vars
 import { replayRowingSession } from './tools/RowingRecorder.js'
 import { createWorkoutRecorder } from './engine/WorkoutRecorder.js'
 import { createWorkoutUploader } from './engine/WorkoutUploader.js'
+import { createAntManager } from './peripherals/ant/AntManager.js'
 const exec = promisify(child_process.exec)
 
 // set the log levels
@@ -193,7 +193,7 @@ rowingStatistics.on('rowingStopped', (metrics) => {
 })
 
 if (config.heartrateMonitorBLE) {
-  const bleCentralService = child_process.fork('./app/ble/CentralService.js')
+  const bleCentralService = child_process.fork('./app/peripherals/ble/CentralService.js')
   bleCentralService.on('message', (heartrateMeasurement) => {
     rowingStatistics.handleHeartrateMeasurement(heartrateMeasurement)
   })

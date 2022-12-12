@@ -55,9 +55,8 @@ export default class RowerDataCharacteristic extends bleno.Characteristic {
       // todo: might add: Average Stroke Rate (1), Average Pace (4), Average Power (6)
       // Remaining Time (12)
       // 00101100
-      bufferBuilder.writeUInt8(0x2c)
+      bufferBuilder.writeUInt16LE(measurementFlag)
       // 00001011
-      bufferBuilder.writeUInt8(0x0B)
 
       // see https://www.bluetooth.com/specifications/specs/gatt-specification-supplement-3/
       // for some of the data types
@@ -98,3 +97,21 @@ export default class RowerDataCharacteristic extends bleno.Characteristic {
     return this.RESULT_SUCCESS
   }
 }
+
+export const RowingMeasurementFlags = {
+  moreDataPresent: (0x01 << 0),
+  averageStrokeRatePresent: (0x01 << 1),
+  totalDistancePresent: (0x01 << 2),
+  instantaneousPacePresent: (0x01 << 3),
+  averagePacePresent: (0x01 << 4),
+  instantaneousPowerPresent: (0x01 << 5),
+  averagePowerPresent: (0x01 << 6),
+  resistanceLevelPresent: (0x01 << 7),
+  expendedEnergyPresent: (0x01 << 8),
+  heartRatePresent: (0x01 << 9),
+  metabolicEquivalentPresent: (0x01 << 10),
+  elapsedTimePresent: (0x01 << 11),
+  remainingTimePresent: (0x01 << 12)
+}
+
+export const measurementFlag = RowingMeasurementFlags.totalDistancePresent | RowingMeasurementFlags.instantaneousPacePresent | RowingMeasurementFlags.instantaneousPowerPresent | RowingMeasurementFlags.expendedEnergyPresent | RowingMeasurementFlags.heartRatePresent | RowingMeasurementFlags.elapsedTimePresent

@@ -20,13 +20,13 @@
 */
 import bleno from '@abandonware/bleno'
 import { getFullUUID } from './Pm5Constants.js'
-import ValueReadCharacteristic from './characteristic/ValueReadCharacteristic.js'
 import MultiplexedCharacteristic from './characteristic/MultiplexedCharacteristic.js'
 import GeneralStatus from './characteristic/GeneralStatus.js'
 import AdditionalStatus from './characteristic/AdditionalStatus.js'
 import AdditionalStatus2 from './characteristic/AdditionalStatus2.js'
 import AdditionalStrokeData from './characteristic/AdditionalStrokeData.js'
 import StrokeData from './characteristic/StrokeData.js'
+import StaticNotifyCharacteristic from '../common/StaticNotifyCharacteristic.js'
 
 export default class PM5RowingService extends bleno.PrimaryService {
   constructor () {
@@ -46,23 +46,23 @@ export default class PM5RowingService extends bleno.PrimaryService {
         // C2 rowing additional status 2
         additionalStatus2,
         // C2 rowing general status and additional status samplerate
-        new ValueReadCharacteristic(getFullUUID('0034'), 'samplerate', 'samplerate'),
+        new StaticNotifyCharacteristic(getFullUUID('0034'), 'samplerate', 'samplerate', true),
         // C2 rowing stroke data
         strokeData,
         // C2 rowing additional stroke data
         additionalStrokeData,
         // C2 rowing split/interval data
-        new ValueReadCharacteristic(getFullUUID('0037'), 'split data', 'split data'),
+        new StaticNotifyCharacteristic(getFullUUID('0037'), 'split data', 'split data', true),
         // C2 rowing additional split/interval data
-        new ValueReadCharacteristic(getFullUUID('0038'), 'additional split data', 'additional split data'),
+        new StaticNotifyCharacteristic(getFullUUID('0038'), 'additional split data', 'additional split data', true),
         // C2 rowing end of workout summary data
-        new ValueReadCharacteristic(getFullUUID('0039'), 'workout summary', 'workout summary'),
+        new StaticNotifyCharacteristic(getFullUUID('0039'), 'workout summary', 'workout summary', true),
         // C2 rowing end of workout additional summary data
-        new ValueReadCharacteristic(getFullUUID('003A'), 'additional workout summary', 'additional workout summary'),
+        new StaticNotifyCharacteristic(getFullUUID('003A'), 'additional workout summary', 'additional workout summary', true),
         // C2 rowing heart rate belt information
-        new ValueReadCharacteristic(getFullUUID('003B'), 'heart rate belt information', 'heart rate belt information'),
+        new StaticNotifyCharacteristic(getFullUUID('003B'), 'heart rate belt information', 'heart rate belt information', true),
         // C2 force curve data
-        new ValueReadCharacteristic(getFullUUID('003D'), 'force curve data', 'force curve data'),
+        new StaticNotifyCharacteristic(getFullUUID('003D'), 'force curve data', 'force curve data', true),
         // C2 multiplexed information
         multiplexedCharacteristic
       ]
