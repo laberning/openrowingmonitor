@@ -12,6 +12,9 @@ import log from 'loglevel'
 import EventEmitter from 'node:events'
 import { createCpsPeripheral } from './ble/CpsPeripheral.js'
 import { createCscPeripheral } from './ble/CscPeripheral.js'
+import child_process from 'child_process'
+import AntManager from './ant/AntManager.js'
+import { createAntHrmPeripheral } from './ant/HrmPeripheral.js'
 
 const modes = ['FTMS', 'FTMSBIKE', 'PM5', 'CSC', 'CPS']
 function createPeripheralManager () {
@@ -94,11 +97,32 @@ function createPeripheralManager () {
     })
   }
 
+  function startBleHeartRateService () {
+    const hrmPeripheral = child_process.fork('./app/peripherals/ble/HrmPeripheral.js')
+    hrmPeripheral.on('message', (heartRateMeasurement) => {
+      emitter.emit('heartRateBleMeasurement', heartRateMeasurement)
+    })
+  }
+
+  function startAntHeartRateService () {
+    if (!this._antManager) {
+      this._antManager = new AntManager()
+    }
+
+    const antHrm = createAntHrmPeripheral(this._antManager)
+
+    antHrm.on('heartRateMeasurement', (heartRateMeasurement) => {
+      emitter.emit('heartRateAntMeasurement', heartRateMeasurement)
+    })
+  }
+
   function controlCallback (event) {
     emitter.emit('control', event)
   }
 
   return Object.assign(emitter, {
+    startAntHeartRateService,
+    startBleHeartRateService,
     getPeripheral,
     getPeripheralMode,
     switchPeripheralMode,

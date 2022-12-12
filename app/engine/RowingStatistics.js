@@ -417,7 +417,7 @@ function createRowingStatistics (config) {
   }
 
   return Object.assign(emitter, {
-    handleHeartrateMeasurement,
+    handleHeartRateMeasurement: handleHeartrateMeasurement,
     handleRotationImpulse,
     setIntervalParameters,
     pause: pauseTraining,

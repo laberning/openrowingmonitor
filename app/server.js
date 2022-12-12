@@ -18,7 +18,6 @@ import { createPeripheralManager } from './peripherals/PeripheralManager.js'
 import { replayRowingSession } from './tools/RowingRecorder.js'
 import { createWorkoutRecorder } from './engine/WorkoutRecorder.js'
 import { createWorkoutUploader } from './engine/WorkoutUploader.js'
-import { createAntManager } from './peripherals/ant/AntManager.js'
 const exec = promisify(child_process.exec)
 
 // set the log levels
@@ -192,17 +191,17 @@ rowingStatistics.on('rowingStopped', (metrics) => {
   workoutRecorder.writeRecordings()
 })
 
-if (config.heartrateMonitorBLE) {
-  const bleCentralService = child_process.fork('./app/peripherals/ble/CentralService.js')
-  bleCentralService.on('message', (heartrateMeasurement) => {
-    rowingStatistics.handleHeartrateMeasurement(heartrateMeasurement)
+if (config.heartRateMonitorBLE) {
+  peripheralManager.startBleHeartRateService()
+  peripheralManager.on('heartRateBleMeasurement', (heartRateMeasurement) => {
+    rowingStatistics.handleHeartRateMeasurement(heartRateMeasurement)
   })
 }
 
-if (config.heartrateMonitorANT) {
-  const antManager = createAntManager()
-  antManager.on('heartrateMeasurement', (heartrateMeasurement) => {
-    rowingStatistics.handleHeartrateMeasurement(heartrateMeasurement)
+if (config.heartRateMonitorANT) {
+  peripheralManager.startAntHeartRateService()
+  peripheralManager.on('heartRateAntMeasurement', (heartRateMeasurement) => {
+    rowingStatistics.handleHeartRateMeasurement(heartRateMeasurement)
   })
 }
 
