@@ -23,6 +23,7 @@ This guide roughly explains how to set up the rowing software and hardware.
 * Configure the network connection and enable SSH, if you use the Raspberry Pi Imager, you can automatically do this while writing the SD Card, just press `Ctrl-Shift-X`(see [here](https://www.raspberrypi.org/blog/raspberry-pi-imager-update-to-v1-6/) for a description), otherwise follow the instructions below
 * Connect the device to your network ([headless](https://www.raspberrypi.org/documentation/configuration/wireless/headless.md) or via [command line](https://www.raspberrypi.org/documentation/configuration/wireless/wireless-cli.md))
 * Enable [SSH](https://www.raspberrypi.org/documentation/remote-access/ssh/README.md)
+* Tune the OS if needed [by following this guide](Improving_Raspberry_Performance.md)
 
 ### Installation of the Open Rowing Monitor
 
@@ -77,16 +78,17 @@ The internal pull-up can be enabled as described [here](https://www.raspberrypi.
 gpio=17=pu,ip
 ```
 
-How to connect this to your rowing machine is specific to your device. You need some kind of mechanism to convert the rotation of the flywheel into impulses. Some rowers have a reed sensor for this built-in, so hooking it up is as simple as connecting the cables. Such a sensor has one or more magnets on the wheel and each one gives an impulse when it passes the sensor.
+How to connect this to your rowing machine is specific to your device. You need some kind of mechanism to convert the rotation of the flywheel into impulses. Some rowers have a reed sensor for this built-in, so hooking it up is as simple as connecting the cables. Such a sensor has one or more magnets on the wheel and each one gives an impulse when it passes the sensor. For a specific hardware-setup, please look at:
+
+* [Concept 2 RowErg](hardware_setup_Concept2_RowErg.md)
+* [Sportstech WRX700](hardware_setup_WRX700.md)
+
+If your machine isn't listed, you can still follow this generic manual.
 
 ![Connecting the reed sensor](img/raspberrypi_reedsensor_wiring.jpg)
 *Connecting the reed sensor*
 
-For a specific hardware-setup, please look at:
-
-* [Sportstech WRX700](hardware_setup_WRX700.md)
-
-If your machine isn't listed and does not have something like this or if the sensor is not accessible, you can still build something similar quite easily. Some ideas on what to use:
+If you do not have and does not have something like this or if the sensor is not accessible, you can still build something similar quite easily. Some ideas on what to use:
 
 * Reed sensor (i.e. of an old bike tachometer)
 * PAS sensor (i.e. from an E-bike)
@@ -94,5 +96,4 @@ If your machine isn't listed and does not have something like this or if the sen
 
 ## Rower Settings
 
-You should now adjust the rower specific parameters in `config/config.js` to suit your rowing machine. Have a look at `config/default.config.js` to see what config parameters are available.
-Also check the [Guide for rower specific settings](rower_settings.md).
+You should now adjust the rower specific parameters in `config/config.js` to suit your rowing machine. You should select a specific rower from the `rowerProfiles.js`, or create your own settings following this [guide for creating the rower specific settings](rower_settings.md). Also have a look at `config/default.config.js` to see what additional config parameters are available to suit your needs.

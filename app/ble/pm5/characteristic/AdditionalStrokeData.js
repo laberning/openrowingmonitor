@@ -38,22 +38,22 @@ export default class AdditionalStrokeData extends bleno.Characteristic {
     if (this._updateValueCallback || this._multiplexedCharacteristic.centralSubscribed()) {
       const bufferBuilder = new BufferBuilder()
       // elapsedTime: UInt24LE in 0.01 sec
-      bufferBuilder.writeUInt24LE(Math.round(data.durationTotal * 100))
+      bufferBuilder.writeUInt24LE(Math.round(data.totalMovingTime * 100))
       // strokePower: UInt16LE in watts
-      bufferBuilder.writeUInt16LE(Math.round(data.power))
+      bufferBuilder.writeUInt16LE(Math.round(data.cyclePower))
       // strokeCalories: UInt16LE in cal
-      bufferBuilder.writeUInt16LE(0)
+      bufferBuilder.writeUInt16LE(Math.round(data.strokeCalories * 1000))
       // strokeCount: UInt16LE
-      bufferBuilder.writeUInt16LE(Math.round(data.strokesTotal))
+      bufferBuilder.writeUInt16LE(Math.round(data.totalNumberOfStrokes))
       // projectedWorkTime: UInt24LE in 1 sec
-      bufferBuilder.writeUInt24LE(0)
+      bufferBuilder.writeUInt24LE(Math.round(data.cycleProjectedEndTime))
       // projectedWorkDistance: UInt24LE in 1 m
-      bufferBuilder.writeUInt24LE(0)
+      bufferBuilder.writeUInt24LE(Math.round(data.cycleProjectedEndLinearDistance))
       if (!this._updateValueCallback) {
         // the multiplexer uses a slightly different format for the AdditionalStrokeData
         // it adds workPerStroke at the end
-        // workPerStroke: UInt16LE
-        bufferBuilder.writeUInt16LE(0)
+        // workPerStroke: UInt16LE in 0.1 Joules
+        bufferBuilder.writeUInt16LE(Math.round(data.strokeWork * 10))
       }
 
       if (this._updateValueCallback) {

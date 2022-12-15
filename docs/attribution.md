@@ -15,3 +15,5 @@ Open Rowing Monitor uses some great work by others. Thank you for all the great 
 * The frontend uses some icons from [Font Awesome](https://fontawesome.com/), licensed under [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/).
 
 * Thank you to [Jaap van Ekris](https://github.com/JaapvanEkris) for his contributions to this project.
+
+* Thanks to [Abasz](https://github.com/Abasz) for his great contributions to the GPIO and BLE implementation

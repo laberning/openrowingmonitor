@@ -54,10 +54,10 @@ export class PerformanceDashboard extends AppElement {
   render () {
     const metrics = this.calculateFormattedMetrics(this.appState.metrics)
     return html`
-      <dashboard-metric .icon=${icon_route} .unit=${metrics?.distanceTotal?.unit || 'm'} .value=${metrics?.distanceTotal?.value}></dashboard-metric>
-      <dashboard-metric .icon=${icon_stopwatch} unit="/500m" .value=${metrics?.splitFormatted?.value}></dashboard-metric>
-      <dashboard-metric .icon=${icon_bolt} unit="watt" .value=${metrics?.power?.value}></dashboard-metric>
-      <dashboard-metric .icon=${icon_paddle} unit="/min" .value=${metrics?.strokesPerMinute?.value}></dashboard-metric>
+      <dashboard-metric .icon=${icon_route} .unit=${metrics?.totalLinearDistanceFormatted?.unit || 'm'} .value=${metrics?.totalLinearDistanceFormatted?.value}></dashboard-metric>
+      <dashboard-metric .icon=${icon_stopwatch} unit="/500m" .value=${metrics?.cyclePaceFormatted?.value}></dashboard-metric>
+      <dashboard-metric .icon=${icon_bolt} unit="watt" .value=${metrics?.cyclePower?.value}></dashboard-metric>
+      <dashboard-metric .icon=${icon_paddle} unit="/min" .value=${metrics?.cycleStrokeRate?.value}></dashboard-metric>
       ${metrics?.heartrate?.value
         ? html`
           <dashboard-metric .icon=${icon_heartbeat} unit="bpm" .value=${metrics?.heartrate?.value}>
@@ -68,9 +68,9 @@ export class PerformanceDashboard extends AppElement {
               : ''
             }
           </dashboard-metric>`
-        : html`<dashboard-metric .icon=${icon_paddle} unit="total" .value=${metrics?.strokesTotal?.value}></dashboard-metric>`}
-      <dashboard-metric .icon=${icon_fire} unit="kcal" .value=${metrics?.caloriesTotal?.value}></dashboard-metric>
-      <dashboard-metric .icon=${icon_clock} .value=${metrics?.durationTotalFormatted?.value}></dashboard-metric>
+        : html`<dashboard-metric .icon=${icon_paddle} unit="total" .value=${metrics?.totalNumberOfStrokes?.value}></dashboard-metric>`}
+      <dashboard-metric .icon=${icon_fire} unit="kcal" .value=${metrics?.totalCalories?.value}></dashboard-metric>
+      <dashboard-metric .icon=${icon_clock} .value=${metrics?.totalMovingTimeFormatted?.value}></dashboard-metric>
       <dashboard-actions .appState=${this.appState}></dashboard-actions>
     `
   }
@@ -79,12 +79,12 @@ export class PerformanceDashboard extends AppElement {
   // we could split this up to make it more readable and testable
   calculateFormattedMetrics (metrics) {
     const fieldFormatter = {
-      distanceTotal: (value) => value >= 10000
-        ? { value: (value / 1000).toFixed(1), unit: 'km' }
+      totalLinearDistanceFormatted: (value) => value >= 10000
+        ? { value: (value / 1000).toFixed(2), unit: 'km' }
         : { value: Math.round(value), unit: 'm' },
-      caloriesTotal: (value) => Math.round(value),
-      power: (value) => Math.round(value),
-      strokesPerMinute: (value) => Math.round(value)
+      totalCalories: (value) => Math.round(value),
+      cyclePower: (value) => Math.round(value),
+      cycleStrokeRate: (value) => Math.round(value)
     }
 
     const formattedMetrics = {}
