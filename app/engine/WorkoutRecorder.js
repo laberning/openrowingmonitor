@@ -76,7 +76,7 @@ function createWorkoutRecorder () {
     while (i < strokes.length) {
       currentstroke = strokes[i]
       trackPointTime = new Date(startTime.getTime() + currentstroke.totalMovingTime * 1000)
-      timestamp = trackPointTime / 1000
+      timestamp = trackPointTime.getTime() / 1000
 
       RowingData += `${currentstroke.totalNumberOfStrokes.toFixed(0)},${currentstroke.totalNumberOfStrokes.toFixed(0)},${currentstroke.totalNumberOfStrokes.toFixed(0)},${timestamp.toFixed(0)},` +
       `${currentstroke.totalMovingTime.toFixed(2)},${(currentstroke.heartrate > 30 ? currentstroke.heartrate.toFixed(0) : NaN)},${currentstroke.totalLinearDistance.toFixed(1)},` +
@@ -131,7 +131,7 @@ function createWorkoutRecorder () {
 
   async function workoutToTcx (workout) {
     let versionArray = process.env.npm_package_version.split('.')
-    if (versionArray.length < 3) versionArray = [0, 0, 0]
+    if (versionArray.length < 3) versionArray = ['0', '0', '0']
     const lastStroke = workout.strokes[strokes.length - 1]
     const drag = workout.strokes.reduce((sum, s) => sum + s.dragFactor, 0) / strokes.length
 
@@ -251,9 +251,17 @@ function createWorkoutRecorder () {
   async function createFile (content, filename, compress = false) {
     if (compress) {
       const gzipContent = await gzip(content)
-      await fs.writeFile(filename, gzipContent, (err) => { if (err) log.error(err) })
+      try {
+        await fs.writeFile(filename, gzipContent)
+      } catch (err) {
+        log.error(err)
+      }
     } else {
-      await fs.writeFile(filename, content, (err) => { if (err) log.error(err) })
+      try {
+        await fs.writeFile(filename, content)
+      } catch (err) {
+        log.error(err)
+      }
     }
   }
 
