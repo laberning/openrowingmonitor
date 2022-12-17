@@ -16,83 +16,88 @@ import child_process from 'child_process'
 import AntManager from './ant/AntManager.js'
 import { createAntHrmPeripheral } from './ant/HrmPeripheral.js'
 
-const modes = ['FTMS', 'FTMSBIKE', 'PM5', 'CSC', 'CPS']
+const bleModes = ['FTMS', 'FTMSBIKE', 'PM5', 'CSC', 'CPS', 'OFF']
 function createPeripheralManager () {
   const emitter = new EventEmitter()
-  let peripheral
-  let mode
+  let blePeripheral
+  let bleMode
 
-  createPeripheral(config.bluetoothMode)
+  createBlePeripheral(config.bluetoothMode)
 
-  function getPeripheral () {
-    return peripheral
+  function getBlePeripheral () {
+    return blePeripheral
   }
 
-  function getPeripheralMode () {
-    return mode
+  function getBlePeripheralMode () {
+    return bleMode
   }
 
-  function switchPeripheralMode (newMode) {
+  function switchBlePeripheralMode (newMode) {
     // if now mode was passed, select the next one from the list
     if (newMode === undefined) {
-      newMode = modes[(modes.indexOf(mode) + 1) % modes.length]
+      newMode = bleModes[(bleModes.indexOf(bleMode) + 1) % bleModes.length]
     }
-    createPeripheral(newMode)
+    createBlePeripheral(newMode)
   }
 
   function notifyMetrics (type, metrics) {
-    peripheral.notifyData(type, metrics)
+    blePeripheral.notifyData(type, metrics)
   }
 
   function notifyStatus (status) {
-    peripheral.notifyStatus(status)
+    blePeripheral.notifyStatus(status)
   }
 
-  async function createPeripheral (newMode) {
-    if (peripheral) {
-      await peripheral.destroy()
+  async function createBlePeripheral (newMode) {
+    if (blePeripheral) {
+      await blePeripheral.destroy()
     }
 
     switch (newMode) {
       case 'PM5':
         log.info('bluetooth profile: Concept2 PM5')
-        peripheral = createPm5Peripheral(controlCallback)
-        mode = 'PM5'
+        blePeripheral = createPm5Peripheral(controlCallback)
+        bleMode = 'PM5'
         break
 
       case 'FTMSBIKE':
         log.info('bluetooth profile: FTMS Indoor Bike')
-        peripheral = createFtmsPeripheral(controlCallback, {
+        blePeripheral = createFtmsPeripheral(controlCallback, {
           simulateIndoorBike: true
         })
-        mode = 'FTMSBIKE'
+        bleMode = 'FTMSBIKE'
         break
+
       case 'CSC':
         log.info('bluetooth profile: Cycling Speed and Cadence')
-        peripheral = createCscPeripheral()
-        mode = 'CSC'
+        blePeripheral = createCscPeripheral()
+        bleMode = 'CSC'
         break
+
       case 'CPS':
         log.info('bluetooth profile: Cycling Power Meter')
-        peripheral = createCpsPeripheral()
-        mode = 'CPS'
+        blePeripheral = createCpsPeripheral()
+        bleMode = 'CPS'
         break
 
       case 'FTMS':
-      default:
         log.info('bluetooth profile: FTMS Rower')
-        peripheral = createFtmsPeripheral(controlCallback, {
+        blePeripheral = createFtmsPeripheral(controlCallback, {
           simulateIndoorBike: false
         })
-        mode = 'FTMS'
+        bleMode = 'FTMS'
         break
+
+      default:
+        log.info('bluetooth profile: Off')
+        bleMode = 'OFF'
     }
-    peripheral.triggerAdvertising()
+    if (bleMode.toLocaleLowerCase() !== 'OFF'.toLocaleLowerCase()) { blePeripheral.triggerAdvertising() }
 
     emitter.emit('control', {
       req: {
-        name: 'peripheralMode',
-        peripheralMode: mode
+        name: 'blePeripheralMode',
+        peripheralMode: bleMode
       }
     })
   }
@@ -123,9 +128,9 @@ function createPeripheralManager () {
   return Object.assign(emitter, {
     startAntHeartRateService,
     startBleHeartRateService,
-    getPeripheral,
-    getPeripheralMode,
-    switchPeripheralMode,
+    getBlePeripheral,
+    getBlePeripheralMode,
+    switchBlePeripheralMode,
     notifyMetrics,
     notifyStatus
   })

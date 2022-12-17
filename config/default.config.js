@@ -78,6 +78,7 @@ export default {
   // - FTMSBIKE: The FTMS profile is used by Smart Bike Trainers (please note: the speed and power are still aimed for rowing, NOT for a bike!)
   // - CPS: The BLE Cycling Power Profile simulates a bike for more modern Garmin watches
   // - CSC: The BLE Cycling Speed and Cadence Profile simulates a bike for older Garmin watches
+  // - OFF: Turns Bluetooth advertisement off
   bluetoothMode: 'FTMS',
 
   // Turn this on if you want support for Bluetooth Low Energy heart rate monitors

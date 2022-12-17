@@ -65,7 +65,7 @@ export class DashboardActions extends AppElement {
     return html`
     <button @click=${this.reset}>${icon_undo}</button>
     ${this.renderOptionalButtons()}
-    <button @click=${this.switchPeripheralMode}>${icon_bluetooth}</button>
+    <button @click=${this.switchBlePeripheralMode}>${icon_bluetooth}</button>
     <div class="peripheral-mode">${this.peripheralMode()}</div>
     ${this.dialog ? this.dialog : ''}
   `
@@ -116,7 +116,7 @@ export class DashboardActions extends AppElement {
       case 'FTMS':
         return 'FTMS Rower'
       default:
-        return ''
+        return 'Off'
     }
   }
 
@@ -135,8 +135,8 @@ export class DashboardActions extends AppElement {
     this.sendEvent('triggerAction', { command: 'reset' })
   }
 
-  switchPeripheralMode () {
-    this.sendEvent('triggerAction', { command: 'switchPeripheralMode' })
+  switchBlePeripheralMode () {
+    this.sendEvent('triggerAction', { command: 'switchBlePeripheralMode' })
   }
 
   uploadTraining () {
