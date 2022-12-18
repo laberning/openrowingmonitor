@@ -10,42 +10,27 @@
   - Garmin mini ANT+ (ID 0x1009)
 */
 import log from 'loglevel'
-import Ant from 'ant-plus'
+import { AntDevice } from 'incyclist-ant-plus/lib/bindings/index.js'
 
 export default class AntManager {
   _isStickOpen = false
+  _stick = new AntDevice({ startupTimeout: 2000 })
 
-  constructor () {
-  // it seems that we have to use two separate heart rate sensors to support both old and new
-  // ant sticks, since the library requires them to be bound before open is called
-    this._stick = new Ant.GarminStick3() // 0fcf:1009
-    if (!this._stick.is_present()) {
-      this._stick = new Ant.GarminStick2() // 0fcf:1008
-    }
+  async openAntStick () {
+    if (this._isStickOpen) return
+    if (!(await this._stick.open())) { throw (new Error('Error opening Ant Stick')) }
+
+    log.info('ANT+ stick found')
+    this._isStickOpen = true
   }
 
-  openAntStick () {
-    return new Promise((resolve, reject) => {
-      if (!this._stick.open()) {
-        reject(new Error('Error opening Ant Stick'))
-      }
-      this._stick.once('startup', () => {
-        log.info('ANT+ stick found')
-        this._isStickOpen = true
-        resolve(this._stick)
-      })
-    })
-  }
+  async closeAntStick () {
+    if (!this._isStickOpen) return
 
-  closeAntStick () {
-    return new Promise(resolve => {
-      this._stick.once('shutdown', () => {
-        log.info('ANT+ stick is closed')
-        this._isStickOpen = false
-        resolve()
-      })
-      this._stick.close()
-    })
+    if (!(await this._stick.close())) { throw (new Error('Error closing Ant Stick')) }
+
+    log.info('ANT+ stick is closed')
+    this._isStickOpen = false
   }
 
   isStickOpen () {

@@ -6,35 +6,33 @@
   a Cycling Speed and Cadence Profile
 */
 import EventEmitter from 'node:events'
-import Ant from 'ant-plus'
+import log from 'loglevel'
+import { HeartRateSensor } from 'incyclist-ant-plus'
 
 function createAntHrmPeripheral (antManager) {
   const emitter = new EventEmitter()
   const antStick = antManager.getAntStick()
+  const heartRateSensor = new HeartRateSensor(0)
 
-  const heartRateSensor = new Ant.HeartRateSensor(antStick)
+  async function attach () {
+    if (!antManager.isStickOpen()) { await antManager.openAntStick() }
+    this.channel = await antStick.getChannel()
 
-  heartRateSensor.on('hbData', (data) => {
-    emitter.emit('heartRateMeasurement', { heartrate: data.ComputedHeartRate, batteryLevel: data.BatteryLevel })
-  })
-
-  function attach () {
-    return new Promise(resolve => {
-      heartRateSensor.once('attached', () => {
-        resolve()
-      })
-      heartRateSensor.attach(0, 0)
+    this.channel.on('data', (profile, deviceID, data) => {
+      emitter.emit('heartRateMeasurement', { heartrate: data.ComputedHeartRate, batteryLevel: data.BatteryLevel })
     })
+
+    if (!(await this.channel.startSensor(heartRateSensor))) {
+      log.error('Could not start ANT+ heart rate sensor')
+    }
   }
 
-  function destroy () {
-    return new Promise((resolve) => {
-      heartRateSensor.once('detached', () => {
-        heartRateSensor.removeAllListeners()
-        resolve()
-      })
-      heartRateSensor.detach()
-    })
+  async function destroy () {
+    if (!this.channel) {
+      log.debug('Ant Sensor does not seem to be running')
+      return
+    }
+    await this.channel.stopSensor(heartRateSensor)
   }
 
   return Object.assign(emitter, {
