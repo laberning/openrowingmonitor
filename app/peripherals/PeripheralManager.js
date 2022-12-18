@@ -12,17 +12,23 @@ import log from 'loglevel'
 import EventEmitter from 'node:events'
 import { createCpsPeripheral } from './ble/CpsPeripheral.js'
 import { createCscPeripheral } from './ble/CscPeripheral.js'
-import child_process from 'child_process'
 import AntManager from './ant/AntManager.js'
 import { createAntHrmPeripheral } from './ant/HrmPeripheral.js'
+import { createBleHrmPeripheral } from './ble/HrmPeripheral.js'
 
 const bleModes = ['FTMS', 'FTMSBIKE', 'PM5', 'CSC', 'CPS', 'OFF']
+const hrmModes = ['ANT', 'BLE', 'OFF']
 function createPeripheralManager () {
   const emitter = new EventEmitter()
+  let _antManager
   let blePeripheral
   let bleMode
 
+  let hrmPeripheral
+  let hrmMode
+
   createBlePeripheral(config.bluetoothMode)
+  createHrmPeripheral(config.heartRateMode)
 
   function getBlePeripheral () {
     return blePeripheral
@@ -30,6 +36,14 @@ function createPeripheralManager () {
 
   function getBlePeripheralMode () {
     return bleMode
+  }
+
+  function getHrmPeripheral () {
+    return hrmPeripheral
+  }
+
+  function getHrmPeripheralMode () {
+    return hrmMode
   }
 
   function switchBlePeripheralMode (newMode) {
@@ -102,22 +116,55 @@ function createPeripheralManager () {
     })
   }
 
-  function startBleHeartRateService () {
-    const hrmPeripheral = child_process.fork('./app/peripherals/ble/HrmPeripheral.js')
-    hrmPeripheral.on('message', (heartRateMeasurement) => {
-      emitter.emit('heartRateBleMeasurement', heartRateMeasurement)
-    })
+  function switchHrmMode (newMode) {
+    if (newMode === undefined) {
+      newMode = hrmModes[(hrmModes.indexOf(hrmMode) + 1) % hrmModes.length]
+    }
+    createHrmPeripheral(newMode)
   }
 
-  function startAntHeartRateService () {
-    if (!this._antManager) {
-      this._antManager = new AntManager()
+  async function createHrmPeripheral (newMode) {
+    if (hrmPeripheral) {
+      await hrmPeripheral.destroy()
+      hrmPeripheral.removeAllListeners()
+
+      if (_antManager && newMode !== 'ANT') { await _antManager.closeAntStick() }
     }
 
-    const antHrm = createAntHrmPeripheral(this._antManager)
+    switch (newMode) {
+      case 'ANT':
+        log.info('heart rate profile: ANT')
+        if (!_antManager) {
+          _antManager = new AntManager()
+        }
 
-    antHrm.on('heartRateMeasurement', (heartRateMeasurement) => {
-      emitter.emit('heartRateAntMeasurement', heartRateMeasurement)
+        hrmPeripheral = createAntHrmPeripheral(_antManager)
+        hrmMode = 'ANT'
+        await hrmPeripheral.attach()
+        break
+
+      case 'BLE':
+        log.info('heart rate profile: BLE')
+        hrmPeripheral = createBleHrmPeripheral()
+        hrmMode = 'BLE'
+        break
+
+      default:
+        log.info('heart rate profile: Off')
+        hrmMode = 'OFF'
+    }
+
+    if (hrmMode.toLocaleLowerCase() !== 'OFF'.toLocaleLowerCase()) {
+      hrmPeripheral.on('heartRateMeasurement', (heartRateMeasurement) => {
+        emitter.emit('heartRateMeasurement', heartRateMeasurement)
+      })
+    }
+
+    emitter.emit('control', {
+      req: {
+        name: 'hrmPeripheralMode',
+        peripheralMode: hrmMode
+      }
     })
   }
 
@@ -126,10 +173,11 @@ function createPeripheralManager () {
   }
 
   return Object.assign(emitter, {
-    startAntHeartRateService,
-    startBleHeartRateService,
     getBlePeripheral,
     getBlePeripheralMode,
+    getHrmPeripheral,
+    getHrmPeripheralMode,
+    switchHrmMode,
     switchBlePeripheralMode,
     notifyMetrics,
     notifyStatus

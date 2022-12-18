@@ -7,7 +7,6 @@
 */
 import EventEmitter from 'node:events'
 import Ant from 'ant-plus'
-import log from 'loglevel'
 
 function createAntHrmPeripheral (antManager) {
   const emitter = new EventEmitter()
@@ -19,32 +18,28 @@ function createAntHrmPeripheral (antManager) {
     emitter.emit('heartRateMeasurement', { heartrate: data.ComputedHeartRate, batteryLevel: data.BatteryLevel })
   })
 
-  antStick.on('startup', () => {
-    log.info('ANT+ stick found')
-    heartRateSensor.attach(0, 0)
-  })
-
-  antStick.on('shutdown', () => {
-    log.info('classic ANT+ stick lost')
-  })
-
-  if (!antManager.openAntStick()) {
-    throw new Error('Error opening Ant Stick')
+  function attach () {
+    return new Promise(resolve => {
+      heartRateSensor.once('attached', () => {
+        resolve()
+      })
+      heartRateSensor.attach(0, 0)
+    })
   }
 
   function destroy () {
     return new Promise((resolve) => {
-      heartRateSensor.detach()
-      heartRateSensor.on('detached', () => {
-        antStick.removeAllListeners()
+      heartRateSensor.once('detached', () => {
         heartRateSensor.removeAllListeners()
         resolve()
       })
+      heartRateSensor.detach()
     })
   }
 
   return Object.assign(emitter, {
-    destroy
+    destroy,
+    attach
   })
 }
 

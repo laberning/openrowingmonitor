@@ -9,9 +9,12 @@
   - Garmin USB or USB2 ANT+ or an off-brand clone of it (ID 0x1008)
   - Garmin mini ANT+ (ID 0x1009)
 */
+import log from 'loglevel'
 import Ant from 'ant-plus'
 
 export default class AntManager {
+  _isStickOpen = false
+
   constructor () {
   // it seems that we have to use two separate heart rate sensors to support both old and new
   // ant sticks, since the library requires them to be bound before open is called
@@ -22,10 +25,31 @@ export default class AntManager {
   }
 
   openAntStick () {
-    if (!this._stick.open()) {
-      return false
-    }
-    return this._stick
+    return new Promise((resolve, reject) => {
+      if (!this._stick.open()) {
+        reject(new Error('Error opening Ant Stick'))
+      }
+      this._stick.once('startup', () => {
+        log.info('ANT+ stick found')
+        this._isStickOpen = true
+        resolve(this._stick)
+      })
+    })
+  }
+
+  closeAntStick () {
+    return new Promise(resolve => {
+      this._stick.once('shutdown', () => {
+        log.info('ANT+ stick is closed')
+        this._isStickOpen = false
+        resolve()
+      })
+      this._stick.close()
+    })
+  }
+
+  isStickOpen () {
+    return this._isStickOpen
   }
 
   getAntStick () {

@@ -134,6 +134,10 @@ export function createApp (app) {
         if (socket)socket.send(JSON.stringify({ command: 'switchBlePeripheralMode' }))
         break
       }
+      case 'switchHrmMode': {
+        if (socket)socket.send(JSON.stringify({ command: 'switchHrmMode' }))
+        break
+      }
       case 'reset': {
         resetFields()
         if (socket)socket.send(JSON.stringify({ command: 'reset' }))

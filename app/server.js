@@ -102,9 +102,17 @@ peripheralManager.on('control', (event) => {
       webServer.notifyClients('config', getConfig())
       event.res = true
       break
+    case 'hrmPeripheralMode':
+      webServer.notifyClients('config', getConfig())
+      event.res = true
+      break
     default:
       log.info('unhandled Command', event.req)
   }
+})
+
+peripheralManager.on('heartRateMeasurement', (heartRateMeasurement) => {
+  rowingStatistics.handleHeartRateMeasurement(heartRateMeasurement)
 })
 
 function pauseWorkout () {
@@ -191,20 +199,6 @@ rowingStatistics.on('rowingStopped', (metrics) => {
   workoutRecorder.writeRecordings()
 })
 
-if (config.heartRateMonitorBLE) {
-  peripheralManager.startBleHeartRateService()
-  peripheralManager.on('heartRateBleMeasurement', (heartRateMeasurement) => {
-    rowingStatistics.handleHeartRateMeasurement(heartRateMeasurement)
-  })
-}
-
-if (config.heartRateMonitorANT) {
-  peripheralManager.startAntHeartRateService()
-  peripheralManager.on('heartRateAntMeasurement', (heartRateMeasurement) => {
-    rowingStatistics.handleHeartRateMeasurement(heartRateMeasurement)
-  })
-}
-
 workoutUploader.on('authorizeStrava', (data, client) => {
   webServer.notifyClient(client, 'authorizeStrava', data)
 })
@@ -218,6 +212,9 @@ webServer.on('messageReceived', async (message, client) => {
   switch (message.command) {
     case 'switchBlePeripheralMode':
       peripheralManager.switchBlePeripheralMode()
+      break
+    case 'switchHrmMode':
+      peripheralManager.switchHrmMode()
       break
     case 'reset':
       resetWorkout()
@@ -243,7 +240,8 @@ webServer.on('clientConnected', (client) => {
 // todo: extract this into some kind of state manager
 function getConfig () {
   return {
-    peripheralMode: peripheralManager.getBlePeripheralMode(),
+    blePeripheralMode: peripheralManager.getBlePeripheralMode(),
+    hrmPeripheralMode: peripheralManager.getHrmPeripheralMode(),
     stravaUploadEnabled: !!config.stravaClientId && !!config.stravaClientSecret,
     shutdownEnabled: !!config.shutdownCommand
   }

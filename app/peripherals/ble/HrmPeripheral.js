@@ -5,14 +5,29 @@
   Starts the central manager in a forked thread since noble does not like
   to run in the same thread as bleno
 */
-import process from 'process'
-import config from '../../tools/ConfigManager.js'
-import log from 'loglevel'
-import { createHeartRateManager } from './hrm/HeartRateManager.js'
+import EventEmitter from 'node:events'
+import child_process from 'child_process'
 
-log.setLevel(config.loglevel.default)
-const heartRateManager = createHeartRateManager()
+function createBleHrmPeripheral () {
+  const emitter = new EventEmitter()
 
-heartRateManager.on('heartRateMeasurement', (heartRateMeasurement) => {
-  process.send(heartRateMeasurement)
-})
+  const bleHrmProcess = child_process.fork('./app/peripherals/ble/hrm/HrmService.js')
+
+  bleHrmProcess.on('message', (heartRateMeasurement) => {
+    emitter.emit('heartRateMeasurement', heartRateMeasurement)
+  })
+
+  function destroy () {
+    return new Promise(resolve => {
+      bleHrmProcess.kill()
+      bleHrmProcess.removeAllListeners()
+      resolve()
+    })
+  }
+
+  return Object.assign(emitter, {
+    destroy
+  })
+}
+
+export { createBleHrmPeripheral }
