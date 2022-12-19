@@ -43,11 +43,16 @@ if (config.appPriority) {
   }
 }
 
-// a hook for setting session parameters that the rower has to obey
+// a hook for setting interval parameters that the rower has to obey
 // Hopefully this will be filled through the WebGUI or through the BLE interface (PM5-BLE can do this...)
-// When set, ORM will terminate the session after reaching the target. If not set, it will behave as usual (a "Just row" session).
 // When set, the GUI will behave similar to a PM5 in that it counts down from the target to 0
-const session = {
+// When set, ORM will set the interval parameters and will activate the next interval when the target is reached
+// When there is no next interval, ORM will terminate the session after reaching the target.
+// If nothing is filled, it will behave as usual (a "Just row" session).
+let intervalSettings = []
+let currentIntervalNo = 0
+
+intervalSettings[0] = { // this is a sample (empty) interval
   targetDistance: 0, // Target distance in meters
   targetTime: 0 // Target time in seconds
 }
@@ -120,7 +125,17 @@ function handleRotationImpulse (dataPoint) {
   rowingStatistics.handleRotationImpulse(dataPoint)
 }
 
-const rowingStatistics = createRowingStatistics(config, session)
+const rowingStatistics = createRowingStatistics(config)
+// Set the interval parameters
+if (intervalSettings.length > 0) {
+  rowingStatistics.setIntervalParameters(intervalSettings[0])
+  currentIntervalNo = 0
+  log.info(`Interval settings: distance limit: ${(intervalSettings[currentIntervalNo].targetDistance > 0 ? `${intervalSettings[currentIntervalNo].targetDistance} meters` : 'none')}, time limit: ${(intervalSettings[currentIntervalNo].targetTime > 0 ? `${intervalSettings[currentIntervalNo].targetTime} seconds` : 'none')}`)
+} else {
+  log.info('Starting a just row session, no time or distance target set')
+}
+
+
 const workoutRecorder = createWorkoutRecorder()
 const workoutUploader = createWorkoutUploader(workoutRecorder)
 
@@ -158,6 +173,19 @@ rowingStatistics.on('intervalTargetReached', (metrics) => {
   // to provide a next intervaltarget. Thus, the use case of a next interval has to be implemented as well
   // (i.e. setting a new interval target). For now, this interval is the one and only so we stop.
   stopWorkout()
+})
+
+rowingStatistics.on('intervalTargetReached', (metrics) => {
+  if ((intervalSettings.length - 1) > currentIntervalNo) {
+    // This is called when there is a next interval
+    currentIntervalNo += 1
+    rowingStatistics.setIntervalParameters(intervalSettings[currentIntervalNo])
+    log.info(`Interval settings: distance limit: ${(intervalSettings[currentIntervalNo].targetDistance > 0 ? `${intervalSettings[currentIntervalNo].targetDistance} meters` : 'none')}, time limit: ${(intervalSettings[currentIntervalNo].targetTime > 0 ? `${intervalSettings[0].targetTime} seconds` : 'none')}`)
+  } else {
+    // This is called when the last intervaltarget is reached
+    log.info('No new interval, terminating session')
+    stopWorkout()
+  }
 })
 
 rowingStatistics.on('rowingStopped', (metrics) => {
