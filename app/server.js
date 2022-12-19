@@ -39,7 +39,7 @@ if (config.appPriority) {
     // setting priority of current process
     os.setPriority(mainPriority)
   } catch (err) {
-    log.debug('need root permission to set priority of main server thread')
+    log.error('Could not set priority for main server thread to ${mainPriority}: need root permission to do this')
   }
 }
 
@@ -56,8 +56,6 @@ intervalSettings[0] = { // this is a sample (empty) interval
   targetDistance: 0, // Target distance in meters
   targetTime: 0 // Target time in seconds
 }
-
-log.info(`Session settings: distance limit: ${(session.targetDistance > 0 ? `${session.targetDistance} meters` : 'none')}, time limit: ${(session.targetTime > 0 ? `${session.targetTime} seconds` : 'none')}\n`)
 
 const peripheralManager = createPeripheralManager()
 
@@ -201,6 +199,7 @@ rowingStatistics.on('rowingStopped', (metrics) => {
 
 if (config.heartrateMonitorBLE) {
   const bleCentralService = child_process.fork('./app/ble/CentralService.js')
+  log.debug('BLE Heartrate monitoring started')
   bleCentralService.on('message', (heartrateMeasurement) => {
     rowingStatistics.handleHeartrateMeasurement(heartrateMeasurement)
   })
@@ -208,6 +207,7 @@ if (config.heartrateMonitorBLE) {
 
 if (config.heartrateMonitorANT) {
   const antManager = createAntManager()
+  log.debug('ANT+ Heartrate monitoring started')
   antManager.on('heartrateMeasurement', (heartrateMeasurement) => {
     rowingStatistics.handleHeartrateMeasurement(heartrateMeasurement)
   })
