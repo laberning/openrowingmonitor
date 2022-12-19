@@ -39,7 +39,7 @@ if (config.appPriority) {
     // setting priority of current process
     os.setPriority(mainPriority)
   } catch (err) {
-    log.error('Could not set priority for main server thread to ${mainPriority}: need root permission to do this')
+    log.error(`Could not set priority for main server thread to ${mainPriority}: need root permission to do this`)
   }
 }
 
