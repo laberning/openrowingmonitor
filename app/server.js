@@ -134,7 +134,6 @@ if (intervalSettings.length > 0) {
   log.info('Starting a just row session, no time or distance target set')
 }
 
-
 const workoutRecorder = createWorkoutRecorder()
 const workoutUploader = createWorkoutUploader(workoutRecorder)
 
