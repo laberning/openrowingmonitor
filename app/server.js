@@ -112,6 +112,7 @@ function resumeWorkout () {
 }
 
 function resetWorkout () {
+  intervalSettings = []
   workoutRecorder.reset()
   rowingStatistics.reset()
   peripheralManager.notifyStatus({ name: 'reset' })
