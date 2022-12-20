@@ -55,16 +55,17 @@ function createPeripheralManager () {
   }
 
   function notifyMetrics (type, metrics) {
-    blePeripheral.notifyData(type, metrics)
+    if (bleMode !== 'OFF') { blePeripheral.notifyData(type, metrics) }
   }
 
   function notifyStatus (status) {
-    blePeripheral.notifyStatus(status)
+    if (bleMode !== 'OFF') { blePeripheral.notifyStatus(status) }
   }
 
   async function createBlePeripheral (newMode) {
     if (blePeripheral) {
       await blePeripheral.destroy()
+      blePeripheral = undefined
     }
 
     switch (newMode) {
@@ -127,7 +128,7 @@ function createPeripheralManager () {
     if (hrmPeripheral) {
       await hrmPeripheral.destroy()
       hrmPeripheral.removeAllListeners()
-
+      hrmPeripheral = undefined
       if (_antManager && newMode !== 'ANT') { await _antManager.closeAntStick() }
     }
 
