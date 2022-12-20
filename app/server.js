@@ -166,14 +166,6 @@ rowingStatistics.on('rowingPaused', (metrics) => {
 })
 
 rowingStatistics.on('intervalTargetReached', (metrics) => {
-  // This is called when the RowingStatistics conclude the target is reached
-  // This isn't the most optimal solution yet, as this interval is the only one set. A logcal extansion would be
-  // to provide a next intervaltarget. Thus, the use case of a next interval has to be implemented as well
-  // (i.e. setting a new interval target). For now, this interval is the one and only so we stop.
-  stopWorkout()
-})
-
-rowingStatistics.on('intervalTargetReached', (metrics) => {
   if ((intervalSettings.length - 1) > currentIntervalNo) {
     // This is called when there is a next interval
     currentIntervalNo += 1
