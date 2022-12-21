@@ -7,7 +7,7 @@
 
 import { AppElement, html, css } from './AppElement.js'
 import { customElement, state } from 'lit/decorators.js'
-import { icon_undo, icon_expand, icon_compress, icon_poweroff, icon_bluetooth, icon_upload, icon_heartbeat } from '../lib/icons.js'
+import { icon_undo, icon_expand, icon_compress, icon_poweroff, icon_bluetooth, icon_upload, icon_heartbeat, icon_antplus } from '../lib/icons.js'
 import './AppDialog.js'
 
 @customElement('dashboard-actions')
@@ -69,6 +69,8 @@ export class DashboardActions extends AppElement {
     <div class="peripheral-mode">${this.blePeripheralMode()}</div>
     <button @click=${this.switchHrmPeripheralMode}>${icon_heartbeat}</button>
     <div class="peripheral-mode">${this.appState?.config?.hrmPeripheralMode}</div>
+    <button @click=${this.switchAntPeripheralMode}>${icon_antplus}</button>
+    <div class="peripheral-mode">${this.appState?.config?.antPeripheralMode}</div>
     ${this.dialog ? this.dialog : ''}
   `
   }
@@ -139,6 +141,10 @@ export class DashboardActions extends AppElement {
 
   switchBlePeripheralMode () {
     this.sendEvent('triggerAction', { command: 'switchBlePeripheralMode' })
+  }
+
+  switchAntPeripheralMode () {
+    this.sendEvent('triggerAction', { command: 'switchAntPeripheralMode' })
   }
 
   switchHrmPeripheralMode () {

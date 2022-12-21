@@ -81,11 +81,16 @@ export default {
   // - OFF: Turns Bluetooth advertisement off
   bluetoothMode: 'FTMS',
 
+  // Selects the AN+ that is broadcasted to external peripherals and apps. Supported modes:
+  // - FE: ANT+ Fitness Equipment
+  // - OFF: Turns Bluetooth advertisement off
+  antplusMode: 'OFF',
+
   // Selects the heart rate monitor mode. Supported modes:
   // - BLE: Use Bluetooth Low Energy to connect Heart Rate Monitor (Will currently connect to the first device found)
   // - ANT: Use Ant+ to connect Heart Rate Monitor
   // - OFF: turns of Heart Rate Monitor discovery
-  heartRateMode: 'BLE',
+  heartRateMode: 'OFF',
 
   // Defines the name that is used to announce the FTMS Rower via Bluetooth Low Energy (BLE)
   // Some rowing training applications expect that the rowing device is announced with a certain name

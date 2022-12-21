@@ -10,7 +10,7 @@
   - Garmin mini ANT+ (ID 0x1009)
 */
 import log from 'loglevel'
-import { AntDevice } from 'incyclist-ant-plus/lib/bindings/index.js'
+import { AntDevice } from 'incyclist-ant-plus/lib/ant-device.js'
 
 export default class AntManager {
   _isStickOpen = false

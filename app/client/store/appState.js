@@ -15,6 +15,8 @@ export const APP_STATE = {
     blePeripheralMode: '',
     // currently can be ANT, BLE, OFF
     hrmPeripheralMode: '',
+    // currently can be FE, OFF
+    antPeripheralMode: '',
     // true if upload to strava is enabled
     stravaUploadEnabled: false,
     // true if remote device shutdown is enabled
