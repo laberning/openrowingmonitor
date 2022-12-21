@@ -32,6 +32,8 @@ function createPeripheralManager () {
   let hrmPeripheral
   let hrmMode
 
+  let isPeripheralChangeInProgress = false
+
   createBlePeripheral(config.bluetoothMode)
   createHrmPeripheral(config.heartRateMode)
   createAntPeripheral(config.antplusMode)
@@ -61,11 +63,14 @@ function createPeripheralManager () {
   }
 
   function switchBlePeripheralMode (newMode) {
+    if (isPeripheralChangeInProgress) return
+    isPeripheralChangeInProgress = true
     // if now mode was passed, select the next one from the list
     if (newMode === undefined) {
       newMode = bleModes[(bleModes.indexOf(bleMode) + 1) % bleModes.length]
     }
     createBlePeripheral(newMode)
+    isPeripheralChangeInProgress = false
   }
 
   function notifyMetrics (type, metrics) {
@@ -80,7 +85,7 @@ function createPeripheralManager () {
 
   async function createBlePeripheral (newMode) {
     if (blePeripheral) {
-      await blePeripheral.destroy()
+      await blePeripheral?.destroy()
       blePeripheral = undefined
     }
 
@@ -134,18 +139,26 @@ function createPeripheralManager () {
   }
 
   function switchAntPeripheralMode (newMode) {
+    if (isPeripheralChangeInProgress) return
+    isPeripheralChangeInProgress = true
     if (newMode === undefined) {
       newMode = antModes[(antModes.indexOf(antMode) + 1) % antModes.length]
     }
     createAntPeripheral(newMode)
+    isPeripheralChangeInProgress = false
   }
 
   async function createAntPeripheral (newMode) {
     if (antPeripheral) {
-      await antPeripheral.destroy()
+      await antPeripheral?.destroy()
       antPeripheral = undefined
 
-      if (_antManager && hrmMode !== 'ANT' && newMode === 'OFF') { await _antManager.closeAntStick() }
+      try {
+        if (_antManager && hrmMode !== 'ANT' && newMode === 'OFF') { await _antManager.closeAntStick() }
+      } catch (error) {
+        log.error(error)
+        return
+      }
     }
 
     switch (newMode) {
@@ -155,9 +168,14 @@ function createPeripheralManager () {
           _antManager = new AntManager()
         }
 
-        antPeripheral = createFEPeripheral(_antManager)
-        antMode = 'FE'
-        await antPeripheral.attach()
+        try {
+          antPeripheral = createFEPeripheral(_antManager)
+          antMode = 'FE'
+          await antPeripheral.attach()
+        } catch (error) {
+          log.error(error)
+          return
+        }
         break
 
       default:
@@ -174,18 +192,26 @@ function createPeripheralManager () {
   }
 
   function switchHrmMode (newMode) {
+    if (isPeripheralChangeInProgress) return
+    isPeripheralChangeInProgress = true
     if (newMode === undefined) {
       newMode = hrmModes[(hrmModes.indexOf(hrmMode) + 1) % hrmModes.length]
     }
     createHrmPeripheral(newMode)
+    isPeripheralChangeInProgress = false
   }
 
   async function createHrmPeripheral (newMode) {
     if (hrmPeripheral) {
-      await hrmPeripheral.destroy()
-      hrmPeripheral.removeAllListeners()
+      await hrmPeripheral?.destroy()
+      hrmPeripheral?.removeAllListeners()
       hrmPeripheral = undefined
-      if (_antManager && newMode !== 'ANT' && antMode === 'OFF') { await _antManager.closeAntStick() }
+      try {
+        if (_antManager && newMode !== 'ANT' && antMode === 'OFF') { await _antManager.closeAntStick() }
+      } catch (error) {
+        log.error(error)
+        return
+      }
     }
 
     switch (newMode) {
@@ -195,9 +221,14 @@ function createPeripheralManager () {
           _antManager = new AntManager()
         }
 
-        hrmPeripheral = createAntHrmPeripheral(_antManager)
-        hrmMode = 'ANT'
-        await hrmPeripheral.attach()
+        try {
+          hrmPeripheral = createAntHrmPeripheral(_antManager)
+          hrmMode = 'ANT'
+          await hrmPeripheral.attach()
+        } catch (error) {
+          log.error(error)
+          return
+        }
         break
 
       case 'BLE':
