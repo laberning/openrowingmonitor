@@ -52,9 +52,17 @@ export function createGpioTimerService () {
   let previousTick = 0
 
   // Define the alert handler
-  sensor.on('alert', (level, currentTick) => {
+  sensor.on('alert', (level, rawCurrentTick) => {
     if ((triggeredFlank === 'Both') || (triggeredFlank === 'Down' && level === 0) || (triggeredFlank === 'Up' && level === 1)) {
-      const currentDt = ((currentTick >> 0) - (previousTick >> 0)) / 1e6
+      const currentTick = (rawCurrentTick >> 0) / 1e6
+      let currentDt
+      if (currentTick > previousTick) {
+        currentDt = currentTick - previousTick
+      } else {
+        // We had a rollover of the tick, so the current tick misses 4,294,967,295 us
+        log.debug(`Gpio-service: tick rollover detected and corrected`)
+        currentDt = (currentTick + 4294.967295) - previousTick
+      }
       previousTick = currentTick
       process.send(currentDt)
     }
