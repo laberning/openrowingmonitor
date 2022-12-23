@@ -60,7 +60,7 @@ export function createGpioTimerService () {
         currentDt = currentTick - previousTick
       } else {
         // We had a rollover of the tick, so the current tick misses 4,294,967,295 us
-        log.debug(`Gpio-service: tick rollover detected and corrected`)
+        log.debug('Gpio-service: tick rollover detected and corrected')
         currentDt = (currentTick + 4294.967295) - previousTick
       }
       previousTick = currentTick
