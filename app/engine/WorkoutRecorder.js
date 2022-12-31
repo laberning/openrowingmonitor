@@ -279,6 +279,8 @@ function createWorkoutRecorder () {
       return
     }
 
+    postExerciseHR = []
+
     const parallelCalls = []
 
     if (config.createRawDataFiles) {
