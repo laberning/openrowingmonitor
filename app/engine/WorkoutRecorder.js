@@ -270,7 +270,7 @@ function createWorkoutRecorder () {
   }
 
   async function createRecordings () {
-    if (!config.createRawDataFiles && !config.createTcxFiles) {
+    if (!config.createRawDataFiles && !config.createTcxFiles && !config.createRowingDataFiles) {
       return
     }
 
