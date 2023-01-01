@@ -68,7 +68,7 @@ function createPm5Peripheral (controlCallback, options) {
     return new Promise((resolve) => {
       bleno.disconnect()
       bleno.removeAllListeners()
-      bleno.stopAdvertising(resolve)
+      bleno.stopAdvertising(() => resolve())
     })
   }
 

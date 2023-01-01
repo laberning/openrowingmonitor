@@ -118,8 +118,8 @@ function createFEPeripheral (antManager) {
           ...Messages.intToLEHexArray(feCapabilitiesBitField, 1)
         ]
         if (sessionData.sessionStatus === 'Rowing') {
-          log.debug(`Page 17 Data Sent. Event=${dataPageCount}. Stroke Length=${sessionData.distancePerStroke}.`)
-          log.debug(`Hex Stroke Length=0x${sessionData.distancePerStroke.toString(16)}.`)
+          log.trace(`Page 17 Data Sent. Event=${dataPageCount}. Stroke Length=${sessionData.distancePerStroke}.`)
+          log.trace(`Hex Stroke Length=0x${sessionData.distancePerStroke.toString(16)}.`)
         }
         break
       case dataPageCount % 8 === 3: // 0x16 - Specific Rower Data (once a second)
@@ -135,8 +135,8 @@ function createFEPeripheral (antManager) {
           ...Messages.intToLEHexArray((sessionData.fitnessEquipmentState + rowingCapabilitiesBitField), 1)
         ]
         if (sessionData.sessionStatus === 'Rowing') {
-          log.debug(`Page 22 Data Sent. Event=${dataPageCount}. Strokes=${sessionData.accumulatedStrokes}. Stroke Rate=${sessionData.strokeRate}. Power=${sessionData.instantaneousPower}`)
-          log.debug(`Hex Strokes=0x${sessionData.accumulatedStrokes.toString(16)}. Hex Stroke Rate=0x${sessionData.strokeRate.toString(16)}. Hex Power=0x${Messages.intToLEHexArray(sessionData.instantaneousPower, 2)}.`)
+          log.trace(`Page 22 Data Sent. Event=${dataPageCount}. Strokes=${sessionData.accumulatedStrokes}. Stroke Rate=${sessionData.strokeRate}. Power=${sessionData.instantaneousPower}`)
+          log.trace(`Hex Strokes=0x${sessionData.accumulatedStrokes.toString(16)}. Hex Stroke Rate=0x${sessionData.strokeRate.toString(16)}. Hex Power=0x${Messages.intToLEHexArray(sessionData.instantaneousPower, 2)}.`)
         }
         break
       case dataPageCount % 4 === 2: // 0x10 - General FE Data (twice a second)
@@ -152,8 +152,8 @@ function createFEPeripheral (antManager) {
           ...Messages.intToLEHexArray((sessionData.fitnessEquipmentState + feCapabilitiesBitField), 1)
         ]
         if (sessionData.sessionStatus === 'Rowing') {
-          log.debug(`Page 16 Data Sent. Event=${dataPageCount}. Time=${sessionData.accumulatedTime}. Distance=${sessionData.accumulatedDistance}. Speed=${sessionData.cycleLinearVelocity}.`)
-          log.debug(`Hex Time=0x${sessionData.accumulatedTime.toString(16)}. Hex Distance=0x${sessionData.accumulatedDistance.toString(16)}. Hex Speed=0x${Messages.intToLEHexArray(sessionData.cycleLinearVelocity, 2)}.`)
+          log.trace(`Page 16 Data Sent. Event=${dataPageCount}. Time=${sessionData.accumulatedTime}. Distance=${sessionData.accumulatedDistance}. Speed=${sessionData.cycleLinearVelocity}.`)
+          log.trace(`Hex Time=0x${sessionData.accumulatedTime.toString(16)}. Hex Distance=0x${sessionData.accumulatedDistance.toString(16)}. Hex Speed=0x${Messages.intToLEHexArray(sessionData.cycleLinearVelocity, 2)}.`)
         }
         break
     }
