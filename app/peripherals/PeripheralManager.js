@@ -34,9 +34,13 @@ function createPeripheralManager () {
 
   let isPeripheralChangeInProgress = false
 
-  createBlePeripheral(config.bluetoothMode)
-  createHrmPeripheral(config.heartRateMode)
-  createAntPeripheral(config.antplusMode)
+  setupPeripherals()
+
+  async function setupPeripherals () {
+    await createBlePeripheral(config.bluetoothMode)
+    await createHrmPeripheral(config.heartRateMode)
+    await createAntPeripheral(config.antplusMode)
+  }
 
   function getBlePeripheral () {
     return blePeripheral
@@ -74,13 +78,13 @@ function createPeripheralManager () {
   }
 
   function notifyMetrics (type, metrics) {
-    if (bleMode !== 'OFF') { blePeripheral.notifyData(type, metrics) }
-    if (antMode !== 'OFF') { antPeripheral.notifyData(type, metrics) }
+    if (bleMode !== 'OFF') { blePeripheral?.notifyData(type, metrics) }
+    if (antMode !== 'OFF') { antPeripheral?.notifyData(type, metrics) }
   }
 
   function notifyStatus (status) {
-    if (bleMode !== 'OFF') { blePeripheral.notifyStatus(status) }
-    if (antMode !== 'OFF') { antPeripheral.notifyStatus(status) }
+    if (bleMode !== 'OFF') { blePeripheral?.notifyStatus(status) }
+    if (antMode !== 'OFF') { antPeripheral?.notifyStatus(status) }
   }
 
   async function createBlePeripheral (newMode) {
