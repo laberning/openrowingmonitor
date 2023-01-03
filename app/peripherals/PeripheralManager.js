@@ -264,7 +264,21 @@ function createPeripheralManager () {
     emitter.emit('control', event)
   }
 
+  async function shutdownAllPeripherals () {
+    log.debug('shutting down all peripherals')
+
+    try {
+      await blePeripheral?.destroy()
+      await antPeripheral?.destroy()
+      await hrmPeripheral?.destroy()
+      await _antManager?.closeAntStick()
+    } catch (error) {
+      log.error('peripheral shutdown was unsuccessful, restart of Pi may required', error)
+    }
+  }
+
   return Object.assign(emitter, {
+    shutdownAllPeripherals,
     getBlePeripheral,
     getBlePeripheralMode,
     getAntPeripheral,

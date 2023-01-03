@@ -140,6 +140,22 @@ function resetWorkout () {
 const gpioTimerService = child_process.fork('./app/gpio/GpioTimerService.js')
 gpioTimerService.on('message', handleRotationImpulse)
 
+process.once('SIGINT', async (signal) => {
+  log.debug(`${signal} signal was received, shutting down gracefully`)
+  await peripheralManager.shutdownAllPeripherals()
+  process.exit(0)
+})
+process.once('SIGTERM', async (signal) => {
+  log.debug(`${signal} signal was received, shutting down gracefully`)
+  await peripheralManager.shutdownAllPeripherals()
+  process.exit(0)
+})
+process.once('uncaughtException', async (error) => {
+  log.error('Uncaught Exception:', error)
+  await peripheralManager.shutdownAllPeripherals()
+  process.exit(1)
+})
+
 function handleRotationImpulse (dataPoint) {
   workoutRecorder.recordRotationImpulse(dataPoint)
   rowingStatistics.handleRotationImpulse(dataPoint)
