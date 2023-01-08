@@ -87,6 +87,14 @@ function createWorkoutRecorder () {
       `"${currentstroke.driveHandleVelocityCurve}","${currentstroke.driveHandlePowerCurve}"\n`
       i++
     }
+
+    try {
+      await fs.mkdir(directory, { recursive: true })
+    } catch (error) {
+      if (error.code !== 'EEXIST') {
+        log.error(`can not create directory ${directory}`, error)
+      }
+    }
     await createFile(RowingData, `${filename}`, false)
   }
 
