@@ -87,6 +87,14 @@ function createWorkoutRecorder () {
       `"${currentstroke.driveHandleVelocityCurve}","${currentstroke.driveHandlePowerCurve}"\n`
       i++
     }
+
+    try {
+      await fs.mkdir(directory, { recursive: true })
+    } catch (error) {
+      if (error.code !== 'EEXIST') {
+        log.error(`can not create directory ${directory}`, error)
+      }
+    }
     await createFile(RowingData, `${filename}`, false)
   }
 
@@ -270,7 +278,7 @@ function createWorkoutRecorder () {
   }
 
   async function createRecordings () {
-    if (!config.createRawDataFiles && !config.createTcxFiles) {
+    if (!config.createRawDataFiles && !config.createTcxFiles && !config.createRowingDataFiles) {
       return
     }
 
@@ -278,6 +286,8 @@ function createWorkoutRecorder () {
       log.debug('workout is shorter than minimum workout time, skipping automatic creation of recordings...')
       return
     }
+
+    postExerciseHR = []
 
     const parallelCalls = []
 
