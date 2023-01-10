@@ -58,7 +58,7 @@ function createFlywheel (rowerSettings) {
   reset()
 
   function pushValue (dataPoint) {
-    if (dataPoint > rowerSettings.maximumStrokeTimeBeforePause || dataPoint < 0) {
+    if (isNaN(dataPoint) || dataPoint < 0 || dataPoint > rowerSettings.maximumStrokeTimeBeforePause) {
       // This typicaly happends after a pause, we need to fix this as it throws off all time calculations
       log.debug(`*** WARNING: currentDt of ${dataPoint} sec isn't between 0 and maximumStrokeTimeBeforePause (${rowerSettings.maximumStrokeTimeBeforePause} sec)`)
       dataPoint = currentDt.clean()
