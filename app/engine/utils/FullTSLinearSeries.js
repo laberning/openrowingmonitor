@@ -183,7 +183,7 @@ function createTSLinearSeries (maxSeriesLength = 0) {
       const mid = Math.floor(sortedArray.length / 2)
       return (sortedArray.length % 2 !== 0 ? sortedArray[mid] : ((sortedArray[mid - 1] + sortedArray[mid]) / 2))
     } else {
-      log.eror('TS Linear Regressor, Median calculation on empty dataset attempted!')
+      log.error('TS Linear Regressor, Median calculation on empty dataset attempted!')
       return 0
     }
   }
