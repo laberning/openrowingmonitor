@@ -99,7 +99,7 @@ function createVO2max (config) {
     switch (true) {
       case (config.userSettings.sex === 'male' && config.userSettings.highlyTrained && config.userSettings.weight > 75):
         // Highly trained male, above 75 Kg
-        Y = 15.7 - (1.5 * projectedTwoKTimeInMinutes
+        Y = 15.7 - (1.5 * projectedTwoKTimeInMinutes)
         break
       case (config.userSettings.sex === 'male' && config.userSettings.highlyTrained):
         // Highly trained male, equal or below 75 Kg
