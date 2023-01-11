@@ -1,4 +1,4 @@
-	 'use strict'
+'use strict'
 /*
   Open Rowing Monitor, https://github.com/laberning/openrowingmonitor
 
@@ -13,12 +13,11 @@ async function getConfig () {
   try {
     customConfig = await import('../../config/config.js')
   } catch (exception) {}
-
   return customConfig !== undefined ? deepMerge(defaultConfig, customConfig.default) : defaultConfig
 }
 
 function checkConfig (configToCheck) {
-  checkRangeValue(configToCheck.loglevel.default, 'loglevel.default',['trace', 'debug', 'info', 'warn', 'error', 'silent'], true, 'error')
+  checkRangeValue(configToCheck.loglevel.default, 'loglevel.default', ['trace', 'debug', 'info', 'warn', 'error', 'silent'], true, 'error')
   checkRangeValue(configToCheck.loglevel.RowingEngine, 'loglevel.RowingEngine', ['trace', 'debug', 'info', 'warn', 'error', 'silent'], true, 'error')
   checkIntegerValue(configToCheck.gpioPin, 'gpioPin', 1, 27, false, false, null)
   checkIntegerValue(configToCheck.gpioPriority, 'gpioPriority', -7, 0, true, true, 0)
@@ -38,8 +37,6 @@ function checkConfig (configToCheck) {
   checkBinaryValue(configToCheck.gzipRawDataFiles, 'gzipRawDataFiles', true, false)
   checkBinaryValue(configToCheck.createTcxFiles, 'createTcxFiles', true, true)
   checkBinaryValue(configToCheck.gzipTcxFiles, 'gzipTcxFiles', true, false)
-  if (configToCheck.createRowingDataFiles || configToCheck.createRawDataFiles || configToCheck.createTcxFiles) {
-  }
   checkFloatValue(configToCheck.userSettings.restingHR, 'userSettings.restingHR', 30, 220, false, true, 40)
   checkFloatValue(configToCheck.userSettings.maxHR, 'userSettings.maxHR', configToCheck.userSettings.restingHR, 220, false, true, 220)
   if (configToCheck.createTcxFiles) {
@@ -73,37 +70,37 @@ function checkConfig (configToCheck) {
   if (configToCheck.rowerSettings.autoAdjustDragFactor && configToCheck.rowerSettings.autoAdjustRecoverySlope) {
     checkFloatValue(configToCheck.rowerSettings.autoAdjustRecoverySlopeMargin, 'autoAdjustRecoverySlopeMargin', 0, 1, false, true, 1)
   }
-  checkFloatValue(configToCheck.rowerSettings.minimumDriveTime, 'minimumDriveTime', 0, 6, false, true, 0.001)
-  checkFloatValue(configToCheck.rowerSettings.minimumRecoveryTime, 'minimumRecoveryTime', 0, 6, false, true, 0.001)
-  checkFloatValue(configToCheck.rowerSettings.maximumStrokeTimeBeforePause, 'maximumStrokeTimeBeforePause', 3, 60, false, true, 6)
-  checkFloatValue(configToCheck.rowerSettings.magicConstant, 'magicConstant', 0, 28, false, true, 2.8)
+  checkFloatValue(configToCheck.rowerSettings.minimumDriveTime, 'rowerSettings.minimumDriveTime', 0, 6, false, true, 0.001)
+  checkFloatValue(configToCheck.rowerSettings.minimumRecoveryTime, 'rowerSettings.minimumRecoveryTime', 0, 6, false, true, 0.001)
+  checkFloatValue(configToCheck.rowerSettings.maximumStrokeTimeBeforePause, 'rowerSettings.maximumStrokeTimeBeforePause', 3, 60, false, true, 6)
+  checkFloatValue(configToCheck.rowerSettings.magicConstant, 'rowerSettings.magicConstant', 0, 28, false, true, 2.8)
 }
 
 function checkIntegerValue (parameter, parameterName, minimumValue, maximumvalue, allowZero, allowRepair, defaultValue) {
   let errors = 0
   switch (true) {
-    case (parameter == undefined):
-    log.error(`Configuration Error: ${parameterName} isn't defined`)
-    errors++
-    break
-  case (!Number.isInteger(parameter)):
-    log.error(`Configuration Error: ${parameterName} should be an integer value, encountered ${parameter}`)
-    errors++
-    break
-  case (minimumValue != null && parameter < minimumValue):
-    log.error(`Configuration Error: ${parameterName} should be at least ${minimumValue}, encountered ${parameter}`)
-    errors++
-    break
-  case (maximumvalue != null && parameter > maximumvalue):
-    log.error(`Configuration Error: ${parameterName} can't be above ${maximumvalue}, encountered ${parameter}`)
-    errors++
-    break
-  case (!allowZero && parameter == 0):
-    log.error(`Configuration Error: ${parameterName} can't be zero`)
-    errors++
-    break
-  default:
-    // No error detected :)
+    case (parameter === undefined):
+      log.error(`Configuration Error: ${parameterName} isn't defined`)
+      errors++
+      break
+    case (!Number.isInteger(parameter)):
+      log.error(`Configuration Error: ${parameterName} should be an integer value, encountered ${parameter}`)
+      errors++
+      break
+    case (minimumValue != null && parameter < minimumValue):
+      log.error(`Configuration Error: ${parameterName} should be at least ${minimumValue}, encountered ${parameter}`)
+      errors++
+      break
+    case (maximumvalue != null && parameter > maximumvalue):
+      log.error(`Configuration Error: ${parameterName} can't be above ${maximumvalue}, encountered ${parameter}`)
+      errors++
+      break
+    case (!allowZero && parameter == 0):
+      log.error(`Configuration Error: ${parameterName} can't be zero`)
+      errors++
+      break
+    default:
+      // No error detected :)
   }
   if (errors > 0) {
     // Errors were made
@@ -121,28 +118,28 @@ function checkIntegerValue (parameter, parameterName, minimumValue, maximumvalue
 function checkFloatValue (parameter, parameterName, minimumValue, maximumvalue, allowZero, allowRepair, defaultValue) {
   let errors = 0
   switch (true) {
-    case (parameter == undefined):
-    log.error(`Configuration Error: ${parameterName} isn't defined`)
-    errors++
-    break
-  case (!typeof(parameter)==="number"):
-    log.error(`Configuration Error: ${parameterName} should be a numerical value, encountered ${parameter}`)
-    errors++
-    break
-  case (minimumValue != null && parameter < minimumValue):
-    log.error(`Configuration Error: ${parameterName} should be at least ${minimumValue}, encountered ${parameter}`)
-    errors++
-    break
-  case (maximumvalue != null && parameter > maximumvalue):
-    log.error(`Configuration Error: ${parameterName} can't be above ${maximumvalue}, encountered ${parameter}`)
-    errors++
-    break
-  case (!allowZero && parameter == 0):
-    log.error(`Configuration Error: ${parameterName} can't be zero`)
-    errors++
-    break
-  default:
-    // No error detected :)
+    case (parameter === undefined):
+      log.error(`Configuration Error: ${parameterName} isn't defined`)
+      errors++
+      break
+    case (!typeof (parameter) === 'number'):
+      log.error(`Configuration Error: ${parameterName} should be a numerical value, encountered ${parameter}`)
+      errors++
+      break
+    case (minimumValue != null && parameter < minimumValue):
+      log.error(`Configuration Error: ${parameterName} should be at least ${minimumValue}, encountered ${parameter}`)
+      errors++
+      break
+    case (maximumvalue != null && parameter > maximumvalue):
+      log.error(`Configuration Error: ${parameterName} can't be above ${maximumvalue}, encountered ${parameter}`)
+      errors++
+      break
+    case (!allowZero && parameter == 0):
+      log.error(`Configuration Error: ${parameterName} can't be zero`)
+      errors++
+      break
+    default:
+      // No error detected :)
   }
   if (errors > 0) {
     // Errors were made
@@ -160,16 +157,16 @@ function checkFloatValue (parameter, parameterName, minimumValue, maximumvalue, 
 function checkBinaryValue (parameter, parameterName, allowRepair, defaultValue) {
   let errors = 0
   switch (true) {
-    case (parameter == undefined):
-    log.error(`Configuration Error: ${parameterName} isn't defined`)
-    errors++
-    break
-  case (!(parameter === true || parameter === false)):
-    log.error(`Configuration Error: ${parameterName} should be either false or true, encountered ${parameter}`)
-    errors++
-    break
-  default:
-    // No error detected :)
+    case (parameter === undefined):
+      log.error(`Configuration Error: ${parameterName} isn't defined`)
+      errors++
+      break
+    case (!(parameter === true || parameter === false)):
+      log.error(`Configuration Error: ${parameterName} should be either false or true, encountered ${parameter}`)
+      errors++
+      break
+    default:
+      // No error detected :)
   }
   if (errors > 0) {
     // Errors were made
@@ -187,16 +184,16 @@ function checkBinaryValue (parameter, parameterName, allowRepair, defaultValue) 
 function checkRangeValue (parameter, parameterName, range, allowRepair, defaultValue) {
   let errors = 0
   switch (true) {
-    case (parameter == undefined):
-    log.error(`Configuration Error: ${parameterName} isn't defined`)
-    errors++
-    break
-  case (!range.includes(parameter)):
-    log.error(`Configuration Error: ${parameterName} should be come from ${range}, encountered ${parameter}`)
-    errors++
-    break
-  default:
-    // No error detected :)
+    case (parameter === undefined):
+      log.error(`Configuration Error: ${parameterName} isn't defined`)
+      errors++
+      break
+    case (!range.includes(parameter)):
+      log.error(`Configuration Error: ${parameterName} should be come from ${range}, encountered ${parameter}`)
+      errors++
+      break
+    default:
+      // No error detected :)
   }
   if (errors > 0) {
     // Errors were made
