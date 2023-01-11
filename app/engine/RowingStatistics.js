@@ -15,8 +15,8 @@ const log = loglevel.getLogger('RowingEngine')
 
 function createRowingStatistics (config, session) {
   const numOfDataPointsForAveraging = config.numOfPhasesForAveragingScreenData
-  const webUpdateInterval = Math.min(config.webUpdateInterval, 2000)
-  const peripheralUpdateInterval = Math.min(config.peripheralUpdateInterval, 1000)
+  const webUpdateInterval = config.webUpdateInterval
+  const peripheralUpdateInterval = config.peripheralUpdateInterval
   const emitter = new EventEmitter()
   const rower = createRower(config.rowerSettings)
   const minimumStrokeTime = config.rowerSettings.minimumRecoveryTime + config.rowerSettings.minimumDriveTime
