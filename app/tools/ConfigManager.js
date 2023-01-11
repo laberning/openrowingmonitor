@@ -95,7 +95,7 @@ function checkIntegerValue (parameter, parameterName, minimumValue, maximumvalue
       log.error(`Configuration Error: ${parameterName} can't be above ${maximumvalue}, encountered ${parameter}`)
       errors++
       break
-    case (!allowZero && parameter == 0):
+    case (!allowZero && parameter === 0):
       log.error(`Configuration Error: ${parameterName} can't be zero`)
       errors++
       break
@@ -134,7 +134,7 @@ function checkFloatValue (parameter, parameterName, minimumValue, maximumvalue, 
       log.error(`Configuration Error: ${parameterName} can't be above ${maximumvalue}, encountered ${parameter}`)
       errors++
       break
-    case (!allowZero && parameter == 0):
+    case (!allowZero && parameter === 0):
       log.error(`Configuration Error: ${parameterName} can't be zero`)
       errors++
       break
