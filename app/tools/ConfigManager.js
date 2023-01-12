@@ -22,7 +22,7 @@ function checkConfig (configToCheck) {
   checkRangeValue(configToCheck.loglevel, 'RowingEngine', ['trace', 'debug', 'info', 'warn', 'error', 'silent'], true, 'error')
   checkIntegerValue(configToCheck, 'gpioPin', 1, 27, false, false, null)
   checkIntegerValue(configToCheck, 'gpioPriority', -7, 0, true, true, 0)
-  checkIntegerValue(configToCheck, 'gpioMinimumPulseLength', 1, 100000, false, true, 0)
+  checkIntegerValue(configToCheck, 'gpioMinimumPulseLength', 1, null, false, true, 0)
   checkIntegerValue(configToCheck, 'gpioPollingInterval', 1, 10, false, true, 10)
   checkRangeValue(configToCheck, 'gpioPollingInterval', [1, 2, 5, 10], true, 10)
   checkRangeValue(configToCheck, 'gpioTriggeredFlank', ['Up', 'Down', 'Both'], false, null)
@@ -53,10 +53,10 @@ function checkConfig (configToCheck) {
   checkFloatValue(configToCheck.rowerSettings, 'sprocketRadius', 0, 20, false, true, 3)
   checkFloatValue(configToCheck.rowerSettings, 'minimumTimeBetweenImpulses', 0, 3, false, false, null)
   checkFloatValue(configToCheck.rowerSettings, 'maximumTimeBetweenImpulses', configToCheck.rowerSettings.minimumTimeBetweenImpulses, 3, false, false, null)
-  checkFloatValue(configToCheck.rowerSettings, 'smoothing', 1, 1000000, false, true, 1)
-  checkFloatValue(configToCheck.rowerSettings, 'dragFactor', 1, 1000000, false, false, null)
+  checkFloatValue(configToCheck.rowerSettings, 'smoothing', 1, null, false, true, 1)
+  checkFloatValue(configToCheck.rowerSettings, 'dragFactor', 1, null, false, false, null)
   checkBinaryValue(configToCheck.rowerSettings, 'autoAdjustDragFactor', true, false)
-  checkIntegerValue(configToCheck.rowerSettings, 'dragFactorSmoothing', 1, 1000, false, true, 1)
+  checkIntegerValue(configToCheck.rowerSettings, 'dragFactorSmoothing', 1, null, false, true, 1)
   if (configToCheck.rowerSettings.autoAdjustDragFactor) {
     checkFloatValue(configToCheck.rowerSettings, 'minimumDragQuality', 0, 1, true, true, 0)
   }
