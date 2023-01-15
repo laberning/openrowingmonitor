@@ -95,7 +95,7 @@ stateDiagram-v2
     Stopped --> [*]
 ```
 
-Please note: the 'Stopped' state in the `handleRotationImpulse`'s state machine is a direct consequence of either `rower.js` indicating the flywheel is in a freespin or reaching the end of an interval without any subsequent interval being present in the workout. The later is tested in the function ` handleIntervalEnd()`, which determines this. Although this distinction could be handled by the state machine as part of `handleRotationImpulse`, we felt it would make the state machine less readable as it would add another three new states. 
+Please note: the 'Stopped' state in the `handleRotationImpulse`'s state machine is a direct consequence of either `rower.js` indicating the flywheel is in a freespin or reaching the end of an interval without any subsequent interval being present in the workout. The later is tested in the function `handleIntervalEnd()`, which determines this. Although this distinction could be handled by the state machine as part of `handleRotationImpulse`, we felt it would make the state machine less readable as it would add another three new states.
 
 #### metrics maintained in RowingStatistics.js
 
