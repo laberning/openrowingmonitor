@@ -13,7 +13,7 @@ import { createCurveAligner } from './utils/CurveAligner.js'
 import loglevel from 'loglevel'
 const log = loglevel.getLogger('RowingEngine')
 
-function createRowingStatistics (config, session) {
+function createRowingStatistics (config) {
   const numOfDataPointsForAveraging = config.numOfPhasesForAveragingScreenData
   const webUpdateInterval = config.webUpdateInterval
   const peripheralUpdateInterval = config.peripheralUpdateInterval
@@ -26,6 +26,12 @@ function createRowingStatistics (config, session) {
   const cyclePower = createStreamFilter(numOfDataPointsForAveraging, 0)
   const cycleLinearVelocity = createStreamFilter(numOfDataPointsForAveraging, 0)
   let sessionStatus = 'WaitingForStart'
+  let intervalSettings = []
+  let currentIntervalNumber = -1
+  let intervalTargetDistance = 0
+  let intervalTargetTime = 0
+  let intervalPrevAccumulatedDistance = 0
+  let intervalPrevAccumulatedTime = 0
   let heartrateResetTimer
   let totalLinearDistance = 0.0
   let totalMovingTime = 0
@@ -91,7 +97,7 @@ function createRowingStatistics (config, session) {
         updateContinousMetrics()
         updateCycleMetrics()
         handleRecoveryEnd()
-        emitMetrics('intervalTargetReached')
+        handleIntervalEnd()
         break
       case (sessionStatus === 'Rowing' && lastStrokeState === 'Recovery' && rower.strokeState() === 'Drive'):
         updateContinousMetrics()
@@ -103,7 +109,7 @@ function createRowingStatistics (config, session) {
         updateContinousMetrics()
         updateCycleMetrics()
         handleDriveEnd()
-        emitMetrics('intervalTargetReached')
+        handleIntervalEnd()
         break
       case (sessionStatus === 'Rowing' && lastStrokeState === 'Drive' && rower.strokeState() === 'Recovery'):
         updateContinousMetrics()
@@ -113,7 +119,7 @@ function createRowingStatistics (config, session) {
         break
       case (sessionStatus === 'Rowing' && intervalTargetReached()):
         updateContinousMetrics()
-        emitMetrics('intervalTargetReached')
+        handleIntervalEnd()
         break
       case (sessionStatus === 'Rowing'):
         updateContinousMetrics()
@@ -181,6 +187,12 @@ function createRowingStatistics (config, session) {
     rower.allowMovement()
     totalMovingTime = 0
     totalLinearDistance = 0.0
+    intervalSettings = []
+    currentIntervalNumber = -1
+    intervalTargetDistance = 0
+    intervalTargetTime = 0
+    intervalPrevAccumulatedDistance = 0
+    intervalPrevAccumulatedTime = 0
     totalNumberOfStrokes = -1
     driveLastStartTime = 0
     distanceOverTime.reset()
@@ -242,6 +254,63 @@ function createRowingStatistics (config, session) {
     calories.push(totalMovingTime, totalCalories)
   }
 
+  function setIntervalParameters (intervalParameters) {
+    intervalSettings = intervalParameters
+    currentIntervalNumber = -1
+    if (intervalSettings.length > 0) {
+      log.info(`Workout recieved with ${intervalSettings.length} interval(s)`)
+      activateNextIntervalParameters()
+    } else {
+      // intervalParameters were empty, lets log this odd situation
+      log.error('Recieved workout containing no intervals')
+    }
+  }
+
+  function intervalTargetReached () {
+    // This tests wether the end of the current interval is reached
+    if ((intervalTargetDistance > 0 && rower.totalLinearDistanceSinceStart() >= intervalTargetDistance) || (intervalTargetTime > 0 && rower.totalMovingTimeSinceStart() >= intervalTargetTime)) {
+      return true
+    } else {
+      return false
+    }
+  }
+
+  function handleIntervalEnd () {
+    // initiated when the state machine has concluded the interval has ended
+    if (intervalSettings.length > 0 && intervalSettings.length > (currentIntervalNumber + 1)) {
+      // There is a next interval available
+      emitMetrics('intervalTargetReached')
+      activateNextIntervalParameters()
+    } else {
+      // There is no additional interval available
+      stopTraining ()
+    }
+  }
+
+  function activateNextIntervalParameters () {
+    if (intervalSettings.length > 0 && intervalSettings.length > (currentIntervalNumber + 1)) {
+      // This function sets the interval parameters in absolute distances/times
+      // Thus the interval target always is a projected "finishline" from the current position
+      intervalPrevAccumulatedTime = rower.totalMovingTimeSinceStart()
+      intervalPrevAccumulatedDistance = rower.totalLinearDistanceSinceStart()
+
+      currentIntervalNumber++
+      if (intervalSettings[currentIntervalNumber].targetDistance > 0) {
+        // A target distance is set
+        intervalTargetTime = 0
+        intervalTargetDistance = intervalPrevAccumulatedDistance + intervalSettings[currentIntervalNumber].targetDistance
+        log.info(`Interval settings for interval ${currentIntervalNumber + 1} of ${intervalSettings.length}: Distance target ${intervalSettings[currentIntervalNumber].targetDistance} meters`)
+      } else {
+        // A target time is set
+        intervalTargetTime = intervalPrevAccumulatedTime + intervalSettings[currentIntervalNumber].targetTime
+        intervalTargetDistance = 0
+        log.info(`Interval settings for interval ${currentIntervalNumber + 1} of ${intervalSettings.length}: time target ${secondsToTimeString(intervalSettings[currentIntervalNumber].targetTime)} minutes`)
+      }
+    } else {
+      log.error('Interval error: there is no next interval!')
+    }
+  }
+
   // initiated when a new heart rate value is received from heart rate sensor
   function handleHeartrateMeasurement (value) {
     // set the heart rate to zero if we did not receive a value for some time
@@ -252,14 +321,6 @@ function createRowingStatistics (config, session) {
     }, 6000)
     heartrate = value.heartrate
     heartrateBatteryLevel = value.batteryLevel
-  }
-
-  function intervalTargetReached () {
-    if ((session.targetDistance > 0 && rower.totalLinearDistanceSinceStart() >= session.targetDistance) || (session.targetTime > 0 && rower.totalMovingTimeSinceStart() >= session.targetTime)) {
-      return true
-    } else {
-      return false
-    }
   }
 
   function measureRecoveryHR () {
@@ -298,11 +359,13 @@ function createRowingStatistics (config, session) {
       sessionStatus,
       strokeState: rower.strokeState(),
       totalMovingTime: totalMovingTime > 0 ? totalMovingTime : 0,
-      driveLastStartTime: driveLastStartTime > 0 ? driveLastStartTime : 0,
-      totalMovingTimeFormatted: session.targetTime > 0 ? secondsToTimeString(Math.round(Math.max(session.targetTime - totalMovingTime, 0))) : secondsToTimeString(Math.round(totalMovingTime)),
+      totalMovingTimeFormatted: intervalTargetTime > 0 ? secondsToTimeString(Math.round(Math.max(intervalTargetTime - totalMovingTime, 0))) : secondsToTimeString(Math.round(totalMovingTime - intervalPrevAccumulatedTime)),
       totalNumberOfStrokes: totalNumberOfStrokes > 0 ? totalNumberOfStrokes : 0,
       totalLinearDistance: totalLinearDistance > 0 ? totalLinearDistance : 0, // meters
-      totalLinearDistanceFormatted: session.targetDistance > 0 ? Math.max(session.targetDistance - totalLinearDistance, 0) : totalLinearDistance,
+      totalLinearDistanceFormatted: intervalTargetDistance > 0 ? Math.max(intervalTargetDistance - totalLinearDistance, 0) : totalLinearDistance - intervalPrevAccumulatedDistance,
+      intervalNumber: Math.max(currentIntervalNumber + 1, 0), // Interval number
+      intervalMovingTime: totalMovingTime - intervalPrevAccumulatedTime,
+      intervalLinearDistance: totalLinearDistance - intervalPrevAccumulatedDistance,
       strokeCalories: strokeCalories > 0 ? strokeCalories : 0, // kCal
       strokeWork: strokeWork > 0 ? strokeWork : 0, // Joules
       totalCalories: calories.yAtSeriesEnd() > 0 ? calories.yAtSeriesEnd() : 0, // kcal
@@ -312,11 +375,12 @@ function createRowingStatistics (config, session) {
       cycleStrokeRate: cycleDuration.clean() > minimumStrokeTime && cycleLinearVelocity.raw() > 0 && sessionStatus === 'Rowing' ? (60.0 / cycleDuration.clean()) : 0, // strokeRate in SPM
       cycleDistance: cycleDistance.raw() > 0 && cycleLinearVelocity.raw() > 0 && sessionStatus === 'Rowing' ? cycleDistance.clean() : 0, // meters
       cycleLinearVelocity: cycleLinearVelocity.clean() > 0 && cycleLinearVelocity.raw() > 0 && sessionStatus === 'Rowing' ? cycleLinearVelocity.clean() : 0, // m/s
-      cyclePace: cycleLinearVelocity.raw() > 0 ? cyclePace : Infinity, // seconds/500m
+      cyclePace: cycleLinearVelocity.raw() > 0 ? cyclePace : Infinity, // seconds/50  0m
       cyclePaceFormatted: cycleLinearVelocity.raw() > 0 ? secondsToTimeString(Math.round(cyclePace)) : Infinity,
       cyclePower: cyclePower.clean() > 0 && cycleLinearVelocity.raw() > 0 && sessionStatus === 'Rowing' ? cyclePower.clean() : 0, // watts
-      cycleProjectedEndTime: session.targetDistance > 0 ? distanceOverTime.projectY(session.targetDistance) : session.targetTime,
-      cycleProjectedEndLinearDistance: session.targetTime > 0 ? distanceOverTime.projectX(session.targetTime) : session.targetDistance,
+      cycleProjectedEndTime: intervalTargetDistance > 0 ? distanceOverTime.projectY(intervalTargetDistance) : intervalTargetTime,
+      cycleProjectedEndLinearDistance: intervalTargetTime > 0 ? distanceOverTime.projectX(intervalTargetTime) : intervalTargetDistance,
+      driveLastStartTime: driveLastStartTime > 0 ? driveLastStartTime : 0,
       driveDuration: driveDuration.clean() >= config.rowerSettings.minimumDriveTime && totalNumberOfStrokes > 0 && sessionStatus === 'Rowing' ? driveDuration.clean() : NaN, // seconds
       driveLength: driveLength.clean() > 0 && sessionStatus === 'Rowing' ? driveLength.clean() : NaN, // meters of chain movement
       driveDistance: driveDistance.clean() >= 0 && sessionStatus === 'Rowing' ? driveDistance.clean() : NaN, // meters
@@ -355,6 +419,7 @@ function createRowingStatistics (config, session) {
   return Object.assign(emitter, {
     handleHeartrateMeasurement,
     handleRotationImpulse,
+    setIntervalParameters,
     pause: pauseTraining,
     stop: stopTraining,
     resume: allowResumeTraining,
