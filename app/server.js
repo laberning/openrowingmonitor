@@ -68,8 +68,6 @@ intervalSettings[2] = {
 }
 */
 
-log.info(`Session settings: distance limit: ${(session.targetDistance > 0 ? `${session.targetDistance} meters` : 'none')}, time limit: ${(session.targetTime > 0 ? `${session.targetTime} seconds` : 'none')}\n`)
-
 const peripheralManager = createPeripheralManager()
 
 peripheralManager.on('control', (event) => {
