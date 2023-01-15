@@ -28,16 +28,16 @@ function checkConfig (configToCheck) {
   checkRangeValue(configToCheck, 'gpioTriggeredFlank', ['Up', 'Down', 'Both'], false, null)
   checkIntegerValue(configToCheck, 'appPriority', configToCheck.gpioPriority, 0, true, true, 0)
   checkIntegerValue(configToCheck, 'webUpdateInterval', 80, 1000, false, true, 1000)
-  checkBinaryValue(configToCheck, 'heartrateMonitorBLE', true, true)
-  checkBinaryValue(configToCheck, 'heartrateMonitorANT', true, false)
+  checkBooleanValue(configToCheck, 'heartrateMonitorBLE', true, true)
+  checkBooleanValue(configToCheck, 'heartrateMonitorANT', true, false)
   checkRangeValue(configToCheck, 'bluetoothMode', ['off', 'PM5', 'FTMS', 'FTMSBIKE', 'CPS', 'CSC'], true, 'FTMS')
   checkIntegerValue(configToCheck, 'peripheralUpdateInterval', 80, 1000, false, true, 1000)
   checkIntegerValue(configToCheck, 'numOfPhasesForAveragingScreenData', 2, null, false, true, 4)
-  checkBinaryValue(configToCheck, 'createRowingDataFiles', true, true)
-  checkBinaryValue(configToCheck, 'createRawDataFiles', true, true)
-  checkBinaryValue(configToCheck, 'gzipRawDataFiles', true, false)
-  checkBinaryValue(configToCheck, 'createTcxFiles', true, true)
-  checkBinaryValue(configToCheck, 'gzipTcxFiles', true, false)
+  checkBooleanValue(configToCheck, 'createRowingDataFiles', true, true)
+  checkBooleanValue(configToCheck, 'createRawDataFiles', true, true)
+  checkBooleanValue(configToCheck, 'gzipRawDataFiles', true, false)
+  checkBooleanValue(configToCheck, 'createTcxFiles', true, true)
+  checkBooleanValue(configToCheck, 'gzipTcxFiles', true, false)
   checkFloatValue(configToCheck.userSettings, 'restingHR', 30, 220, false, true, 40)
   checkFloatValue(configToCheck.userSettings, 'maxHR', configToCheck.userSettings.restingHR, 220, false, true, 220)
   if (configToCheck.createTcxFiles) {
@@ -46,7 +46,7 @@ function checkConfig (configToCheck) {
     checkFloatValue(configToCheck.userSettings, 'distanceCorrectionFactor', 0, 50, false, true, 5)
     checkFloatValue(configToCheck.userSettings, 'weight', 25, 500, false, true, 80)
     checkRangeValue(configToCheck.userSettings, 'sex', ['male', 'female'], true, 'male')
-    checkBinaryValue(configToCheck.userSettings, 'highlyTrained', true, false)
+    checkBooleanValue(configToCheck.userSettings, 'highlyTrained', true, false)
   }
   checkIntegerValue(configToCheck.rowerSettings, 'numOfImpulsesPerRevolution', 1, null, false, false, null)
   checkIntegerValue(configToCheck.rowerSettings, 'flankLength', 3, null, false, false, null)
@@ -55,7 +55,7 @@ function checkConfig (configToCheck) {
   checkFloatValue(configToCheck.rowerSettings, 'maximumTimeBetweenImpulses', configToCheck.rowerSettings.minimumTimeBetweenImpulses, 3, false, false, null)
   checkFloatValue(configToCheck.rowerSettings, 'smoothing', 1, null, false, true, 1)
   checkFloatValue(configToCheck.rowerSettings, 'dragFactor', 1, null, false, false, null)
-  checkBinaryValue(configToCheck.rowerSettings, 'autoAdjustDragFactor', true, false)
+  checkBooleanValue(configToCheck.rowerSettings, 'autoAdjustDragFactor', true, false)
   checkIntegerValue(configToCheck.rowerSettings, 'dragFactorSmoothing', 1, null, false, true, 1)
   if (configToCheck.rowerSettings.autoAdjustDragFactor) {
     checkFloatValue(configToCheck.rowerSettings, 'minimumDragQuality', 0, 1, true, true, 0)
@@ -64,7 +64,7 @@ function checkConfig (configToCheck) {
   checkFloatValue(configToCheck.rowerSettings, 'minumumForceBeforeStroke', 0, 500, true, true, 0)
   checkFloatValue(configToCheck.rowerSettings, 'minumumRecoverySlope', 0, null, true, true, 0)
   checkFloatValue(configToCheck.rowerSettings, 'minimumStrokeQuality', 0, 1, true, true, 0)
-  checkBinaryValue(configToCheck.rowerSettings, 'autoAdjustRecoverySlope', true, false)
+  checkBooleanValue(configToCheck.rowerSettings, 'autoAdjustRecoverySlope', true, false)
   if (!configToCheck.rowerSettings.autoAdjustDragFactor && configToCheck.rowerSettings.autoAdjustRecoverySlope) {
     log.error('Configuration Error: rowerSettings.autoAdjustRecoverySlope can not be true when rowerSettings.autoAdjustDragFactor is false, ignoring request')
   }
@@ -124,7 +124,7 @@ function checkFloatValue (parameterSection, parameterName, minimumValue, maximum
       log.error(`Configuration Error: ${parameterSection}.${parameterName} isn't defined`)
       errors++
       break
-    case (!typeof (parameterSection[parameterName]) === 'number'):
+    case (!(typeof (parameterSection[parameterName]) === 'number')):
       log.error(`Configuration Error: ${parameterSection}.${parameterName} should be a numerical value, encountered ${parameterSection[parameterName]}`)
       errors++
       break
@@ -155,7 +155,7 @@ function checkFloatValue (parameterSection, parameterName, minimumValue, maximum
   }
 }
 
-function checkBinaryValue (parameterSection, parameterName, allowRepair, defaultValue) {
+function checkBooleanValue (parameterSection, parameterName, allowRepair, defaultValue) {
   // PLEASE NOTE: the parameterSection, parameterName seperation is needed to force a call by reference, which is needed for the repair action
   let errors = 0
   switch (true) {
