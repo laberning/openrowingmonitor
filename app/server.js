@@ -47,10 +47,26 @@ if (config.appPriority) {
 // Hopefully this will be filled through the WebGUI or through the BLE interface (PM5-BLE can do this...)
 // When set, ORM will terminate the session after reaching the target. If not set, it will behave as usual (a "Just row" session).
 // When set, the GUI will behave similar to a PM5 in that it counts down from the target to 0
-const session = {
-  targetDistance: 0, // Target distance in meters
-  targetTime: 0 // Target time in seconds
+const intervalSettings = []
+
+/* an example of the workout setting that RowingStatistics will obey: a 1 minute warmup, a 2K timed piece followed by a 1 minute cooldown
+// This should normally come from the PM5 interface or the webinterface
+intervalSettings[0] = {
+  targetDistance: 0,
+  targetTime: 60
 }
+
+/* Additional intervals for testing
+intervalSettings[1] = {
+  targetDistance: 2000,
+  targetTime: 0
+}
+
+intervalSettings[2] = {
+  targetDistance: 0,
+  targetTime: 60
+}
+*/
 
 log.info(`Session settings: distance limit: ${(session.targetDistance > 0 ? `${session.targetDistance} meters` : 'none')}, time limit: ${(session.targetTime > 0 ? `${session.targetTime} seconds` : 'none')}\n`)
 
@@ -120,7 +136,15 @@ function handleRotationImpulse (dataPoint) {
   rowingStatistics.handleRotationImpulse(dataPoint)
 }
 
-const rowingStatistics = createRowingStatistics(config, session)
+const rowingStatistics = createRowingStatistics(config)
+if (intervalSettings.length > 0) {
+  // There is an interval defined at startup, let's inform RowingStatistics
+  // ToDo: update these settings when the PM5 or webinterface tells us to
+  rowingStatistics.setIntervalParameters(intervalSettings)
+} else {
+  log.info('Starting a just row session, no time or distance target set')
+}
+
 const workoutRecorder = createWorkoutRecorder()
 const workoutUploader = createWorkoutUploader(workoutRecorder)
 
@@ -153,11 +177,11 @@ rowingStatistics.on('rowingPaused', (metrics) => {
 })
 
 rowingStatistics.on('intervalTargetReached', (metrics) => {
-  // This is called when the RowingStatistics conclude the target is reached
-  // This isn't the most optimal solution yet, as this interval is the only one set. A logcal extansion would be
-  // to provide a next intervaltarget. Thus, the use case of a next interval has to be implemented as well
-  // (i.e. setting a new interval target). For now, this interval is the one and only so we stop.
-  stopWorkout()
+  // This is called when the RowingStatistics conclude the intervaltarget is reached
+  // Update all screens to reflect this change, as targetTime and targetDistance have changed
+  // ToDo: recording this event in the recordings accordingly should be done as well
+  webServer.notifyClients('metrics', metrics)
+  peripheralManager.notifyMetrics('metricsUpdate', metrics)
 })
 
 rowingStatistics.on('rowingStopped', (metrics) => {
