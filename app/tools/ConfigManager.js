@@ -25,7 +25,7 @@ function checkConfig (configToCheck) {
   checkIntegerValue(configToCheck, 'gpioMinimumPulseLength', 1, null, false, true, 0)
   checkIntegerValue(configToCheck, 'gpioPollingInterval', 1, 10, false, true, 10)
   checkRangeValue(configToCheck, 'gpioPollingInterval', [1, 2, 5, 10], true, 10)
-  checkRangeValue(configToCheck, 'gpioTriggeredFlank', ['Up', 'Down', 'Both'], false, null)
+  checkRangeValue(configToCheck, 'gpioTriggeredFlank', ['Up', 'Down', 'Both'], true, 'Up')
   checkIntegerValue(configToCheck, 'appPriority', configToCheck.gpioPriority, 0, true, true, 0)
   checkIntegerValue(configToCheck, 'webUpdateInterval', 80, 1000, false, true, 1000)
   checkBooleanValue(configToCheck, 'heartrateMonitorBLE', true, true)
