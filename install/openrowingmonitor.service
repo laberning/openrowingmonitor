@@ -1,6 +1,8 @@
 [Unit]
 Description=Open Rowing Monitor
 After=multi-user.target
+StartLimitIntervalSec=60
+StartLimitBurst=5
 
 [Service]
 Type=simple
