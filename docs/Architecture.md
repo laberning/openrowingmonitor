@@ -95,7 +95,7 @@ stateDiagram-v2
     Stopped --> [*]
 ```
 
-Please note: the 'Stopped' state isn't directly part of the state machine that is defined in `handleRotationImpulse`, it is a direct consequence of emitting the `intervalTargetReached` message to `Server.js`, where `Server.js` concludes there is no next interval left, and thus `stopTraining()` has to be called (which does set the sessionState to 'Stopped'). This is needed as RowingStatistics shouldn't be aware about the existence of next intervals, as it only deals with the current interval.
+Please note: the 'Stopped' state in the `handleRotationImpulse`'s state machine is a direct consequence of either `rower.js` indicating the flywheel is in a freespin or reaching the end of an interval without any subsequent interval being present in the workout. The later is tested in the function ` handleIntervalEnd()`, which determines this. Although this distinction could be handled by the state machine as part of `handleRotationImpulse`, we felt it would make the state machine less readable as it would add another three new states. 
 
 #### metrics maintained in RowingStatistics.js
 
@@ -107,7 +107,7 @@ In a nutshell:
 * `RowingStatistics.js` maintains the session state, thus determines whether the rowing machine is 'Rowing', or 'WaitingForDrive', etc.,
 * `RowingStatistics.js` applies a moving median filter across strokes to make metrics less volatile and thus better suited for presentation,
 * `RowingStatistics.js` calculates derived metrics (like Calories) and trands (like Calories per hour),
-* `RowingStatistics.js` gaurds interval and session boundaries, and will chop up the metrics-stream accordingly, where Rower.js will just move on without looking at these artifical boundaries.
+* `RowingStatistics.js` maintains the workout intervals, guards interval and session boundaries, and will chop up the metrics-stream accordingly, where `Rower.js` will just move on without looking at these artifical boundaries.
 
 In total, this takes full control of the displayed metrics in a specific interval.
 
