@@ -93,11 +93,18 @@ function createRowingStatistics (config) {
         sessionStatus = 'Paused'
         pauseTraining()
         break
-      case (sessionStatus === 'Rowing' && lastStrokeState === 'Recovery' && rower.strokeState() === 'Drive' && intervalTargetReached()):
+      case (sessionStatus === 'Rowing' && lastStrokeState === 'Recovery' && rower.strokeState() === 'Drive' && isIntervalTargetReached() && isNextIntervalAvailable()):
         updateContinousMetrics()
         updateCycleMetrics()
         handleRecoveryEnd()
-        handleIntervalEnd()
+        activateNextIntervalParameters()
+        emitMetrics('intervalTargetReached')
+        break
+      case (sessionStatus === 'Rowing' && lastStrokeState === 'Recovery' && rower.strokeState() === 'Drive' && isIntervalTargetReached()):
+        updateContinousMetrics()
+        updateCycleMetrics()
+        handleRecoveryEnd()
+        stopTraining()
         break
       case (sessionStatus === 'Rowing' && lastStrokeState === 'Recovery' && rower.strokeState() === 'Drive'):
         updateContinousMetrics()
@@ -105,11 +112,18 @@ function createRowingStatistics (config) {
         handleRecoveryEnd()
         emitMetrics('recoveryFinished')
         break
-      case (sessionStatus === 'Rowing' && lastStrokeState === 'Drive' && rower.strokeState() === 'Recovery' && intervalTargetReached()):
+      case (sessionStatus === 'Rowing' && lastStrokeState === 'Drive' && rower.strokeState() === 'Recovery' && isIntervalTargetReached() && isNextIntervalAvailable()):
         updateContinousMetrics()
         updateCycleMetrics()
         handleDriveEnd()
-        handleIntervalEnd()
+        activateNextIntervalParameters()
+        emitMetrics('intervalTargetReached')
+        break
+      case (sessionStatus === 'Rowing' && lastStrokeState === 'Drive' && rower.strokeState() === 'Recovery' && isIntervalTargetReached()):
+        updateContinousMetrics()
+        updateCycleMetrics()
+        handleDriveEnd()
+        stopTraining()
         break
       case (sessionStatus === 'Rowing' && lastStrokeState === 'Drive' && rower.strokeState() === 'Recovery'):
         updateContinousMetrics()
@@ -117,9 +131,14 @@ function createRowingStatistics (config) {
         handleDriveEnd()
         emitMetrics('driveFinished')
         break
-      case (sessionStatus === 'Rowing' && intervalTargetReached()):
+      case (sessionStatus === 'Rowing' && isIntervalTargetReached() && isNextIntervalAvailable()):
         updateContinousMetrics()
-        handleIntervalEnd()
+        activateNextIntervalParameters()
+        emitMetrics('intervalTargetReached')
+        break
+      case (sessionStatus === 'Rowing' && isIntervalTargetReached()):
+        updateContinousMetrics()
+        stopTraining()
         break
       case (sessionStatus === 'Rowing'):
         updateContinousMetrics()
@@ -266,7 +285,7 @@ function createRowingStatistics (config) {
     }
   }
 
-  function intervalTargetReached () {
+  function isIntervalTargetReached () {
     // This tests wether the end of the current interval is reached
     if ((intervalTargetDistance > 0 && rower.totalLinearDistanceSinceStart() >= intervalTargetDistance) || (intervalTargetTime > 0 && rower.totalMovingTimeSinceStart() >= intervalTargetTime)) {
       return true
@@ -275,15 +294,12 @@ function createRowingStatistics (config) {
     }
   }
 
-  function handleIntervalEnd () {
-    // initiated when the state machine has concluded the interval has ended
-    if (intervalSettings.length > 0 && intervalSettings.length > (currentIntervalNumber + 1)) {
-      // There is a next interval available
-      emitMetrics('intervalTargetReached')
-      activateNextIntervalParameters()
+  function isNextIntervalAvailable () {
+    // This function tests whether there is a next interval available
+    if (currentIntervalNumber > -1 && intervalSettings.length > 0 && intervalSettings.length > (currentIntervalNumber + 1)) {
+      return true
     } else {
-      // There is no additional interval available
-      stopTraining()
+      return false
     }
   }
 
