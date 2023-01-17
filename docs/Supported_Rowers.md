@@ -21,7 +21,9 @@ The following rowers are known to work, or are even actively supported:
 If your machine isn't listed, it just means that you need to [adjust the software settings following the settings adjustment guide](rower_settings.md) yourself. But don't worry, in the [GitHub Discussions](https://github.com/laberning/openrowingmonitor/discussions) there always are friendly people to help you set up your machine and the settings.
 
 ## Support status
+
 In the table, the support status means the following:
+
 * **Active support**: These are the testmachines of the developers, these are tested almost on a daily basis. These settings are automatically modified to facilitate updates of the rowing engine;
 * **Full support**: We actively maintain a the configuration, including automatically updating these settings to facilitate chages of the rowing engine, and are part of the automated regression test set. So as a user, you can be assured this setting will keep working;
 * **Supported**: Users have reported a working configuration, and this configuration is part of `rowerProfiles.js`, but we lack the raw data samples to maintain the rower for future updates. This means that future support isn't guaranteed;
@@ -32,7 +34,9 @@ In the table, the support status means the following:
 Please note: the support status largely depends on the willingness of users to report their settings and provide decent samples of their data. So when you have a machine, please provide this information.
 
 ## Basic Metrics
+
 With basic metrics we mean:
+
 * Distance rowed,
 * Training Duration,
 * Power,
@@ -45,7 +49,9 @@ With basic metrics we mean:
 * Heart Rate
 
 ## Extended Metrics
+
 With extended metrics, we mean:
+
 * Drag factor,
 * Drive length,
 * Average handle force,
@@ -55,7 +61,9 @@ With extended metrics, we mean:
 * Handle power curve.
 
 ## Limitations
+
 With the limitation, we mean:
+
 * **None**: No limitations, drag calculation and distance per stroke are dynamic based on flywheel behaviour and automatically adapt to environmental conditions;
 * **Static drag**: the drag calculation is fixed, so changes in air/water properties due to temperature or settings are not automatically adjusted;
 * **Static distance**: the distance per impulse is fixed, thus making the measurement of a more forceful stroke impossible. This typically happens when the handle movement is measured, but not its effect on the flywheel.
