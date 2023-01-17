@@ -11,7 +11,7 @@ Open Rowing Monitor is a free and open source performance monitor for rowing mac
 
 It is a Node.js application that runs on a Raspberry Pi and measures the rotation of the rower's flywheel (or similar) to calculate rowing specific metrics, such as power, split time, speed, stroke rate, distance and calories. It can share these metrics for controling games and record these metrics for further analysis.
 
-It is currently developed and tested with a Sportstech WRX700 water-rower and a Concept2 air-rower. In the past, it was also tested extensively on a NordicTrack RX-800 hybrid air/magnetic rower. But it should run fine with any rowing machine that uses some kind of damping mechanism, as long as you can add something to measure the speed of the flywheel. It has shown to work well with DIY rowing machines like the [Openergo](https://openergo.webs.com), providing the construction is decent.
+Open Rowing Monitor should run fine with any rowing machine that uses some kind of damping mechanism, as long as you can add something to measure the speed of the flywheel. It has shown to work well with DIY rowing machines like the [Openergo](https://openergo.webs.com), providing the construction is decent. For a full list of supported rowing machines, you can visit the list of [supported rowers](Supported_Rowers.md). If your machine isn't listed, it just means that you need to [adjust the software settings following the settings adjustment guide](rower_settings.md) yourself. But don't worry, in the [GitHub Discussions](https://github.com/laberning/openrowingmonitor/discussions) there always are friendly people to help you set up your machine and the settings.
 
 ## Features
 
@@ -68,23 +68,6 @@ Open Rowing Monitor is based on the idea that metrics should be easily accessibl
 * **Raw flywheel measurements of the flywheel**, also in CSV files. These files are great to start to learn about the specifics of your rowing machine (some Excel visualistion can help with this).
 
 Uploading your sessions to Strava is an integrated feature, for all other platforms this is currently a manual step. Uploading to [RowsAndAll](https://rowsandall.com/) can be automated through their e-mail interface, see [this description](https://rowsandall.com/rowers/developers/). The Open rowing Monito installer can also set up a network share that contains all training data so it is easy to grab the files from there and manually upload them to the training platform of your choice.
-
-## Supported machines
-
-Several machines are known to work with Open Rowing Monitor:
-
-* Abilica Winrower 2.0: Air rower that is known to work, see [this discussion](https://github.com/laberning/openrowingmonitor/discussions/48);
-* [Concept 2 Model D, Model E and RowErg](hardware_setup_Concept2_RowErg.md): fully supported Air rower, dynamic drag calculation and all metrics available including force curves
-* Decathlon Rower120: known to work by adding magnets to the flywheel, currently basic metrics only, see [this discussion](https://github.com/laberning/openrowingmonitor/issues/110);
-* DKN R-320 Air Rower: fully supported Air rower, static drag calculation, basic metrics only;
-* FDF Neon Pro V rower: known to work, see [this discussion](https://github.com/laberning/openrowingmonitor/discussions/87);
-* ForceUSA R3: supported Air rower, dynamic drag calculation and all metrics available including force curves;
-* NordickTrack RX800: fully supported hybrid Magnetic/Air rower, dynamic drag calculation and all metrics available including force curves;
-* Sportplus MR-SP-08: work in progress, see [this discussion](https://github.com/laberning/openrowingmonitor/discussions/95);
-* [Sportstech WRX700](hardware_setup_WRX700.md): fully supported water rower, static drag calculation, all metrics available including force curves;
-* [OpenErgo machines](https://openergo.webs.com/): several machines have been made to work, see [example 1](https://github.com/laberning/openrowingmonitor/discussions/80), [example 2](https://github.com/laberning/openrowingmonitor/discussions/105) and [example 3](https://github.com/laberning/openrowingmonitor/discussions/115)
-
-If your machine isn't listed, it just means that you need to [adjust the software settings following the settings adjustment guide](rower_settings.md). Don't worry, in the [GitHub Discussions](https://github.com/laberning/openrowingmonitor/discussions) there always are friendly people to help you set up your machine and the settings.
 
 ## Installation
 
