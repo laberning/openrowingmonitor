@@ -1,5 +1,7 @@
 # Known rowers and their support status
 
+Open Rowing Monitor works with a very wide range of rowing machines. It is currently developed and tested with a Sportstech WRX700 water-rower and a Concept2 air-rower. In the past, it was also tested extensively on a NordicTrack RX-800 hybrid air/magnetic rower. But it should run fine with any rowing machine that uses some kind of damping mechanism, as long as you can add something to measure the speed of the flywheel. It has shown to work well with DIY rowing machines like the [Openergo](https://openergo.webs.com/), providing the construction is decent.
+
 The following rowers are known to work, or are even actively supported:
 
 | Brand | Type | Rower type | Measurement type | HW Modification needed | Support status | Rower profile | Basic Metrics | Advanced Metrics | Limitations | Remarks |
@@ -13,7 +15,7 @@ The following rowers are known to work, or are even actively supported:
 | FDF | Neon Pro V | Air rower | Flywheel | Sensor replacement | Known to work | - | Yes | - | - | - | see [this discussion](https://github.com/laberning/openrowingmonitor/discussions/87) |
 | ForceUSA | R3 | Air Rower | Flywheel | No | Supported | ForceUSA_R3 | Yes | Yes | None | - |
 | NordicTrack | RX800 | Hybrid Magnetic and Air rower | Flywheel | None | Full support | NordicTrack_RX800 | Yes | Yes | None | Also known under ProForm brand |
-| Sportplus | MR-SP-08 | Water rower | Handle drive wheel | In development | - | - | - | - | see [this discussion](https://github.com/laberning/openrowingmonitor/discussions/95) |
+| Sportplus | MR-SP-08 | Water rower | Handle drive wheel | - | In development | - | - | - | - | see [this discussion](https://github.com/laberning/openrowingmonitor/discussions/95) |
 | Sportstech | WRX700 | Water rower | Impellor | Add one magnet | Active support | Sportstech_WRX700 | Yes | Yes | Static drag | see [Sportstech WRX700 setup](hardware_setup_WRX700.md)
 | White label | Air Rower | Air rower | Fywheel | None | Supported | Generic_Air_Rower | Yes | Yes | None | Sold under different brand names |
 | Open ergo | - | Air rower | Flywheel | Addition of magnets en sensor | Known to work | - | Yes | Yes | None | Machine specific profile is needed, but is done before, see [example 1](https://github.com/laberning/openrowingmonitor/discussions/80), [example 2](https://github.com/laberning/openrowingmonitor/discussions/105) and [example 3](https://github.com/laberning/openrowingmonitor/discussions/115) |
