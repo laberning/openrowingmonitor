@@ -5,7 +5,7 @@
   Some PM5 specific constants
 */
 export const PeripheralConstants = {
-  serial: '123456789',
+  serial: '431234567',
   model: 'PM5',
   name: 'PM5 123456789 Row',
   hardwareRevision: '907',
