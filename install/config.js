@@ -20,10 +20,11 @@ export default {
       default: 'debug'
     },
 
-  // The rower specific settings. Either choose a profile from config/rowerProfiles.js or
-  // define the settings individually. If you find good settings for a new rowing device
-  // please send them to us (together with a raw recording of 10 strokes) so we can add
-  // the device to the profiles.
+  // The rower specific settings. Either choose a profile from config/rowerProfiles.js (see
+  // https://github.com/laberning/openrowingmonitor/blob/main/docs/Supported_Rowers.md) or define
+  // the settings manually (see https://github.com/laberning/openrowingmonitor/blob/main/docs/rower_settings.md
+  // on how to do this). If you find good settings for a new rowing device please send them to us (together
+  // with a raw recording of at least 10 strokes) so we can add the device to the profiles.
 
   // EXAMPLE ROWER CONFIG : using a DKN R-320 Air Rower as is
   // rowerSettings: rowerProfiles.DKN_R320
