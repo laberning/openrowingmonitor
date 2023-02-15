@@ -45,7 +45,7 @@ If you connect a physical screen directly to the Raspberry Pi, then this interfa
 
 ### Bluetooth Low Energy (BLE)
 
-Open Rowing Monitor also implements different Bluetooth Low Energy (BLE) protocols so you can use your rowing machine with different fitness applications. Some apps use the Fitness Machine Service (FTMS), which is a standardized GATT protocol for different types of fitness machines. Other apps prefer to see a Concept 2 PM5. To help you connect to your app and game of choice, Open Rowing Monitor currently supports the following Bluetooth protocols:
+Open Rowing Monitor can recieve recieve heartrate data via BLE. Asides this functionality, Open Rowing Monitor also implements different Bluetooth Low Energy (BLE) protocols so you can use your rowing machine to share rowing metrics with different fitness applications. Some apps use the Fitness Machine Service (FTMS), which is a standardized GATT protocol for different types of fitness machines. Other apps prefer to see a Concept 2 PM5. To help you connect to your app and game of choice, Open Rowing Monitor currently supports the following Bluetooth protocols:
 
 * **Concept2 PM**: Open Rowing Monitor implements part of the Concept2 PM Bluetooth Smart Communication Interface Definition. This is still work in progress and only implements the most common parts of the spec, so it is not guaranteed to work with all applications that support C2 rowing machines. Our interface currently can only report metrics, but can't recieve commands and session parameters from the app yet. It is known to work with [EXR](https://www.exrgame.com) and all the samples from [The Erg Arcade](https://ergarcade.com), for example you can [row in the clouds](https://ergarcade.github.io/mrdoob-clouds/).
 
@@ -56,6 +56,10 @@ Open Rowing Monitor also implements different Bluetooth Low Energy (BLE) protoco
 * **BLE Cycling Power Profile**: This Bluetooth simulates a bike, which allows you to connect the rower to a bike activity on your (mostly Garmin) sportwatch. It will translate the rowing metrics to the appropriate fields. This profile is only supported by specific watches, so it might provide a solution.
 
 * **BLE Cycling Speed and Cadence Profile**: used for older Garmin Forerunner and Garmin Venu watches and similar types, again simulating a bike activity. Please note to set the wheel circumference to 10mm to make this work well.
+
+### ANT+
+
+You can add a ANT+ USB-stick to your Raspberry Pi, which allows to to recieve data from your ANT+ heartrate monitor. On top of recieving the heartrate data, Open Rowing Monitor can also broadcast rowing metrics via ANT+, which can be recieved by the more expensive series of Garmin smartwatches, which then can calculate metrics like training load etc..
 
 ### Export of Training Sessions
 
