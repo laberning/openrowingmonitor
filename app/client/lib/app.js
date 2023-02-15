@@ -130,8 +130,16 @@ export function createApp (app) {
 
   function handleAction (action) {
     switch (action.command) {
-      case 'switchPeripheralMode': {
-        if (socket)socket.send(JSON.stringify({ command: 'switchPeripheralMode' }))
+      case 'switchBlePeripheralMode': {
+        if (socket)socket.send(JSON.stringify({ command: 'switchBlePeripheralMode' }))
+        break
+      }
+      case 'switchAntPeripheralMode': {
+        if (socket)socket.send(JSON.stringify({ command: 'switchAntPeripheralMode' }))
+        break
+      }
+      case 'switchHrmMode': {
+        if (socket)socket.send(JSON.stringify({ command: 'switchHrmMode' }))
         break
       }
       case 'reset': {

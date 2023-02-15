@@ -49,7 +49,7 @@ NobleBindings.prototype.onDisconnComplete = function (handle, reason) {
 const noble = new Noble(new NobleBindings())
 // END of noble patch
 
-function createCentralManager () {
+function createHeartRateManager () {
   const emitter = new EventEmitter()
   let batteryLevel
 
@@ -64,10 +64,10 @@ function createCentralManager () {
 
   noble.on('discover', (peripheral) => {
     noble.stopScanning()
-    connectHeartratePeripheral(peripheral)
+    connectHeartRatePeripheral(peripheral)
   })
 
-  function connectHeartratePeripheral (peripheral) {
+  function connectHeartRatePeripheral (peripheral) {
     // connect to the heart rate sensor
     peripheral.connect((error) => {
       if (error) {
@@ -75,7 +75,7 @@ function createCentralManager () {
         return
       }
       log.info(`heart rate peripheral connected, name: '${peripheral.advertisement?.localName}', id: ${peripheral.id}`)
-      subscribeToHeartrateMeasurement(peripheral)
+      subscribeToHeartRateMeasurement(peripheral)
     })
 
     peripheral.once('disconnect', () => {
@@ -87,33 +87,33 @@ function createCentralManager () {
   }
 
   // see https://www.bluetooth.com/specifications/specs/heart-rate-service-1-0/
-  function subscribeToHeartrateMeasurement (peripheral) {
-    const heartrateMeasurementUUID = '2a37'
+  function subscribeToHeartRateMeasurement (peripheral) {
+    const heartRateMeasurementUUID = '2a37'
     const batteryLevelUUID = '2a19'
 
-    peripheral.discoverSomeServicesAndCharacteristics([], [heartrateMeasurementUUID, batteryLevelUUID],
+    peripheral.discoverSomeServicesAndCharacteristics([], [heartRateMeasurementUUID, batteryLevelUUID],
       (error, services, characteristics) => {
         if (error) {
           log.error(error)
           return
         }
 
-        const heartrateMeasurementCharacteristic = characteristics.find(
-          characteristic => characteristic.uuid === heartrateMeasurementUUID
+        const heartRateMeasurementCharacteristic = characteristics.find(
+          characteristic => characteristic.uuid === heartRateMeasurementUUID
         )
 
         const batteryLevelCharacteristic = characteristics.find(
           characteristic => characteristic.uuid === batteryLevelUUID
         )
 
-        if (heartrateMeasurementCharacteristic !== undefined) {
-          heartrateMeasurementCharacteristic.notify(true, (error) => {
+        if (heartRateMeasurementCharacteristic !== undefined) {
+          heartRateMeasurementCharacteristic.notify(true, (error) => {
             if (error) {
               log.error(error)
               return
             }
 
-            heartrateMeasurementCharacteristic.on('data', (data, isNotification) => {
+            heartRateMeasurementCharacteristic.on('data', (data, isNotification) => {
               const buffer = Buffer.from(data)
               const flags = buffer.readUInt8(0)
               // bits of the feature flag:
@@ -121,7 +121,7 @@ function createCentralManager () {
               // 1 + 2: Sensor Contact Status
               // 3: Energy Expended Status
               // 4: RR-Interval
-              const heartrateUint16LE = flags & 0b1
+              const heartRateUint16LE = flags & 0b1
 
               // from the specs:
               // While most human applications require support for only 255 bpm or less, special
@@ -129,8 +129,8 @@ function createCentralManager () {
               // If the Heart Rate Measurement Value is less than or equal to 255 bpm a UINT8 format
               // should be used for power savings.
               // If the Heart Rate Measurement Value exceeds 255 bpm a UINT16 format shall be used.
-              const heartrate = heartrateUint16LE ? buffer.readUInt16LE(1) : buffer.readUInt8(1)
-              emitter.emit('heartrateMeasurement', { heartrate, batteryLevel })
+              const heartrate = heartRateUint16LE ? buffer.readUInt16LE(1) : buffer.readUInt8(1)
+              emitter.emit('heartRateMeasurement', { heartrate, batteryLevel })
             })
           })
         }
@@ -155,4 +155,4 @@ function createCentralManager () {
   })
 }
 
-export { createCentralManager }
+export { createHeartRateManager }

@@ -13,8 +13,7 @@ import log from 'loglevel'
 import config from './tools/ConfigManager.js'
 import { createRowingStatistics } from './engine/RowingStatistics.js'
 import { createWebServer } from './WebServer.js'
-import { createPeripheralManager } from './ble/PeripheralManager.js'
-import { createAntManager } from './ant/AntManager.js'
+import { createPeripheralManager } from './peripherals/PeripheralManager.js'
 // eslint-disable-next-line no-unused-vars
 import { replayRowingSession } from './tools/RowingRecorder.js'
 import { createWorkoutRecorder } from './engine/WorkoutRecorder.js'
@@ -99,13 +98,25 @@ peripheralManager.on('control', (event) => {
       peripheralManager.notifyStatus({ name: 'startedOrResumedByUser' })
       event.res = true
       break
-    case 'peripheralMode':
+    case 'blePeripheralMode':
+      webServer.notifyClients('config', getConfig())
+      event.res = true
+      break
+    case 'antPeripheralMode':
+      webServer.notifyClients('config', getConfig())
+      event.res = true
+      break
+    case 'hrmPeripheralMode':
       webServer.notifyClients('config', getConfig())
       event.res = true
       break
     default:
       log.info('unhandled Command', event.req)
   }
+})
+
+peripheralManager.on('heartRateMeasurement', (heartRateMeasurement) => {
+  rowingStatistics.handleHeartRateMeasurement(heartRateMeasurement)
 })
 
 function pauseWorkout () {
@@ -128,6 +139,22 @@ function resetWorkout () {
 
 const gpioTimerService = child_process.fork('./app/gpio/GpioTimerService.js')
 gpioTimerService.on('message', handleRotationImpulse)
+
+process.once('SIGINT', async (signal) => {
+  log.debug(`${signal} signal was received, shutting down gracefully`)
+  await peripheralManager.shutdownAllPeripherals()
+  process.exit(0)
+})
+process.once('SIGTERM', async (signal) => {
+  log.debug(`${signal} signal was received, shutting down gracefully`)
+  await peripheralManager.shutdownAllPeripherals()
+  process.exit(0)
+})
+process.once('uncaughtException', async (error) => {
+  log.error('Uncaught Exception:', error)
+  await peripheralManager.shutdownAllPeripherals()
+  process.exit(1)
+})
 
 function handleRotationImpulse (dataPoint) {
   workoutRecorder.recordRotationImpulse(dataPoint)
@@ -192,20 +219,6 @@ rowingStatistics.on('rowingStopped', (metrics) => {
   workoutRecorder.writeRecordings()
 })
 
-if (config.heartrateMonitorBLE) {
-  const bleCentralService = child_process.fork('./app/ble/CentralService.js')
-  bleCentralService.on('message', (heartrateMeasurement) => {
-    rowingStatistics.handleHeartrateMeasurement(heartrateMeasurement)
-  })
-}
-
-if (config.heartrateMonitorANT) {
-  const antManager = createAntManager()
-  antManager.on('heartrateMeasurement', (heartrateMeasurement) => {
-    rowingStatistics.handleHeartrateMeasurement(heartrateMeasurement)
-  })
-}
-
 workoutUploader.on('authorizeStrava', (data, client) => {
   webServer.notifyClient(client, 'authorizeStrava', data)
 })
@@ -217,8 +230,14 @@ workoutUploader.on('resetWorkout', () => {
 const webServer = createWebServer()
 webServer.on('messageReceived', async (message, client) => {
   switch (message.command) {
-    case 'switchPeripheralMode':
-      peripheralManager.switchPeripheralMode()
+    case 'switchBlePeripheralMode':
+      peripheralManager.switchBlePeripheralMode()
+      break
+    case 'switchAntPeripheralMode':
+      peripheralManager.switchAntPeripheralMode()
+      break
+    case 'switchHrmMode':
+      peripheralManager.switchHrmMode()
       break
     case 'reset':
       resetWorkout()
@@ -244,7 +263,9 @@ webServer.on('clientConnected', (client) => {
 // todo: extract this into some kind of state manager
 function getConfig () {
   return {
-    peripheralMode: peripheralManager.getPeripheralMode(),
+    blePeripheralMode: peripheralManager.getBlePeripheralMode(),
+    antPeripheralMode: peripheralManager.getAntPeripheralMode(),
+    hrmPeripheralMode: peripheralManager.getHrmPeripheralMode(),
     stravaUploadEnabled: !!config.stravaClientId && !!config.stravaClientSecret,
     shutdownEnabled: !!config.shutdownCommand
   }
