@@ -179,9 +179,29 @@ As ${&Delta;&omega; \over &Delta;t}$ = &alpha; and D = k \* &omega;<sup>2</sup> 
 
 As &alpha; and &omega; have been derived in a robust manner, and there are no alternative more robust approaches to determining instant &tau; that allows for handle force curves, we consider this the best attainable result. Testing shows that the results are quite useable.
 
-### Detecting force on the flywheel
+## Detecting the stroke phase
 
-One of the key elements of rowing is detecting the stroke phases and thus calculate the associated metrics. From the perspective of Open Rowing Monitor, there only is a stream of *CurrentDt*'s, which should form the basis of this detection:
+One of the key elements of rowing is detecting the stroke phases and thus calculate the associated metrics for that phase. Assuming that `engine/Flywheel.js` has determined whether there is a force present on the flywheel, `engine/Rower.js` can now transform this information into the phase of the rowing stroke. On an indoor rower, the rowing cycle will always start with a drive, followed by a recovery. This results in the follwing phases:
+
+* The **Drive phase**, where the rower pulls on the handle, some force on the flywheel is excerted and the flywheel is accelerating or at least not decelerating in accordance with the drag;
+
+* The **Recovery Phase**, where the rower returns to his starting position and the flywheel decelerates as the drag on the flywheel is slowing it down;
+
+As the rowing cycle always follows this fixed schema, Open Rowing Monitor models it as a finite state machine (implemented in `handleRotationImpulse` in `engine/Rower.js`).
+
+```mermaid
+stateDiagram-v2
+  direction LR
+  Drive --> Recovery: Flywheel<br>isn't powered
+  Drive --> Drive: Flywheel<br>is powered
+  Recovery --> Drive: Flywheel<br>is powered
+  Recovery --> Recovery: Flywheel<br>isn't powered
+```
+
+<!-- markdownlint-disable-next-line no-emphasis-as-header -->
+*Finite state machine of rowing cycle*
+
+From the perspective of Open Rowing Monitor, there only is a stream of *CurrentDt*'s, which should form the basis of this detection:
 
 The following picture shows the time between impulses through time:
 ![Measurements of flywheel](img/physics/flywheelmeasurement.png)
@@ -189,17 +209,17 @@ The following picture shows the time between impulses through time:
 
 Open Rowing Monitor combines two types of force detection, which work independently: *basic force detection* and *advanced stroke detection*. Both can detect a stroke accuratly, and the combination has proven its use.
 
-In `engine/Flywheel.js`, two functions provide force detection:
+In `engine/Flywheel.js`, two functions provide force detection, which use the following criteria before attempting a stroke phase transition:
 
-* `isUnpowered()`: which indicates that the simple or the advanced force detection indicate that a force is absent;
+* `isPowered()`: which indicates a force is present, suggesting a drive phase. This is true when the slope of a series of *flankLength* times between impulses is below the **minumumRecoverySlope** (i.e. accelerating) AND the handleforce is above **minumumForceBeforeStroke** (i.e. the torque &tau; is above a certain threshold);
 
-* `isPowered()`: which indicates that both the simple or the advanced force detection indicate that a force is present.
+* `isUnpowered()`: which indicates that there is no force present, suggesting a recovery phase. This is true when the slope of a series of *flankLength* times between impulses is above the **minumumRecoverySlope** (i.e. decelerating) where the goodness of fit of that slope exceeds the **minimumStrokeQuality** OR the handleforce is below **minumumForceBeforeStroke** (i.e. the torque &tau; is below a certain threshold)
 
-The choice for the logical relations between the two types of force detection is based on testing: where a sudden presence of force on a flywheel (i.e. the start of a drive) is quite easily and consistently detected, its abscence has proven to be more difficult. In practice, the beginning of a drive is easily recognised as strong leg muscles excert much force onto the flywheel in a very short period of time. The end of the drive is more difficult to assess, as the dragforce of the flywheel increases with its speed, and the weaker arm muscles have taken over, making the transition to the recovery much harder to detect. In theory, in the end of the drive phase the drag force might be bigger than the force from the arms, resulting in an overall negative torque.
+The choice for the logical relations between the two types of force detection is based on testing: where a sudden presence of force on a flywheel (i.e. the start of a drive) is quite easily and consistently detected, its abscence has proven to be more difficult. In practice, the beginning of a drive is easily recognised as strong leg muscles excert much force onto the flywheel in a very short period of time, leading to an easily recognisable (large) torque &tau; and a sudden decrease in currentDt's. The end of the drive is more difficult to assess, as the dragforce of the flywheel increases with its speed, and the weaker arm muscles have taken over, making the transition to the recovery much harder to detect. In theory, in the end of the drive phase the drag force might be bigger than the force from the arms, resulting in an overall negative torque.
 
-In the remainder of this paragraph, we describe the underlying physics of these force detection methods.
+In the remainder of this paragraph, we describe the underlying physics of both these force detection methods.
 
-#### Basic force detection
+### Basic force detection through currentDt slope
 
 One of the key indicator is the acceleration/decelleration of the flywheel. Looking at a simple visualisation of the rowing stroke, we try to achieve the following:
 
@@ -218,7 +238,7 @@ A more nuanced, but more vulnerable, approach is to compare the slope of this fu
 
 In Open Rowing Monitor, the settings allow for using the more robust ascending/descending approach (by setting *minumumRecoverySlope* to 0), for a more accurate approach (by setting *minumumRecoverySlope* to a static value) or even a dynamic approach (by setting *autoAdjustRecoverySlope* to true)
 
-#### Advanced force detection
+### Advanced force detection through torque &tau;
 
 The more advanced, but more vulnerable approach depends on the calculated torque. When looking at *CurrentDt* and Torque over time, we get the following picture:
 
@@ -365,28 +385,6 @@ Where r is the radius of the sprocket in meters.
 From theory [[13]](#13)), we know that the handle Power is
 
 > $$ P_{Handle} = &tau; * &omega; $$
-
-## Detecting the stroke phase
-
-Knowing that `engine/Flywheel.js` has determined whether there is a force on the flywheel, `engine/Rower.js` can now transform this into the phase of the rowing stroke. On an indoor rower, the rowing cycle will always start with a stroke, followed by a recovery. This results in the follwing phases:
-
-* The **Drive phase**, where the rower pulls on the handle, some force on the flywheel is excerted and the flywheel is accelerating or at least not decelerating in accordance with the drag;
-
-* The **Recovery Phase**, where the rower returns to his starting position and the flywheel decelerates as the drag on the flywheel is slowing it down;
-
-As the rowing cycle always follows this fixed schema, Open Rowing Monitor models it as a finite state machine (implemented in `handleRotationImpulse` in `engine/Rower.js`).
-
-```mermaid
-stateDiagram-v2
-  direction LR
-  Drive --> Recovery: Flywheel<br>isn't powered
-  Drive --> Drive: Flywheel<br>is powered
-  Recovery --> Drive: Flywheel<br>is powered
-  Recovery --> Recovery: Flywheel<br>isn't powered
-```
-
-<!-- markdownlint-disable-next-line no-emphasis-as-header -->
-*Finite state machine of rowing cycle*
 
 ## A mathematical perspective on key metrics
 
