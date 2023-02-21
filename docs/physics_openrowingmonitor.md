@@ -205,15 +205,15 @@ From the perspective of Open Rowing Monitor, there only is a stream of *CurrentD
 
 The following picture shows the time between impulses through time:
 ![Measurements of flywheel](img/physics/flywheelmeasurement.png)
-*Measurements of flywheel*
+*example currentDt Measurements of flywheel*
 
 Open Rowing Monitor combines two types of force detection, which work independently: *basic force detection* and *advanced stroke detection*. Both can detect a stroke accuratly, and the combination has proven its use.
 
 In `engine/Flywheel.js`, two functions provide force detection, which use the following criteria before attempting a stroke phase transition:
 
-* `isPowered()`: which indicates a force is present, suggesting a drive phase. This is true when the slope of a series of *flankLength* times between impulses is below the **minumumRecoverySlope** (i.e. accelerating) AND the handleforce is above **minumumForceBeforeStroke** (i.e. the torque &tau; is above a certain threshold);
+* `isPowered()`: which indicates a force is present, suggesting a drive phase. This is true when the slope of a series of *flankLength* times between impulses is below the **minumumRecoverySlope** (i.e. accelerating, as is the case in the measurements in above figure before the dotted line) AND the handleforce is above **minumumForceBeforeStroke** (i.e. the torque &tau; is above a certain threshold);
 
-* `isUnpowered()`: which indicates that there is no force present, suggesting a recovery phase. This is true when the slope of a series of *flankLength* times between impulses is above the **minumumRecoverySlope** (i.e. decelerating) where the goodness of fit of that slope exceeds the **minimumStrokeQuality** OR the handleforce is below **minumumForceBeforeStroke** (i.e. the torque &tau; is below a certain threshold)
+* `isUnpowered()`: which indicates that there is no force present, suggesting a recovery phase. This is true when the slope of a series of *flankLength* times between impulses is above the **minumumRecoverySlope** (i.e. decelerating, as is the case in the measurements in above figure after the dotted line) where the goodness of fit of that slope exceeds the **minimumStrokeQuality** OR the handleforce is below **minumumForceBeforeStroke** (i.e. the torque &tau; is below a certain threshold)
 
 The choice for the logical relations between the two types of force detection is based on testing: where a sudden presence of force on a flywheel (i.e. the start of a drive) is quite easily and consistently detected, its abscence has proven to be more difficult. In practice, the beginning of a drive is easily recognised as strong leg muscles excert much force onto the flywheel in a very short period of time, leading to an easily recognisable (large) torque &tau; and a sudden decrease in currentDt's. The end of the drive is more difficult to assess, as the dragforce of the flywheel increases with its speed, and the weaker arm muscles have taken over, making the transition to the recovery much harder to detect. In theory, in the end of the drive phase the drag force might be bigger than the force from the arms, resulting in an overall negative torque.
 
