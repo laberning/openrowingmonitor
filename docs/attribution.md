@@ -6,7 +6,7 @@ Open Rowing Monitor uses some great work by others. Thank you for all the great 
 
 * Dave Vernooy's project description on [ErgWare](https://dvernooy.github.io/projects/ergware) has some good information on the maths involved in a rowing ergometer.
 
-* Nomath has done a very impressive [Reverse engineering of the actual workings of the Concept 2 PM5](https://www.c2forum.com/viewtopic.php?f=7&t=194719), including experimentally checking drag calculations.
+* Nomath has done a very impressive [Reverse engineering of the actual workings of the Concept 2 PM5](https://www.c2forum.com/viewtopic.php?f=7&t=194719), including experimentally checking drag calculations, which is at the base of our physics engine. 
 
 * Bluetooth is quite a complex beast, luckily the Bluetooth SIG releases all the [Bluetooth Specifications](https://www.bluetooth.com/specifications/specs).
 
@@ -14,6 +14,6 @@ Open Rowing Monitor uses some great work by others. Thank you for all the great 
 
 * The frontend uses some icons from [Font Awesome](https://fontawesome.com/), licensed under [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/).
 
-* Thank you to [Jaap van Ekris](https://github.com/JaapvanEkris) for his contributions to this project.
+* Thank you to [Jaap van Ekris](https://github.com/JaapvanEkris) for his many contributions to this project, especially the physics engine and the file exports.
 
-* Thanks to [Abasz](https://github.com/Abasz) for his great contributions to the GPIO and BLE implementation
+* Thanks to [Abasz](https://github.com/Abasz) for his great contributions to the GPIO, BLE and Ant+ implementations, as well as the many constructive feedback that helped improve many areas of OpenRowingMonitor.
