@@ -6,7 +6,7 @@ Open Rowing Monitor uses some great work by others. Thank you for all the great 
 
 * Dave Vernooy's project description on [ErgWare](https://dvernooy.github.io/projects/ergware) has some good information on the maths involved in a rowing ergometer.
 
-* Nomath has done a very impressive [Reverse engineering of the actual workings of the Concept 2 PM5](https://www.c2forum.com/viewtopic.php?f=7&t=194719), including experimentally checking drag calculations, which is at the base of our physics engine. 
+* Nomath has done a very impressive [Reverse engineering of the actual workings of the Concept 2 PM5](https://www.c2forum.com/viewtopic.php?f=7&t=194719), including experimentally checking drag calculations, which is at the base of our physics engine.
 
 * Bluetooth is quite a complex beast, luckily the Bluetooth SIG releases all the [Bluetooth Specifications](https://www.bluetooth.com/specifications/specs).
 
