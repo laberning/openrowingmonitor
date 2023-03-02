@@ -311,8 +311,12 @@ function createWorkoutRecorder () {
   function minimumRecordingTimeHasPassed () {
     const minimumRecordingTimeInSeconds = 10
     const rotationImpulseTimeTotal = rotationImpulses.reduce((acc, impulse) => acc + impulse, 0)
-    const strokeTimeTotal = strokes[strokes.length - 1].totalMovingTime
-    return (Math.max(rotationImpulseTimeTotal, strokeTimeTotal) > minimumRecordingTimeInSeconds)
+    if (strokes.length > 0) {
+      const strokeTimeTotal = strokes[strokes.length - 1].totalMovingTime
+      return (Math.max(rotationImpulseTimeTotal, strokeTimeTotal) > minimumRecordingTimeInSeconds)
+    } else {
+      return (rotationImpulseTimeTotal > minimumRecordingTimeInSeconds)
+    }
   }
 
   return {
