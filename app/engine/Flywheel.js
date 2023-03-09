@@ -71,7 +71,7 @@ function createFlywheel (rowerSettings) {
 
     if (dataPoint < rowerSettings.minimumTimeBetweenImpulses && maintainMetrics) {
       // This shouldn't happen, but let's log it to clarify there is some issue going on here
-      log.debug(`*** WARNING: currentDt of ${dataPoint} sec is above minimumTimeBetweenImpulses (${rowerSettings.minimumTimeBetweenImpulses} sec)`)
+      log.debug(`*** WARNING: currentDt of ${dataPoint} sec is below minimumTimeBetweenImpulses (${rowerSettings.minimumTimeBetweenImpulses} sec)`)
     }
 
     currentDt.push(dataPoint)
