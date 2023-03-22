@@ -9,7 +9,7 @@ import NoSleep from 'nosleep.js'
 import { filterObjectByKeys } from './helper.js'
 
 const rowingMetricsFields = ['totalNumberOfStrokes', 'totalLinearDistanceFormatted', 'totalCalories', 'cyclePower', 'heartrate',
-  'heartrateBatteryLevel', 'cyclePaceFormatted', 'cycleStrokeRate', 'totalMovingTimeFormatted']
+  'heartrateBatteryLevel', 'cyclePaceFormatted', 'cycleStrokeRate', 'totalMovingTimeFormatted', 'driveHandleForceCurve']
 
 export function createApp (app) {
   const urlParameters = new URLSearchParams(window.location.search)
@@ -79,11 +79,11 @@ export function createApp (app) {
             // if we are in reset state only update heart rate and peripheral mode
             if (data.totalNumberOfStrokes < 1) {
               if (data.totalLinearDistanceFormatted > 0) {
-                activeFields = ['totalLinearDistanceFormatted', 'heartrate', 'heartrateBatteryLevel']
+                activeFields = ['totalLinearDistanceFormatted', 'heartrate', 'heartrateBatteryLevel', 'driveHandleForceCurve']
               } else if (data.totalMovingTimeFormatted !== '00:00') {
-                activeFields = ['totalMovingTimeFormatted', 'heartrate', 'heartrateBatteryLevel']
+                activeFields = ['totalMovingTimeFormatted', 'heartrate', 'heartrateBatteryLevel', 'driveHandleForceCurve']
               } else {
-                activeFields = ['heartrate', 'heartrateBatteryLevel']
+                activeFields = ['heartrate', 'heartrateBatteryLevel', 'driveHandleForceCurve']
               }
             }
 

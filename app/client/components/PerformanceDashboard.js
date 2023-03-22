@@ -8,6 +8,7 @@
 import { AppElement, html, css } from './AppElement.js'
 import { APP_STATE } from '../store/appState.js'
 import { customElement, property } from 'lit/decorators.js'
+import './DashboardForceCurve.js'
 import './DashboardMetric.js'
 import './DashboardActions.js'
 import './BatteryIcon.js'
@@ -32,7 +33,7 @@ export class PerformanceDashboard extends AppElement {
       }
     }
 
-    dashboard-metric, dashboard-actions {
+    dashboard-metric, dashboard-actions,dashboard-force-curve {
       background: var(--theme-widget-color);
       text-align: center;
       position: relative;
@@ -69,6 +70,7 @@ export class PerformanceDashboard extends AppElement {
             }
           </dashboard-metric>`
         : html`<dashboard-metric .icon=${icon_paddle} unit="total" .value=${metrics?.totalNumberOfStrokes?.value}></dashboard-metric>`}
+        <dashboard-force-curve .value=${this.appState?.metrics?.driveHandleForceCurve} style="grid-column: span 2"></dashboard-force-curve>
       <dashboard-metric .icon=${icon_fire} unit="kcal" .value=${metrics?.totalCalories?.value}></dashboard-metric>
       <dashboard-metric .icon=${icon_clock} .value=${metrics?.totalMovingTimeFormatted?.value}></dashboard-metric>
       <dashboard-actions .appState=${this.appState}></dashboard-actions>
