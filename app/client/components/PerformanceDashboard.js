@@ -7,12 +7,13 @@
 
 import { AppElement, html, css } from './AppElement.js'
 import { APP_STATE } from '../store/appState.js'
-import { customElement, property } from 'lit/decorators.js'
+import { customElement, property, state } from 'lit/decorators.js'
 import './DashboardForceCurve.js'
 import './DashboardMetric.js'
 import './DashboardActions.js'
 import './BatteryIcon.js'
-import { icon_route, icon_stopwatch, icon_bolt, icon_paddle, icon_heartbeat, icon_fire, icon_clock } from '../lib/icons.js'
+import './SettingsDialog'
+import { icon_route, icon_stopwatch, icon_bolt, icon_paddle, icon_heartbeat, icon_fire, icon_clock, icon_settings } from '../lib/icons.js'
 
 @customElement('performance-dashboard')
 export class PerformanceDashboard extends AppElement {
@@ -44,7 +45,26 @@ export class PerformanceDashboard extends AppElement {
     dashboard-actions {
       padding: 0.5em 0 0 0;
     }
+
+    .settings {
+      padding: 0.1em 0;
+      position: absolute;
+      bottom: 0;
+      right: 0;
+      z-index: 20;
+    }
+
+    .settings .icon {
+      cursor: pointer;
+      height: 1em;
+    }
+
+    .settings:hover .icon {
+      filter: brightness(150%);
+    }
   `
+  @state({ type: Object })
+    dialog
 
   @property({ type: Object })
     metrics
@@ -55,6 +75,10 @@ export class PerformanceDashboard extends AppElement {
   render () {
     const metrics = this.calculateFormattedMetrics(this.appState.metrics)
     return html`
+      <div class="settings" @click=${this.openSettings}>
+        ${icon_settings}
+        ${this.dialog ? this.dialog : ''}
+      </div>
       <dashboard-metric .icon=${icon_route} .unit=${metrics?.totalLinearDistanceFormatted?.unit || 'm'} .value=${metrics?.totalLinearDistanceFormatted?.value}></dashboard-metric>
       <dashboard-metric .icon=${icon_stopwatch} unit="/500m" .value=${metrics?.cyclePaceFormatted?.value}></dashboard-metric>
       <dashboard-metric .icon=${icon_bolt} unit="watt" .value=${metrics?.cyclePower?.value}></dashboard-metric>
@@ -75,6 +99,14 @@ export class PerformanceDashboard extends AppElement {
       <dashboard-metric .icon=${icon_clock} .value=${metrics?.totalMovingTimeFormatted?.value}></dashboard-metric>
       <dashboard-actions .appState=${this.appState}></dashboard-actions>
     `
+  }
+
+  openSettings () {
+    this.dialog = html`<settings-dialog .config=${this.appState.config.guiConfigs} @close=${dialogClosed}></settings-dialog>`
+
+    function dialogClosed (event) {
+      this.dialog = undefined
+    }
   }
 
   // todo: so far this is just a port of the formatter from the initial proof of concept client
