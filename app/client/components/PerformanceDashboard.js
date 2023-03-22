@@ -34,7 +34,7 @@ export class PerformanceDashboard extends AppElement {
       }
     }
 
-    dashboard-metric, dashboard-actions,dashboard-force-curve {
+    dashboard-metric, dashboard-actions, dashboard-force-curve {
       background: var(--theme-widget-color);
       text-align: center;
       position: relative;
@@ -63,6 +63,32 @@ export class PerformanceDashboard extends AppElement {
       filter: brightness(150%);
     }
   `
+  dashboardMetricComponents = (formattedMetrics, appState) => ({
+    distance: html`<dashboard-metric .icon=${icon_route} .unit=${formattedMetrics?.totalLinearDistanceFormatted?.unit || 'm'} .value=${formattedMetrics?.totalLinearDistanceFormatted?.value}></dashboard-metric>`,
+
+    pace: html`<dashboard-metric .icon=${icon_stopwatch} unit="/500m" .value=${formattedMetrics?.cyclePaceFormatted?.value}></dashboard-metric>`,
+
+    power: html`<dashboard-metric .icon=${icon_bolt} unit="watt" .value=${formattedMetrics?.cyclePower?.value}></dashboard-metric>`,
+
+    stkRate: html`<dashboard-metric .icon=${icon_paddle} unit="/min" .value=${formattedMetrics?.cycleStrokeRate?.value}></dashboard-metric>`,
+
+    heartRate: html`<dashboard-metric .icon=${icon_heartbeat} unit="bpm" .value=${formattedMetrics?.heartrate?.value}>
+          ${formattedMetrics?.heartrateBatteryLevel?.value
+          ? html`<battery-icon .batteryLevel=${formattedMetrics?.heartrateBatteryLevel?.value}></battery-icon>`
+            : ''}
+    </dashboard-metric>`,
+
+    totalStk: html`<dashboard-metric .icon=${icon_paddle} unit="total" .value=${formattedMetrics?.totalNumberOfStrokes?.value}></dashboard-metric>`,
+
+    calories: html`<dashboard-metric .icon=${icon_fire} unit="kcal" .value=${formattedMetrics?.totalCalories?.value}></dashboard-metric>`,
+
+    timer: html`<dashboard-metric .icon=${icon_clock} .value=${formattedMetrics?.totalMovingTimeFormatted?.value}></dashboard-metric>`,
+
+    forceCurve: html`<dashboard-force-curve .value=${appState?.metrics.driveHandleForceCurve} style="grid-column: span 2"></dashboard-force-curve>`,
+
+    actions: html`<dashboard-actions .appState=${appState}></dashboard-actions>`
+  })
+
   @state({ type: Object })
     dialog
 
@@ -73,31 +99,19 @@ export class PerformanceDashboard extends AppElement {
     appState = APP_STATE
 
   render () {
-    const metrics = this.calculateFormattedMetrics(this.appState.metrics)
+    const metricConfig = [...new Set(this.appState.config.guiConfigs.dashboardMetrics)].reduce((prev, metricName) => {
+      prev.push(this.dashboardMetricComponents(this.metrics, this.appState)[metricName])
+      return prev
+    }, [])
+
+    this.metrics = this.calculateFormattedMetrics(this.appState.metrics)
     return html`
       <div class="settings" @click=${this.openSettings}>
         ${icon_settings}
         ${this.dialog ? this.dialog : ''}
       </div>
-      <dashboard-metric .icon=${icon_route} .unit=${metrics?.totalLinearDistanceFormatted?.unit || 'm'} .value=${metrics?.totalLinearDistanceFormatted?.value}></dashboard-metric>
-      <dashboard-metric .icon=${icon_stopwatch} unit="/500m" .value=${metrics?.cyclePaceFormatted?.value}></dashboard-metric>
-      <dashboard-metric .icon=${icon_bolt} unit="watt" .value=${metrics?.cyclePower?.value}></dashboard-metric>
-      <dashboard-metric .icon=${icon_paddle} unit="/min" .value=${metrics?.cycleStrokeRate?.value}></dashboard-metric>
-      ${metrics?.heartrate?.value
-        ? html`
-          <dashboard-metric .icon=${icon_heartbeat} unit="bpm" .value=${metrics?.heartrate?.value}>
-            ${metrics?.heartrateBatteryLevel?.value
-              ? html`
-                <battery-icon .batteryLevel=${metrics?.heartrateBatteryLevel?.value}></battery-icon>
-              `
-              : ''
-            }
-          </dashboard-metric>`
-        : html`<dashboard-metric .icon=${icon_paddle} unit="total" .value=${metrics?.totalNumberOfStrokes?.value}></dashboard-metric>`}
-        <dashboard-force-curve .value=${this.appState?.metrics?.driveHandleForceCurve} style="grid-column: span 2"></dashboard-force-curve>
-      <dashboard-metric .icon=${icon_fire} unit="kcal" .value=${metrics?.totalCalories?.value}></dashboard-metric>
-      <dashboard-metric .icon=${icon_clock} .value=${metrics?.totalMovingTimeFormatted?.value}></dashboard-metric>
-      <dashboard-actions .appState=${this.appState}></dashboard-actions>
+
+      ${metricConfig}
     `
   }
 
@@ -124,10 +138,10 @@ export class PerformanceDashboard extends AppElement {
     const formattedMetrics = {}
     for (const [key, value] of Object.entries(metrics)) {
       const valueFormatted = fieldFormatter[key] ? fieldFormatter[key](value) : value
-      if (valueFormatted.value !== undefined && valueFormatted.unit !== undefined) {
+      if (valueFormatted?.value !== undefined && valueFormatted?.unit !== undefined) {
         formattedMetrics[key] = {
-          value: valueFormatted.value,
-          unit: valueFormatted.unit
+          value: valueFormatted?.value,
+          unit: valueFormatted?.unit
         }
       } else {
         formattedMetrics[key] = {

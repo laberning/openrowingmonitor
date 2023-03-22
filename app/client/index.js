@@ -28,6 +28,11 @@ export class App extends LitElement {
       // todo: we also want a mechanism here to get notified of state changes
     })
 
+    const config = this.appState.config.guiConfigs
+    Object.keys(config).forEach(key => {
+      config[key] = JSON.parse(localStorage.getItem(key)) ?? config[key]
+    })
+
     // this is how we implement changes to the global state:
     // once any child component sends this CustomEvent we update the global state according
     // to the changes that were passed to us
@@ -39,13 +44,22 @@ export class App extends LitElement {
     this.addEventListener('triggerAction', (event) => {
       this.app.handleAction(event.detail)
     })
+
+    // notify the app about the triggered action
+    this.addEventListener('changeGuiSetting', (event) => {
+      Object.keys(event.detail.config.guiConfigs).forEach(key => {
+        localStorage.setItem(key, JSON.stringify(event.detail.config.guiConfigs[key]))
+      })
+
+      this.updateState(event.detail)
+    })
   }
 
   // the global state is updated by replacing the appState with a copy of the new state
   // todo: maybe it is more convenient to just pass the state elements that should be changed?
   // i.e. do something like this.appState = { ..this.appState, ...newState }
   updateState = (newState) => {
-    this.appState = { ...newState }
+    this.appState = { ...this.appState, ...newState }
   }
 
   // return a deep copy of the state to other components to minimize risk of side effects

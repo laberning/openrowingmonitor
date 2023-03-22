@@ -20,6 +20,9 @@ export const APP_STATE = {
     // true if upload to strava is enabled
     stravaUploadEnabled: false,
     // true if remote device shutdown is enabled
-    shutdownEnabled: false
+    shutdownEnabled: false,
+    guiConfigs: {
+      dashboardMetrics: ['distance', 'timer', 'pace', 'power', 'stkRate', 'totalStk', 'calories', 'actions']
+    }
   }
 }

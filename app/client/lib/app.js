@@ -38,7 +38,7 @@ export function createApp (app) {
   let initialWebsocketOpenend = true
   function initWebsocket () {
     // use the native websocket implementation of browser to communicate with backend
-    socket = new WebSocket(`ws://${location.host}/websocket`)
+    socket = new WebSocket('ws://localhost:100/websocket')
 
     socket.addEventListener('open', (event) => {
       console.log('websocket opened')
@@ -71,7 +71,7 @@ export function createApp (app) {
         const data = message.data
         switch (message.type) {
           case 'config': {
-            app.updateState({ ...app.getState(), config: data })
+            app.updateState({ ...app.getState(), config: { ...app.getState().config, ...data } })
             break
           }
           case 'metrics': {
