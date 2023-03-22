@@ -64,25 +64,25 @@ export class PerformanceDashboard extends AppElement {
     }
   `
   dashboardMetricComponents = (formattedMetrics, appState) => ({
-    distance: html`<dashboard-metric .icon=${icon_route} .unit=${formattedMetrics?.totalLinearDistanceFormatted?.unit || 'm'} .value=${formattedMetrics?.totalLinearDistanceFormatted?.value}></dashboard-metric>`,
+    distance: html`<dashboard-metric .icon=${this.appState.config.guiConfigs.showIcons ? icon_route : ''} .unit=${formattedMetrics?.totalLinearDistanceFormatted?.unit || 'm'} .value=${formattedMetrics?.totalLinearDistanceFormatted?.value}></dashboard-metric>`,
 
-    pace: html`<dashboard-metric .icon=${icon_stopwatch} unit="/500m" .value=${formattedMetrics?.cyclePaceFormatted?.value}></dashboard-metric>`,
+    pace: html`<dashboard-metric .icon=${this.appState.config.guiConfigs.showIcons ? icon_stopwatch : ''} unit="/500m" .value=${formattedMetrics?.cyclePaceFormatted?.value}></dashboard-metric>`,
 
-    power: html`<dashboard-metric .icon=${icon_bolt} unit="watt" .value=${formattedMetrics?.cyclePower?.value}></dashboard-metric>`,
+    power: html`<dashboard-metric .icon=${this.appState.config.guiConfigs.showIcons ? icon_bolt : ''} unit="watt" .value=${formattedMetrics?.cyclePower?.value}></dashboard-metric>`,
 
-    stkRate: html`<dashboard-metric .icon=${icon_paddle} unit="/min" .value=${formattedMetrics?.cycleStrokeRate?.value}></dashboard-metric>`,
+    stkRate: html`<dashboard-metric .icon=${this.appState.config.guiConfigs.showIcons ? icon_paddle : ''} unit="/min" .value=${formattedMetrics?.cycleStrokeRate?.value}></dashboard-metric>`,
 
-    heartRate: html`<dashboard-metric .icon=${icon_heartbeat} unit="bpm" .value=${formattedMetrics?.heartrate?.value}>
+    heartRate: html`<dashboard-metric .icon=${this.appState.config.guiConfigs.showIcons ? icon_heartbeat : ''} unit="bpm" .value=${formattedMetrics?.heartrate?.value}>
           ${formattedMetrics?.heartrateBatteryLevel?.value
           ? html`<battery-icon .batteryLevel=${formattedMetrics?.heartrateBatteryLevel?.value}></battery-icon>`
             : ''}
     </dashboard-metric>`,
 
-    totalStk: html`<dashboard-metric .icon=${icon_paddle} unit="total" .value=${formattedMetrics?.totalNumberOfStrokes?.value}></dashboard-metric>`,
+    totalStk: html`<dashboard-metric .icon=${this.appState.config.guiConfigs.showIcons ? icon_paddle : ''} unit="total" .value=${formattedMetrics?.totalNumberOfStrokes?.value}></dashboard-metric>`,
 
-    calories: html`<dashboard-metric .icon=${icon_fire} unit="kcal" .value=${formattedMetrics?.totalCalories?.value}></dashboard-metric>`,
+    calories: html`<dashboard-metric .icon=${this.appState.config.guiConfigs.showIcons ? icon_fire : ''} unit="kcal" .value=${formattedMetrics?.totalCalories?.value}></dashboard-metric>`,
 
-    timer: html`<dashboard-metric .icon=${icon_clock} .value=${formattedMetrics?.totalMovingTimeFormatted?.value}></dashboard-metric>`,
+    timer: html`<dashboard-metric .icon=${this.appState.config.guiConfigs.showIcons ? icon_clock : ''} .value=${formattedMetrics?.totalMovingTimeFormatted?.value}></dashboard-metric>`,
 
     forceCurve: html`<dashboard-force-curve .value=${appState?.metrics.driveHandleForceCurve} style="grid-column: span 2"></dashboard-force-curve>`,
 

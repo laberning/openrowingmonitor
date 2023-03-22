@@ -35,7 +35,7 @@ export class DashboardMetric extends AppElement {
   `
 
   @property({ type: Object })
-    icon
+    icon = ''
 
   @property({ type: String })
     unit = ''
@@ -47,7 +47,7 @@ export class DashboardMetric extends AppElement {
     return html`
       <div class="label">${this.icon}</div>
       <div class="content">
-        <span class="metric-value">${this.value !== undefined ? this.value : '--'}</span>
+        <span class="metric-value" style="${this.icon === '' ? 'font-size: 200%;' : ''}">${this.value !== undefined ? this.value : '--'}</span>
         <span class="metric-unit">${this.unit}</span>
       </div>
       <slot></slot>

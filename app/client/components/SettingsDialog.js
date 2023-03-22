@@ -6,7 +6,7 @@
 */
 
 import { AppElement, html, css } from './AppElement.js'
-import { customElement, property, queryAll } from 'lit/decorators.js'
+import { customElement, property, query, queryAll } from 'lit/decorators.js'
 import { icon_settings } from '../lib/icons.js'
 import './AppDialog.js'
 
@@ -73,13 +73,25 @@ export class DashboardActions extends AppElement {
       text-align: center;
       background-color: var(--theme-widget-color);
     }
+
+    .show-icons-selector {
+      display: flex;
+      gap: 8px;
+    }
+
+    app-dialog > *:last-child {
+      margin-bottom: -24px;
+    }
   `
 
   @property({ type: Object })
     config
 
-  @queryAll('input')
+  @queryAll('.metric-selector>input')
     inputs
+
+  @query('input[name="showIcons"]')
+    showIconInput
 
   static get properties () {
     return {
@@ -93,6 +105,7 @@ export class DashboardActions extends AppElement {
     super()
     this.selectedMetrics = []
     this.sumSelectedSlots = 0
+    this.showIcons = true
     this.isValid = false
   }
 
@@ -132,6 +145,10 @@ export class DashboardActions extends AppElement {
         ${this.renderSelectedMetrics()}
       </table>
     </div>
+    <p class="show-icons-selector">
+      <label for="actions">Show icons</label>
+      <input @change=${this.toggleIcons} name="showIcons" type="checkbox" />
+    </p>
     </app-dialog>
   `
   }
@@ -139,6 +156,7 @@ export class DashboardActions extends AppElement {
   firstUpdated () {
     this.selectedMetrics = this.config.dashboardMetrics
     this.sumSelectedSlots = this.selectedMetrics.length
+    this.showIcons = this.config.showIcons
     if (this.sumSelectedSlots === 8) {
       this.isValid = true
     } else {
@@ -147,6 +165,7 @@ export class DashboardActions extends AppElement {
     [...this.inputs].forEach(input => {
       input.checked = this.selectedMetrics.find(metric => metric === input.name) !== undefined
     })
+    this.showIconInput.checked = this.showIcons
   }
 
   renderSelectedMetrics () {
@@ -181,6 +200,10 @@ export class DashboardActions extends AppElement {
     }
   }
 
+  toggleIcons (e) {
+    this.showIcons = e.target.checked
+  }
+
   isFormValid () {
     return this.sumSelectedSlots === 8 && this.selectedMetrics[3] !== this.selectedMetrics[4]
   }
@@ -194,7 +217,8 @@ export class DashboardActions extends AppElement {
           config: {
             ...this.appState.config,
             guiConfigs: {
-              dashboardMetrics: this.selectedMetrics
+              dashboardMetrics: this.selectedMetrics,
+              showIcons: this.showIcons
             }
           }
         },
