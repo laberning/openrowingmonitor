@@ -9,6 +9,7 @@ import { AppElement, html, css } from './AppElement.js'
 import { customElement, property, query, queryAll, state } from 'lit/decorators.js'
 import { icon_settings } from '../lib/icons.js'
 import './AppDialog.js'
+import { DASHBOARD_METRICS } from '../store/dashboardMetrics.js'
 
 @customElement('settings-dialog')
 export class DashboardActions extends AppElement {
@@ -28,9 +29,7 @@ export class DashboardActions extends AppElement {
     .settings-dialog>div.metric-selector{
       display: grid;
       grid-template-columns: repeat(4,max-content);
-      grid-template-rows: repeat(3, max-content);
       gap: 8px;
-
     }
 
     .settings-dialog>div>label{
@@ -112,26 +111,7 @@ export class DashboardActions extends AppElement {
 
     <p>Select metrics to be shown:</p>
     <div class="metric-selector">
-      <label for="distance">Distance</label>
-      <input @change=${this.toggleCheck} name="distance" size=1 type="checkbox" />
-      <label for="timer">Timer</label>
-      <input @change=${this.toggleCheck} name="timer" size=1 type="checkbox" />
-      <label for="pace">Pace</label>
-      <input @change=${this.toggleCheck} name="pace" size=1 type="checkbox" />
-      <label for="power">Power</label>
-      <input @change=${this.toggleCheck} name="power" size=1 type="checkbox" />
-      <label for="stk">Stroke Rate</label>
-      <input @change=${this.toggleCheck} name="stkRate" size=1 type="checkbox" />
-      <label for="totalStrokes">Total Strokes</label>
-      <input @change=${this.toggleCheck} name="totalStk" size=1 type="checkbox" />
-      <label for="calories">Calories</label>
-      <input @change=${this.toggleCheck} name="calories" size=1 type="checkbox" />
-      <label for="actions">Heart Rate</label>
-      <input @change=${this.toggleCheck} name="heartRate" size=1 type="checkbox" />
-      <label for="forceCurve">Force Curve</label>
-      <input @change=${this.toggleCheck} name="forceCurve" size=2 type="checkbox" />
-      <label for="actions">Actions</label>
-      <input @change=${this.toggleCheck} name="actions" size=1 type="checkbox" />
+      ${this.renderAvailableMetricList()}
     </div>
     <div class="metric-selector-feedback">Slots remaining:  ${8 - this._sumSelectedSlots}
       <table>
@@ -159,6 +139,13 @@ export class DashboardActions extends AppElement {
       input.checked = this._selectedMetrics.find(metric => metric === input.name) !== undefined
     })
     this._showIconInput.checked = this._showIcons
+  }
+
+  renderAvailableMetricList () {
+    return Object.keys(DASHBOARD_METRICS).map(key => html`
+      <label for=${key}>${DASHBOARD_METRICS[key].displayName}</label>
+      <input @change=${this.toggleCheck} name=${key} size=${DASHBOARD_METRICS[key].size} type="checkbox" />
+    `)
   }
 
   renderSelectedMetrics () {

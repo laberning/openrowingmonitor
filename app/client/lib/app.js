@@ -8,9 +8,6 @@
 import NoSleep from 'nosleep.js'
 import { filterObjectByKeys } from './helper.js'
 
-const rowingMetricsFields = ['totalNumberOfStrokes', 'totalLinearDistanceFormatted', 'totalCalories', 'cyclePower', 'heartrate',
-  'heartrateBatteryLevel', 'cyclePaceFormatted', 'cycleStrokeRate', 'totalMovingTimeFormatted', 'driveHandleForceCurve']
-
 export function createApp (app) {
   const urlParameters = new URLSearchParams(window.location.search)
   const mode = urlParameters.get('mode')
@@ -75,20 +72,7 @@ export function createApp (app) {
             break
           }
           case 'metrics': {
-            let activeFields = rowingMetricsFields
-            // if we are in reset state only update heart rate and peripheral mode
-            if (data.totalNumberOfStrokes < 1) {
-              if (data.totalLinearDistanceFormatted > 0) {
-                activeFields = ['totalLinearDistanceFormatted', 'heartrate', 'heartrateBatteryLevel', 'driveHandleForceCurve']
-              } else if (data.totalMovingTimeFormatted !== '00:00') {
-                activeFields = ['totalMovingTimeFormatted', 'heartrate', 'heartrateBatteryLevel', 'driveHandleForceCurve']
-              } else {
-                activeFields = ['heartrate', 'heartrateBatteryLevel', 'driveHandleForceCurve']
-              }
-            }
-
-            const filteredData = filterObjectByKeys(data, activeFields)
-            app.updateState({ ...app.getState(), metrics: filteredData })
+            app.updateState({ ...app.getState(), metrics: data })
             break
           }
           case 'authorizeStrava': {
@@ -124,8 +108,7 @@ export function createApp (app) {
   function resetFields () {
     const appState = app.getState()
     // drop all metrics except heartrate
-    appState.metrics = filterObjectByKeys(appState.metrics, ['heartrate', 'heartrateBatteryLevel'])
-    app.updateState(appState)
+    app.updateState({ ...appState, metrics: { ...filterObjectByKeys(appState.metrics, ['heartrate', 'heartrateBatteryLevel']) } })
   }
 
   function handleAction (action) {
