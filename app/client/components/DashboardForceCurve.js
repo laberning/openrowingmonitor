@@ -7,7 +7,8 @@
 
 import { AppElement, html, css } from './AppElement.js'
 import { customElement, property, state } from 'lit/decorators.js'
-import Chart from 'chart.js/auto'
+import ChartDataLabels from 'chartjs-plugin-datalabels'
+import { Chart, Filler, Legend, LinearScale, LineController, LineElement, PointElement } from 'chart.js/auto'
 
 @customElement('dashboard-force-curve')
 export class DashboardForceCurve extends AppElement {
@@ -16,6 +17,11 @@ export class DashboardForceCurve extends AppElement {
       margin-top: 24px;
     }
   `
+
+  constructor () {
+    super()
+    Chart.register(ChartDataLabels, Legend, Filler, LinearScale, LineController, PointElement, LineElement)
+  }
 
   @property({ type: Object })
     value = []
@@ -33,7 +39,7 @@ export class DashboardForceCurve extends AppElement {
           datasets: [
             {
               fill: true,
-              data: this.value?.map((data, index) => ({ y: data, x: index })),
+              data: this.value?.map((data, index) => ({ y: parseInt(data, 10), x: index })),
               pointRadius: 1,
               borderColor: 'rgb(255,255,255)',
               backgroundColor: 'rgb(220,220,220)'
@@ -44,6 +50,18 @@ export class DashboardForceCurve extends AppElement {
           responsive: true,
           maintainAspectRatio: false,
           plugins: {
+            datalabels: {
+              anchor: 'center',
+              align: 'top',
+              formatter: (value) => `Peak: ${Math.round(value.y)}`,
+              display: (ctx) => Math.max(
+                ...ctx.dataset.data.map((point) => point.y)
+              ) === ctx.dataset.data[ctx.dataIndex].y,
+              font: {
+                size: 16
+              },
+              color: 'rgb(255,255,255)'
+            },
             legend: {
               title: {
                 display: true,
@@ -95,7 +113,7 @@ export class DashboardForceCurve extends AppElement {
 
   render () {
     if (this._chart?.data) {
-      this._chart.data.datasets[0].data = this.value?.map((data, index) => ({ y: data, x: index }))
+      this._chart.data.datasets[0].data = this.value?.map((data, index) => ({ y: parseInt(data, 10), x: index }))
       this.forceCurve = this.value
       this._chart.update()
     }
