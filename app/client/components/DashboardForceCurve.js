@@ -6,7 +6,7 @@
 */
 
 import { AppElement, html, css } from './AppElement.js'
-import { customElement, property } from 'lit/decorators.js'
+import { customElement, property, state } from 'lit/decorators.js'
 import Chart from 'chart.js/auto'
 
 @customElement('dashboard-force-curve')
@@ -16,14 +16,16 @@ export class DashboardForceCurve extends AppElement {
       margin-top: 24px;
     }
   `
+
   @property({ type: Object })
     value = []
 
-  chart
+  @state()
+    _chart
 
   firstUpdated () {
     const ctx = this.renderRoot.querySelector('#chart').getContext('2d')
-    this.chart = new Chart(
+    this._chart = new Chart(
       ctx,
       {
         type: 'line',
@@ -92,10 +94,10 @@ export class DashboardForceCurve extends AppElement {
   }
 
   render () {
-    if (this.chart?.data) {
-      this.chart.data.datasets[0].data = this.value?.map((data, index) => ({ y: data, x: index }))
+    if (this._chart?.data) {
+      this._chart.data.datasets[0].data = this.value?.map((data, index) => ({ y: data, x: index }))
       this.forceCurve = this.value
-      this.chart.update()
+      this._chart.update()
     }
 
     return html`

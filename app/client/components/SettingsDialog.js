@@ -6,7 +6,7 @@
 */
 
 import { AppElement, html, css } from './AppElement.js'
-import { customElement, property, query, queryAll } from 'lit/decorators.js'
+import { customElement, property, query, queryAll, state } from 'lit/decorators.js'
 import { icon_settings } from '../lib/icons.js'
 import './AppDialog.js'
 
@@ -85,36 +85,29 @@ export class DashboardActions extends AppElement {
   `
 
   @property({ type: Object })
-    config
+    config = {}
 
   @queryAll('.metric-selector>input')
-    inputs
+    _inputs
 
   @query('input[name="showIcons"]')
-    showIconInput
+    _showIconInput
 
-  static get properties () {
-    return {
-      selectedMetrics: { type: Array },
-      sumSelectedSlots: { type: Number },
-      isValid: { type: Boolean }
-    }
-  }
+  @state()
+    _selectedMetrics = []
 
-  constructor () {
-    super()
-    this.selectedMetrics = []
-    this.sumSelectedSlots = 0
-    this.showIcons = true
-    this.isValid = false
-  }
+  @state()
+    _sumSelectedSlots = 0
 
-  @property({ type: Object })
-    icon
+  @state()
+    _isValid = false
+
+  @state()
+    _showIcons = true
 
   render () {
     return html`
-    <app-dialog class="settings-dialog" .isValid=${this.isValid} @close=${this.close}>
+    <app-dialog class="settings-dialog" .isValid=${this._isValid} @close=${this.close}>
     <legend>${icon_settings}<br/>Settings</legend>
 
     <p>Select metrics to be shown:</p>
@@ -140,7 +133,7 @@ export class DashboardActions extends AppElement {
       <label for="actions">Actions</label>
       <input @change=${this.toggleCheck} name="actions" size=1 type="checkbox" />
     </div>
-    <div class="metric-selector-feedback">Slots remaining:  ${8 - this.sumSelectedSlots}
+    <div class="metric-selector-feedback">Slots remaining:  ${8 - this._sumSelectedSlots}
       <table>
         ${this.renderSelectedMetrics()}
       </table>
@@ -154,77 +147,74 @@ export class DashboardActions extends AppElement {
   }
 
   firstUpdated () {
-    this.selectedMetrics = this.config.dashboardMetrics
-    this.sumSelectedSlots = this.selectedMetrics.length
-    this.showIcons = this.config.showIcons
-    if (this.sumSelectedSlots === 8) {
-      this.isValid = true
+    this._selectedMetrics = [...this.config.dashboardMetrics]
+    this._sumSelectedSlots = this._selectedMetrics.length
+    this._showIcons = this.config.showIcons
+    if (this._sumSelectedSlots === 8) {
+      this._isValid = true
     } else {
-      this.isValid = false
+      this._isValid = false
     }
-    [...this.inputs].forEach(input => {
-      input.checked = this.selectedMetrics.find(metric => metric === input.name) !== undefined
+    [...this._inputs].forEach(input => {
+      input.checked = this._selectedMetrics.find(metric => metric === input.name) !== undefined
     })
-    this.showIconInput.checked = this.showIcons
+    this._showIconInput.checked = this._showIcons
   }
 
   renderSelectedMetrics () {
-    const selectedMetrics = [html`<tr>${[0, 1, 2, 3].map(index => html`<td style="${this.selectedMetrics[3] === this.selectedMetrics[4] && index === 3 ? 'color: red' : ''}">${this.selectedMetrics[index]}</td>`)}</tr>`]
-    selectedMetrics.push(html`<tr>${[4, 5, 6, 7].map(index => html`<td  style="${this.selectedMetrics[3] === this.selectedMetrics[4] && index === 4 ? 'color: red' : ''}">${this.selectedMetrics[index]}</td>`)}</tr>`)
+    const selectedMetrics = [html`<tr>${[0, 1, 2, 3].map(index => html`<td style="${this._selectedMetrics[3] === this._selectedMetrics[4] && index === 3 ? 'color: red' : ''}">${this._selectedMetrics[index]}</td>`)}</tr>`]
+    selectedMetrics.push(html`<tr>${[4, 5, 6, 7].map(index => html`<td  style="${this._selectedMetrics[3] === this._selectedMetrics[4] && index === 4 ? 'color: red' : ''}">${this._selectedMetrics[index]}</td>`)}</tr>`)
 
     return selectedMetrics
   }
 
   toggleCheck (e) {
-    if ((e.target.checked && this.selectedMetrics.length < 4 && e.target.size > 1 && this.selectedMetrics.length + e.target.size > 4) || (e.target.checked && this.sumSelectedSlots + 1 > 8)) {
-      this.isValid = this.isFormValid()
+    if ((e.target.checked && this._selectedMetrics.length < 4 && e.target.size > 1 && this._selectedMetrics.length + e.target.size > 4) || (e.target.checked && this._sumSelectedSlots + 1 > 8)) {
+      this._isValid = this.isFormValid()
       e.target.checked = false
       return
     }
 
     if (e.target.checked) {
       for (let index = 0; index < e.target.size; index++) {
-        this.selectedMetrics = [...this.selectedMetrics, e.target.name]
+        this._selectedMetrics = [...this._selectedMetrics, e.target.name]
       }
     } else {
       for (let index = 0; index < e.target.size; index++) {
-        this.selectedMetrics.splice(this.selectedMetrics.findIndex(metric => metric === e.target.name), 1)
+        this._selectedMetrics.splice(this._selectedMetrics.findIndex(metric => metric === e.target.name), 1)
+        this._selectedMetrics = [...this._selectedMetrics]
       }
     }
 
-    this.sumSelectedSlots = this.selectedMetrics.length
+    this._sumSelectedSlots = this._selectedMetrics.length
     if (this.isFormValid()) {
-      this.isValid = true
+      this._isValid = true
     } else {
-      this.isValid = false
+      this._isValid = false
     }
   }
 
   toggleIcons (e) {
-    this.showIcons = e.target.checked
+    this._showIcons = e.target.checked
   }
 
   isFormValid () {
-    return this.sumSelectedSlots === 8 && this.selectedMetrics[3] !== this.selectedMetrics[4]
+    return this._sumSelectedSlots === 8 && this._selectedMetrics[3] !== this._selectedMetrics[4]
   }
 
   close (event) {
     this.dispatchEvent(new CustomEvent('close'))
     if (event.detail === 'confirm') {
-      this.dispatchEvent(new CustomEvent('changeGuiSetting', {
-        detail: {
-          ...this.appState,
-          config: {
-            ...this.appState.config,
-            guiConfigs: {
-              dashboardMetrics: this.selectedMetrics,
-              showIcons: this.showIcons
-            }
+      this.sendEvent('changeGuiSetting', {
+        ...this.appState,
+        config: {
+          ...this.appState.config,
+          guiConfigs: {
+            dashboardMetrics: this._selectedMetrics,
+            showIcons: this._showIcons
           }
-        },
-        bubbles: true,
-        composed: true
-      }))
+        }
+      })
     }
   }
 }

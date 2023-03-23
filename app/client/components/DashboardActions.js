@@ -74,8 +74,8 @@ export class DashboardActions extends AppElement {
     }
   `
 
-  @state({ type: Object })
-    dialog
+  @state()
+    _dialog
 
   render () {
     return html`
@@ -95,7 +95,7 @@ export class DashboardActions extends AppElement {
       <button @click=${this.switchBlePeripheralMode}>${icon_bluetooth}</button>
         <div class="peripheral-mode">${this.blePeripheralMode()}</div>
     </div>
-    ${this.dialog ? this.dialog : ''}
+    ${this._dialog ? this._dialog : ''}
   `
   }
 
@@ -176,14 +176,14 @@ export class DashboardActions extends AppElement {
   }
 
   uploadTraining () {
-    this.dialog = html`
+    this._dialog = html`
       <app-dialog @close=${dialogClosed}>
         <legend>${icon_upload}<br/>Upload to Strava?</legend>
         <p>Do you want to finish your workout and upload it to Strava?</p>
       </app-dialog>
     `
     function dialogClosed (event) {
-      this.dialog = undefined
+      this._dialog = undefined
       if (event.detail === 'confirm') {
         this.sendEvent('triggerAction', { command: 'uploadTraining' })
       }
@@ -191,14 +191,14 @@ export class DashboardActions extends AppElement {
   }
 
   shutdown () {
-    this.dialog = html`
+    this._dialog = html`
       <app-dialog @close=${dialogClosed}>
         <legend>${icon_poweroff}<br/>Shutdown Open Rowing Monitor?</legend>
         <p>Do you want to shutdown the device?</p>
       </app-dialog>
     `
     function dialogClosed (event) {
-      this.dialog = undefined
+      this._dialog = undefined
       if (event.detail === 'confirm') {
         this.sendEvent('triggerAction', { command: 'shutdown' })
       }

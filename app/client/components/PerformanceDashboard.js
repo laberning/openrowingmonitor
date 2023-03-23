@@ -6,8 +6,7 @@
 */
 
 import { AppElement, html, css } from './AppElement.js'
-import { APP_STATE } from '../store/appState.js'
-import { customElement, property, state } from 'lit/decorators.js'
+import { customElement, state } from 'lit/decorators.js'
 import './DashboardForceCurve.js'
 import './DashboardMetric.js'
 import './DashboardActions.js'
@@ -63,6 +62,9 @@ export class PerformanceDashboard extends AppElement {
       filter: brightness(150%);
     }
   `
+  @state()
+    _dialog
+
   dashboardMetricComponents = (formattedMetrics, appState) => ({
     distance: html`<dashboard-metric .icon=${this.appState.config.guiConfigs.showIcons ? icon_route : ''} .unit=${formattedMetrics?.totalLinearDistanceFormatted?.unit || 'm'} .value=${formattedMetrics?.totalLinearDistanceFormatted?.value}></dashboard-metric>`,
 
@@ -89,15 +91,6 @@ export class PerformanceDashboard extends AppElement {
     actions: html`<dashboard-actions .appState=${appState}></dashboard-actions>`
   })
 
-  @state({ type: Object })
-    dialog
-
-  @property({ type: Object })
-    metrics
-
-  @property({ type: Object })
-    appState = APP_STATE
-
   render () {
     const metricConfig = [...new Set(this.appState.config.guiConfigs.dashboardMetrics)].reduce((prev, metricName) => {
       prev.push(this.dashboardMetricComponents(this.metrics, this.appState)[metricName])
@@ -108,7 +101,7 @@ export class PerformanceDashboard extends AppElement {
     return html`
       <div class="settings" @click=${this.openSettings}>
         ${icon_settings}
-        ${this.dialog ? this.dialog : ''}
+        ${this._dialog ? this._dialog : ''}
       </div>
 
       ${metricConfig}
@@ -116,10 +109,10 @@ export class PerformanceDashboard extends AppElement {
   }
 
   openSettings () {
-    this.dialog = html`<settings-dialog .config=${this.appState.config.guiConfigs} @close=${dialogClosed}></settings-dialog>`
+    this._dialog = html`<settings-dialog .config=${this.appState.config.guiConfigs} @close=${dialogClosed}></settings-dialog>`
 
     function dialogClosed (event) {
-      this.dialog = undefined
+      this._dialog = undefined
     }
   }
 

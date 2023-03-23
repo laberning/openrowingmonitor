@@ -41,7 +41,7 @@ export class DashboardMetric extends AppElement {
     unit = ''
 
   @property({ type: String })
-    value = ''
+    value
 
   render () {
     return html`
