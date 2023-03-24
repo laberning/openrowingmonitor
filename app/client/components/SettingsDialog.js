@@ -193,14 +193,8 @@ export class DashboardActions extends AppElement {
     this.dispatchEvent(new CustomEvent('close'))
     if (event.detail === 'confirm') {
       this.sendEvent('changeGuiSetting', {
-        ...this.appState,
-        config: {
-          ...this.appState.config,
-          guiConfigs: {
-            dashboardMetrics: this._selectedMetrics,
-            showIcons: this._showIcons
-          }
-        }
+        dashboardMetrics: this._selectedMetrics,
+        showIcons: this._showIcons
       })
     }
   }

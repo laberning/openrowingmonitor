@@ -44,11 +44,10 @@ export class App extends LitElement {
 
     // notify the app about the triggered action
     this.addEventListener('changeGuiSetting', (event) => {
-      Object.keys(event.detail.config.guiConfigs).forEach(key => {
-        localStorage.setItem(key, JSON.stringify(event.detail.config.guiConfigs[key]))
+      Object.keys(event.detail).forEach(key => {
+        localStorage.setItem(key, JSON.stringify(event.detail[key]))
       })
-
-      this.updateState(event.detail)
+      this.updateState({ config: { ...this._appState.config, guiConfigs: { ...event.detail } } })
     })
   }
 
