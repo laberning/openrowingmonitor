@@ -64,10 +64,10 @@ export class PerformanceDashboard extends AppElement {
 
   dashboardMetricComponentsFactory = (appState) => {
     const metrics = appState.metrics
-    const configs = appState.config.guiConfigs
+    const configs = appState.config
 
     const dashboardMetricComponents = Object.keys(DASHBOARD_METRICS).reduce((dashboardMetrics, key) => {
-      dashboardMetrics[key] = DASHBOARD_METRICS[key].template(metrics, configs.showIcons)
+      dashboardMetrics[key] = DASHBOARD_METRICS[key].template(metrics, configs)
 
       return dashboardMetrics
     }, {})

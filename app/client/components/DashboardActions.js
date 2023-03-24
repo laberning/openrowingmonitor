@@ -6,7 +6,7 @@
 */
 
 import { AppElement, html, css } from './AppElement.js'
-import { customElement, state } from 'lit/decorators.js'
+import { customElement, property, state } from 'lit/decorators.js'
 import { icon_undo, icon_expand, icon_compress, icon_poweroff, icon_bluetooth, icon_upload, icon_heartbeat, icon_antplus } from '../lib/icons.js'
 import './AppDialog.js'
 
@@ -74,6 +74,12 @@ export class DashboardActions extends AppElement {
     }
   `
 
+  @property({ type: Object })
+    config = {}
+
+  @property({ type: Object })
+    appMode = 'BROWSER'
+
   @state()
     _dialog
 
@@ -84,11 +90,11 @@ export class DashboardActions extends AppElement {
       ${this.renderOptionalButtons()}
       <button @click=${this.switchHrmPeripheralMode}>
         ${icon_heartbeat}
-        <div class="text">${this.appState?.config?.hrmPeripheralMode}</div>
+        <div class="text">${this.config?.hrmPeripheralMode}</div>
       </button>
       <button @click=${this.switchAntPeripheralMode}>
         ${icon_antplus}
-        <div class="text">${this.appState?.config?.antPeripheralMode}</div>
+        <div class="text">${this.config?.antPeripheralMode}</div>
       </button>
     </div>
       <div class="text-button">
@@ -104,7 +110,7 @@ export class DashboardActions extends AppElement {
     // changing to fullscreen mode only makes sence when the app is openend in a regular
     // webbrowser (kiosk and standalone mode are always in fullscreen view) and if the
     // browser supports this feature
-    if (this.appState?.appMode === 'BROWSER' && document.documentElement.requestFullscreen) {
+    if (this.appMode === 'BROWSER' && document.documentElement.requestFullscreen) {
       buttons.push(html`
       <button @click=${this.toggleFullscreen}>
         <div id="fullscreen-icon">${icon_expand}</div>
@@ -115,13 +121,13 @@ export class DashboardActions extends AppElement {
     // add a button to power down the device, if browser is running on the device in kiosk mode
     // and the shutdown feature is enabled
     // (might also make sence to enable this for all clients but then we would need visual feedback)
-    if (this.appState?.appMode === 'KIOSK' && this.appState?.config?.shutdownEnabled) {
+    if (this.appMode === 'KIOSK' && this.config?.shutdownEnabled) {
       buttons.push(html`
       <button @click=${this.shutdown}>${icon_poweroff}</button>
     `)
     }
 
-    if (this.appState?.config?.stravaUploadEnabled) {
+    if (this.config?.stravaUploadEnabled) {
       buttons.push(html`
       <button @click=${this.uploadTraining}>${icon_upload}</button>
     `)
@@ -130,8 +136,7 @@ export class DashboardActions extends AppElement {
   }
 
   blePeripheralMode () {
-    const value = this.appState?.config?.blePeripheralMode
-
+    const value = this.config?.blePeripheralMode
     switch (value) {
       case 'PM5':
         return 'C2 PM5'
