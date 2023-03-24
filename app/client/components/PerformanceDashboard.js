@@ -6,7 +6,7 @@
 */
 
 import { AppElement, html, css } from './AppElement.js'
-import { customElement, state } from 'lit/decorators.js'
+import { customElement, property, state } from 'lit/decorators.js'
 import './SettingsDialog'
 import { icon_settings } from '../lib/icons.js'
 import { DASHBOARD_METRICS } from '../store/dashboardMetrics.js'
@@ -20,7 +20,7 @@ export class PerformanceDashboard extends AppElement {
       padding: 1vw;
       grid-gap: 1vw;
       grid-template-columns: repeat(4, minmax(0, 1fr));
-      grid-template-rows: repeat(2, minmax(0, 1fr));
+      grid-template-rows: repeat(3, minmax(0, 1fr));
     }
 
     @media (orientation: portrait) {
@@ -59,6 +59,9 @@ export class PerformanceDashboard extends AppElement {
       filter: brightness(150%);
     }
   `
+  @property()
+    appState = {}
+
   @state()
     _dialog
 
