@@ -49,5 +49,5 @@ export const DASHBOARD_METRICS = {
 
   forceCurve: { displayName: 'Force curve', size: 2, template: (metrics) => html`<dashboard-force-curve .value=${metrics.driveHandleForceCurve} style="grid-column: span 2"></dashboard-force-curve>` },
 
-  actions: { displayName: 'Actions', size: 1, template: (appState, config) => html`<dashboard-actions .appMode=${appState.appMode} .config=${config}></dashboard-actions>` }
+  actions: { displayName: 'Actions', size: 1, template: (_, config) => html`<dashboard-actions .config=${config}></dashboard-actions>` }
 }

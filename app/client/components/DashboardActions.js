@@ -77,8 +77,8 @@ export class DashboardActions extends AppElement {
   @property({ type: Object })
     config = {}
 
-  @property({ type: Object })
-    appMode = 'BROWSER'
+  @state()
+    _appMode = 'BROWSER'
 
   @state()
     _dialog
@@ -105,12 +105,25 @@ export class DashboardActions extends AppElement {
   `
   }
 
+  firstUpdated () {
+    switch (new URLSearchParams(window.location.search).get('mode')) {
+      case 'standalone':
+        this._appMode = 'STANDALONE'
+        break
+      case 'kiosk':
+        this._appMode = 'KIOSK'
+        break
+      default:
+        this._appMode = 'BROWSER'
+    }
+  }
+
   renderOptionalButtons () {
     const buttons = []
     // changing to fullscreen mode only makes sence when the app is openend in a regular
     // webbrowser (kiosk and standalone mode are always in fullscreen view) and if the
     // browser supports this feature
-    if (this.appMode === 'BROWSER' && document.documentElement.requestFullscreen) {
+    if (this._appMode === 'BROWSER' && document.documentElement.requestFullscreen) {
       buttons.push(html`
       <button @click=${this.toggleFullscreen}>
         <div id="fullscreen-icon">${icon_expand}</div>
@@ -121,7 +134,7 @@ export class DashboardActions extends AppElement {
     // add a button to power down the device, if browser is running on the device in kiosk mode
     // and the shutdown feature is enabled
     // (might also make sence to enable this for all clients but then we would need visual feedback)
-    if (this.appMode === 'KIOSK' && this.config?.shutdownEnabled) {
+    if (this._appMode === 'KIOSK' && this.config?.shutdownEnabled) {
       buttons.push(html`
       <button @click=${this.shutdown}>${icon_poweroff}</button>
     `)

@@ -9,12 +9,7 @@ import NoSleep from 'nosleep.js'
 import { filterObjectByKeys } from './helper.js'
 
 export function createApp (app) {
-  const urlParameters = new URLSearchParams(window.location.search)
-  const mode = urlParameters.get('mode')
-  const appMode = mode === 'standalone' ? 'STANDALONE' : mode === 'kiosk' ? 'KIOSK' : 'BROWSER'
-  app.updateState({ ...app.getState(), appMode })
-
-  const stravaAuthorizationCode = urlParameters.get('code')
+  const stravaAuthorizationCode = new URLSearchParams(window.location.search).get('code')
 
   let socket
 
