@@ -25,6 +25,21 @@ export class DashboardActions extends AppElement {
       gap: 8px;
     }
 
+    .experimental-settings {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .experimental-settings label {
+      width: fit-content;
+      margin-top: 8px;
+      font-size: 0.7em;
+    }
+
+    .experimental-settings label>input {
+      font-size: 0.7em;
+    }
+
     .settings-dialog>div>label{
       font-size: 0.6em;
       width: fit-content;
@@ -92,6 +107,9 @@ export class DashboardActions extends AppElement {
   @query('input[name="showIcons"]')
     _showIconInput
 
+  @query('input[name="maxNumberOfTiles"]')
+    _maxNumberOfTilesInput
+
   @state()
     _selectedMetrics = []
 
@@ -104,6 +122,9 @@ export class DashboardActions extends AppElement {
   @state()
     _showIcons = true
 
+  @state()
+    _maxNumberOfTiles = 8
+
   render () {
     return html`
     <app-dialog class="settings-dialog" .isValid=${this._isValid} @close=${this.close}>
@@ -113,7 +134,7 @@ export class DashboardActions extends AppElement {
     <div class="metric-selector">
       ${this.renderAvailableMetricList()}
     </div>
-    <div class="metric-selector-feedback">Slots remaining:  ${8 - this._sumSelectedSlots}
+    <div class="metric-selector-feedback">Slots remaining:  ${this._maxNumberOfTiles - this._sumSelectedSlots}
       <table>
         ${this.renderSelectedMetrics()}
       </table>
@@ -124,6 +145,13 @@ export class DashboardActions extends AppElement {
         <input @change=${this.toggleIcons} name="showIcons" type="checkbox" />
       </label>
     </p>
+    <p class="experimental-settings">
+      Experimental settings:
+      <label>
+        <span>Use 12 cell grid</span>
+        <input @change=${this.toggleMaxTiles} name="maxNumberOfTiles" type="checkbox" />
+      </label>
+    </p>
     </app-dialog>
   `
   }
@@ -132,7 +160,8 @@ export class DashboardActions extends AppElement {
     this._selectedMetrics = [...this.config.dashboardMetrics]
     this._sumSelectedSlots = this._selectedMetrics.length
     this._showIcons = this.config.showIcons
-    if (this._sumSelectedSlots === 8) {
+    this._maxNumberOfTiles = this.config.maxNumberOfTiles
+    if (this._sumSelectedSlots === this._maxNumberOfTiles) {
       this._isValid = true
     } else {
       this._isValid = false
@@ -141,6 +170,7 @@ export class DashboardActions extends AppElement {
       input.checked = this._selectedMetrics.find(metric => metric === input.name) !== undefined
     })
     this._showIconInput.checked = this._showIcons
+    this._maxNumberOfTilesInput.checked = this._maxNumberOfTiles === 12
   }
 
   renderAvailableMetricList () {
@@ -153,13 +183,28 @@ export class DashboardActions extends AppElement {
 
   renderSelectedMetrics () {
     const selectedMetrics = [html`<tr>${[0, 1, 2, 3].map(index => html`<td style="${this._selectedMetrics[3] === this._selectedMetrics[4] && index === 3 ? 'color: red' : ''}">${this._selectedMetrics[index]}</td>`)}</tr>`]
-    selectedMetrics.push(html`<tr>${[4, 5, 6, 7].map(index => html`<td  style="${this._selectedMetrics[3] === this._selectedMetrics[4] && index === 4 ? 'color: red' : ''}">${this._selectedMetrics[index]}</td>`)}</tr>`)
+    selectedMetrics.push(html`<tr>${[4, 5, 6, 7].map(index => html`<td  style="${
+      (index === 4 && this._selectedMetrics[3] === this._selectedMetrics[4]) ||
+      (index === 7 && this._selectedMetrics[7] === this._selectedMetrics[8])
+        ? 'color: red'
+        : ''
+      }">${this._selectedMetrics[index]}</td>`)}</tr>`)
+    if (this._maxNumberOfTiles === 12) {
+      selectedMetrics.push(html`<tr>${[8, 9, 10, 11].map(index => html`<td  style="${
+        (index === 8 && this._selectedMetrics[7] === this._selectedMetrics[8]) ||
+        (index === 11 && this._selectedMetrics.length > 12)
+          ? 'color: red'
+          : ''
+        }">${this._selectedMetrics[index]}</td>`)}</tr>`)
+    }
 
     return selectedMetrics
   }
 
   toggleCheck (e) {
-    if ((e.target.checked && this._selectedMetrics.length < 4 && e.target.size > 1 && this._selectedMetrics.length + e.target.size > 4) || (e.target.checked && this._sumSelectedSlots + 1 > 8)) {
+    if (e.target.checked &&
+      ((this._selectedMetrics.length % 4 === 3 && e.target.size > 1) ||
+      (this._sumSelectedSlots + e.target.size > this._maxNumberOfTiles))) {
       this._isValid = this.isFormValid()
       e.target.checked = false
       return
@@ -188,8 +233,13 @@ export class DashboardActions extends AppElement {
     this._showIcons = e.target.checked
   }
 
+  toggleMaxTiles (e) {
+    this._maxNumberOfTiles = e.target.checked ? 12 : 8
+    this._isValid = this.isFormValid()
+  }
+
   isFormValid () {
-    return this._sumSelectedSlots === 8 && this._selectedMetrics[3] !== this._selectedMetrics[4]
+    return this._sumSelectedSlots === this._maxNumberOfTiles && this._selectedMetrics[3] !== this._selectedMetrics[4] && this._selectedMetrics[7] !== this._selectedMetrics?.[8]
   }
 
   close (event) {
@@ -197,7 +247,8 @@ export class DashboardActions extends AppElement {
     if (event.detail === 'confirm') {
       this.sendEvent('changeGuiSetting', {
         dashboardMetrics: this._selectedMetrics,
-        showIcons: this._showIcons
+        showIcons: this._showIcons,
+        maxNumberOfTiles: this._maxNumberOfTiles
       })
     }
   }

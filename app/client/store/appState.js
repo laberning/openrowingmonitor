@@ -23,7 +23,8 @@ export const APP_STATE = {
     shutdownEnabled: false,
     guiConfigs: {
       dashboardMetrics: ['distance', 'timer', 'pace', 'power', 'stkRate', 'totalStk', 'calories', 'actions'],
-      showIcons: true
+      showIcons: true,
+      maxNumberOfTiles: 8
     }
   }
 }

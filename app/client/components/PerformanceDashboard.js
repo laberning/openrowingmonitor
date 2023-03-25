@@ -20,7 +20,6 @@ export class PerformanceDashboard extends AppElement {
       padding: 1vw;
       grid-gap: 1vw;
       grid-template-columns: repeat(4, minmax(0, 1fr));
-      grid-template-rows: repeat(3, minmax(0, 1fr));
     }
 
     @media (orientation: portrait) {
@@ -85,6 +84,11 @@ export class PerformanceDashboard extends AppElement {
     }, [])
 
     return html`
+      <style type="text/css">
+        :host {
+          ${this.appState.config.guiConfigs.maxNumberOfTiles === 12 ? 'grid-template-rows: repeat(3, minmax(0, 1fr));' : 'grid-template-rows: repeat(2, minmax(0, 1fr));'}
+        }
+      </style>
       <div class="settings" @click=${this.openSettings}>
         ${icon_settings}
         ${this._dialog ? this._dialog : ''}
