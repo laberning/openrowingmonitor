@@ -11,6 +11,7 @@ import { createStreamFilter } from './utils/StreamFilter.js'
 import { createCurveAligner } from './utils/CurveAligner.js'
 
 import loglevel from 'loglevel'
+import { secondsToTimeString } from '../tools/Helper.js'
 const log = loglevel.getLogger('RowingEngine')
 
 function createRowingStatistics (config) {
@@ -375,12 +376,11 @@ function createRowingStatistics (config) {
       sessionStatus,
       strokeState: rower.strokeState(),
       totalMovingTime: totalMovingTime > 0 ? totalMovingTime : 0,
-      totalMovingTimeFormatted: intervalTargetTime > 0 ? secondsToTimeString(Math.round(Math.max(intervalTargetTime - totalMovingTime, 0))) : secondsToTimeString(Math.round(totalMovingTime - intervalPrevAccumulatedTime)),
       totalNumberOfStrokes: totalNumberOfStrokes > 0 ? totalNumberOfStrokes : 0,
       totalLinearDistance: totalLinearDistance > 0 ? totalLinearDistance : 0, // meters
-      totalLinearDistanceFormatted: intervalTargetDistance > 0 ? Math.max(intervalTargetDistance - totalLinearDistance, 0) : totalLinearDistance - intervalPrevAccumulatedDistance,
       intervalNumber: Math.max(currentIntervalNumber + 1, 0), // Interval number
       intervalMovingTime: totalMovingTime - intervalPrevAccumulatedTime,
+      intervalRemainingTime: intervalTargetTime - totalMovingTime,
       intervalLinearDistance: totalLinearDistance - intervalPrevAccumulatedDistance,
       strokeCalories: strokeCalories > 0 ? strokeCalories : 0, // kCal
       strokeWork: strokeWork > 0 ? strokeWork : 0, // Joules
@@ -392,7 +392,6 @@ function createRowingStatistics (config) {
       cycleDistance: cycleDistance.raw() > 0 && cycleLinearVelocity.raw() > 0 && sessionStatus === 'Rowing' ? cycleDistance.clean() : 0, // meters
       cycleLinearVelocity: cycleLinearVelocity.clean() > 0 && cycleLinearVelocity.raw() > 0 && sessionStatus === 'Rowing' ? cycleLinearVelocity.clean() : 0, // m/s
       cyclePace: cycleLinearVelocity.raw() > 0 ? cyclePace : Infinity, // seconds/50  0m
-      cyclePaceFormatted: cycleLinearVelocity.raw() > 0 ? secondsToTimeString(Math.round(cyclePace)) : Infinity,
       cyclePower: cyclePower.clean() > 0 && cycleLinearVelocity.raw() > 0 && sessionStatus === 'Rowing' ? cyclePower.clean() : 0, // watts
       cycleProjectedEndTime: intervalTargetDistance > 0 ? distanceOverTime.projectY(intervalTargetDistance) : intervalTargetTime,
       cycleProjectedEndLinearDistance: intervalTargetTime > 0 ? distanceOverTime.projectX(intervalTargetTime) : intervalTargetDistance,
@@ -410,19 +409,6 @@ function createRowingStatistics (config) {
       instantPower: instantPower > 0 && rower.strokeState() === 'Drive' ? instantPower : 0,
       heartrate: heartrate > 30 ? heartrate : 0,
       heartRateBatteryLevel
-    }
-  }
-
-  // converts a timeStamp in seconds to a human readable hh:mm:ss format
-  function secondsToTimeString (secondsTimeStamp) {
-    if (secondsTimeStamp === Infinity) return '∞'
-    const hours = Math.floor(secondsTimeStamp / 60 / 60)
-    const minutes = Math.floor(secondsTimeStamp / 60) - (hours * 60)
-    const seconds = Math.floor(secondsTimeStamp % 60)
-    if (hours > 0) {
-      return `${hours}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`
-    } else {
-      return `${minutes}:${seconds.toString().padStart(2, '0')}`
     }
   }
 
