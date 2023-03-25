@@ -402,9 +402,9 @@ function createRowingStatistics (config) {
       driveDistance: driveDistance.clean() >= 0 && sessionStatus === 'Rowing' ? driveDistance.clean() : NaN, // meters
       driveAverageHandleForce: driveAverageHandleForce.clean() > 0 && sessionStatus === 'Rowing' ? driveAverageHandleForce.clean() : NaN,
       drivePeakHandleForce: drivePeakHandleForce.clean() > 0 && sessionStatus === 'Rowing' ? drivePeakHandleForce.clean() : NaN,
-      driveHandleForceCurve: drivePeakHandleForce.clean() > 0 && sessionStatus === 'Rowing' ? driveHandleForceCurve.lastCompleteCurve() : [NaN],
-      driveHandleVelocityCurve: drivePeakHandleForce.clean() > 0 && sessionStatus === 'Rowing' ? driveHandleVelocityCurve.lastCompleteCurve() : [NaN],
-      driveHandlePowerCurve: drivePeakHandleForce.clean() > 0 && sessionStatus === 'Rowing' ? driveHandlePowerCurve.lastCompleteCurve() : [NaN],
+      driveHandleForceCurve: drivePeakHandleForce.clean() > 0 && sessionStatus === 'Rowing' ? driveHandleForceCurve.lastCompleteCurve() : [],
+      driveHandleVelocityCurve: drivePeakHandleForce.clean() > 0 && sessionStatus === 'Rowing' ? driveHandleVelocityCurve.lastCompleteCurve() : [],
+      driveHandlePowerCurve: drivePeakHandleForce.clean() > 0 && sessionStatus === 'Rowing' ? driveHandlePowerCurve.lastCompleteCurve() : [],
       recoveryDuration: recoveryDuration.clean() >= config.rowerSettings.minimumRecoveryTime && totalNumberOfStrokes > 0 && sessionStatus === 'Rowing' ? recoveryDuration.clean() : NaN, // seconds
       dragFactor: dragFactor > 0 ? dragFactor : config.rowerSettings.dragFactor, // Dragfactor
       instantPower: instantPower > 0 && rower.strokeState() === 'Drive' ? instantPower : 0,

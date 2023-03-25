@@ -22,7 +22,7 @@ export function filterObjectByKeys (object, keys) {
 /**
   * Pipe for converting seconds to pace format 00:00
   *
-  * @param seconds The actual time in seconds.
+  * @param {number} seconds The actual time in seconds.
 */
 export function secondsToPace (seconds) {
   const hours = Math.floor((seconds % 86400) / 3600)
@@ -41,8 +41,8 @@ export function secondsToPace (seconds) {
 /**
   * Pipe for formatting distance in meters with units
   *
-  * @param value The distance in meters.
-  * @param showInMiles Boolean whether to use imperial metric (default: false).
+  * @param {number} value The distance in meters.
+  * @param {boolean} showInMiles Boolean whether to use imperial metric (default: false).
 */
 export function formatDistance (value, showInMiles = false) {
   if (showInMiles === false) {
@@ -57,8 +57,8 @@ export function formatDistance (value, showInMiles = false) {
 /**
   * Pipe for formatting numbers to specific decimal
   *
-  * @param value The number.
-  * @param decimalPlaces The number of decimal places to round to (default: 0).
+  * @param {number} value The number.
+  * @param {number} decimalPlaces The number of decimal places to round to (default: 0).
 */
 export function formatNumber (value, decimalPlaces = 0) {
   const decimal = Math.pow(10, decimalPlaces)
@@ -67,6 +67,13 @@ export function formatNumber (value, decimalPlaces = 0) {
   return Math.round(value * decimal) / decimal
 }
 
-export function simpleMetricFactory (value, unit, icon) {
+/**
+  * Helper function to create a simple metric tile
+  *
+  * @param {string | number} value The metric to show
+  * @param {string} unit The unit of the metric.
+  * @param {string | import('lit').TemplateResult<2>} icon The number of decimal places to round to (default: 0).
+*/
+export function simpleMetricFactory (value = '--', unit = '', icon = '') {
   return html`<dashboard-metric .icon=${icon} .unit=${unit} .value=${value}></dashboard-metric>`
 }

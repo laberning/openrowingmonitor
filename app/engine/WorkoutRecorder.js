@@ -83,8 +83,8 @@ function createWorkoutRecorder () {
       `${currentstroke.cycleStrokeRate.toFixed(1)},${(currentstroke.totalNumberOfStrokes > 0 ? currentstroke.cyclePace.toFixed(2) : NaN)},${(currentstroke.totalNumberOfStrokes > 0 ? currentstroke.cyclePower.toFixed(0) : NaN)},` +
       `${currentstroke.cycleDistance.toFixed(2)},${(currentstroke.driveDuration * 1000).toFixed(0)},${(currentstroke.totalNumberOfStrokes > 0 ? currentstroke.driveLength.toFixed(2) : NaN)},${(currentstroke.recoveryDuration * 1000).toFixed(0)},` +
       `${(currentstroke.totalNumberOfStrokes > 0 ? currentstroke.cycleLinearVelocity.toFixed(2) : 0)},${currentstroke.totalLinearDistance.toFixed(1)},${currentstroke.totalCalories.toFixed(1)},${currentstroke.dragFactor.toFixed(1)},` +
-      `${(currentstroke.totalNumberOfStrokes > 0 ? currentstroke.drivePeakHandleForce.toFixed(1) : NaN)},${(currentstroke.totalNumberOfStrokes > 0 ? currentstroke.driveAverageHandleForce.toFixed(1) : 0)},"${currentstroke.driveHandleForceCurve}",` +
-      `"${currentstroke.driveHandleVelocityCurve}","${currentstroke.driveHandlePowerCurve}"\n`
+      `${(currentstroke.totalNumberOfStrokes > 0 ? currentstroke.drivePeakHandleForce.toFixed(1) : NaN)},${(currentstroke.totalNumberOfStrokes > 0 ? currentstroke.driveAverageHandleForce.toFixed(1) : 0)},"${currentstroke.driveHandleForceCurve.map(value => value.toFixed(2))}",` +
+      `"${currentstroke.driveHandleVelocityCurve.map(value => value.toFixed(3))}","${currentstroke.driveHandlePowerCurve.map(value => value.toFixed(1))}"\n`
       i++
     }
 

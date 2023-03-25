@@ -20,9 +20,9 @@ const log = loglevel.getLogger('RowingEngine')
 function createRower (rowerSettings) {
   const flywheel = createFlywheel(rowerSettings)
   const sprocketRadius = rowerSettings.sprocketRadius / 100
-  const driveHandleForce = createCurveMetrics(2)
-  const driveHandleVelocity = createCurveMetrics(3)
-  const driveHandlePower = createCurveMetrics(1)
+  const driveHandleForce = createCurveMetrics()
+  const driveHandleVelocity = createCurveMetrics()
+  const driveHandlePower = createCurveMetrics()
   let _strokeState = 'WaitingForDrive'
   let _totalNumberOfStrokes = -1.0
   let recoveryPhaseStartTime = 0.0

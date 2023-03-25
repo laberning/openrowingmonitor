@@ -39,7 +39,7 @@ export class DashboardForceCurve extends AppElement {
           datasets: [
             {
               fill: true,
-              data: this.value?.map((data, index) => ({ y: parseInt(data, 10), x: index })),
+              data: this.value?.map((data, index) => ({ y: data, x: index })),
               pointRadius: 1,
               borderColor: 'rgb(255,255,255)',
               backgroundColor: 'rgb(220,220,220)'
@@ -113,7 +113,7 @@ export class DashboardForceCurve extends AppElement {
 
   render () {
     if (this._chart?.data) {
-      this._chart.data.datasets[0].data = this.value?.map((data, index) => ({ y: parseInt(data, 10), x: index }))
+      this._chart.data.datasets[0].data = this.value?.map((data, index) => ({ y: data, x: index }))
       this.forceCurve = this.value
       this._chart.update()
     }
