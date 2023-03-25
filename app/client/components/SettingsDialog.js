@@ -15,25 +15,19 @@ import { DASHBOARD_METRICS } from '../store/dashboardMetrics.js'
 export class DashboardActions extends AppElement {
   static styles = css`
     .metric-selector-feedback{
-      font-size: 0.4em;
+      font-size: 0.5em;
       padding-top: 8px;
-    }
-
-    .metric-selector-feedback>div {
-      display: grid;
-      grid-template-columns: repeat(4,1fr);
-      grid-template-rows: repeat(2, max-content);
-      gap: 8px;
     }
 
     .settings-dialog>div.metric-selector{
       display: grid;
-      grid-template-columns: repeat(4,max-content);
+      grid-template-columns: repeat(3,max-content);
       gap: 8px;
     }
 
     .settings-dialog>div>label{
       font-size: 0.6em;
+      width: fit-content;
     }
 
     input[type="checkbox"]{
@@ -41,6 +35,12 @@ export class DashboardActions extends AppElement {
       align-self: center;
       width: 1.5em;
       height: 1.5em;
+    }
+
+    label>span {
+      cursor: pointer;
+      -webkit-user-select: none;
+      user-select: none;
     }
 
     .icon {
@@ -58,7 +58,7 @@ export class DashboardActions extends AppElement {
     }
 
     table, th, td {
-      font-size: 0.8em;
+      font-size: 0.9em;
       border: 1px solid white;
       border-collapse: collapse;
     }
@@ -86,7 +86,7 @@ export class DashboardActions extends AppElement {
   @property({ type: Object })
     config = {}
 
-  @queryAll('.metric-selector>input')
+  @queryAll('.metric-selector input')
     _inputs
 
   @query('input[name="showIcons"]')
@@ -119,8 +119,10 @@ export class DashboardActions extends AppElement {
       </table>
     </div>
     <p class="show-icons-selector">
-      <label for="actions">Show icons</label>
-      <input @change=${this.toggleIcons} name="showIcons" type="checkbox" />
+      <label>
+        <span>Show icons</span>
+        <input @change=${this.toggleIcons} name="showIcons" type="checkbox" />
+      </label>
     </p>
     </app-dialog>
   `
@@ -143,8 +145,9 @@ export class DashboardActions extends AppElement {
 
   renderAvailableMetricList () {
     return Object.keys(DASHBOARD_METRICS).map(key => html`
-      <label for=${key}>${DASHBOARD_METRICS[key].displayName}</label>
-      <input @change=${this.toggleCheck} name=${key} size=${DASHBOARD_METRICS[key].size} type="checkbox" />
+      <label>
+        <input @change=${this.toggleCheck} name=${key} size=${DASHBOARD_METRICS[key].size} type="checkbox" />
+      <span>${DASHBOARD_METRICS[key].displayName}</span></label>
     `)
   }
 

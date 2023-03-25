@@ -61,7 +61,7 @@ export function formatDistance (value, showInMiles = false) {
   * @param decimalPlaces The number of decimal places to round to (default: 0).
 */
 export function formatNumber (value, decimalPlaces = 0) {
-  const decimal = decimalPlaces > 0 ? decimalPlaces * 10 : 1
+  const decimal = Math.pow(10, decimalPlaces)
   if (value === undefined || value === null || value === Infinity || isNaN(value) || value === 0) { return '--' }
 
   return Math.round(value * decimal) / decimal
