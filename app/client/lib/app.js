@@ -108,7 +108,7 @@ export function createApp (app) {
   function resetFields () {
     const appState = app.getState()
     // drop all metrics except heartrate
-    app.updateState({ ...appState, metrics: { ...filterObjectByKeys(appState.metrics, ['heartrate', 'heartrateBatteryLevel']) } })
+    app.updateState({ ...appState, metrics: { ...filterObjectByKeys(appState.metrics, ['heartrate', 'heartRateBatteryLevel']) } })
   }
 
   function handleAction (action) {

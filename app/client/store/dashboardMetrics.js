@@ -25,8 +25,8 @@ export const DASHBOARD_METRICS = {
     displayName: 'Heart rate',
     size: 1,
     template: (metrics, config) => html`<dashboard-metric .icon=${config.guiConfigs.showIcons ? icon_heartbeat : ''} unit="bpm" .value=${formatNumber(metrics?.heartrate)}>
-      ${metrics?.heartrateBatteryLevel
-        ? html`<battery-icon .batteryLevel=${metrics?.heartrateBatteryLevel}></battery-icon>`
+      ${metrics?.heartRateBatteryLevel > 0
+        ? html`<battery-icon .batteryLevel=${metrics?.heartRateBatteryLevel}></battery-icon>`
         : ''}
     </dashboard-metric>`
   },

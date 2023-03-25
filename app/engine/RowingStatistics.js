@@ -32,7 +32,7 @@ function createRowingStatistics (config) {
   let intervalTargetTime = 0
   let intervalPrevAccumulatedDistance = 0
   let intervalPrevAccumulatedTime = 0
-  let heartrateResetTimer
+  let heartRateResetTimer
   let totalLinearDistance = 0.0
   let totalMovingTime = 0
   let totalNumberOfStrokes = 0
@@ -52,7 +52,7 @@ function createRowingStatistics (config) {
   const driveHandlePowerCurve = createCurveAligner(50)
   let dragFactor = config.rowerSettings.dragFactor
   let heartrate = 0
-  let heartrateBatteryLevel = 0
+  let heartRateBatteryLevel = 0
   const postExerciseHR = []
   let instantPower = 0.0
   let lastStrokeState = 'WaitingForDrive'
@@ -328,15 +328,15 @@ function createRowingStatistics (config) {
   }
 
   // initiated when a new heart rate value is received from heart rate sensor
-  function handleHeartrateMeasurement (value) {
+  function handleHeartRateMeasurement (value) {
     // set the heart rate to zero if we did not receive a value for some time
-    if (heartrateResetTimer)clearInterval(heartrateResetTimer)
-    heartrateResetTimer = setTimeout(() => {
+    if (heartRateResetTimer)clearInterval(heartRateResetTimer)
+    heartRateResetTimer = setTimeout(() => {
       heartrate = 0
-      heartrateBatteryLevel = 0
+      heartRateBatteryLevel = 0
     }, 6000)
     heartrate = value.heartrate
-    heartrateBatteryLevel = value.batteryLevel
+    heartRateBatteryLevel = value.batteryLevel
   }
 
   function measureRecoveryHR () {
@@ -408,8 +408,8 @@ function createRowingStatistics (config) {
       recoveryDuration: recoveryDuration.clean() >= config.rowerSettings.minimumRecoveryTime && totalNumberOfStrokes > 0 && sessionStatus === 'Rowing' ? recoveryDuration.clean() : NaN, // seconds
       dragFactor: dragFactor > 0 ? dragFactor : config.rowerSettings.dragFactor, // Dragfactor
       instantPower: instantPower > 0 && rower.strokeState() === 'Drive' ? instantPower : 0,
-      heartrate: heartrate > 30 ? heartrate : undefined,
-      heartrateBatteryLevel: heartrateBatteryLevel > 0 ? heartrateBatteryLevel : undefined // BE AWARE, changing undefined to NaN kills the GUI!!!
+      heartrate: heartrate > 30 ? heartrate : 0,
+      heartRateBatteryLevel
     }
   }
 
@@ -433,7 +433,7 @@ function createRowingStatistics (config) {
   }
 
   return Object.assign(emitter, {
-    handleHeartRateMeasurement: handleHeartrateMeasurement,
+    handleHeartRateMeasurement,
     handleRotationImpulse,
     setIntervalParameters,
     pause: pauseTraining,
