@@ -42,16 +42,11 @@ export function secondsToPace (seconds) {
   * Pipe for formatting distance in meters with units
   *
   * @param {number} value The distance in meters.
-  * @param {boolean} showInMiles Boolean whether to use imperial metric (default: false).
 */
-export function formatDistance (value, showInMiles = false) {
-  if (showInMiles === false) {
-    return value >= 10000
-      ? { distance: formatNumber((value / 1000), 2), unit: 'km' }
-      : { distance: formatNumber(value), unit: 'm' }
-  }
-
-  return { distance: formatNumber((value / 1609.344), 2), unit: 'mi' }
+export function formatDistance (value) {
+  return value >= 10000
+    ? { distance: formatNumber((value / 1000), 2), unit: 'km' }
+    : { distance: formatNumber(value), unit: 'm' }
 }
 
 /**

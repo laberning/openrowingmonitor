@@ -10,7 +10,8 @@ export const DASHBOARD_METRICS = {
     displayName: 'Distance',
     size: 1,
     template: (metrics, config) => {
-      const linearDistance = formatDistance(metrics?.totalLinearDistance)
+      const distance = metrics?.sessiontype === 'Distance' ? Math.max(metrics?.intervalTargetDistance - metrics?.intervalLinearDistance, 0) : metrics?.totalLinearDistance
+      const linearDistance = formatDistance(distance ?? 0)
 
       return simpleMetricFactory(linearDistance.distance, linearDistance.unit, config.guiConfigs.showIcons ? icon_route : '')
     }
@@ -33,9 +34,25 @@ export const DASHBOARD_METRICS = {
 
   totalStk: { displayName: 'Total strokes', size: 1, template: (metrics, config) => simpleMetricFactory(metrics?.totalNumberOfStrokes, 'stk', config.guiConfigs.showIcons ? icon_paddle : '') },
 
-  calories: { displayName: 'Calories', size: 1, template: (metrics, config) => simpleMetricFactory(formatNumber(metrics?.totalCalories), 'kcal', config.guiConfigs.showIcons ? icon_fire : '') },
+  calories: {
+    displayName: 'Calories',
+    size: 1,
+    template: (metrics, config) => {
+      const calories = metrics?.sessiontype === 'Calories' ? Math.max(metrics?.intervalTargetCalories - metrics?.intervalLinearCalories, 0) : metrics?.totalCalories
 
-  timer: { displayName: 'Timer', size: 1, template: (metrics, config) => simpleMetricFactory(secondsToPace(metrics?.totalMovingTime), '', config.guiConfigs.showIcons ? icon_clock : '') },
+      return simpleMetricFactory(formatNumber(calories ?? 0), 'kcal', config.guiConfigs.showIcons ? icon_fire : '')
+    }
+  },
+
+  timer: {
+    displayName: 'Timer',
+    size: 1,
+    template: (metrics, config) => {
+      const time = metrics?.sessiontype === 'Time' ? Math.max(metrics?.intervalTargetTime - metrics?.intervalMovingTime, 0) : metrics?.totalMovingTime
+
+      return simpleMetricFactory(secondsToPace(time ?? 0), '', config.guiConfigs.showIcons ? icon_clock : '')
+    }
+  },
 
   distancePerStk: { displayName: 'Dist per Stroke', size: 1, template: (metrics, config) => simpleMetricFactory(formatNumber(metrics?.cycleDistance, 1), 'm', config.guiConfigs.showIcons ? rower_icon : '') },
 

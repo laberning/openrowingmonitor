@@ -380,8 +380,9 @@ function createRowingStatistics (config) {
       totalLinearDistance: totalLinearDistance > 0 ? totalLinearDistance : 0, // meters
       intervalNumber: Math.max(currentIntervalNumber + 1, 0), // Interval number
       intervalMovingTime: totalMovingTime - intervalPrevAccumulatedTime,
-      intervalRemainingTime: intervalTargetTime - totalMovingTime,
+      intervalTargetTime: intervalTargetTime > intervalPrevAccumulatedTime ? intervalTargetTime - intervalPrevAccumulatedTime : 0,
       intervalLinearDistance: totalLinearDistance - intervalPrevAccumulatedDistance,
+      intervalTargetDistance: intervalTargetDistance > intervalPrevAccumulatedDistance ? intervalTargetDistance - intervalPrevAccumulatedDistance : 0,
       strokeCalories: strokeCalories > 0 ? strokeCalories : 0, // kCal
       strokeWork: strokeWork > 0 ? strokeWork : 0, // Joules
       totalCalories: calories.yAtSeriesEnd() > 0 ? calories.yAtSeriesEnd() : 0, // kcal
