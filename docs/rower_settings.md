@@ -86,7 +86,7 @@ Next, when the electric connection has been made, we need to look if the data is
   sudo nano /opt/openrowingmonitor/config/config.js
   ```
 
-Here, you can change the setting for **createRawDataFiles** by setting:
+Here, you can change the setting for **createRawDataFiles** by setting/adding the following BEFORE the rowerSettings element (so outside the rowerSettings scope):
 
  ```js
  createRawDataFiles: true,
