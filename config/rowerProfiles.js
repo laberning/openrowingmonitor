@@ -43,7 +43,7 @@ export default {
     minumumRecoverySlope: 0,
 
     // The minimum quality level of the stroke detection: 1.0 is perfect, 0.1 pretty bad. Normally around 0.33. Setting this too high will stop
-    // the recovery phase from being detected.
+    // the recovery phase from being detected through the slope angle (i.e. it will completely rely on the absence of the minumumForceBeforeStroke).
     minimumStrokeQuality: 0.34,
 
     // ORM can automatically calculate the recovery slope and adjust it dynamically. For this to work, autoAdjustDragFactor MUST be set to true
