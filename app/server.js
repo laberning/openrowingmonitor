@@ -18,6 +18,7 @@ import { createPeripheralManager } from './peripherals/PeripheralManager.js'
 import { replayRowingSession } from './tools/RowingRecorder.js'
 import { createWorkoutRecorder } from './engine/WorkoutRecorder.js'
 import { createWorkoutUploader } from './engine/WorkoutUploader.js'
+import { secondsToTimeString } from './tools/Helper.js'
 const exec = promisify(child_process.exec)
 
 // set the log levels
@@ -290,7 +291,7 @@ async function shutdown () {
 
 function logMetrics (metrics) {
   log.info(`stroke: ${metrics.totalNumberOfStrokes}, dist: ${metrics.totalLinearDistance.toFixed(1)}m, speed: ${metrics.cycleLinearVelocity.toFixed(2)}m/s` +
-  `, pace: ${metrics.cyclePaceFormatted}/500m, power: ${Math.round(metrics.cyclePower)}W, cal: ${metrics.totalCalories.toFixed(1)}kcal` +
+  `, pace: ${secondsToTimeString(metrics.cyclePace)}/500m, power: ${Math.round(metrics.cyclePower)}W, cal: ${metrics.totalCalories.toFixed(1)}kcal` +
   `, SPM: ${metrics.cycleStrokeRate.toFixed(1)}, drive dur: ${metrics.driveDuration.toFixed(2)}s, rec. dur: ${metrics.recoveryDuration.toFixed(2)}s` +
   `, stroke dur: ${metrics.cycleDuration.toFixed(2)}s`)
 }

@@ -11,6 +11,7 @@ import { createStreamFilter } from './utils/StreamFilter.js'
 import { createCurveAligner } from './utils/CurveAligner.js'
 
 import loglevel from 'loglevel'
+import { secondsToTimeString } from '../tools/Helper.js'
 const log = loglevel.getLogger('RowingEngine')
 
 function createRowingStatistics (config) {
@@ -32,7 +33,7 @@ function createRowingStatistics (config) {
   let intervalTargetTime = 0
   let intervalPrevAccumulatedDistance = 0
   let intervalPrevAccumulatedTime = 0
-  let heartrateResetTimer
+  let heartRateResetTimer
   let totalLinearDistance = 0.0
   let totalMovingTime = 0
   let totalNumberOfStrokes = 0
@@ -52,7 +53,7 @@ function createRowingStatistics (config) {
   const driveHandlePowerCurve = createCurveAligner(50)
   let dragFactor = config.rowerSettings.dragFactor
   let heartrate = 0
-  let heartrateBatteryLevel = 0
+  let heartRateBatteryLevel = 0
   const postExerciseHR = []
   let instantPower = 0.0
   let lastStrokeState = 'WaitingForDrive'
@@ -328,15 +329,15 @@ function createRowingStatistics (config) {
   }
 
   // initiated when a new heart rate value is received from heart rate sensor
-  function handleHeartrateMeasurement (value) {
+  function handleHeartRateMeasurement (value) {
     // set the heart rate to zero if we did not receive a value for some time
-    if (heartrateResetTimer)clearInterval(heartrateResetTimer)
-    heartrateResetTimer = setTimeout(() => {
+    if (heartRateResetTimer)clearInterval(heartRateResetTimer)
+    heartRateResetTimer = setTimeout(() => {
       heartrate = 0
-      heartrateBatteryLevel = 0
+      heartRateBatteryLevel = 0
     }, 6000)
     heartrate = value.heartrate
-    heartrateBatteryLevel = value.batteryLevel
+    heartRateBatteryLevel = value.batteryLevel
   }
 
   function measureRecoveryHR () {
@@ -375,13 +376,13 @@ function createRowingStatistics (config) {
       sessionStatus,
       strokeState: rower.strokeState(),
       totalMovingTime: totalMovingTime > 0 ? totalMovingTime : 0,
-      totalMovingTimeFormatted: intervalTargetTime > 0 ? secondsToTimeString(Math.round(Math.max(intervalTargetTime - totalMovingTime, 0))) : secondsToTimeString(Math.round(totalMovingTime - intervalPrevAccumulatedTime)),
       totalNumberOfStrokes: totalNumberOfStrokes > 0 ? totalNumberOfStrokes : 0,
       totalLinearDistance: totalLinearDistance > 0 ? totalLinearDistance : 0, // meters
-      totalLinearDistanceFormatted: intervalTargetDistance > 0 ? Math.max(intervalTargetDistance - totalLinearDistance, 0) : totalLinearDistance - intervalPrevAccumulatedDistance,
       intervalNumber: Math.max(currentIntervalNumber + 1, 0), // Interval number
       intervalMovingTime: totalMovingTime - intervalPrevAccumulatedTime,
+      intervalTargetTime: intervalTargetTime > intervalPrevAccumulatedTime ? intervalTargetTime - intervalPrevAccumulatedTime : 0,
       intervalLinearDistance: totalLinearDistance - intervalPrevAccumulatedDistance,
+      intervalTargetDistance: intervalTargetDistance > intervalPrevAccumulatedDistance ? intervalTargetDistance - intervalPrevAccumulatedDistance : 0,
       strokeCalories: strokeCalories > 0 ? strokeCalories : 0, // kCal
       strokeWork: strokeWork > 0 ? strokeWork : 0, // Joules
       totalCalories: calories.yAtSeriesEnd() > 0 ? calories.yAtSeriesEnd() : 0, // kcal
@@ -392,7 +393,6 @@ function createRowingStatistics (config) {
       cycleDistance: cycleDistance.raw() > 0 && cycleLinearVelocity.raw() > 0 && sessionStatus === 'Rowing' ? cycleDistance.clean() : 0, // meters
       cycleLinearVelocity: cycleLinearVelocity.clean() > 0 && cycleLinearVelocity.raw() > 0 && sessionStatus === 'Rowing' ? cycleLinearVelocity.clean() : 0, // m/s
       cyclePace: cycleLinearVelocity.raw() > 0 ? cyclePace : Infinity, // seconds/50  0m
-      cyclePaceFormatted: cycleLinearVelocity.raw() > 0 ? secondsToTimeString(Math.round(cyclePace)) : Infinity,
       cyclePower: cyclePower.clean() > 0 && cycleLinearVelocity.raw() > 0 && sessionStatus === 'Rowing' ? cyclePower.clean() : 0, // watts
       cycleProjectedEndTime: intervalTargetDistance > 0 ? distanceOverTime.projectY(intervalTargetDistance) : intervalTargetTime,
       cycleProjectedEndLinearDistance: intervalTargetTime > 0 ? distanceOverTime.projectX(intervalTargetTime) : intervalTargetDistance,
@@ -402,27 +402,14 @@ function createRowingStatistics (config) {
       driveDistance: driveDistance.clean() >= 0 && sessionStatus === 'Rowing' ? driveDistance.clean() : NaN, // meters
       driveAverageHandleForce: driveAverageHandleForce.clean() > 0 && sessionStatus === 'Rowing' ? driveAverageHandleForce.clean() : NaN,
       drivePeakHandleForce: drivePeakHandleForce.clean() > 0 && sessionStatus === 'Rowing' ? drivePeakHandleForce.clean() : NaN,
-      driveHandleForceCurve: drivePeakHandleForce.clean() > 0 && sessionStatus === 'Rowing' ? driveHandleForceCurve.lastCompleteCurve() : [NaN],
-      driveHandleVelocityCurve: drivePeakHandleForce.clean() > 0 && sessionStatus === 'Rowing' ? driveHandleVelocityCurve.lastCompleteCurve() : [NaN],
-      driveHandlePowerCurve: drivePeakHandleForce.clean() > 0 && sessionStatus === 'Rowing' ? driveHandlePowerCurve.lastCompleteCurve() : [NaN],
+      driveHandleForceCurve: drivePeakHandleForce.clean() > 0 && sessionStatus === 'Rowing' ? driveHandleForceCurve.lastCompleteCurve() : [],
+      driveHandleVelocityCurve: drivePeakHandleForce.clean() > 0 && sessionStatus === 'Rowing' ? driveHandleVelocityCurve.lastCompleteCurve() : [],
+      driveHandlePowerCurve: drivePeakHandleForce.clean() > 0 && sessionStatus === 'Rowing' ? driveHandlePowerCurve.lastCompleteCurve() : [],
       recoveryDuration: recoveryDuration.clean() >= config.rowerSettings.minimumRecoveryTime && totalNumberOfStrokes > 0 && sessionStatus === 'Rowing' ? recoveryDuration.clean() : NaN, // seconds
       dragFactor: dragFactor > 0 ? dragFactor : config.rowerSettings.dragFactor, // Dragfactor
       instantPower: instantPower > 0 && rower.strokeState() === 'Drive' ? instantPower : 0,
-      heartrate: heartrate > 30 ? heartrate : undefined,
-      heartrateBatteryLevel: heartrateBatteryLevel > 0 ? heartrateBatteryLevel : undefined // BE AWARE, changing undefined to NaN kills the GUI!!!
-    }
-  }
-
-  // converts a timeStamp in seconds to a human readable hh:mm:ss format
-  function secondsToTimeString (secondsTimeStamp) {
-    if (secondsTimeStamp === Infinity) return '∞'
-    const hours = Math.floor(secondsTimeStamp / 60 / 60)
-    const minutes = Math.floor(secondsTimeStamp / 60) - (hours * 60)
-    const seconds = Math.floor(secondsTimeStamp % 60)
-    if (hours > 0) {
-      return `${hours}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`
-    } else {
-      return `${minutes}:${seconds.toString().padStart(2, '0')}`
+      heartrate: heartrate > 30 ? heartrate : 0,
+      heartRateBatteryLevel
     }
   }
 
@@ -433,7 +420,7 @@ function createRowingStatistics (config) {
   }
 
   return Object.assign(emitter, {
-    handleHeartRateMeasurement: handleHeartrateMeasurement,
+    handleHeartRateMeasurement,
     handleRotationImpulse,
     setIntervalParameters,
     pause: pauseTraining,

@@ -13,13 +13,38 @@ function createAntHrmPeripheral (antManager) {
   const emitter = new EventEmitter()
   const antStick = antManager.getAntStick()
   const heartRateSensor = new HeartRateSensor(0)
+  let batteryLevel = 0
 
   async function attach () {
     if (!antManager.isStickOpen()) { await antManager.openAntStick() }
     this.channel = await antStick.getChannel()
 
     this.channel.on('data', (profile, deviceID, data) => {
-      emitter.emit('heartRateMeasurement', { heartrate: data.ComputedHeartRate, batteryLevel: data.BatteryLevel })
+      switch (data.BatteryStatus) {
+        case 'New':
+          batteryLevel = 100
+          break
+        case 'Good':
+          batteryLevel = 80
+          break
+        case 'Ok':
+          batteryLevel = 60
+          break
+        case 'Low':
+          batteryLevel = 40
+          break
+        case 'Critical':
+          batteryLevel = 20
+          break
+        default:
+          batteryLevel = 0
+      }
+
+      if (data.BatteryLevel > 0) {
+        batteryLevel = data.BatteryLevel
+      }
+
+      emitter.emit('heartRateMeasurement', { heartrate: data.ComputedHeartRate, batteryLevel })
     })
 
     if (!(await this.channel.startSensor(heartRateSensor))) {

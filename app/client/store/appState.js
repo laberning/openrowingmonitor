@@ -6,8 +6,6 @@
 */
 
 export const APP_STATE = {
-  // currently can be STANDALONE (Mobile Home Screen App), KIOSK (Raspberry Pi deployment) or '' (default)
-  appMode: '',
   // contains all the rowing metrics that are delivered from the backend
   metrics: {},
   config: {
@@ -20,6 +18,11 @@ export const APP_STATE = {
     // true if upload to strava is enabled
     stravaUploadEnabled: false,
     // true if remote device shutdown is enabled
-    shutdownEnabled: false
+    shutdownEnabled: false,
+    guiConfigs: {
+      dashboardMetrics: ['distance', 'timer', 'pace', 'power', 'stkRate', 'totalStk', 'calories', 'actions'],
+      showIcons: true,
+      maxNumberOfTiles: 8
+    }
   }
 }

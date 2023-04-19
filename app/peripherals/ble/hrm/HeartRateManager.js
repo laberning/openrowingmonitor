@@ -81,7 +81,7 @@ function createHeartRateManager () {
     peripheral.once('disconnect', () => {
       // todo: figure out if we have to dispose the peripheral somehow to prevent memory leaks
       log.info('heart rate peripheral disconnected, searching new one')
-      batteryLevel = undefined
+      batteryLevel = 0
       noble.startScanning(['180d'], false)
     })
   }
@@ -136,6 +136,16 @@ function createHeartRateManager () {
         }
 
         if (batteryLevelCharacteristic !== undefined) {
+          batteryLevelCharacteristic.read((error, data) => {
+            if (error) {
+              log.error(error)
+              return
+            }
+
+            const buffer = Buffer.from(data)
+            batteryLevel = buffer.readUInt8(0)
+          })
+
           batteryLevelCharacteristic.notify(true, (error) => {
             if (error) {
               log.error(error)

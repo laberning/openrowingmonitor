@@ -35,19 +35,19 @@ export class DashboardMetric extends AppElement {
   `
 
   @property({ type: Object })
-    icon
+    icon = ''
 
   @property({ type: String })
     unit = ''
 
   @property({ type: String })
-    value = ''
+    value
 
   render () {
     return html`
-      <div class="label">${this.icon}</div>
+      <div class="label"><div class="icon">${this.icon}</div></div>
       <div class="content">
-        <span class="metric-value">${this.value !== undefined ? this.value : '--'}</span>
+        <span class="metric-value" style="${this.icon === '' ? 'font-size: 200%;' : ''}">${this.value !== undefined ? this.value : '--'}</span>
         <span class="metric-unit">${this.unit}</span>
       </div>
       <slot></slot>
