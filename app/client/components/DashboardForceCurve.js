@@ -8,7 +8,7 @@
 import { AppElement, html, css } from './AppElement.js'
 import { customElement, property, state } from 'lit/decorators.js'
 import ChartDataLabels from 'chartjs-plugin-datalabels'
-import { Chart, Filler, Legend, LinearScale, LineController, LineElement, PointElement } from 'chart.js/auto'
+import { Chart, Filler, Legend, LinearScale, LineController, LineElement, PointElement } from 'chart.js'
 
 @customElement('dashboard-force-curve')
 export class DashboardForceCurve extends AppElement {

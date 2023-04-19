@@ -1,8 +1,9 @@
 import { html } from 'lit'
-import { simpleMetricFactory, formatDistance, formatNumber, secondsToPace } from '../lib/helper'
+import { formatDistance, formatNumber, secondsToPace } from '../lib/helper'
 import { icon_bolt, icon_clock, icon_fire, icon_heartbeat, icon_paddle, icon_route, icon_stopwatch, rower_icon } from '../lib/icons'
 import '../components/DashboardForceCurve.js'
 import '../components/DashboardActions.js'
+import '../components/DashboardMetric.js'
 import '../components/BatteryIcon.js'
 
 export const DASHBOARD_METRICS = {
@@ -67,4 +68,15 @@ export const DASHBOARD_METRICS = {
   forceCurve: { displayName: 'Force curve', size: 2, template: (metrics) => html`<dashboard-force-curve .value=${metrics.driveHandleForceCurve} style="grid-column: span 2"></dashboard-force-curve>` },
 
   actions: { displayName: 'Actions', size: 1, template: (_, config) => html`<dashboard-actions .config=${config}></dashboard-actions>` }
+}
+
+/**
+  * Helper function to create a simple metric tile
+  *
+  * @param {string | number} value The metric to show
+  * @param {string} unit The unit of the metric.
+  * @param {string | import('lit').TemplateResult<2>} icon The number of decimal places to round to (default: 0).
+*/
+function simpleMetricFactory (value = '--', unit = '', icon = '') {
+  return html`<dashboard-metric .icon=${icon} .unit=${unit} .value=${value}></dashboard-metric>`
 }

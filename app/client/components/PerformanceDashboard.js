@@ -7,7 +7,7 @@
 
 import { AppElement, html, css } from './AppElement.js'
 import { customElement, property, state } from 'lit/decorators.js'
-import './SettingsDialog'
+import './SettingsDialog.js'
 import { icon_settings } from '../lib/icons.js'
 import { DASHBOARD_METRICS } from '../store/dashboardMetrics.js'
 

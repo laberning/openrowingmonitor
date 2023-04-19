@@ -1,8 +1,5 @@
 'use strict'
 
-import { html } from 'lit'
-import '../components/DashboardMetric.js'
-
 /*
   Open Rowing Monitor, https://github.com/laberning/openrowingmonitor
 
@@ -60,15 +57,4 @@ export function formatNumber (value, decimalPlaces = 0) {
   if (value === undefined || value === null || value === Infinity || isNaN(value) || value === 0) { return '--' }
 
   return Math.round(value * decimal) / decimal
-}
-
-/**
-  * Helper function to create a simple metric tile
-  *
-  * @param {string | number} value The metric to show
-  * @param {string} unit The unit of the metric.
-  * @param {string | import('lit').TemplateResult<2>} icon The number of decimal places to round to (default: 0).
-*/
-export function simpleMetricFactory (value = '--', unit = '', icon = '') {
-  return html`<dashboard-metric .icon=${icon} .unit=${unit} .value=${value}></dashboard-metric>`
 }
