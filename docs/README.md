@@ -15,13 +15,18 @@ Open Rowing Monitor should run fine with any rowing machine that uses some kind 
 
 ## Features
 
-Open Rowing Monitor aims to provide you with metrics directly, connect to apps and games via bluetooth and allow you to export your data to the analysis tool of your choice. The following items describe most of the current features in more detail.
+Open Rowing Monitor aims to provide you with metrics directly, connect to watches, apps and games via bluetooth or ANT+ and allow you to export your data to the analysis tool of your choice. These features have been tested intensily, where most features have survived flawlessly over 3 million meters of rowing with different types of rowing machines.
+
+<!-- markdownlint-disable-next-line no-inline-html -->
+<img src="img/openrowingmonitor_frontend.png" width="700"><br clear="left">
+
+The following items describe most of the current features in more detail.
 
 ### Rowing Metrics
 
 Open Rowing Monitor implements a physics model to simulate the typical metrics of a rowing boat based on the pull on the handle. The physics model can be tuned to the specifics of a rower by changing some model parameters in the configuration file, where we also provide these settings for machines known to us.
 
-Open Rowing Monitor displays the following key metrics on the user interfaces:
+Open Rowing Monitor can display the following key metrics on the user interface:
 
 * Distance rowed (meters)
 * Training Duration
@@ -31,17 +36,25 @@ Open Rowing Monitor displays the following key metrics on the user interfaces:
 * Calories used (kcal)
 * Total number of strokes
 * Heart Rate (supports BLE and ANT+ heart rate monitors, ANT+ requires an ANT+ USB stick)
+* Drag factor
+* Drive duration (seconds)
+* Drive length (meters)
+* Recovery duration (seconds)
+* Distance per stroke (meters)
+* Force curve with Peak power (Newtons)
 
-It calculates and can export many other key rowing metrics, including Drag factor, Drive length (meters), Drive time (milliseconds), Recovery Time (milliseconds), Average handle force (Newton), Peak handle force (Newton) and the associated handle force curve, handle velocity curve and handle power curve.
+It calculates and can export many other key rowing metrics, including Average handle force (Newton), Peak handle force (Newton) and the associated handle force curve, handle velocity curve and handle power curve.
 
 ### Web Interface
 
-The web interface visualizes the basic rowing metrics on any device that can run a web browser (i.e. a smartphone that you attach to your rowing machine while training). It uses web sockets to show the rowing status in realtime. It can also be used to reset the training metrics and to select the type of bluetooth connection.
-
-If you connect a physical screen directly to the Raspberry Pi, then this interface can also be directly shown on the device. The installation script can set up a web browser in kiosk mode that runs on the Raspberry Pi.
+The web interface visualizes the basic rowing metrics on any device that can run a web browser (i.e. a smartphone that you attach to your rowing machine while training). It shows the rowing statistics in realtime. You can set up the user interface as you like, with the metrics you find important:
 
 <!-- markdownlint-disable-next-line no-inline-html -->
-<img src="img/openrowingmonitor_frontend.png" width="700"><br clear="left">
+<img src="img/Metrics_Selection.png" width="700"><br clear="left">
+
+Via the Action tile, it can also be used to reset the training metrics and to select the type of bluetooth and ANT+ connection.
+
+If you connect a physical screen directly to the Raspberry Pi, then this interface can also be directly shown on the device. The installation script can set up a web browser in kiosk mode that runs on the Raspberry Pi.
 
 ### Bluetooth Low Energy (BLE)
 
