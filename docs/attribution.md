@@ -16,4 +16,4 @@ Open Rowing Monitor uses some great work by others. Thank you for all the great 
 
 * Thank you to [Jaap van Ekris](https://github.com/JaapvanEkris) for his many contributions to this project, especially the physics engine and the file exports.
 
-* Thanks to [Abasz](https://github.com/Abasz) for his great contributions to the GPIO, BLE and Ant+ implementations, as well as the many constructive feedback that helped improve many areas of OpenRowingMonitor.
+* Thanks to [Abasz](https://github.com/Abasz) for his great contributions to the GUI, GPIO, BLE and Ant+ implementations, as well as the many constructive feedback that helped improve many areas of OpenRowingMonitor.
