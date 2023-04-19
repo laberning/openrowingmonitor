@@ -41,7 +41,7 @@ export function secondsToPace (seconds) {
   * @param {number} value The distance in meters.
 */
 export function formatDistance (value) {
-  return value >= 10000
+  return value >= 99999.5
     ? { distance: formatNumber((value / 1000), 2), unit: 'km' }
     : { distance: formatNumber(value), unit: 'm' }
 }
