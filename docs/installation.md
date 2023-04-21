@@ -97,3 +97,14 @@ If you do not have and does not have something like this or if the sensor is not
 ## Rower Settings
 
 You should now adjust the rower specific parameters in `config/config.js` to suit your rowing machine. You should select a specific rower from the `rowerProfiles.js`, or create your own settings following this [guide for creating the rower specific settings](rower_settings.md). Also have a look at `config/default.config.js` to see what additional config parameters are available to suit your needs.
+
+### Setting up Strava upload
+
+Part of the specific parameters in `config/config.js` are the Strava settings. To use this, you have to create a Strava API Application as described [here](https://developers.strava.com/docs/getting-started/#account) and use the corresponding values. When creating your Strava API application, set the "Authorization Callback Domain" to the IP address of your Raspberry Pi.
+
+Once you get your Strava credentials, you can add them in `config/config.js`:
+
+```js
+stravaClientId: "StravaClientID",
+stravaClientSecret: "client_secret_string_from_the_Strava_API",
+```
