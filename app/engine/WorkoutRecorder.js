@@ -78,7 +78,7 @@ function createWorkoutRecorder () {
       trackPointTime = new Date(startTime.getTime() + currentstroke.totalMovingTime * 1000)
       timestamp = trackPointTime.getTime() / 1000
 
-      RowingData += `${currentstroke.totalNumberOfStrokes.toFixed(0)},${currentstroke.totalNumberOfStrokes.toFixed(0)},${currentstroke.totalNumberOfStrokes.toFixed(0)},${timestamp.toFixed(0)},` +
+      RowingData += `${currentstroke.totalNumberOfStrokes.toFixed(0)},${currentstroke.totalNumberOfStrokes.toFixed(0)},${currentstroke.totalNumberOfStrokes.toFixed(0)},${timestamp.toFixed(5)},` +
       `${currentstroke.totalMovingTime.toFixed(2)},${(currentstroke.heartrate > 30 ? currentstroke.heartrate.toFixed(0) : NaN)},${currentstroke.totalLinearDistance.toFixed(1)},` +
       `${currentstroke.cycleStrokeRate.toFixed(1)},${(currentstroke.totalNumberOfStrokes > 0 ? currentstroke.cyclePace.toFixed(2) : NaN)},${(currentstroke.totalNumberOfStrokes > 0 ? currentstroke.cyclePower.toFixed(0) : NaN)},` +
       `${currentstroke.cycleDistance.toFixed(2)},${(currentstroke.driveDuration * 1000).toFixed(0)},${(currentstroke.totalNumberOfStrokes > 0 ? currentstroke.driveLength.toFixed(2) : NaN)},${(currentstroke.recoveryDuration * 1000).toFixed(0)},` +
