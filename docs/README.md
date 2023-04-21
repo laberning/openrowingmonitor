@@ -15,7 +15,7 @@ Open Rowing Monitor should run fine with any rowing machine that uses some kind 
 
 ## Features
 
-Open Rowing Monitor aims to provide you with metrics directly, connect to watches, apps and games via bluetooth or ANT+ and allow you to export your data to the analysis tool of your choice. These features have been tested intensily, where most features have survived flawlessly over 3 million meters of rowing with different types of rowing machines. The underlying V1 physics engine has been validated against a Concept2 PM5 in 250 sessions (totalling 1.8 million meters), and results deviate less than 0.05% for every rowing session.
+Open Rowing Monitor aims to provide you with metrics directly, connect to watches, apps and games via bluetooth or ANT+ and allow you to export your data to the analysis tool of your choice. These features have been tested intensily, where most features have survived flawlessly over 3 million meters of rowing with different types of rowing machines.
 
 <!-- markdownlint-disable-next-line no-inline-html -->
 <img src="img/openrowingmonitor_frontend.png" width="700"><br clear="left">
@@ -24,7 +24,7 @@ The following items describe most of the current features in more detail.
 
 ### Rowing Metrics
 
-Open Rowing Monitor implements a physics model to simulate the typical metrics of a rowing boat based on the pull on the handle. The physics model can be tuned to the specifics of a rower by changing some model parameters in the configuration file, where we also provide these settings for machines known to us.
+Open Rowing Monitor implements a physics model to simulate the typical metrics of a rowing boat based on the pull on the handle. The physics model can be tuned to the specifics of a rower by changing some model parameters in the configuration file, where we also provide these settings for machines known to us. The underlying V1 physics engine has been validated against a Concept2 PM5 in 250 sessions (totalling 1.8 million meters), and results deviate less than 0.05% for every rowing session.
 
 Open Rowing Monitor can display the following key metrics on the user interface:
 
