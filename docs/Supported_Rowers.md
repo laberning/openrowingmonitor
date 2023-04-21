@@ -14,6 +14,7 @@ The following rowers are known to work, or are even actively supported:
 | DKN | R-320 | Air Rower | Flywheel | No | Full support | DKN_R320 | Yes | No | Static drag | - |
 | FDF | Neon Pro V | Air rower | Flywheel | Sensor replacement | Known to work | - | Yes | - | - | - | see [this discussion](https://github.com/laberning/openrowingmonitor/discussions/87) |
 | ForceUSA | R3 | Air Rower | Flywheel | No | Supported | ForceUSA_R3 | Yes | Yes | None | - |
+| Johnson | JAR5100 | Air Rower | Flywheel | Yes, add magnets and sensor | Known to work | | Yes | Yes | None | [this discussion](https://github.com/laberning/openrowingmonitor/discussions/139) |
 | NordicTrack | RX800 | Hybrid Magnetic and Air rower | Flywheel | None | Full support | NordicTrack_RX800 | Yes | Yes | None | Also known under ProForm brand |
 | Sportstech | WRX700 | Water rower | Impellor | Add one magnet | Active support | Sportstech_WRX700 | Yes | Yes | Static drag | see [Sportstech WRX700 setup](hardware_setup_WRX700.md)
 | White label | Air Rower | Air rower | Fywheel | None | Supported | Generic_Air_Rower | Yes | Yes | None | Sold under different brand names |
