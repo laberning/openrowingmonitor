@@ -43,7 +43,7 @@ Open Rowing Monitor can display the following key metrics on the user interface:
 * Distance per stroke (meters)
 * Force curve with Peak power (Newtons)
 
-It calculates and can export many other key rowing metrics, including Average handle force (Newton), Peak handle force (Newton) and the associated handle force curve, handle velocity curve and handle power curve.
+It calculates and can export many other key rowing metrics, including Recovery Heart Rate, Average handle force (Newton), Peak handle force (Newton) and the associated handle force curve, handle velocity curve and handle power curve.
 
 ### Web Interface
 
