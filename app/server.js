@@ -220,6 +220,11 @@ rowingStatistics.on('rowingStopped', (metrics) => {
   workoutRecorder.writeRecordings()
 })
 
+rowingStatistics.on('HRRecoveryUpdate', (hrMetrics) => {
+  // This is called at minute intervals after the rowingmachine has stopped, to record the Recovery heartrate in the tcx
+  workoutRecorder.updateHRRecovery(hrMetrics)
+})
+
 workoutUploader.on('authorizeStrava', (data, client) => {
   webServer.notifyClient(client, 'authorizeStrava', data)
 })
