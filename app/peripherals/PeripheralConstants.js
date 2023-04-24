@@ -7,7 +7,7 @@
 export const PeripheralConstants = {
   serial: '431234567',
   model: 'PM5',
-  name: 'PM5 123456789 Row',
+  name: 'PM5 431234567 Row',
   hardwareRevision: '907',
   // See https://www.concept2.com/service/monitors/pm5/firmware for available versions
   // please note: hardware versions exclude a software version, and thus might confuse the client
