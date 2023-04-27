@@ -15,7 +15,26 @@ The choice has been made to use JavaScript to build te application, as many of t
 
 ## Main functional components
 
-We first describe the relation between the main functional components by describing the flow of the key pieces of information: the flywheel and heartrate measurements. We first follow the flow of the flywheel data, which is provided by the interrupt driven `GpioTimerService.js`. The only information retrieved by Open Rowing Monitor is *CurrentDt*: the time between impulses. This data element is transformed in meaningful metrics in the following manner:
+At the highest level, we recognise the following functional components, with their primary dataflows:
+
+```mermaid
+flowchart LR
+A(GpioTimerService.js) -->|time between ticks| B(server.js)
+C(PeripheralManager.js) -->|Heart rate data| B(server.js)
+B(server.js) -->|time between ticks| D(RowingStatistics.js)
+B(server.js) -->|Heart rate data| D(RowingStatistics.js)
+D(RowingStatistics.js) -->|Rowing metrics| B(server.js)
+B(server.js) -->|Rowing metrics| E(PeripheralManager.js)
+E(PeripheralManager.js) -->|Rowing metrics| F(ANT+ clients)
+E(PeripheralManager.js) -->|Rowing metrics| G(BLE clients)
+B(server.js) -->|Rowing metrics| H(RecordingManager.js)
+H(RecordingManager.js) -->|Rowing metrics| I(raw recorder)
+H(RecordingManager.js) -->|Rowing metrics| J(tcx recorder)
+H(RecordingManager.js) -->|Rowing metrics| K(RowingData recorder)
+B(server.js) -->|Rowing metrics| L(WebServer.js)
+```
+
+We first describe the relation between these main functional components by describing the flow of the key pieces of information in more detail: the flywheel and heartrate measurements. We first follow the flow of the flywheel data, which is provided by the interrupt driven `GpioTimerService.js`. The only information retrieved by Open Rowing Monitor is *CurrentDt*: the time between impulses. This data element is transformed in meaningful metrics in the following manner:
 
 ```mermaid
 sequenceDiagram
