@@ -32,6 +32,7 @@ H(RecordingManager.js) -->|Rowing metrics| I(raw recorder)
 H(RecordingManager.js) -->|Rowing metrics| J(tcx recorder)
 H(RecordingManager.js) -->|Rowing metrics| K(RowingData recorder)
 B(server.js) -->|Rowing metrics| L(WebServer.js)
+L(WebServer.js) -->|Rowing metrics| M(Client.js)
 ```
 
 We first describe the relation between these main functional components by describing the flow of the key pieces of information in more detail: the flywheel and heartrate measurements. We first follow the flow of the flywheel data, which is provided by the interrupt driven `GpioTimerService.js`. The only information retrieved by Open Rowing Monitor is *CurrentDt*: the time between impulses. This data element is transformed in meaningful metrics in the following manner:
