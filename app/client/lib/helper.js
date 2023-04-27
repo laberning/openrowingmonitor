@@ -17,21 +17,21 @@ export function filterObjectByKeys (object, keys) {
 }
 
 /**
-  * Pipe for converting seconds to pace format 00:00
+  * Pipe for converting seconds to a human readable time format 00:00
   *
   * @param {number} seconds The actual time in seconds.
 */
-export function secondsToPace (seconds) {
-  const hours = Math.floor((seconds % 86400) / 3600)
-  const mins = Math.floor(((seconds % 86400) % 3600) / 60)
-
-  if (seconds === undefined || seconds === null || seconds === Infinity || isNaN(seconds)) return '--'
+export function secondsToTimeString (timeInSeconds) {
+  if (timeInSeconds === undefined || timeInSeconds === null || isNaN(timeInSeconds)) return '--'
+  if (timeInSeconds === Infinity) return '∞'
+  const timeInRoundedSeconds = Math.round(timeInSeconds)
+  const hours = Math.floor(timeInRoundedSeconds / 3600)
+  const minutes = Math.floor(timeInRoundedSeconds / 60) - (hours * 60)
+  const seconds = Math.floor(timeInRoundedSeconds % 60)
   if (hours > 0) {
-    return `${hours}:${mins.toString().padStart(2, '0')}:${(Math.round(seconds) % 60)
-            .toString()
-            .padStart(2, '0')}`
+    return `${hours}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`
   } else {
-    return `${mins}:${(Math.round(seconds) % 60).toString().padStart(2, '0')}`
+    return `${minutes}:${seconds.toString().padStart(2, '0')}`
   }
 }
 
