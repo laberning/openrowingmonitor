@@ -19,8 +19,8 @@ At the highest level, we recognise the following functional components, with the
 
 ```mermaid
 flowchart LR
-A(GpioTimerService.js) -->|time between ticks| B(server.js)
-B(server.js) -->|time between ticks| D(RowingStatistics.js)
+A(GpioTimerService.js) -->|currentDt| B(server.js)
+B(server.js) -->|currentDt| D(RowingStatistics.js)
 D(RowingStatistics.js) -->|Rowing metrics| B(server.js)
 C(PeripheralManager.js) -->|Heart rate data| B(server.js)
 B(server.js) -->|Heart rate data| D(RowingStatistics.js)
@@ -28,12 +28,15 @@ B(server.js) -->|Rowing metrics| E(PeripheralManager.js)
 E(PeripheralManager.js) -->|Rowing metrics| F(ANT+ clients)
 E(PeripheralManager.js) -->|Rowing metrics| G(BLE clients)
 B(server.js) -->|Rowing metrics| H(RecordingManager.js)
-H(RecordingManager.js) -->|Rowing metrics| I(raw recorder)
+B(server.js) -->|currentDt| H(RecordingManager.js)
+H(RecordingManager.js) -->|currentDt| I(raw recorder)
 H(RecordingManager.js) -->|Rowing metrics| J(tcx recorder)
 H(RecordingManager.js) -->|Rowing metrics| K(RowingData recorder)
 B(server.js) -->|Rowing metrics| L(WebServer.js)
 L(WebServer.js) -->|Rowing metrics| M(Client.js)
 ```
+
+Here, *currentDt* stands for the time between the impulses of the sensor, as measured by the pigpio in 'ticks' (i.e. microseconds sinds OS start).
 
 We first describe the relation between these main functional components by describing the flow of the key pieces of information in more detail: the flywheel and heartrate measurements. We first follow the flow of the flywheel data, which is provided by the interrupt driven `GpioTimerService.js`. The only information retrieved by Open Rowing Monitor is *CurrentDt*: the time between impulses. This data element is transformed in meaningful metrics in the following manner:
 
