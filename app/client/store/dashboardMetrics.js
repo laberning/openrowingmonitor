@@ -1,5 +1,5 @@
 import { html } from 'lit'
-import { formatDistance, formatNumber, secondsToPace } from '../lib/helper'
+import { formatDistance, formatNumber, secondsToTimeString } from '../lib/helper'
 import { icon_bolt, icon_clock, icon_fire, icon_heartbeat, icon_paddle, icon_route, icon_stopwatch, rower_icon } from '../lib/icons'
 import '../components/DashboardForceCurve.js'
 import '../components/DashboardActions.js'
@@ -18,7 +18,7 @@ export const DASHBOARD_METRICS = {
     }
   },
 
-  pace: { displayName: 'Pace/500', size: 1, template: (metrics, config) => simpleMetricFactory(secondsToPace(500 / metrics?.cycleLinearVelocity), '/500m', config.guiConfigs.showIcons ? icon_stopwatch : '') },
+  pace: { displayName: 'Pace/500', size: 1, template: (metrics, config) => simpleMetricFactory(secondsToTimeString(500 / metrics?.cycleLinearVelocity), '/500m', config.guiConfigs.showIcons ? icon_stopwatch : '') },
 
   power: { displayName: 'Power', size: 1, template: (metrics, config) => simpleMetricFactory(formatNumber(metrics?.cyclePower), 'watt', config.guiConfigs.showIcons ? icon_bolt : '') },
 
@@ -51,7 +51,7 @@ export const DASHBOARD_METRICS = {
     template: (metrics, config) => {
       const time = metrics?.sessiontype === 'Time' ? Math.max(metrics?.intervalTargetTime - metrics?.intervalMovingTime, 0) : metrics?.totalMovingTime
 
-      return simpleMetricFactory(secondsToPace(time ?? 0), '', config.guiConfigs.showIcons ? icon_clock : '')
+      return simpleMetricFactory(secondsToTimeString(time ?? 0), '', config.guiConfigs.showIcons ? icon_clock : '')
     }
   },
 
