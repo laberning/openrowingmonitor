@@ -299,8 +299,11 @@ function createRower (rowerSettings) {
   }
 
   function allowMovement () {
-    log.debug(`*** ALLOW MOVEMENT command by RowingEngine recieved at time: ${flywheel.spinningTime().toFixed(4)} sec`)
-    _strokeState = 'WaitingForDrive'
+    if (_strokeState === 'Stopped') {
+      // We have to check whether there actually was a stop/pause, in order to prevent weird behaviour from the state machine
+      log.debug(`*** ALLOW MOVEMENT command by RowingEngine recieved at time: ${flywheel.spinningTime().toFixed(4)} sec`)
+      _strokeState = 'WaitingForDrive'
+    }
   }
 
   function pauseMoving () {
