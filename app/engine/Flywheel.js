@@ -354,7 +354,8 @@ function createFlywheel (rowerSettings) {
     isDwelling,
     isAboveMinimumSpeed,
     isUnpowered,
-    isPowered
+    isPowered,
+    reset
   }
 }
 
