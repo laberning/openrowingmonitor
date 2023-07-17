@@ -1,9 +1,9 @@
 # The physics behind Open Rowing Monitor
 
 <!-- markdownlint-disable no-inline-html -->
-In this document we explain the physics behind the Open Rowing Monitor, to allow for independent review and software maintenance. This work wouldn't have been possible without some solid physics, described by some people with real knowledge of the subject matter. Please note that any errors in our implementation probably is on us, not them. When appropriate, we link to these sources. When possible, we also link to the source code.
+In this document we explain the physics behind the Open Rowing Monitor, to allow for independent review and software maintenance. This work wouldn't have been possible without some solid physics, described by some people with real knowledge of the subject matter. Please note that any errors in our implementation probably is on us, not them. When appropriate, we link to these sources. When possible, we also link to the source code to allow further investigation and keep the link with the actual implementation.
 
-Please note that this text is used as a rationale for design decissions in Open Rowing Monitor. So it is of interest for people maintaining the code (as it explains why we do things the way we do) and for academics to verify of improve our solution. For these academics, we conclude with a section of open design issues. If you are interested in just using Open Rowing Monitor as-is, this might not be the text you are looking for.
+Please note that this text is used as a rationale for design decissions of the physics used in Open Rowing Monitor. So it is of interest for people maintaining the code (as it explains why we do things the way we do) and for academics to verify or improve our solution. For these academics, we conclude with a section of open design issues as they might provide avenues of future research. If you are interested in just using Open Rowing Monitor as-is, this might not be the text you are looking for.
 
 ## Basic concepts
 
@@ -11,7 +11,7 @@ Before we analyze the physics of a rowing engine, we first need to define the ba
 
 ### Physical systems in a rower
 
-A rowing machine effectively has two fundamental movements: a **linear** (the rower moving up and down, or a boat moving forward) and a **rotational** where the energy that the rower inputs in the system is absorbed through a flywheel (either a solid one, or a liquid one) [[1]](#1).
+A rowing machine effectively has two fundamental movements: a **linear** (the rowing person moving up and down the rail, or a boat moving forward) and a **rotational** where the energy that the rower inputs in the system is absorbed through a flywheel (either a solid one, or a liquid one) [[1]](#1).
 
 <img src="img/physics/indoorrower.png" width="700">
 
@@ -28,7 +28,7 @@ There are several types of rowers:
 
 * **Magnetic resistance**: where the resistance is constant
 
-There are also hybrid rowers, which combine air resistance and magnetic resistance. The differences in physical behavior can be significant, for example a magnetic rower has a constant resistance while a air/water rower's resistance is dependent on the flywheel's speed. As the key principle is the same for all these rowers (some mass is made to spin and drag brings its speed down), we currently treat them the same.
+There are also hybrid rowers, which combine air resistance and magnetic resistance. The differences in physical behavior can be significant, for example a magnetic rower has a constant resistance while a air rower's resistance is dependent on the flywheel's speed. We suspect that on a water rower behaves slightly different from an air rower, as the rotated water mass changes shape when the rotational velocity changes. Currently for Open Rowing Monitor, we consider that the key principle is similar enough for all these rowers (some mass is made to spin and drag brings its speed down) to treat them all as an air rower as a first approximation. However, we are still investigating how to adapt for these specific machines.
 
 ### Phases in the rowing stroke
 
@@ -50,7 +50,7 @@ On an indoor rower, the rowing cycle will always start with a stroke, followed b
 
 * The **Recovery Phase**, where the rower returns to his starting position
 
-Combined, we consider a *Drive* followed by a *Recovery* a **Stroke**. In the calculation of several metrics, the requirement is that it should include *a* *Drive* and *a* *Recovery*, but order isn't a strict requirement for some metrics [[2]](#2). We call such combination of a *Drive* and *Recovery* without perticular order a **Cycle**, which allows us to calculate these metrics twice per *stroke*.
+Combined, we define a *Drive* followed by a *Recovery* a **Stroke**. In the calculation of several metrics, the requirement is that it should include *a* *Drive* and *a* *Recovery*, but order isn't a strict requirement for some metrics [[2]](#2). We define such combination of a *Drive* and *Recovery* without perticular order a **Cycle**, which allows us to calculate these metrics twice per *stroke*.
 
 ## Leading design principles of the rowing engine
 
@@ -72,7 +72,9 @@ Although the physics is well-understood and even well-described publicly (see [[
 
 ## Relevant rotational metrics
 
-Typically, measurements are done in the rotational part of the rower, on the flywheel. There is a magnetic reed sensor or optical sensor that will measure time between either magnets or reflective stripes, which gives an **Impulse** each time a magnet or stripe passes. For example, when the flywheel rotates on a NordicTrack RX800, the passing of a magnet on the flywheel triggers a reed-switch, that delivers a pulse to our Raspberry Pi.
+Typically, actual measurements are done in the rotational part of the rower, on the flywheel. We explicitly assume that Open Rowing Monitor measures the flywheel movement (directly or indirectly). Some rowing machines are known to measure the movement of the driving axle and thus the velocity and direction of the handle, and not the driven flywheel. This type of measurement blocks access to the physical behaviour of the flywheel (especially acceleration and coast down behaviour), thus making most of the physics engine irrelevant. Open Rowing Monitor can handle some of these rowing machines by fixing specific parameters, but as this measurement approach excludes any meaningful measurement, we will exclude it in the further description.
+
+In a typical rowing machine, there is a magnetic reed sensor or optical sensor that will measure time between either magnets or reflective stripes on the flywheel or impellor, which gives an **Impulse** each time a magnet or stripe passes. For example, when the flywheel rotates on a NordicTrack RX800, the passing of a magnet on the flywheel triggers a reed-switch, that delivers a pulse to our Raspberry Pi.
 
 Depending on the **number of impulse providers** (i.e. the number of magnets or stripes), the number of impulses per rotation increases, increasing the resolution of the measurement. As described in [the architecture](Architecture.md), Open Rowing Monitor's `GpioTimerService.js` measures the time between two subsequent impulses and reports as a *currentDt* value. The constant stream of *currentDt* values is the basis for all our angular calculations, which are typically performed in the `pushValue()` function of `engine/Flywheel.js`.
 
@@ -86,7 +88,9 @@ Open Rowing Monitor needs to keep track of several metrics about the flywheel an
 
 * The **Angular Acceleration** of the flywheel in Radians \* s<sup>-2</sup> (denoted with &alpha;): the acceleration/deceleration of the flywheel;
 
-* The *estimated* **drag factor** of the flywheel: the level af (air/water/magnet) resistence encountered by the flywheel, as a result of a damper setting.
+* The **flywheel inertia** of the flywheel in kg \* m<sup>2</sup> (denoted with I): the resistance of the flywheel to acceleration/deceleration;
+
+* The *estimated* **drag factor** of the flywheel in N \* m \* s<sup>2</sup> (denoted with k): the level of (air/water/magnet) drag encountered by the flywheel, as a result of a damper setting.
 
 * The **Torque** of the flywheel in kg \* m<sup>2</sup> \* s<sup>-2</sup> (denoted with &tau;): the momentum of force on the flywheel.
 
@@ -107,7 +111,7 @@ As the impulse-givers are evenly spread over the flywheel, this can be robustly 
 In theory, there are two threats here:
 
 * Potentially missed impulses due to sticking sensors or too short intervals for the Raspberry Pi to detect them. So far, this hasn't happened.
-* Ghost impulses, typically caused by **debounce** effects of the sensor. Up till now, some reports have been seen of this, where the best resolution was a better mechanical construction of magnets and sensors.
+* Ghost impulses, typically caused by **bounce** effects of the sensor where the same magnet is seen twice by the sensor. The best resolution is a better mechanical construction of magnets and sensors or adjust the **debounce filter**.
 
 ### Determining the "Angular Velocity" and "Angular Acceleration" of the flywheel
 
@@ -133,11 +137,11 @@ A first numerical approach is presented by through [[1]](#1) in formula 7.2a:
 
 > $$ k = - I \* {&Delta;&omega; \over &Delta;t} * {1 \over &Delta;&omega;^2} $$
 
-Where the resulting k should be averaged across the rotations of the flywheel. The downside of this approach is that it introduces &Delta;t in the divider of the drag calculation, making this calculation potentially volatile. Our practical experience based on testing confirms this valatility. An alternative numerical approach is presented by through [[1]](#1) in formula 7.2b:
+Where the resulting k should be averaged across the rotations of the flywheel. The downside of this approach is that it introduces &Delta;t in the divider of the drag calculation, making this calculation potentially volatile. Our practical experience based on testing confirms this volatility. An alternative numerical approach is presented by through [[1]](#1) in formula 7.2b:
 
 > $$ k = -I \* {&Delta;({1 \over &omega;}) \over &Delta;t} $$
 
-Where this is calculated across the entire recovery phase. Again, the presence of &Delta;t in the divider potentially introduces a type of undesired volatility. Testing has shown that even when &Delta;t is chosen to span the entire recovery phase reliably, reducing the effect of single values of *CurrentDt*, the calculated drag factor is more stable but still is too unstable to be used as is: it typically requires averaging across strokes to prevent drag poisoning.
+Where this is calculated across the entire recovery phase. Again, the presence of &Delta;t in the divider potentially introduces a type of undesired volatility. Testing has shown that even when &Delta;t is chosen to span the entire recovery phase reliably, reducing the effect of single values of *CurrentDt*, the calculated drag factor is more stable but still is too unstable to be used as is: it typically requires averaging across strokes to prevent drag poisoning (i.e. a single bad measurement of *currentDt* throwing off the drag factor significantly, and thus throwing off all dependent linear metrics significantly).
 
 To make this calculation more robust, we again turn to regression methods (as suggested by [[7]](#7)).  We can transform formula 7.2 to the definition of the slope of a line, by doing the following:
 
