@@ -12,7 +12,7 @@ The following rowers are known to work, or are even actively supported:
 | | RowErg | Air rower | Flywheel | Modification to electrical signal | Active support | Concept2_RowErg | Yes | Yes | None | [Concept 2 Model D, Model E and RowErg setup](hardware_setup_Concept2_RowErg.md) |
 | Decathlon | Rower 120 | Physical friction | Flywheel | Adding sensor and adding magnets to the flywheel | In development | - | - | - | - | see [this discussion](https://github.com/laberning/openrowingmonitor/issues/110) |
 | DKN | R-320 | Air Rower | Flywheel | No | Full support | DKN_R320 | Yes | No | Static drag | - |
-| FDF | Neon Pro V | Air rower | Flywheel | Sensor replacement | Known to work | - | Yes | - | - | - | see [this](https://github.com/laberning/openrowingmonitor/discussions/87) and [this](https://github.com/JaapvanEkris/openrowingmonitor/discussions/11) discussion|
+| FDF | Neon Pro V | Air rower | Flywheel | Sensor replacement | Known to work | - | Yes | - | - | see [this](https://github.com/laberning/openrowingmonitor/discussions/87) and [this](https://github.com/JaapvanEkris/openrowingmonitor/discussions/11) discussion|
 | ForceUSA | R3 | Air Rower | Flywheel | No | Supported | ForceUSA_R3 | Yes | Yes | None | - |
 | Johnson | JAR5100 | Air Rower | Flywheel | Yes, add magnets and sensor | Configuration known | - | Yes | Yes | None | [this discussion](https://github.com/laberning/openrowingmonitor/discussions/139) |
 | NordicTrack | RX800 | Hybrid Magnetic and Air rower | Flywheel | None | Full support | NordicTrack_RX800 | Yes | Yes | None | Also known under ProForm brand |
