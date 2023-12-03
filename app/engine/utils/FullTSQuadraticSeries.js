@@ -2,7 +2,7 @@
 /*
   Open Rowing Monitor, https://github.com/laberning/openrowingmonitor
 
-  The TSLinearSeries is a datatype that represents a Quadratic Series. It allows
+  The FullTSQuadraticSeries is a datatype that represents a Quadratic Series. It allows
   values to be retrieved (like a FiFo buffer, or Queue) but it also includes
   a Theil-Sen Quadratic Regressor to determine the coefficients of this dataseries.
 
@@ -22,6 +22,7 @@
 
 import { createSeries } from './Series.js'
 import { createTSLinearSeries } from './FullTSLinearSeries.js'
+import { createLabelledBinarySearchTree } from './BinarySearchTree.js'
 
 import loglevel from 'loglevel'
 const log = loglevel.getLogger('RowingEngine')
@@ -29,7 +30,7 @@ const log = loglevel.getLogger('RowingEngine')
 function createTSQuadraticSeries (maxSeriesLength = 0) {
   const X = createSeries(maxSeriesLength)
   const Y = createSeries(maxSeriesLength)
-  const A = []
+  const A = createLabelledBinarySearchTree()
   let _A = 0
   let _B = 0
   let _C = 0
@@ -37,32 +38,33 @@ function createTSQuadraticSeries (maxSeriesLength = 0) {
   function push (x, y) {
     const linearResidu = createTSLinearSeries(maxSeriesLength)
 
+    // Invariant: A contains all a's (as in the general formula y = a * x^2 + b * x + c)
+    // Where the a's are labeled in the Binary Search Tree with their xi when they BEGIN in the point (xi, yi)
+    if (maxSeriesLength > 0 && X.length() >= maxSeriesLength) {
+      // The maximum of the array has been reached, so when pushing the x,y the array gets shifted,
+      // thus we have to remove the a's belonging to the current position X0 as well before this value is trashed
+      A.remove(X.get(0))
+    }
+
     X.push(x)
     Y.push(y)
 
-    if (maxSeriesLength > 0 && A.length >= maxSeriesLength) {
-      // The maximum of the array has been reached, we have to create room
-      // in the 2D array by removing the first row from the A-table
-      A.shift()
-    }
-
-    // Invariant: the indices of the X and Y array now match up with the
-    // row numbers of the A array. So, the A of (X[0],Y[0]) and (X[1],Y[1]
-    // will be stored in A[0][.].
-
-    // Add an empty array at the end to store futurs results for the most recent points
-    A.push([])
-
-    // Calculate the coefficients of this new point
+    // Calculate the coefficient a for the new interval by adding the newly added datapoint
     if (X.length() > 2) {
       // There are at least two points in the X and Y arrays, so let's add the new datapoint
       let i = 0
+      let j = 0
       while (i < X.length() - 2) {
-        A[X.length() - 1].push(calculateA(i, X.length() - 1))
+        j = i + 1
+        while (j < X.length() - 1) {
+          A.push(X.get(i), calculateA(i, j, X.length() - 1))
+          j++
+        }
         i++
       }
-      _A = matrixMedian(A)
+      _A = A.median()
 
+      // Calculate the remaining two coefficients for this new interval
       i = 0
       linearResidu.reset()
       while (i < X.length() - 1) {
@@ -193,6 +195,22 @@ function createTSQuadraticSeries (maxSeriesLength = 0) {
     return Y.sum()
   }
 
+  function minimumX () {
+    return X.minimum()
+  }
+
+  function minimumY () {
+    return Y.minimum()
+  }
+
+  function maximumX () {
+    return X.maximum()
+  }
+
+  function maximumY () {
+    return Y.maximum()
+  }
+
   function xSeries () {
     return X.series()
   }
@@ -201,29 +219,14 @@ function createTSQuadraticSeries (maxSeriesLength = 0) {
     return Y.series()
   }
 
-  function calculateA (pointOne, pointThree) {
-    if ((pointOne + 1) < pointThree && X.get(pointOne) !== X.get(pointThree)) {
-      const results = createSeries(maxSeriesLength)
-      let pointTwo = pointOne + 1
-      while (pointOne < pointTwo && pointTwo < pointThree && X.get(pointOne) !== X.get(pointTwo) && X.get(pointTwo) !== X.get(pointThree)) {
-        // For the underlying math, see https://www.quora.com/How-do-I-find-a-quadratic-equation-from-points/answer/Robert-Paxson
-        results.push((X.get(pointOne) * (Y.get(pointThree) - Y.get(pointTwo)) + Y.get(pointOne) * (X.get(pointTwo) - X.get(pointThree)) + (X.get(pointThree) * Y.get(pointTwo) - X.get(pointTwo) * Y.get(pointThree))) / ((X.get(pointOne) - X.get(pointTwo)) * (X.get(pointOne) - X.get(pointThree)) * (X.get(pointTwo) - X.get(pointThree))))
-        pointTwo += 1
-      }
-      return results.median()
+  function calculateA (pointOne, pointTwo, pointThree) {
+    let result = 0
+    if (X.get(pointOne) !== X.get(pointTwo) && X.get(pointOne) !== X.get(pointThree) && X.get(pointTwo) !== X.get(pointThree)) {
+      // For the underlying math, see https://www.quora.com/How-do-I-find-a-quadratic-equation-from-points/answer/Robert-Paxson
+      result = (X.get(pointOne) * (Y.get(pointThree) - Y.get(pointTwo)) + Y.get(pointOne) * (X.get(pointTwo) - X.get(pointThree)) + (X.get(pointThree) * Y.get(pointTwo) - X.get(pointTwo) * Y.get(pointThree))) / ((X.get(pointOne) - X.get(pointTwo)) * (X.get(pointOne) - X.get(pointThree)) * (X.get(pointTwo) - X.get(pointThree)))
+      return result
     } else {
       log.error('TS Quadratic Regressor, Division by zero prevented in CalculateA!')
-      return 0
-    }
-  }
-
-  function matrixMedian (inputMatrix) {
-    if (inputMatrix.length > 1) {
-      const sortedArray = [...inputMatrix.flat()].sort((a, b) => a - b)
-      const mid = Math.floor(sortedArray.length / 2)
-      return (sortedArray.length % 2 !== 0 ? sortedArray[mid] : ((sortedArray[mid - 1] + sortedArray[mid]) / 2))
-    } else {
-      log.error('TS Quadratic Regressor, Median calculation on empty matrix attempted!')
       return 0
     }
   }
@@ -231,7 +234,7 @@ function createTSQuadraticSeries (maxSeriesLength = 0) {
   function reset () {
     X.reset()
     Y.reset()
-    A.splice(0, A.length)
+    A.reset()
     _A = 0
     _B = 0
     _C = 0
@@ -259,6 +262,10 @@ function createTSQuadraticSeries (maxSeriesLength = 0) {
     yAtSeriesBegin,
     yAtSeriesEnd,
     yAtPosition,
+    minimumX,
+    minimumY,
+    maximumX,
+    maximumY,
     xSum,
     ySum,
     xSeries,
