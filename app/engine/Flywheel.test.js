@@ -1,6 +1,6 @@
 'use strict'
 /*
-  Open Rowing Monitor, https://github.com/laberning/openrowingmonitor
+  Open Rowing Monitor, https://github.com/jaapvanekris/openrowingmonitor
 */
 import { test } from 'uvu'
 import * as assert from 'uvu/assert'
@@ -10,24 +10,27 @@ import rowerProfiles from '../../config/rowerProfiles.js'
 
 import { createFlywheel } from './Flywheel.js'
 
-const baseConfig = {
+const baseConfig = { // Based on Concept 2 settings, as this is the validation system
   numOfImpulsesPerRevolution: 6,
-  smoothing: 1,
-  flankLength: 11,
-  minimumStrokeQuality: 0.30,
-  minumumRecoverySlope: 0,
-  autoAdjustRecoverySlope: true,
-  autoAdjustRecoverySlopeMargin: 0.10,
-  minumumForceBeforeStroke: 50,
-  minimumRecoveryTime: 2,
-  minimumTimeBetweenImpulses: 0.005,
-  maximumTimeBetweenImpulses: 0.02,
+  sprocketRadius: 1.4,
+  maximumStrokeTimeBeforePause: 6.0,
+  dragFactor: 110,
   autoAdjustDragFactor: true,
+  minimumDragQuality: 0.95,
   dragFactorSmoothing: 3,
-  dragFactor: 100,
-  minimumDragQuality: 0.83,
-  flywheelInertia: 0.1,
-  sprocketRadius: 2
+  minimumTimeBetweenImpulses: 0.005,
+  maximumTimeBetweenImpulses: 0.020,
+  flankLength: 12,
+  smoothing: 1,
+  minimumStrokeQuality: 0.36,
+  minumumForceBeforeStroke: 10,
+  minumumRecoverySlope: 0.00070,
+  autoAdjustRecoverySlope: true,
+  autoAdjustRecoverySlopeMargin: 0.15,
+  minimumDriveTime: 0.40,
+  minimumRecoveryTime: 0.90,
+  flywheelInertia: 0.1031,
+  magicConstant: 2.8
 }
 
 // Test behaviour for no datapoints
@@ -39,20 +42,17 @@ test('Correct Flywheel behaviour at initialisation', () => {
   testAngularVelocity(flywheel, 0)
   testAngularAcceleration(flywheel, 0)
   testTorque(flywheel, 0)
-  testDragFactor(flywheel, 0.0001)
+  testDragFactor(flywheel, 0.00011)
   testIsDwelling(flywheel, false)
   testIsUnpowered(flywheel, false)
   testIsPowered(flywheel, true)
 })
 
 // Test behaviour for one datapoint
-// ToDo: Add additional test for testing the behaviour after a single datapoint
 
 // Test behaviour for perfect upgoing flank
-// ToDo: Add additional test to test isDwelling, isUnpowered and isPowered with an upgoing flank
 
 // Test behaviour for perfect downgoing flank
-// ToDo: Add additional test to test isDwelling, isUnpowered and isPowered with an downgoing flank
 
 // Test behaviour for perfect stroke
 test('Correct Flywheel behaviour for a noisefree stroke', () => {
@@ -64,7 +64,7 @@ test('Correct Flywheel behaviour for a noisefree stroke', () => {
   testAngularVelocity(flywheel, 0)
   testAngularAcceleration(flywheel, 0)
   testTorque(flywheel, 0)
-  testDragFactor(flywheel, 0.0001)
+  testDragFactor(flywheel, 0.00011)
   testIsDwelling(flywheel, false)
   testIsUnpowered(flywheel, false)
   testIsPowered(flywheel, true)
@@ -87,13 +87,13 @@ test('Correct Flywheel behaviour for a noisefree stroke', () => {
   flywheel.pushValue(0.010526151)
   flywheel.pushValue(0.010511225)
   flywheel.pushValue(0.010386684)
-  testDeltaTime(flywheel, 0.011051853)
-  testSpinningTime(flywheel, 0.088970487)
-  testAngularPosition(flywheel, 9.42477796076938)
-  testAngularVelocity(flywheel, 95.27559080008358)
-  testAngularAcceleration(flywheel, 23.690349229418256)
-  testTorque(flywheel, 3.276778743172323)
-  testDragFactor(flywheel, 0.0001)
+  testDeltaTime(flywheel, 0.011062297)
+  testSpinningTime(flywheel, 0.077918634)
+  testAngularPosition(flywheel, 8.377580409572781)
+  testAngularVelocity(flywheel, 94.69334352755811)
+  testAngularAcceleration(flywheel, 25.82371590019147)
+  testTorque(flywheel, 3.6487763332368353)
+  testDragFactor(flywheel, 0.00011)
   testIsDwelling(flywheel, false)
   testIsUnpowered(flywheel, false)
   testIsPowered(flywheel, true)
@@ -112,13 +112,13 @@ test('Correct Flywheel behaviour for a noisefree stroke', () => {
   flywheel.pushValue(0.011099509)
   flywheel.pushValue(0.011131862)
   flywheel.pushValue(0.011209919)
-  testDeltaTime(flywheel, 0.01089567)
-  testSpinningTime(flywheel, 0.24984299900000007)
-  testAngularPosition(flywheel, 25.132741228718345)
-  testAngularVelocity(flywheel, 96.63189639573201)
-  testAngularAcceleration(flywheel, -28.68758647905641)
-  testTorque(flywheel, -1.9349863078020926)
-  testDragFactor(flywheel, 0.0001)
+  testDeltaTime(flywheel, 0.010722165)
+  testSpinningTime(flywheel, 0.23894732900000007)
+  testAngularPosition(flywheel, 24.085543677521745)
+  testAngularVelocity(flywheel, 96.90300446282997)
+  testAngularAcceleration(flywheel, -30.80944790298386)
+  testTorque(flywheel, -2.1435329286660787)
+  testDragFactor(flywheel, 0.00011)
   testIsDwelling(flywheel, false)
   testIsUnpowered(flywheel, true)
   testIsPowered(flywheel, false)
@@ -137,32 +137,27 @@ test('Correct Flywheel behaviour for a noisefree stroke', () => {
   flywheel.pushValue(0.021099509)
   flywheel.pushValue(0.021131862)
   flywheel.pushValue(0.021209919)
-  testDeltaTime(flywheel, 0.02089567)
-  testSpinningTime(flywheel, 0.45433115300000004)
-  testAngularPosition(flywheel, 40.84070449666731)
-  testAngularVelocity(flywheel, 50.44417826920988)
-  testAngularAcceleration(flywheel, -25.426721357529768)
-  testTorque(flywheel, -2.2882106236273945)
-  testDragFactor(flywheel, 0.0001)
+  testDeltaTime(flywheel, 0.020722165)
+  testSpinningTime(flywheel, 0.43343548300000007)
+  testAngularPosition(flywheel, 39.79350694547071)
+  testAngularVelocity(flywheel, 50.26484699562684)
+  testAngularAcceleration(flywheel, -58.29260187010073)
+  testTorque(flywheel, -5.7320462200230695)
+  testDragFactor(flywheel, 0.00011)
   testIsDwelling(flywheel, true)
   testIsUnpowered(flywheel, true)
   testIsPowered(flywheel, false)
 })
 
 // Test behaviour for noisy upgoing flank
-// ToDo: Add additional test to test isDwelling, isUnpowered and isPowered with an upgoing flank
 
 // Test behaviour for noisy downgoing flank
-// ToDo: Add additional test to test isDwelling, isUnpowered and isPowered with an downgoing flank
 
 // Test behaviour for noisy stroke
-// ToDo: Add additional test to test isDwelling, isUnpowered and isPowered with an upgoing and downgoing flank
 
 // Test drag factor calculation
-// ToDo: Add additional test to test dragfactor calculation
 
 // Test Dynamic stroke detection
-// ToDo: Add additional test to test isDwelling, isUnpowered and isPowered with an upgoing and downgoing flank with dynamic stroke detection
 
 // Test behaviour for not maintaining metrics
 test('Correct Flywheel behaviour at maintainStateOnly', () => {
@@ -174,7 +169,7 @@ test('Correct Flywheel behaviour at maintainStateOnly', () => {
   testAngularVelocity(flywheel, 0)
   testAngularAcceleration(flywheel, 0)
   testTorque(flywheel, 0)
-  testDragFactor(flywheel, 0.0001)
+  testDragFactor(flywheel, 0.00011)
   testIsDwelling(flywheel, false)
   testIsUnpowered(flywheel, false)
   testIsPowered(flywheel, true)
@@ -204,7 +199,7 @@ test('Correct Flywheel behaviour at maintainStateOnly', () => {
   testAngularVelocity(flywheel, 0)
   testAngularAcceleration(flywheel, 0)
   testTorque(flywheel, 0)
-  testDragFactor(flywheel, 0.0001)
+  testDragFactor(flywheel, 0.00011)
   testIsDwelling(flywheel, false)
   testIsUnpowered(flywheel, false)
   testIsPowered(flywheel, true)
@@ -229,7 +224,7 @@ test('Correct Flywheel behaviour at maintainStateOnly', () => {
   testAngularVelocity(flywheel, 0)
   testAngularAcceleration(flywheel, 0)
   testTorque(flywheel, 0)
-  testDragFactor(flywheel, 0.0001)
+  testDragFactor(flywheel, 0.00011)
   testIsDwelling(flywheel, false)
   testIsUnpowered(flywheel, true)
   testIsPowered(flywheel, false)
@@ -240,9 +235,9 @@ test('Correct Flywheel behaviour with a SportsTech WRX700', async () => {
   testSpinningTime(flywheel, 0)
   testAngularPosition(flywheel, 0)
   testDragFactor(flywheel, (rowerProfiles.Sportstech_WRX700.dragFactor / 1000000))
+  flywheel.maintainStateAndMetrics()
 
   // Inject 16 strokes
-  flywheel.maintainStateAndMetrics()
   await replayRowingSession(flywheel.pushValue, { filename: 'recordings/WRX700_2magnets.csv', realtime: false, loop: false })
   testSpinningTime(flywheel, 46.302522627)
   testAngularPosition(flywheel, 741.4158662471912)
@@ -254,9 +249,9 @@ test('Correct Flywheel behaviour with a DKN R-320', async () => {
   testSpinningTime(flywheel, 0)
   testAngularPosition(flywheel, 0)
   testDragFactor(flywheel, (rowerProfiles.DKN_R320.dragFactor / 1000000))
+  flywheel.maintainStateAndMetrics()
 
   // Inject 10 strokes
-  flywheel.maintainStateAndMetrics()
   await replayRowingSession(flywheel.pushValue, { filename: 'recordings/DKNR320.csv', realtime: false, loop: false })
 
   testSpinningTime(flywheel, 22.249536391000003)
@@ -270,9 +265,9 @@ test('Correct Flywheel behaviour with a NordicTrack RX800', async () => {
   testSpinningTime(flywheel, 0)
   testAngularPosition(flywheel, 0)
   testDragFactor(flywheel, (rowerProfiles.NordicTrack_RX800.dragFactor / 1000000))
+  flywheel.maintainStateAndMetrics()
 
   // Inject 10 strokes
-  flywheel.maintainStateAndMetrics()
   await replayRowingSession(flywheel.pushValue, { filename: 'recordings/RX800.csv', realtime: false, loop: false })
 
   testSpinningTime(flywheel, 22.65622640199999)
@@ -286,9 +281,9 @@ test('Correct Flywheel behaviour with a full session on a SportsTech WRX700', as
   testSpinningTime(flywheel, 0)
   testAngularPosition(flywheel, 0)
   testDragFactor(flywheel, (rowerProfiles.Sportstech_WRX700.dragFactor / 1000000))
+  flywheel.maintainStateAndMetrics()
 
   // Inject 846 strokes
-  flywheel.maintainStateAndMetrics()
   await replayRowingSession(flywheel.pushValue, { filename: 'recordings/WRX700_2magnets_session.csv', realtime: false, loop: false })
   testSpinningTime(flywheel, 2342.741183077012)
   testAngularPosition(flywheel, 37337.82868791469)
@@ -301,17 +296,17 @@ test('A full session for a Concept2 RowErg should produce plausible results', as
   testSpinningTime(flywheel, 0)
   testAngularPosition(flywheel, 0)
   testDragFactor(flywheel, (rowerProfiles.Concept2_RowErg.dragFactor / 1000000))
-
   flywheel.maintainStateAndMetrics()
+
   await replayRowingSession(flywheel.pushValue, { filename: 'recordings/Concept2_RowErg_Session_2000meters.csv', realtime: false, loop: false })
-  testSpinningTime(flywheel, 591.0432650000008)
-  testAngularPosition(flywheel, 65961.92655232249)
+
+  testSpinningTime(flywheel, 476.2153029599991)
+  testAngularPosition(flywheel, 55767.458391423614)
   // As we don't detect strokes here (this is a function of Rower.js, the dragcalculation shouldn't be triggered
   testDragFactor(flywheel, (rowerProfiles.Concept2_RowErg.dragFactor / 1000000))
 })
 
 // Test behaviour after reset
-// ToDo: Add additional test to test isDwelling, isUnpowered and isPowered after a reset
 
 function testDeltaTime (flywheel, expectedValue) {
   assert.ok(flywheel.deltaTime() === expectedValue, `deltaTime should be ${expectedValue} sec at ${flywheel.spinningTime()} sec, is ${flywheel.deltaTime()}`)
@@ -352,5 +347,11 @@ function testIsUnpowered (flywheel, expectedValue) {
 function testIsPowered (flywheel, expectedValue) {
   assert.ok(flywheel.isPowered() === expectedValue, `isPowered should be ${expectedValue} at ${flywheel.spinningTime()} sec, is ${flywheel.isPowered()}`)
 }
+
+/*
+function reportAll (flywheel) {
+  assert.ok(0, `deltaTime: ${flywheel.deltaTime()}, spinningTime: ${flywheel.spinningTime()}, ang. pos: ${flywheel.angularPosition()}, ang. vel: ${flywheel.angularVelocity()}, Ang. acc: ${flywheel.angularAcceleration()}, Torque: ${flywheel.torque()}, DF: ${flywheel.dragFactor()}`)
+}
+*/
 
 test.run()
