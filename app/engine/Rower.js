@@ -55,8 +55,8 @@ function createRower (rowerSettings) {
         break
       case (_strokeState === 'WaitingForDrive' && flywheel.isPowered() && flywheel.isAboveMinimumSpeed()):
         // We change into the "Drive" phase since were waiting for a drive phase, and we see a clear force exerted on the flywheel
-        // As we are not certain what caused the "WaitingForDrive", we explicitly start the flywheel maintaining metrics again
         log.debug(`*** Rowing (re)started with a DRIVE phase at time: ${flywheel.spinningTime().toFixed(4)} sec`)
+        // As we are not certain what caused the "WaitingForDrive" (a fresh start or a restart after pause),, we explicitly start the flywheel maintaining metrics again
         flywheel.maintainStateAndMetrics()
         _strokeState = 'Drive'
         startDrivePhase()
@@ -235,18 +235,22 @@ function createRower (rowerSettings) {
   }
 
   function cycleDuration () {
+    // ToDo: return 0 in the situation where the first cycle hasn't completed yet
     return _cycleDuration
   }
 
   function cycleLinearDistance () {
+    // ToDo: return 0 in the situation where the first cycle hasn't completed yet
     return _driveLinearDistance + _recoveryLinearDistance
   }
 
   function cycleLinearVelocity () {
+    // ToDo: return 0 in the situation where the first cycle hasn't completed yet
     return _cycleLinearVelocity
   }
 
   function cyclePower () {
+    // ToDo: return 0 in the situation where the first cycle hasn't completed yet
     return _cyclePower
   }
 
