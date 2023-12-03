@@ -240,8 +240,9 @@ function createFlywheel (rowerSettings) {
   }
 
   function isUnpowered () {
-    if ((deltaTimeSlopeAbove(minumumRecoverySlope.clean()) || torqueAbsent()) && _deltaTime.length() >= flankLength) {
+    if (deltaTimeSlopeAbove(minumumRecoverySlope.clean()) && torqueAbsent() && _deltaTime.length() >= flankLength) {
       // We reached the minimum number of increasing currentDt values
+      // log.info(`*** INFO: recovery detected based on due to slope exceeding recoveryslope = ${deltaTimeSlopeAbove(minumumRecoverySlope.clean())}, exceeding minumumForceBeforeStroke = ${torqueAbsent()}`)
       return true
     } else {
       return false
@@ -257,7 +258,7 @@ function createFlywheel (rowerSettings) {
   }
 
   function deltaTimesAbove (threshold) {
-    if (_deltaTime.numberOfYValuesAbove(threshold) === flankLength) {
+    if (_deltaTime.minimumY() >= threshold && _deltaTime.length() >= flankLength) {
       return true
     } else {
       return false
@@ -265,7 +266,7 @@ function createFlywheel (rowerSettings) {
   }
 
   function deltaTimesEqualorBelow (threshold) {
-    if (_deltaTime.numberOfYValuesEqualOrBelow(threshold) === flankLength) {
+    if (_deltaTime.maximumY() <= threshold && _deltaTime.length() >= flankLength) {
       return true
     } else {
       return false
