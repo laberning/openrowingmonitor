@@ -488,16 +488,6 @@ For a specific flank, our quadratic regression algorithm calculates a single &al
 
 Reducing extreme values while maintaining the true data volatility is a subject for further improvement.
 
-### Quality of the implementation of Quadratic Theil-Senn regression in calculateA()
-
-The implementation of the Quadratic Theil-Senn regression in `FullTSQuadraticSeries.js` contains an optimization that will hurt its accuracy. In theory, all encountered factors for `a` (in generalised formula y = a \* x<sup>2</sup> + b \* x + c ) should be considered in the median calculation. `TSQuadraticSeries` maintains a matrix of all possible `a`'s to determine this median. When calculating the optimal curve between points x<sub>1</sub> and x<sub>3</sub> by calculateA(x<sub>1</sub>, x<sub>3</sub>), all possible intermediate values of x<sub>2</sub> are considered, resulting in a series of `a`'s.
-
-In theory, all resulting `a`'s found by calculateA(x<sub>1</sub>, x<sub>3</sub>) should be returned as an array and all should be considered in the median calculation by `TSQuadraticSeries`'s `push(x,y)` function. However, this results in a large 3D matrix, where sorting and determining the median would be extremely CPU intensive. As this approach would result in a 3D matrix, with length, width and depth sizes close to `flankLength`, a sorting will cost O(n<sup>3</sup>) cycles (at best) before the median can be determined for `a`.
-
-By reducing the result of calculateA(x<sub>1</sub>, x<sub>3</sub>) to a single result, the median `a` of all curves starting at x<sub>1</sub> and ending at x<sub>3</sub>, the matrix in `TSQuadraticSeries` is reduced to a 2D matrix, where sorting is 'only' O(n<sup>2</sup>). However, as a median isn't a commutative operation, this will introduce errors in the resulting data. Tests have shown the effects are minimal and that the current implementation delivers good results.
-
-However, it does imply that a better Quadratic Theil-Senn regression algorithm can improve the algorithms accuracy.
-
 ## References
 
 <a id="1">[1]</a> Anu Dudhia, "The Physics of ErgoMeters" <http://eodg.atm.ox.ac.uk/user/dudhia/rowing/physics/ergometer.html>
