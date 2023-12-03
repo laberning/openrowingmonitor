@@ -119,25 +119,29 @@ export default {
     flywheelInertia: 0.073,
     maximumStrokeTimeBeforePause: 6.0
   },
+
   // Concept2 RowErg, Model D, E and RowErg
   Concept2_RowErg: {
     numOfImpulsesPerRevolution: 6,
-    minimumTimeBetweenImpulses: 0.005,
-    maximumTimeBetweenImpulses: 0.022,
-    flywheelInertia: 0.10163,
-    sprocketRadius: 1.5,
-    flankLength: 12,
-    minimumStrokeQuality: 0.50,
-    minumumRecoverySlope: 0.00070,
-    autoAdjustRecoverySlope: true,
-    autoAdjustRecoverySlopeMargin: 0.035,
-    minumumForceBeforeStroke: 0,
-    minimumDriveTime: 0.46,
-    minimumRecoveryTime: 0.90,
+    sprocketRadius: 1.4,
+    maximumStrokeTimeBeforePause: 6.0,
     dragFactor: 110,
     autoAdjustDragFactor: true,
-    minimumDragQuality: 0.83,
-    dragFactorSmoothing: 3
+    minimumDragQuality: 0.95,
+    dragFactorSmoothing: 3,
+    minimumTimeBetweenImpulses: 0.005,
+    maximumTimeBetweenImpulses: 0.020,
+    flankLength: 12,
+    smoothing: 1,
+    minimumStrokeQuality: 0.36,
+    minumumForceBeforeStroke: 10,
+    minumumRecoverySlope: 0.00070,
+    autoAdjustRecoverySlope: true,
+    autoAdjustRecoverySlopeMargin: 0.04,
+    minimumDriveTime: 0.40,
+    minimumRecoveryTime: 0.90,
+    flywheelInertia: 0.10130,
+    magicConstant: 2.8
   },
 
   // DKN R-320 Air Rower
@@ -196,7 +200,7 @@ export default {
     numOfImpulsesPerRevolution: 2,
     minimumTimeBetweenImpulses: 0.005,
     maximumTimeBetweenImpulses: 0.5,
-    minumumRecoverySlope: 0.125,
+    minumumRecoverySlope: 0,
     flywheelInertia: 0.72,
     dragFactor: 32000
   }
