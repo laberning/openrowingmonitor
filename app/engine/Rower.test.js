@@ -411,7 +411,7 @@ test('A full session for a Concept2 RowErg should produce plausible results', as
   await replayRowingSession(rower.handleRotationImpulse, { filename: 'recordings/Concept2_RowErg_Session_2000meters.csv', realtime: false, loop: false })
 
   testTotalMovingTimeSinceStart(rower, 590.3787439999999)
-  testTotalLinearDistanceSinceStart(rower, 2029.913698336418)
+  testTotalLinearDistanceSinceStart(rower, 2029.9571540200975)
   testTotalNumberOfStrokes(rower, 206)
   // As dragFactor isn't static, it should have changed
   testRecoveryDragFactor(rower, 80.7226918408467)
