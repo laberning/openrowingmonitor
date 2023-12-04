@@ -22,7 +22,7 @@
 
 import loglevel from 'loglevel'
 import { createStreamFilter } from './utils/StreamFilter.js'
-import { createSeries } from './utils/Series.js'
+import { createLabelledBinarySearchTree } from './utils/BinarySearchTree.js'
 import { createOLSLinearSeries } from './utils/OLSLinearSeries.js'
 import { createTSQuadraticSeries } from './utils/FullTSQuadraticSeries.js'
 const log = loglevel.getLogger('RowingEngine')
@@ -116,13 +116,14 @@ function createFlywheel (rowerSettings) {
     }
 
     // Let's make room for a new set of values for angular velocity and acceleration
-    _angularVelocityMatrix[_angularVelocityMatrix.length] = createSeries(flankLength)
-    _angularAccelerationMatrix[_angularAccelerationMatrix.length] = createSeries(flankLength)
+    _angularVelocityMatrix[_angularVelocityMatrix.length] = createLabelledBinarySearchTree()
+    _angularAccelerationMatrix[_angularAccelerationMatrix.length] = createLabelledBinarySearchTree()
 
     let i = 0
     while (i < _angularVelocityMatrix.length) {
-      _angularVelocityMatrix[i].push(_angularDistance.firstDerivativeAtPosition(i))
-      _angularAccelerationMatrix[i].push(_angularDistance.secondDerivativeAtPosition(i))
+      // Please note, the label used in the Binary Search Tree has no meaning, as we will not do any targetted remove actions
+      _angularVelocityMatrix[i].push(i, _angularDistance.firstDerivativeAtPosition(i))
+      _angularAccelerationMatrix[i].push(i, _angularDistance.secondDerivativeAtPosition(i))
       i++
     }
 
