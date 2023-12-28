@@ -131,17 +131,17 @@ Summarizing, both Angular Velocity &omega; and Angular Acceleration &alpha; are 
 
 ### Determining the "drag factor" of the flywheel
 
-In the recovery phase, the only force exerted on the flywheel is the (air-/water-/magnetic-)resistance. Thus we can calculate the *drag factor of the flywheel* based on deceleration through the recovery phase [[1]](#1). This calculation is performed in the `markRecoveryPhaseCompleted()` function of `engine/Flywheel.js`.
+In the recovery phase, the only force exerted on the flywheel is the (air-/water-/magnetic-)resistance. Thus we can calculate the *drag factor of the flywheel* based on deceleration through the recovery phase [[1]](#1). This calculation is performed in the `markRecoveryPhaseCompleted()` function of `engine/Flywheel.js`. There are several approaches described in literature [[1]](#1), which Open Rowing Monitor extends to deliver a reliable and practically applicable approach.
 
 A first numerical approach is presented by through [[1]](#1) in formula 7.2a:
 
 $$ k = - I \* {&Delta;&omega; \over &Delta;t} * {1 \over &Delta;&omega;^2} $$
 
-Where the resulting k should be averaged across the rotations of the flywheel. The downside of this approach is that it introduces &Delta;t in the divider of the drag calculation, making this calculation potentially volatile. Our practical experience based on testing confirms this volatility. An alternative numerical approach is presented by through [[1]](#1) in formula 7.2b:
+Where the resulting k should be averaged across the rotations of the flywheel. The downside of this approach is that it introduces &Delta;t in the divider of the drag calculation, making this calculation potentially volatile, especially in the presence of systematic errors in the flywheel construction (as is the case with Concept2 Model D and later). Our practical experience based on testing confirms this volatility. An alternative numerical approach is presented by through [[1]](#1) in formula 7.2b:
 
 $$ k = -I \* {&Delta;({1 \over &omega;}) \over &Delta;t} $$
 
-Where this is calculated across the entire recovery phase. Again, the presence of &Delta;t in the divider potentially introduces a type of undesired volatility. Testing has shown that even when &Delta;t is chosen to span the entire recovery phase reliably, reducing the effect of single values of *CurrentDt*, the calculated drag factor is more stable but still is too unstable to be used as is: it typically requires averaging across strokes to prevent drag poisoning (i.e. a single bad measurement of *currentDt* throwing off the drag factor significantly, and thus throwing off all dependent linear metrics significantly).
+Where this is calculated across the entire recovery phase. Again, the presence of &Delta;t in the divider potentially introduces a type of undesired volatility. Testing has shown that even when &Delta;t is chosen to span the entire recovery phase, reducing the effect of single values of *CurrentDt*, the calculated drag factor is more stable but still is too unstable to be used as both the &omega;'s used in this calculation still depend on single values of *CurrentDt*. Additionally, small errors in detection of the drive or recovery phase would change &omega; dramatically, throwing off the drag calculation significantly (see also [this elaboration](physics_openrowingmonitor.md#use-of-simplified-power-calculation)). Therefore, such an approach typically requires averaging across strokes to prevent drag poisoning (i.e. a single bad measurement of *currentDt* throwing off the drag factor significantly, and thus throwing off all dependent linear metrics significantly), which still lacks robustness of results as drag tends to fluctuate throughout a session.
 
 To make this calculation more robust, we again turn to regression methods (as suggested by [[7]](#7)).  We can transform formula 7.2 to the definition of the slope of a line, by doing the following:
 
