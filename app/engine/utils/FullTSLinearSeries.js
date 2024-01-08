@@ -31,7 +31,6 @@ function createTSLinearSeries (maxSeriesLength = 0) {
 
   let _A = 0
   let _B = 0
-  let _goodnessOfFit = 0
 
   function push (x, y) {
     // Invariant: A contains all a's (as in the general formula y = a * x^2 + b * x + c)
@@ -88,8 +87,21 @@ function createTSLinearSeries (maxSeriesLength = 0) {
 
   function goodnessOfFit () {
     // This function returns the R^2 as a goodness of fit indicator
+    let i = 0
+    let ssr = 0
+    let sst = 0
     if (X.length() >= 2) {
-      return _goodnessOfFit
+      while (i < X.length() - 1) {
+        ssr =+ Math.pow((Y.get(i) - projectX(X.get(i))), 2)
+        sst =+ Math.pow((Y.get(i) - Y.average()), 2)
+        i++
+      }
+      if (sst !== 0) {
+        const _goodnessOfFit = 1 - (ssr / sst)
+        return _goodnessOfFit
+      } else {
+        return 0
+      }
     } else {
       return 0
     }
@@ -174,7 +186,6 @@ function createTSLinearSeries (maxSeriesLength = 0) {
     A.reset()
     _A = 0
     _B = 0
-    _goodnessOfFit = 0
   }
 
   return {
