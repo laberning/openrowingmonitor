@@ -92,8 +92,8 @@ function createTSLinearSeries (maxSeriesLength = 0) {
     let sst = 0
     if (X.length() >= 2) {
       while (i < X.length() - 1) {
-        ssr =+ Math.pow((Y.get(i) - projectX(X.get(i))), 2)
-        sst =+ Math.pow((Y.get(i) - Y.average()), 2)
+        ssr += Math.pow((Y.get(i) - projectX(X.get(i))), 2)
+        sst += Math.pow((Y.get(i) - Y.average()), 2)
         i++
       }
       if (sst !== 0) {
