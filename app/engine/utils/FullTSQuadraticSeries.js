@@ -129,17 +129,27 @@ function createTSQuadraticSeries (maxSeriesLength = 0) {
 
   function goodnessOfFit () {
     // This function returns the R^2 as a goodness of fit indicator
-    // ToDo: calculate the goodness of fit when called
+    let i = 0
+    let ssr = 0
+    let sst = 0
     if (X.length() >= 2) {
-      // return _goodnessOfFit
-      return 1
+      while (i < X.length() - 1) {
+        ssr =+ Math.pow((Y.get(i) - projectX(X.get(i))), 2)
+        sst =+ Math.pow((Y.get(i) - Y.average()), 2)
+        i++
+      }
+      if (sst !== 0) {
+        const _goodnessOfFit = 1 - (ssr / sst)
+        return _goodnessOfFit
+      } else {
+        return 0
+      }
     } else {
       return 0
     }
   }
 
   function projectX (x) {
-    const _C = coefficientC()
     if (X.length() > 2) {
       return ((_A * x * x) + (_B * x) + _C)
     } else {
