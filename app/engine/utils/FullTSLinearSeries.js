@@ -68,7 +68,7 @@ function createTSLinearSeries (maxSeriesLength = 0) {
       let i = 0
       while (i < X.length() - 1) {
         // Please note , as we need to recreate the B-tree for each newly added datapoint anyway, the label i isn't relevant
-        B.push(i , (Y.get(i) - (_A * X.get(i))))
+        B.push(i, (Y.get(i) - (_A * X.get(i))))
         i++
       }
     }
