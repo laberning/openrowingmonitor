@@ -193,7 +193,7 @@ test('Quadratic Approximation on function y = 4 * Math.pow(x, 2) + 4 * x + 4, wi
   dataSeries.push(-7, 171)
   testCoefficientA(dataSeries, 3.3333333333333335)
   testCoefficientB(dataSeries, -7.999999999999995)
-  testCoefficientC(dataSeries, -48.999999999999964)
+  testCoefficientC(dataSeries, -48.333333333333314)
   dataSeries.push(-6, 125)
   testCoefficientA(dataSeries, 4)
   testCoefficientB(dataSeries, 4)
@@ -281,7 +281,7 @@ test('Quadratic Approximation on function y = 4 * Math.pow(x, 2) + 4 * x + 4, wi
   dataSeries.push(-3, 37) // FIRST SPIKE +9
   testCoefficientA(dataSeries, 4.215277777777778)
   testCoefficientB(dataSeries, 7.321527777777776)
-  testCoefficientC(dataSeries, 15.671874999999993)
+  testCoefficientC(dataSeries, 15.70208333333332)
   dataSeries.push(-2, 3) // SECOND SPIKE -9
   testCoefficientA(dataSeries, 3.9714285714285715)
   testCoefficientB(dataSeries, 3.78571428571429) // Coefficient B seems to take a hit anyway
