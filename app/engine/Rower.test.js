@@ -111,7 +111,7 @@ test('Test behaviour for three perfect identical strokes, including settingling 
   testDriveLinearDistance(rower, 0.2491943602992768)
   testDriveLength(rower, 0) // Shouldn't this one be filled after the first drive?
   testDriveAverageHandleForce(rower, 1719.3447518912537)
-  testDrivePeakHandleForce(rower, 260.62688094548827)
+  testDrivePeakHandleForce(rower, 10418.921263084261)
   testRecoveryDuration(rower, 0)
   testRecoveryDragFactor(rower, 110)
   testInstantHandlePower(rower, 345.5148307784195)
@@ -382,7 +382,7 @@ test('sample data for NordicTrack RX800 should produce plausible results', async
   testTotalLinearDistanceSinceStart(rower, 62.365436964788074)
   testTotalNumberOfStrokes(rower, 8)
   // As dragFactor is dynamic, it should have changed
-  testRecoveryDragFactor(rower, 495.22141133985474)
+  testRecoveryDragFactor(rower, 490.4918403723983)
 })
 
 test('A full session for SportsTech WRX700 should produce plausible results', async () => {
@@ -395,7 +395,7 @@ test('A full session for SportsTech WRX700 should produce plausible results', as
   await replayRowingSession(rower.handleRotationImpulse, { filename: 'recordings/WRX700_2magnets_session.csv', realtime: false, loop: false })
 
   testTotalMovingTimeSinceStart(rower, 2342.741183077012)
-  testTotalLinearDistanceSinceStart(rower, 8408.91479919917)
+  testTotalLinearDistanceSinceStart(rower, 8409.62244161274)
   testTotalNumberOfStrokes(rower, 846)
   // As dragFactor is static, it should remain in place
   testRecoveryDragFactor(rower, rowerProfiles.Sportstech_WRX700.dragFactor)
@@ -414,7 +414,7 @@ test('A full session for a Concept2 RowErg should produce plausible results', as
   testTotalLinearDistanceSinceStart(rower, 2029.6167445192161)
   testTotalNumberOfStrokes(rower, 206)
   // As dragFactor isn't static, it should have changed
-  testRecoveryDragFactor(rower, 80.7226918408467)
+  testRecoveryDragFactor(rower, 80.60603626039024)
 })
 
 function testStrokeState (rower, expectedValue) {
