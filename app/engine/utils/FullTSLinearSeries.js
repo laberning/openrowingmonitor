@@ -2,7 +2,7 @@
 /*
   Open Rowing Monitor, https://github.com/laberning/openrowingmonitor
 
-  The FullTSLinearSeries is a datatype that represents a Linear Series. It allows
+  The TSLinearSeries is a datatype that represents a Linear Series. It allows
   values to be retrieved (like a FiFo buffer, or Queue) but it also includes
   a Theil-Sen estimator Linear Regressor to determine the slope of this timeseries.
 
@@ -60,7 +60,20 @@ function createTSLinearSeries (maxSeriesLength = 0) {
     } else {
       _A = 0
     }
-    _B = Y.average() - (_A * X.average())
+
+    // Calculate all the intercepts for the newly added point and the newly calculated A
+    const B = createLabelledBinarySearchTree()
+    if (X.length() > 1) {
+      // There are at least two points in the X and Y arrays, so let's calculate the intercept
+      let i = 0
+      while (i < X.length() - 1) {
+        // Please note , as we need to recreate the B-tree for each newly added datapoint anyway, the label i isn't relevant
+        B.push(i , (Y.get(i) - (_A * X.get(i))))
+        i++
+      }
+    }
+
+    _B = B.median()
   }
 
   function slope () {
@@ -163,6 +176,14 @@ function createTSLinearSeries (maxSeriesLength = 0) {
     return Y.sum()
   }
 
+  function xAverage () {
+    return X.average()
+  }
+
+  function yAverage () {
+    return Y.average()
+  }
+
   function xSeries () {
     return X.series()
   }
@@ -208,6 +229,8 @@ function createTSLinearSeries (maxSeriesLength = 0) {
     yAtSeriesEnd,
     xSum,
     ySum,
+    xAverage,
+    yAverage,
     xSeries,
     ySeries,
     reset
