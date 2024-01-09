@@ -52,7 +52,7 @@ function createTSQuadraticSeries (maxSeriesLength = 0) {
     let i = 0
     let j = 0
     const linearResidu = createTSLinearSeries(maxSeriesLength)
-    
+
     switch (true) {
       case (X.length() > 2):
         // There are now at least three datapoints in the X and Y arrays, so let's calculate the A portion belonging for the new datapoint via Quadratic Theil-Sen regression
