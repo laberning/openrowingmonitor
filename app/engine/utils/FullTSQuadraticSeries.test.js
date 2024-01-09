@@ -213,7 +213,7 @@ test('Quadratic Approximation on function y = 4 * Math.pow(x, 2) + 4 * x + 4, wi
   dataSeries.push(-2, 13)
   testCoefficientA(dataSeries, 4)
   testCoefficientB(dataSeries, 4)
-  testCoefficientC(dataSeries, 3.8888888888888893) // This is quite acceptable as ORM ignores the C
+  testCoefficientC(dataSeries, 4)
   dataSeries.push(-1, 3)
   testCoefficientA(dataSeries, 4)
   testCoefficientB(dataSeries, 4)
@@ -301,7 +301,7 @@ test('Quadratic Approximation on function y = 4 * Math.pow(x, 2) + 4 * x + 4, wi
   dataSeries.push(2, 29)
   testCoefficientA(dataSeries, 4)
   testCoefficientB(dataSeries, 4)
-  testCoefficientC(dataSeries, 4)
+  testCoefficientC(dataSeries, 5)
   dataSeries.push(3, 51)
   testCoefficientA(dataSeries, 4)
   testCoefficientB(dataSeries, 4)
