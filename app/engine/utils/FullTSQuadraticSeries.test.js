@@ -189,7 +189,7 @@ test('Quadratic Approximation on function y = 4 * Math.pow(x, 2) + 4 * x + 4, wi
   dataSeries.push(-8, 229)
   testCoefficientA(dataSeries, 4)
   testCoefficientB(dataSeries, 4)
-  testCoefficientC(dataSeries, 3.6666666666666643) // This is quite acceptable as ORM ignores the C
+  testCoefficientC(dataSeries, 4)
   dataSeries.push(-7, 171)
   testCoefficientA(dataSeries, 3.3333333333333335)
   testCoefficientB(dataSeries, -7.999999999999995)
@@ -277,7 +277,7 @@ test('Quadratic Approximation on function y = 4 * Math.pow(x, 2) + 4 * x + 4, wi
   dataSeries.push(-4, 53)
   testCoefficientA(dataSeries, 4)
   testCoefficientB(dataSeries, 4)
-  testCoefficientC(dataSeries, 3.8571428571428577)
+  testCoefficientC(dataSeries, 4)
   dataSeries.push(-3, 37) // FIRST SPIKE +9
   testCoefficientA(dataSeries, 4.215277777777778)
   testCoefficientB(dataSeries, 7.321527777777776)
@@ -354,7 +354,7 @@ test('Quadratic TS Estimation should be decent for standard real-life example fr
   dataSeries.push(64, 180.4)
   testCoefficientA(dataSeries, -0.17702838827838824) // In the example, the TI084 results in -0.1737141137, which we consider acceptably close
   testCoefficientB(dataSeries, 15.059093406593405) // In the example, the TI084 results in 14.52117133, which we consider acceptably close
-  testCoefficientC(dataSeries, -34.880354853479844) // In the example, the TI084 results in -21.89774466, which we consider acceptably close
+  testCoefficientC(dataSeries, -37.563076923077006) // In the example, the TI084 results in -21.89774466, which we consider acceptably close
 })
 
 test('Quadratic TS Estimation should be decent for standard real-life example from VarsityTutors with some noise', () => {
@@ -369,7 +369,7 @@ test('Quadratic TS Estimation should be decent for standard real-life example fr
   dataSeries.push(3, 14)
   testCoefficientA(dataSeries, 1.0833333333333333) // The example results in 1.1071 for OLS, which we consider acceptably close
   testCoefficientB(dataSeries, 0.9166666666666667) // The example results in 1 for OLS, which we consider acceptably close
-  testCoefficientC(dataSeries, 0.527777777777778) // The example results in 0.5714 for OLS, which we consider acceptably close
+  testCoefficientC(dataSeries, 0.5000000000000004) // The example results in 0.5714 for OLS, which we consider acceptably close
 })
 
 test('Quadratic TS Estimation should be decent for standard example from VTUPulse with some noise, without the vertex being part of the dataset', () => {
@@ -382,7 +382,7 @@ test('Quadratic TS Estimation should be decent for standard example from VTUPuls
   dataSeries.push(7, 11.5)
   testCoefficientA(dataSeries, 0.8583333333333334) // The example results in 0.7642857 for OLS, which we consider acceptably close given the small sample size
   testCoefficientB(dataSeries, -6.566666666666666) // The example results in -5.5128571 for OLS, which we consider acceptably close given the small sample size
-  testCoefficientC(dataSeries, 15.12083333333333) // The example results in 12.4285714 for OLS, which we consider acceptably close given the small sample size
+  testCoefficientC(dataSeries, 15.174999999999994) // The example results in 12.4285714 for OLS, which we consider acceptably close given the small sample size
 })
 
 test('Quadratic TS Estimation should be decent for standard real-life example from Uni Berlin with some noise without the vertex being part of the dataset', () => {
@@ -415,7 +415,7 @@ test('Quadratic TS Estimation should be decent for standard real-life example fr
   dataSeries.push(0.681745393, -0.83059624)
   testCoefficientA(dataSeries, -2.030477132951317)
   testCoefficientB(dataSeries, 0.6253742507247935)
-  testCoefficientC(dataSeries, 0.2376050557383506)
+  testCoefficientC(dataSeries, 0.2334077291108024)
 })
 
 test('Quadratic TS Estimation should be decent for standard real-life example from Statology.org with some noise and chaotic X values', () => {
@@ -434,7 +434,7 @@ test('Quadratic TS Estimation should be decent for standard real-life example fr
   dataSeries.push(60, 27)
   testCoefficientA(dataSeries, -0.10119047619047619) // The example results in -0.1012 for R after two rounds, which we consider acceptably close
   testCoefficientB(dataSeries, 6.767857142857142) // The example results in 6.7444 for R after two rounds, which we consider acceptably close
-  testCoefficientC(dataSeries, -19.458333333333314) // The example results in 18.2536 for R after two rounds, but for ORM, this factor is irrelevant
+  testCoefficientC(dataSeries, -19.55952380952374) // The example results in 18.2536 for R after two rounds, but for ORM, this factor is irrelevant
 })
 
 test('Quadratic TS Estimation should be decent for standard real-life example from StatsDirect.com with some noise and chaotic X values', () => {
@@ -452,7 +452,7 @@ test('Quadratic TS Estimation should be decent for standard real-life example fr
   dataSeries.push(2930, 1954)
   testCoefficientA(dataSeries, -0.00046251263566907585) // The example results in -0.00045 through QR decomposition by Givens rotations, which we consider acceptably close
   testCoefficientB(dataSeries, 2.429942262608943) // The example results in 2.39893 for QR decomposition by Givens rotations, which we consider acceptably close
-  testCoefficientC(dataSeries, -1230.9398743132388) // The example results in -1216.143887 for QR decomposition by Givens rotations, but for ORM, this factor is irrelevant
+  testCoefficientC(dataSeries, -1221.3216719814116) // The example results in -1216.143887 for QR decomposition by Givens rotations, but for ORM, this factor is irrelevant
 })
 
 test('Quadratic Approximation with a clean function and a reset', () => {
