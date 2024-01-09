@@ -36,8 +36,6 @@ function createTSQuadraticSeries (maxSeriesLength = 0) {
   let _C = 0
 
   function push (x, y) {
-															  
-
     // Invariant: A contains all a's (as in the general formula y = a * x^2 + b * x + c)
     // Where the a's are labeled in the Binary Search Tree with their Xi when they BEGIN in the point (Xi, Yi)
 
@@ -51,12 +49,14 @@ function createTSQuadraticSeries (maxSeriesLength = 0) {
     Y.push(y)
 
     // Calculate the coefficient a for the new interval by adding the newly added datapoint
+    let i = 0
+    let j = 0
+    const linearResidu = createTSLinearSeries(maxSeriesLength)
+    
     switch (true) {
       case (X.length() > 2):
         // There are now at least three datapoints in the X and Y arrays, so let's calculate the A portion belonging for the new datapoint via Quadratic Theil-Sen regression
         // First we calculate the A for the formula
-        let i = 0
-        let j = 0
         while (i < X.length() - 2) {
           j = i + 1
           while (j < X.length() - 1) {
@@ -65,13 +65,10 @@ function createTSQuadraticSeries (maxSeriesLength = 0) {
           }
           i++
         }
-		   
-	   
         _A = A.median()
 
         // Next, we calculate the B and C via Linear regression over the residu
         i = 0
-        const linearResidu = createTSLinearSeries(maxSeriesLength)
         while (i < X.length() - 1) {
           linearResidu.push(X.get(i), Y.get(i) - (_A * Math.pow(X.get(i), 2)))
           i++
@@ -88,9 +85,9 @@ function createTSQuadraticSeries (maxSeriesLength = 0) {
         _C = 0
         break
       default:
-         _A = 0
-         _B = 0
-         _C = 0
+        _A = 0
+        _B = 0
+        _C = 0
     }
   }
 
