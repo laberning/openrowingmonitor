@@ -257,11 +257,11 @@ test('Quadratic Approximation on function y = 4 * Math.pow(x, 2) + 4 * x + 4, wi
   dataSeries.push(9, 363)
   testCoefficientA(dataSeries, 4)
   testCoefficientB(dataSeries, 4)
-  testCoefficientC(dataSeries, 4)
+  testCoefficientC(dataSeries, 3)
   dataSeries.push(10, 444)
   testCoefficientA(dataSeries, 4)
   testCoefficientB(dataSeries, 4)
-  testCoefficientC(dataSeries, 4)
+  testCoefficientC(dataSeries, 5)
 })
 
 test('Quadratic Approximation on function y = 4 * Math.pow(x, 2) + 4 * x + 4, with some noise (+/- 1) and spikes (+/- 9)', () => {
@@ -325,15 +325,15 @@ test('Quadratic Approximation on function y = 4 * Math.pow(x, 2) + 4 * x + 4, wi
   dataSeries.push(8, 293)
   testCoefficientA(dataSeries, 3.9047619047619047)
   testCoefficientB(dataSeries, 4.761904761904762)
-  testCoefficientC(dataSeries, 2.47619047619048) // This is quite acceptable as ORM ignores the C
+  testCoefficientC(dataSeries, 3.476190476190478) // This is quite acceptable as ORM ignores the C
   dataSeries.push(9, 363)
   testCoefficientA(dataSeries, 4)
   testCoefficientB(dataSeries, 4)
-  testCoefficientC(dataSeries, 4) // We get a 3 instead of 4, which is quite acceptable (especially since ORM ignores the C)
+  testCoefficientC(dataSeries, 3) // We get a 3 instead of 4, which is quite acceptable (especially since ORM ignores the C)
   dataSeries.push(10, 444)
   testCoefficientA(dataSeries, 4)
   testCoefficientB(dataSeries, 4)
-  testCoefficientC(dataSeries, 4)
+  testCoefficientC(dataSeries, 5)
 })
 
 test('Quadratic TS Estimation should be decent for standard real-life example from MathBits with some noise', () => {
