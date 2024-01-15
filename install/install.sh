@@ -73,7 +73,7 @@ if [[ $MODEL != Raspberry* ]]; then
 fi
 
 VERSION=$(grep -oP '(?<=^VERSION=).+' /etc/os-release | tr -d '"')
-if [[ $VERSION != "10 (buster)" ]] && [[ $VERSION != "11 (bullseye)" ]]; && [[ $VERSION != "12 (bookworm)" ]]; then
+if [[ $VERSION != "10 (buster)" ]] && [[ $VERSION != "11 (bullseye)" ]] && [[ $VERSION != "12 (bookworm)" ]]; then
   print
   print "Warning: So far this install script has only been tested with Raspberry Pi OS 10 (buster), 11 (bullseye) and OS 12 (bookworm)."
   if ! ask "You are running Raspberry Pi OS $VERSION, are you sure that you want to continue?" N; then
