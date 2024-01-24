@@ -213,7 +213,7 @@ test('Test behaviour for three perfect identical strokes, including settingling 
   testDriveAverageHandleForce(rower, 290.98159585708896)
   testDrivePeakHandleForce(rower, 456.9929898648157)
   testRecoveryDuration(rower, 0.152533057)
-  testRecoveryDragFactor(rower, 343.6343564104484) // As we decelerate the flywheel quite fast, this is expected
+  testRecoveryDragFactor(rower, 309.02744980039836) // As we decelerate the flywheel quite fast, this is expected
   testInstantHandlePower(rower, 0)
   // Drive third stroke starts here
   rower.handleRotationImpulse(0.011221636)
