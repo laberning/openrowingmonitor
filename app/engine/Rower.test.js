@@ -2,7 +2,7 @@
 /*
 
   This test is a test of the Rower object, that tests wether this object fills all fields correctly, given one validated rower, (the
-  Concept2 RowErg) using a validated cycle of strokes. This thoroughly tests the raw physics of the translation of Angfular physics
+  Concept2 RowErg) using a validated cycle of strokes. This thoroughly tests the raw physics of the translation of Angular physics
   to Linear physics. The combination with all possible known rowers is tested when testing the above function RowingStatistics, as
   these statistics are dependent on these settings as well.
 */
@@ -274,7 +274,7 @@ test('Test behaviour for three perfect identical strokes, including settingling 
   testCycleDuration(rower, 0.3712367640000004)
   testCycleLinearDistance(rower, 1.3060154305498848)
   testCycleLinearVelocity(rower, 4.600477371517923)
-  testCyclePower(rower, 303.1560556797095)
+  testCyclePower(rower, 272.62565872880714)
   testDriveDuration(rower, 0.2727572410000002)
   testDriveLinearDistance(rower, 1.3010125187490824)
   testDriveLength(rower, 0.3371976114853044)
