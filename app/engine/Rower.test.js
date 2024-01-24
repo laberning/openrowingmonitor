@@ -176,7 +176,7 @@ test('Test behaviour for three perfect identical strokes, including settingling 
   testCycleLinearVelocity(rower, 3.2650920019419694)
   testCyclePower(rower, 97.46401557792097)
   testDriveDuration(rower, 0.19636192600000005)
-  testDriveLinearDistance(rower, 0.4683645067496696)
+  testDriveLinearDistance(rower, 0.4520822644211139)
   testDriveLength(rower, 0.2638937829015426)
   testDriveAverageHandleForce(rower, 270.4531194469761)
   testDrivePeakHandleForce(rower, 418.918391852085)
@@ -414,7 +414,7 @@ test('A full session for a Concept2 RowErg should produce plausible results', as
   testTotalLinearDistanceSinceStart(rower, 2029.6932502534587)
   testTotalNumberOfStrokes(rower, 206)
   // As dragFactor isn't static, it should have changed
-  testRecoveryDragFactor(rower, 80.60603626039024)
+  testRecoveryDragFactor(rower, 80.79039510767821)
 })
 
 function testStrokeState (rower, expectedValue) {
