@@ -210,7 +210,7 @@ test('Test behaviour for three perfect identical strokes, including settingling 
   testDriveDuration(rower, 0.25056694500000004)
   testDriveLinearDistance(rower, 1.1553213424095137)
   testDriveLength(rower, 0.3371976114853044)
-  testDriveAverageHandleForce(rower, 312.83830506634683)
+  testDriveAverageHandleForce(rower, 290.98159585708896)
   testDrivePeakHandleForce(rower, 480.0144155860976)
   testRecoveryDuration(rower, 0.152533057)
   testRecoveryDragFactor(rower, 343.6343564104484) // As we decelerate the flywheel quite fast, this is expected
