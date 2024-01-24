@@ -36,7 +36,6 @@ function createFlywheel (rowerSettings) {
   const minumumTorqueBeforeStroke = rowerSettings.minumumForceBeforeStroke * (rowerSettings.sprocketRadius / 100)
   const currentDt = createStreamFilter(rowerSettings.smoothing, rowerSettings.maximumTimeBetweenImpulses)
   const _deltaTime = createOLSLinearSeries(flankLength)
-//  const _deltaTime = createTSLinearSeries(flankLength)
   const _angularDistance = createTSQuadraticSeries(flankLength)
   const _angularVelocityMatrix = []
   const _angularAccelerationMatrix = []
@@ -251,7 +250,6 @@ function createFlywheel (rowerSettings) {
   function isUnpowered () {
     if (deltaTimeSlopeAbove(minumumRecoverySlope.weighedAverage()) && torqueAbsent() && _deltaTime.length() >= flankLength) {
       // We reached the minimum number of increasing currentDt values
-      // log.info(`*** INFO: recovery detected based on due to slope exceeding recoveryslope = ${deltaTimeSlopeAbove(minumumRecoverySlope.weighedAverage())}, exceeding minumumForceBeforeStroke = ${torqueAbsent()}`)
       return true
     } else {
       return false
