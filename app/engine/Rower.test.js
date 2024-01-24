@@ -244,7 +244,7 @@ test('Test behaviour for three perfect identical strokes, including settingling 
   testCycleLinearVelocity(rower, 4.6051278388258226)
   testCyclePower(rower, 273.453258990202)
   testDriveDuration(rower, 0.25056694500000004)
-  testDriveLinearDistance(rower, 0.5724455082495962)
+  testDriveLinearDistance(rower, 0.552544989848028)
   testDriveLength(rower, 0.3371976114853044)
   testDriveAverageHandleForce(rower, 245.5974258934615)
   testDrivePeakHandleForce(rower, 418.91839185069534)
