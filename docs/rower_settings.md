@@ -1,7 +1,7 @@
 # Guide for rower specific settings
 
 <!-- markdownlint-disable no-inline-html -->
-This guide helps you to adjust the rowing monitor specifically for a new type of rower or even for your specific use, when the supported rowers don't suffice (you can [find a list of supported rowers here](Supported_Rowers.md)). In this manual, we will guide you through the settings needed to get your machine working. This is a work in progress, and please get in touch through the [GitHub Discussions](https://github.com/laberning/openrowingmonitor/discussions) when you run into problems.
+This guide helps you to adjust the rowing monitor specifically for a new type of rower or even for your specific use, when the supported rowers don't suffice (you can [find a list of supported rowers here](Supported_Rowers.md)). In this manual, we will guide you through the settings needed to get your machine working. This is a work in progress, and please get in touch through the [GitHub Discussions](https://github.com/JaapvanEkris/openrowingmonitor/discussions) when you run into problems.
 
 In this manual, we cover the following topics:
 
@@ -100,7 +100,7 @@ You can use the following commands on the command line to restart after a config
 
 After rowing a bit, there should be a csv file created with raw data. If no strokes or pauses are detected, you can force the writing of these files by pushing the reset button on the GUI. Please read this data in Excel (it is in US format, so you might need to adapt it to your local settings), to check if it is sufficiently clean. After loading it into Excel, you can visualise it, and probably see something similar to the following:
 
-<img src="img/CurrentDt_curve.jpg" width="700">
+<img src="img/CurrentDt_curve.jpg" alt="A curve showing the typical progress of currentDt" width="700">
 
 When the line goes up, the time between impulses from the flywheel goes up, and thus the flywheel is decellerating. When the line goes down, the time between impulses decreases, and thus the flywheel is accelerating. In the first decellerating flank, we see some noise, which Open Rowing Monitor an deal with perfectly. However, looking at the bottom of the first acceleration flank, we see a series of heavy downward spikes. This could be start-up noise, but it also could be systematic across the rowing session. This is problematic as it throws off both stroke detection and many metrics. Typically, it signals an issue in the mechanical construction of the sensor: the frame and sensor vibrate at high speeds, resulting in much noise. Fixing this type of errors is key. We adress two familiar measurement quality issues:
 
@@ -111,7 +111,7 @@ When the line goes up, the time between impulses from the flywheel goes up, and 
 
 A specific issue to be aware of is *switch bounce*, which typically is seen as a valid signal followed by a very short spike. When looking at a set of plotted signals in Excel, it manafests itself as the following:
 
-<img src="img/CurrentDt_With_Lots_Of_Bounce.jpg" width="700">
+<img src="img/CurrentDt_With_Lots_Of_Bounce.jpg" alt="A scatter plot showing the typical progress of currentDt with switch bounce" width="700">
 
 As this example scatterplot curve shows, you can vaguely recognize the typical rowing curve in the measurements between 0.02 and 0.08 seconds. However, you also see a lot of very small spikes where the measurements are below 0.01 seconds. Actually there are so many spikes that it masks the real signal completely for Open Rowing Monitor. It contains sections where the time between pulses is 0.0001 seconds, which would mean that the flywheel would be spinning at 120.000 RPM, which physically is impossible for a simple bicycle wheel used in this example. This type of scater plot and the underlying data clearly suggests that the sensor picks up the magnet twice or more. This is a measurement quality issue that must be adressed.
 
@@ -124,7 +124,7 @@ The preferred solution is to fix the physical underlying cause, this is a better
 
 Another specific issue to watch out for are systemic errors in the magnet placement. For exmple, these 18 pulses from a Concept2 RowErg show a nice clean signal, but also a systematic error, that follows a 6 impulse cycle. As the RowErg has 6 magnets, it is very likely that it is caused by magnets not being perfectly aligned (for example due to production tollerances):
 
-<img src="img/Concept2_RowErg_Construction_tolerances.jpg" width="700">
+<img src="img/Concept2_RowErg_Construction_tolerances.jpg" alt="A curve showing the typical Concept 2 RowErg Sinoid deviation of currentDt for three cycles" width="700">
 
 In some cases, changing the magnet placing or orientation can fix this completely (see for example [this discussion](https://github.com/laberning/openrowingmonitor/discussions/87)), which yields very good results and near-perfect data. Sometimes, you can't fix this or you are unwilling to physically modify the machine. Open Rowing Monitor can handle this kind of systematic error, as long as the *flankLength* (described later) is set to at least two full rotations (in this case, 12 impulses *flankLength* for a 6 magnet machine).
 
@@ -185,7 +185,7 @@ Another option is to change the *gpioPollingInterval*, which determines how accu
 
 A good quality curve of the time between impulses (as captured in the raw datafiles) looks like this:
 
-<img src="img/maximumTimeBetweenImpulses.jpg" width="700">
+<img src="img/maximumTimeBetweenImpulses.jpg" alt="A curve showing the typical progress of currentDt throughout several strokes" width="700">
 
 Here, aside from the startup and spindown, the blue line shows that the impulses typically vary between 0.035 and 0.120 seconds. The red line depicts the *maximumTimeBetweenImpulses*, which is set to 0.120 seconds. When using the raw datafiles, realise that the goal is to distinguish good normal strokes from noise. So at startup it is quite accepted that the flywheel starts too slow to produce valid data during the biggest part of the first drive phase. Also at the end of a session the flywheel should spin down out of valid ranges again. So *maximumTimeBetweenImpulses* could be set lower, sometimes even hitting the "peaks" of the curves, without causing issues in normal use of Open Rowing Monitor (it will add warnings in the logs). Similarily, *minimumTimeBetweenImpulses* could be slightly increased to include some valleys, without causing much issues.
 

@@ -1,13 +1,13 @@
 {
   "name": "openrowingmonitor",
-  "version": "0.8.2",
+  "version": "0.9.0",
   "description": "A free and open source performance monitor for rowing machines",
   "main": "app/server.js",
-  "author": "Lars Berning",
+  "author": "Jaap van Ekris",
   "license": "GPL-3.0",
   "repository": {
     "type": "git",
-    "url": "https://github.com/laberning/openrowingmonitor.git"
+    "url": "https://github.com/JaapvanEkris/openrowingmonitor.git"
   },
   "type": "module",
   "engines": {
@@ -31,24 +31,24 @@
     "pre-commit": "npm run lint && npm test"
   },
   "dependencies": {
-    "@abandonware/bleno": "0.5.1-4",
-    "@abandonware/noble": "1.9.2-15",
-    "chart.js": "^4.2.1",
+    "@abandonware/bleno": "^0.6.1",
+    "@abandonware/noble": "^1.9.2-23",
+    "chart.js": "^4.4.1",
     "chartjs-plugin-datalabels": "^2.2.0",
-    "finalhandler": "1.1.2",
+    "finalhandler": "^1.2.0",
     "form-data": "4.0.0",
-    "incyclist-ant-plus": "^0.1.15",
+    "incyclist-ant-plus": "^0.3.1",
     "lit": "2.1.3",
-    "loglevel": "1.8.0",
+    "loglevel": "^1.9.1",
     "nosleep.js": "0.12.0",
     "pigpio": "3.3.1",
-    "serve-static": "1.14.2",
-    "ws": "8.5.0",
-    "xml2js": "0.4.23"
+    "serve-static": "^1.15.0",
+    "ws": "^8.16.0",
+    "xml2js": "^0.6.2"
   },
   "//fix1Comment": "version 0.5.3-8 currently does not work with bleno",
   "optionalDependencies": {
-    "@abandonware/bluetooth-hci-socket": "0.5.3-7"
+    "@abandonware/bluetooth-hci-socket": "^0.5.3-10"
   },
   "//fix2Comment": "a hacky fix to not install the optional dependency xpc-connect which has a security issue",
   "overrides": {
@@ -83,6 +83,6 @@
     "simple-git-hooks": "2.7.0",
     "snowpack": "3.8.8",
     "tar": "6.1.11",
-    "uvu": "0.5.3"
+    "uvu": "^0.5.6"
   }
 }

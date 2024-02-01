@@ -11,12 +11,15 @@ Before we analyze the physics of a rowing engine, we first need to define the ba
 
 ### Physical systems in a rower
 
-A rowing machine effectively has two fundamental movements: a **linear** (the rowing person moving up and down the rail, or a boat moving forward) and a **rotational** where the energy that the rower inputs in the system is absorbed through a flywheel (either a solid one, or a liquid one) [[1]](#1).
+A rowing machine effectively has two fundamental movements:
 
-<img src="img/physics/indoorrower.png" width="700">
+* a **linear** movement (the rowing person moving up and down the rail, or a boat moving forward) and
+* a **rotational** movement where the energy that the rower inputs in the system is absorbed through a flywheel (either a solid one, or a liquid one) [[1]](#1).
 
-<!-- markdownlint-disable-next-line no-emphasis-as-header -->
-*A basic view of an indoor rower*
+Physically these movements are related, as they are connected by a chain or belt, allowing the rowing person to move the flywheel. This is shown in the following figure:
+
+<img src="img/physics/indoorrower.png" alt="Image showing a rowing machine with its linear and rotational energy systems" width="700">
+<span class="caption">A basic view of an indoor rower's energy systems</span>
 
 The linear and rotational speeds are related: the stronger/faster you pull in the linear direction, the faster the flywheel will rotate. The rotation of the flywheel simulates the effect of a boat in the water: after the stroke, the boat will continue to glide only be dampened by the drag of the boat, so does the flywheel.
 
@@ -41,8 +44,7 @@ stateDiagram-v2
   Recovery --> Drive
 ```
 
-<!-- markdownlint-disable-next-line no-emphasis-as-header -->
-*Basic phases of a rowing stroke*
+<span class="caption">Basic phases of a rowing stroke</span>
 
 On an indoor rower, the rowing cycle will always start with a stroke, followed by a recovery. We define them as follows:
 
@@ -202,14 +204,13 @@ stateDiagram-v2
   Recovery --> Recovery: Flywheel<br>isn't powered
 ```
 
-<!-- markdownlint-disable-next-line no-emphasis-as-header -->
-*Finite state machine of rowing cycle*
+<span class="caption">Finite state machine of rowing cycle</span>
 
 From the perspective of Open Rowing Monitor, there only is a stream of *CurrentDt*'s, which should form the basis of this detection:
 
 The following picture shows the time between impulses through time:
-![Measurements of flywheel](img/physics/flywheelmeasurement.png)
-*example currentDt Measurements of flywheel*
+<img src="img/physics/flywheelmeasurement.png" alt="Image showing the currentDt measurements of the flywheel through time" width="700">
+<span class="caption">example currentDt Measurements of a flywheel</span>
 
 Open Rowing Monitor combines two types of force detection, which work independently: *basic force detection* and *advanced stroke detection*. Both can detect a stroke accuratly, and the combination has proven its use.
 
@@ -227,8 +228,8 @@ In the remainder of this paragraph, we describe the underlying physics of both t
 
 One of the key indicator is the acceleration/decelleration of the flywheel. Looking at a simple visualisation of the rowing stroke, we try to achieve the following:
 
-![Impulses, impulse lengths and rowing cycle phases](img/physics/rowingcycle.png)
-*Impulses, impulse lengths and rowing cycle phases*
+<img src="img/physics/rowingcycle.png" alt="Image showing the relation between Impulses, impulse lengths and rowing cycle phases" width="700">
+<span class="caption">Impulses, impulse lengths and rowing cycle phases</span>
 
 Here we plot the *currentDt* against its sequence number. So, a high *currentDt* means a long time between impulses (so a low *angular velocity*), and a low *currentDt* means that there is a short time between impulses (so a high *angular velocity*).
 
@@ -246,8 +247,8 @@ In Open Rowing Monitor, the settings allow for using the more robust ascending/d
 
 The more advanced, but more vulnerable approach depends on the calculated torque. When looking at *CurrentDt* and Torque over time, we get the following picture:
 
-![Average curves of a rowing machine](img/physics/currentdtandacceleration.png)
-*Average currentDt (red) and Acceleration (blue) of a single stroke on a rowing machine*
+<img src="img/physics/currentdtandacceleration.png" alt="Image showing the average currentDt curves of a rowing machine" width="700">
+<span class="caption">Average currentDt (red) and Acceleration (blue) of a single stroke on a rowing machine</span>
 
 In this graph, we plot *currentDt* and Torque against the time in the stroke. As soon as the Torque of the flywheel becomes below the 0, the *currentDt* begins to lengthen again (i.e. the flywheel is decelerating). As indicated earlier, this is the trigger for the basic force detection algorithm (i.e. when *minumumRecoverySlope*  is set to 0): when the *currentDt* starts to lengthen, the drive-phase is considered complete.
 
@@ -263,11 +264,11 @@ Open Rowing Monitor only will get impulses at discrete points in time. As Open R
 
 Knowing that *Time since start*, Angular Velocity &omega;, Angular Acceleration &alpha;, flywheel Torque &tau; and dragfactor k have been determined in a robust manner by `engine/Flywheel.js`, `engine/Rower.js` can now transform these key rotational metrics in linear metrics. This is done in the `handleRotationImpulse()` function of `engine/Rower.js`, where based on the flywheel state, the relevant metrics are calculated. The following metrics need to be determined:
 
-* The estimated **power produced** by the rower (in Watts): the power the rower produced during the stroke;
+* The estimated **power produced** by the rower (in Watts, denoted with P): the power the rower produced during the stroke;
 
-* The estimated **Linear Velocity** of the boat (in Meters/Second): the speed at which the boat is expected to travel;
+* The estimated **Linear Velocity** of the boat (in Meters/Second, denoted with u): the speed at which the boat is expected to travel;
 
-* The estimated **Linear Distance** of the boat (in Meters): the distance the boat is expected to travel;
+* The estimated **Linear Distance** of the boat (in Meters, denoted with s): the distance the boat is expected to travel;
 
 * The estimated **Drive length** (in meters): the estimated distance travelled by the handle during the drive phase;
 
@@ -474,7 +475,8 @@ However, there are some current practical objections against using these more co
 
 We also observe specific practical issues, which could result in structurally overfitting the dataset, nihilating its noise reduction effect. As the following sample of three rotations of a Concept2 flywheel shows, due to production tolerances or deliberate design constructs, there are **systematic** errors in the data due to magnet placement or magnet polarity. This results in systematic issues in the datastream:
 
-<img src="img/Concept2_RowErg_Construction_tolerances.jpg" width="700">
+<img src="img/Concept2_RowErg_Construction_tolerances.jpg" alt="Image showing the sinoid measurement deviations of a Concept 2 RowErg over three full flywheel rotations" width="700">
+<span class="caption">Deviation of the Concept 2 RowErg</span>
 
 Fitting a quadratic curve with at least two full rotations of data (in this case, 12 datapoints) seems to reduce the noise to very acceptable levels. In our view, fitting a third-degree polynomial would result in a better fit with these systematic errors, but resulting in a much less robust signal.
 

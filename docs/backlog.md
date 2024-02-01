@@ -19,5 +19,4 @@ If you would like to contribute to this project, please read the [Contributing G
 
 ## Ideas
 
-* add video playback to the Web UI
-* implement or integrate some rowing games (i.e. a little 2D or 3D, game implemented as Web Component)
+* Add sounds and indicators for training zones
