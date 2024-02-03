@@ -303,7 +303,7 @@ function logMetrics (metrics) {
 
 /*
 replayRowingSession(handleRotationImpulse, {
-//  filename: 'recordings/2021/04/rx800_2021-04-21_1845_Rowing_30Minutes_Damper8.csv', // 30 minutes, damper 10
+  filename: 'recordings/Concept2_RowErg_Session_2000meters.csv', // Example row from a Concept 2 RowErg, 2000 meters
   realtime: true,
   loop: false
 })

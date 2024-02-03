@@ -14,7 +14,6 @@
 import rowerProfiles from './rowerProfiles.js'
 
 export default {
-  /*
     // example: change the default log level:
     loglevel: {
       default: 'debug'
