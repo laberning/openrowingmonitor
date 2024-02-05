@@ -89,7 +89,7 @@ Uploading your sessions to Strava is an integrated feature, for all other platfo
 
 You will need a Raspberry Pi Zero 2 W, Raspberry Pi 3, Raspberry Pi 4 or Raspberry Pi 5 with a fresh installation of Raspberry Pi OS Lite for this (the 64Bit kernel is preferred). Connect to the device with SSH have a look at the [Detailed Installation Instructions](installation.md) for more information on the software installation and for instructions on how to connect the rowing machine. Don't have a Raspberry Pi, but do have an ESP32 lying about? No problem, our sister project ported [Open Rowing Monitor for the ESP32](https://github.com/Abasz/ESPRowingMonitor), which works well (although uses a bit less accurate math due to platform limitations).
 
-Please observe that active support for the Raspberry Pi Zero W has been dropped as of february 2024 (see [this discussion for more information](https://github.com/JaapvanEkris/openrowingmonitor/discussions/33)), and that installation on the latest version of Raspberry Pi OS Bookworm is impossible due to package conflicts beyond our control. We do maintain branch where we will backport functional improvements until April 2025.
+Please observe that active support for the Raspberry Pi Zero W has been dropped as of february 2024 (see [this discussion for more information](https://github.com/JaapvanEkris/openrowingmonitor/discussions/33)), and that installation on the latest version of Raspberry Pi OS Bookworm is impossible due to package conflicts beyond our control. We do [maintain branch where we will backport functional improvements until April 2025](https://github.com/JaapvanEkris/openrowingmonitor/tree/v1beta_updates_Pi_Zero_W).
 
 ## How it all started
 
