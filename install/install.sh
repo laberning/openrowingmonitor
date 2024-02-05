@@ -131,7 +131,10 @@ ARCHITECTURE=$(uname -m)
 if [[ $ARCHITECTURE == "armv6l" ]];
 then
   print "You are running a system with ARM v6 architecture. Official support for Node.js has been discontinued"
-  print "for ARM v6. Installing experimental unofficial build of Node.js..."
+  print "for ARM v6."
+  print "Due to package conflicts, support for this version of OpenRowingMonitor will cease in April 2025"
+  print
+  print "Installing experimental unofficial build of Node.js..."
 
   # we stick to node 14 as there are problem with WebAssembly on node 16 on the armv6l architecture
   NODEJS_VERSION=v14.18.3
