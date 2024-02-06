@@ -14,6 +14,7 @@ Main contributors: [Jaap van Ekris](https://github.com/JaapvanEkris) and [Abasz]
 
 ### Bugfixes and robustness improvements in 0.9.0
 
+- Added support for the newest version of Raspberry Pi OS (Bookworm), moved from Node.js v16 (EOL) to Node.js v20 (current) and upgraded packages where possible.
 - Added a configuration sanity check which logs obvious errors and (if possible) repairs settings, after several users messed up their config and got completely stuck.
 - The configuration sanity check also provides an automated upgrade path for 0.8.2 (old config) users to 0.9.0 (new config), as all the newly added configuration items between these two versions are automatically detected, logged and repaired.
 - Added restart limits to prevent infinite boot loops of the app crashing and rebooting when there is a config error
