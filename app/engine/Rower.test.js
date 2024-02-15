@@ -1,5 +1,6 @@
 'use strict'
 /*
+  Open Rowing Monitor, https://github.com/JaapvanEkris/openrowingmonitor
 
   This test is a test of the Rower object, that tests wether this object fills all fields correctly, given one validated rower, (the
   Concept2 RowErg) using a validated cycle of strokes. This thoroughly tests the raw physics of the translation of Angular physics
@@ -110,11 +111,11 @@ test('Test behaviour for three perfect identical strokes, including settingling 
   testDriveDuration(rower, 0) // Shouldn't this one be filled after the first drive?
   testDriveLinearDistance(rower, 0.2491943602992768)
   testDriveLength(rower, 0) // Shouldn't this one be filled after the first drive?
-  testDriveAverageHandleForce(rower, 1691.793078056684)
-  testDrivePeakHandleForce(rower, 10246.062011594136)
+  testDriveAverageHandleForce(rower, 249.91096328436572)
+  testDrivePeakHandleForce(rower, 280.43473478416803)
   testRecoveryDuration(rower, 0)
   testRecoveryDragFactor(rower, 110)
-  testInstantHandlePower(rower, 372.0199762100516)
+  testInstantHandlePower(rower, 372.09477620281604)
   // Recovery initial stroke starts here
   rower.handleRotationImpulse(0.010769)
   rower.handleRotationImpulse(0.010707554)
@@ -142,8 +143,8 @@ test('Test behaviour for three perfect identical strokes, including settingling 
   testDriveDuration(rower, 0.19636192600000005)
   testDriveLinearDistance(rower, 0.6407854979124261)
   testDriveLength(rower, 0.2638937829015426)
-  testDriveAverageHandleForce(rower, 851.8820525641245) // This is the first stroke, which always leads to insane data like this
-  testDrivePeakHandleForce(rower, 10246.062011594136)
+  testDriveAverageHandleForce(rower, 247.35502383653122)
+  testDrivePeakHandleForce(rower, 325.1619554833936)
   testRecoveryDuration(rower, 0)
   testRecoveryDragFactor(rower, 110)
   testInstantHandlePower(rower, 0)
@@ -178,11 +179,11 @@ test('Test behaviour for three perfect identical strokes, including settingling 
   testDriveDuration(rower, 0.19636192600000005)
   testDriveLinearDistance(rower, 0.4520822644211139)
   testDriveLength(rower, 0.2638937829015426)
-  testDriveAverageHandleForce(rower, 251.04336322997108)
-  testDrivePeakHandleForce(rower, 396.7011215867992)
+  testDriveAverageHandleForce(rower, 251.12896067596512)
+  testDrivePeakHandleForce(rower, 396.7733761783577)
   testRecoveryDuration(rower, 0.152533057)
   testRecoveryDragFactor(rower, 309.02744980039836)
-  testInstantHandlePower(rower, 526.5255378434941)
+  testInstantHandlePower(rower, 526.7173432408988)
   // Recovery second stroke starts here
   rower.handleRotationImpulse(0.010769)
   rower.handleRotationImpulse(0.010707554)
@@ -210,8 +211,8 @@ test('Test behaviour for three perfect identical strokes, including settingling 
   testDriveDuration(rower, 0.25056694500000004)
   testDriveLinearDistance(rower, 1.1553213424095137)
   testDriveLength(rower, 0.3371976114853044)
-  testDriveAverageHandleForce(rower, 290.98159585708896)
-  testDrivePeakHandleForce(rower, 456.9929898648157)
+  testDriveAverageHandleForce(rower, 290.9778542238004)
+  testDrivePeakHandleForce(rower, 456.96817421319486)
   testRecoveryDuration(rower, 0.152533057)
   testRecoveryDragFactor(rower, 309.02744980039836) // As we decelerate the flywheel quite fast, this is expected
   testInstantHandlePower(rower, 0)
@@ -246,11 +247,11 @@ test('Test behaviour for three perfect identical strokes, including settingling 
   testDriveDuration(rower, 0.25056694500000004)
   testDriveLinearDistance(rower, 0.552544989848028)
   testDriveLength(rower, 0.3371976114853044)
-  testDriveAverageHandleForce(rower, 223.750606354492)
-  testDrivePeakHandleForce(rower, 396.7011215854034)
+  testDriveAverageHandleForce(rower, 223.8446015637509)
+  testDrivePeakHandleForce(rower, 396.7733761769528)
   testRecoveryDuration(rower, 0.09847952300000018)
   testRecoveryDragFactor(rower, 309.02744980039836)
-  testInstantHandlePower(rower, 526.5255378417136)
+  testInstantHandlePower(rower, 526.7173432390936)
   // Recovery third stroke starts here
   rower.handleRotationImpulse(0.010769)
   rower.handleRotationImpulse(0.010707554)
@@ -278,8 +279,8 @@ test('Test behaviour for three perfect identical strokes, including settingling 
   testDriveDuration(rower, 0.2727572410000002)
   testDriveLinearDistance(rower, 1.2557840678364274)
   testDriveLength(rower, 0.36651914291880905)
-  testDriveAverageHandleForce(rower, 272.7765993429924)
-  testDrivePeakHandleForce(rower, 456.99298986363897)
+  testDriveAverageHandleForce(rower, 272.78784054454604)
+  testDrivePeakHandleForce(rower, 456.96817421200865)
   testRecoveryDuration(rower, 0.09847952300000018)
   testRecoveryDragFactor(rower, 309.02744980039836)
   testInstantHandlePower(rower, 0)
@@ -310,8 +311,8 @@ test('Test behaviour for three perfect identical strokes, including settingling 
   testDriveDuration(rower, 0.2727572410000002)
   testDriveLinearDistance(rower, 1.2557840678364274)
   testDriveLength(rower, 0.36651914291880905)
-  testDriveAverageHandleForce(rower, 272.7765993429924)
-  testDrivePeakHandleForce(rower, 456.99298986363897)
+  testDriveAverageHandleForce(rower, 272.78784054454604)
+  testDrivePeakHandleForce(rower, 456.96817421200865)
   testRecoveryDuration(rower, 0.1430115999999999)
   testRecoveryDragFactor(rower, 309.02744980039836)
   testInstantHandlePower(rower, 0)
@@ -379,10 +380,10 @@ test('sample data for NordicTrack RX800 should produce plausible results', async
   await replayRowingSession(rower.handleRotationImpulse, { filename: 'recordings/RX800.csv', realtime: false, loop: false })
 
   testTotalMovingTimeSinceStart(rower, 17.389910236000024)
-  testTotalLinearDistanceSinceStart(rower, 62.49982252262572)
+  testTotalLinearDistanceSinceStart(rower, 62.499750609934196)
   testTotalNumberOfStrokes(rower, 8)
   // As dragFactor is dynamic, it should have changed
-  testRecoveryDragFactor(rower, 493.1277530352103)
+  testRecoveryDragFactor(rower, 493.127960064474)
 })
 
 test('A full session for SportsTech WRX700 should produce plausible results', async () => {
@@ -411,10 +412,10 @@ test('A full session for a Concept2 RowErg should produce plausible results', as
   await replayRowingSession(rower.handleRotationImpulse, { filename: 'recordings/Concept2_RowErg_Session_2000meters.csv', realtime: false, loop: false })
 
   testTotalMovingTimeSinceStart(rower, 590.111937)
-  testTotalLinearDistanceSinceStart(rower, 2029.6932502534587)
+  testTotalLinearDistanceSinceStart(rower, 2029.6932305734617)
   testTotalNumberOfStrokes(rower, 206)
   // As dragFactor isn't static, it should have changed
-  testRecoveryDragFactor(rower, 80.79039510767821)
+  testRecoveryDragFactor(rower, 80.7904433692072)
 })
 
 function testStrokeState (rower, expectedValue) {

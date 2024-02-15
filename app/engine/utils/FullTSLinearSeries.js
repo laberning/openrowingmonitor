@@ -1,6 +1,6 @@
 'use strict'
 /*
-  Open Rowing Monitor, https://github.com/laberning/openrowingmonitor
+  Open Rowing Monitor, https://github.com/JaapvanEkris/openrowingmonitor
 
   The TSLinearSeries is a datatype that represents a Linear Series. It allows
   values to be retrieved (like a FiFo buffer, or Queue) but it also includes
@@ -33,11 +33,11 @@ function createTSLinearSeries (maxSeriesLength = 0) {
   let _B = 0
 
   function push (x, y) {
-    // Invariant: A contains all a's (as in the general formula y = a * x^2 + b * x + c)
+    // Invariant: A contains all a's (as in the general formula y = a * x + b)
     // Where the a's are labeled in the Binary Search Tree with their xi when they BEGIN in the point (xi, yi)
     if (maxSeriesLength > 0 && X.length() >= maxSeriesLength) {
-      // The maximum of the array has been reached, so when pushing the x,y the array gets shifted,
-      // thus we have to remove the a's belonging to the current position X0 as well before this value is trashed
+      // The maximum of the array has been reached, so when pushing the x,y into the arrays, they get shifted automatically,
+      // So, we have to remove the a's belonging to the current position X0 as well before this value is trashed
       A.remove(X.get(0))
     }
 
@@ -49,6 +49,8 @@ function createTSLinearSeries (maxSeriesLength = 0) {
       // There are at least two points in the X and Y arrays, so let's add the new datapoint
       let i = 0
       while (i < X.length() - 1) {
+        // Calculate the slope with all preceeding datapoints with the X.length() - 1'th datapoint (as the array starts at zero)
+        // And store it at its beginpoint (i.e. X.get(i)) to allow remove when that point gets removed from the flank
         A.push(X.get(i), calculateSlope(i, X.length() - 1))
         i++
       }
@@ -66,7 +68,7 @@ function createTSLinearSeries (maxSeriesLength = 0) {
     if (X.length() > 1) {
       // There are at least two points in the X and Y arrays, so let's calculate the intercept
       let i = 0
-      while (i < X.length() - 1) {
+      while (i < X.length()) {
         // Please note , as we need to recreate the B-tree for each newly added datapoint anyway, the label i isn't relevant
         B.push(i, (Y.get(i) - (_A * X.get(i))))
         i++
@@ -101,23 +103,34 @@ function createTSLinearSeries (maxSeriesLength = 0) {
   function goodnessOfFit () {
     // This function returns the R^2 as a goodness of fit indicator
     let i = 0
-    let ssr = 0
+    let sse = 0
     let sst = 0
+    let _goodnessOfFit = 0
     if (X.length() >= 2) {
-      while (i < X.length() - 1) {
-        ssr += Math.pow((Y.get(i) - projectX(X.get(i))), 2)
+      while (i < X.length()) {
+        sse += Math.pow((Y.get(i) - projectX(X.get(i))), 2)
         sst += Math.pow((Y.get(i) - Y.average()), 2)
         i++
       }
-      if (sst !== 0) {
-        const _goodnessOfFit = 1 - (ssr / sst)
-        return _goodnessOfFit
-      } else {
-        return 0
+      switch (true) {
+        case (sse === 0):
+          _goodnessOfFit = 1
+          break
+        case (sse > sst):
+          // This is a pretty bad fit as the error is bigger than just using the line for the average y as intercept
+          _goodnessOfFit = 0
+          break
+        case (sst !== 0):
+          _goodnessOfFit = 1 - (sse / sst)
+          break
+        default:
+          // When SST = 0, R2 isn't defined
+          _goodnessOfFit = 0
       }
     } else {
-      return 0
+      _goodnessOfFit = 0
     }
+    return _goodnessOfFit
   }
 
   function projectX (x) {

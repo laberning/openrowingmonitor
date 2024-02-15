@@ -1,6 +1,6 @@
 'use strict'
 /*
-  Open Rowing Monitor, https://github.com/jaapvanekris/openrowingmonitor
+  Open Rowing Monitor, https://github.com/JaapvanEkris/openrowingmonitor
 */
 import { test } from 'uvu'
 import * as assert from 'uvu/assert'
@@ -90,9 +90,9 @@ test('Correct Flywheel behaviour for a noisefree stroke', () => {
   testDeltaTime(flywheel, 0.011062297)
   testSpinningTime(flywheel, 0.077918634)
   testAngularPosition(flywheel, 8.377580409572781)
-  testAngularVelocity(flywheel, 94.76231358849583)
-  testAngularAcceleration(flywheel, 28.980404808837132)
-  testTorque(flywheel, 3.975668304221995)
+  testAngularVelocity(flywheel, 94.77498684553687)
+  testAngularAcceleration(flywheel, 28.980405331480235)
+  testTorque(flywheel, 3.975932584148498)
   testDragFactor(flywheel, 0.00011)
   testIsDwelling(flywheel, false)
   testIsUnpowered(flywheel, false)
@@ -115,9 +115,9 @@ test('Correct Flywheel behaviour for a noisefree stroke', () => {
   testDeltaTime(flywheel, 0.010722165)
   testSpinningTime(flywheel, 0.23894732900000007)
   testAngularPosition(flywheel, 24.085543677521745)
-  testAngularVelocity(flywheel, 97.13471664858164)
-  testAngularAcceleration(flywheel, -29.657593800236377)
-  testTorque(flywheel, -2.0198310711803433)
+  testAngularVelocity(flywheel, 97.12541571421204)
+  testAngularAcceleration(flywheel, -29.657604177526746)
+  testTorque(flywheel, -2.0200308891605716)
   testDragFactor(flywheel, 0.00011)
   testIsDwelling(flywheel, false)
   testIsUnpowered(flywheel, true)
@@ -140,9 +140,9 @@ test('Correct Flywheel behaviour for a noisefree stroke', () => {
   testDeltaTime(flywheel, 0.020722165)
   testSpinningTime(flywheel, 0.43343548300000007)
   testAngularPosition(flywheel, 39.79350694547071)
-  testAngularVelocity(flywheel, 50.71501160141977)
-  testAngularAcceleration(flywheel, -159.90034506799844)
-  testTorque(flywheel, -16.202804212320103)
+  testAngularVelocity(flywheel, 50.85265548983507)
+  testAngularAcceleration(flywheel, -159.89027501034317)
+  testTorque(flywheel, -16.20022817082592)
   testDragFactor(flywheel, 0.00011)
   testIsDwelling(flywheel, true)
   testIsUnpowered(flywheel, true)

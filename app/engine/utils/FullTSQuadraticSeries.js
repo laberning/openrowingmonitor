@@ -1,6 +1,6 @@
 'use strict'
 /*
-  Open Rowing Monitor, https://github.com/laberning/openrowingmonitor
+  Open Rowing Monitor, https://github.com/JaapvanEkris/openrowingmonitor
 
   The FullTSQuadraticSeries is a datatype that represents a Quadratic Series. It allows
   values to be retrieved (like a FiFo buffer, or Queue) but it also includes
@@ -69,20 +69,12 @@ function createTSQuadraticSeries (maxSeriesLength = 0) {
 
         // Next, we calculate the B and C via Linear regression over the residu
         i = 0
-        while (i < X.length() - 1) {
+        while (i < X.length()) {
           linearResidu.push(X.get(i), Y.get(i) - (_A * Math.pow(X.get(i), 2)))
           i++
         }
         _B = linearResidu.coefficientA()
         _C = linearResidu.coefficientB()
-        break
-      case (X.length() === 2 && X.get(1) - X.get(0) !== 0):
-        // There are only two datapoints, so we need to be creative to get to a quadratic solution
-        // As we know this is part of a 'linear' acceleration, we know that the second derivative should obey 2 * _A = angular acceleration = 2 * angular distance / (delta t)^2
-        _A = (Y.get(1) - Y.get(0)) / Math.pow(X.get(1) - X.get(0), 2)
-        // As the first derivative should match angular velocity (= angular acceleration * (delta t))
-        _B = -2 * _A * X.get(0)
-        _C = 0
         break
       default:
         _A = 0
@@ -141,23 +133,34 @@ function createTSQuadraticSeries (maxSeriesLength = 0) {
   function goodnessOfFit () {
     // This function returns the R^2 as a goodness of fit indicator
     let i = 0
-    let ssr = 0
+    let sse = 0
     let sst = 0
-    if (X.length() >= 2) {
-      while (i < X.length() - 1) {
-        ssr += Math.pow((Y.get(i) - projectX(X.get(i))), 2)
+    let _goodnessOfFit = 0
+    if (X.length() > 2) {
+      while (i < X.length()) {
+        sse += Math.pow((Y.get(i) - projectX(X.get(i))), 2)
         sst += Math.pow((Y.get(i) - Y.average()), 2)
         i++
       }
-      if (sst !== 0) {
-        const _goodnessOfFit = 1 - (ssr / sst)
-        return _goodnessOfFit
-      } else {
-        return 0
+      switch (true) {
+        case (sse === 0):
+          _goodnessOfFit = 1
+          break
+        case (sse > sst):
+          // This is a pretty bad fit as the error is bigger than just using the line for the average y as intercept
+          _goodnessOfFit = 0
+          break
+        case (sst !== 0):
+          _goodnessOfFit = 1 - (sse / sst)
+          break
+        default:
+          // When SST = 0, R2 isn't defined
+          _goodnessOfFit = 0
       }
     } else {
-      return 0
+      _goodnessOfFit = 0
     }
+    return _goodnessOfFit
   }
 
   function projectX (x) {

@@ -1,6 +1,6 @@
 'use strict'
 /*
-  Open Rowing Monitor, https://github.com/jaapvanekris/openrowingmonitor
+  Open Rowing Monitor, https://github.com/JaapvanEkris/openrowingmonitor
 
   This creates an ordered series with labels
   It allows for efficient determining the Median, Number of Above and Below

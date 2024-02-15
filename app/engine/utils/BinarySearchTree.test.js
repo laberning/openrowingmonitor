@@ -1,6 +1,6 @@
 'use strict'
 /*
-  Open Rowing Monitor, https://github.com/laberning/openrowingmonitor
+  Open Rowing Monitor, https://github.com/JaapvanEkris/openrowingmonitor
 
   As this object is fundamental for most other utility objects, we must test its behaviour quite thoroughly
 */
