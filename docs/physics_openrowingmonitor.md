@@ -294,13 +294,13 @@ Combining these formulae, makes
 
 $$ P = I \* ({&Delta;&omega; \over &Delta;t}) \* &omega; + k \* &omega;^3 $$
 
-Although this is an easy technical implementable algorithm by calculating a running sum of this function (see [[3]](#3), and more specifically [[4]](#4)). However, the presence of the many small &omega;'s makes the outcome of this calculation quite volatile, even despite the robust underlying calculation for &omega;. Calculating this across the stroke might be an option, but the presence of &Delta;&omega; would make the power calculation highly dependent on both accurate stroke detection and the accurate determination of instantanous &omega;.
+This is an easy technical implementable algorithm by calculating a running sum of this function (see [[3]](#3), and more specifically [[4]](#4)). However, the presence of the many small &omega;'s makes the outcome of this calculation potentially quite volatile, even despite the robust underlying calculation for &omega;. Calculating this across the stroke might be an option, but the presence of &Delta;&omega; would make the power calculation highly dependent on both accurate stroke detection and the accurate determination of instantanous &omega;.
 
 An alternative approach is given in [[1]](#1), [[2]](#2) and [[3]](#3), which describe that power on a Concept 2 is determined through ([[1]](#1) formula 9.1), which proposes:
 
 $$ \overline{P} = k \* \overline{\omega}^3 $$
 
-Where $\overline{P}$ is the average power and $\overline{\omega}$ is the average angular velocity during the stroke. Here, the average speed can be determined in a robust manner (i.e. ${&Delta;&theta; \over &Delta;t}$ for sufficiently large &Delta;t).
+Where $\overline{P}$ is the average power and $\overline{\omega}$ is the average angular velocity during the stroke. Here, the average speed $\overline{\omega}$ can be determined in a robust manner (i.e. ${&Delta;&theta; \over &Delta;t}$ for the entire cycle, which makes &Delta;t sufficiently large to isolate it from measurement noise).
 
 Dave Venrooy indicates that this formula is accurate with a 5% margin [[3]](#3). Testing this on live data confirms this behavior. Academic research on the accuracy of the Concept 2 RowErg PM5's power measurements [[15]](#15) shows that:
 
@@ -333,13 +333,13 @@ In [[1]](#1) and [[2]](#2), it is described that power on a Concept 2 is determi
 
 $$ \overline{P} = k \* \overline{\omega}^3 = c \* \overline{u}^3 $$
 
-Where c is a constant (2.8 according to [[1]](#1)), $\overline{\omega}$ the average angular velocity and $\overline{u}$ is the average linear velocity, making this formula the essential pivot between rotational and linear velocity and distance.
+Where c is a constant (2.8 according to [[1]](#1)), $\overline{\omega}$ the average angular velocity and $\overline{u}$ is the average linear velocity, making this formula the essential pivot between rotational and linear velocity and distance. Again, the average angular velocity $\overline{\omega}$ can be determined per cycle in a robust manner (i.e. ${&Delta;&theta; \over &Delta;t}$ for the entire cycle, which makes &Delta;t sufficiently large to isolate it from measurement noise).
 
-However, in [[1]](#1) and [[2]](#2), it is suggested that power on a Concept 2 might be determined through (formula 9.4, [[1]](#1)):
+In [[1]](#1) and [[2]](#2), it is suggested that power on a Concept 2 might be determined through (formula 9.4, [[1]](#1)):
 
 $$ \overline{P} = 4.31 \* \overline{u}^{2.75} $$
 
-Based on a simple experiment, downloading the exported data of several rowing sessions from Concept 2's logbook, and comparing the reported velocity and power, it can easily be determined that $\overline{P}$ = 2.8 \* $\overline{u}$<sup>3</sup> offers a much better fit with the data than $\overline{P}$ = 4.31 \* $\overline{u}$<sup>2.75</sup> provides. Therefore, we choose to use formula 9.1. Baed on this, we thus adopt formula 9.1 (from [[1]](#1)) for the calculation of linear velocity u:
+Based on a simple experiment, downloading the exported data of several rowing sessions from Concept 2's logbook, and comparing the reported velocity and power for each stroke, it can be determined that $\overline{P}$ = 2.8 \* $\overline{u}$<sup>3</sup> offers a much better fit with the data than $\overline{P}$ = 4.31 \* $\overline{u}$<sup>2.75</sup> provides. Therefore, we choose to use formula 9.1. Baed on this, we thus adopt formula 9.1 (from [[1]](#1)) for the calculation of linear velocity u:
 
 $$ \overline{u} = ({k \over C})^{1/3} * \overline{\omega} $$
 
@@ -351,7 +351,7 @@ As both k and $\overline{\omega}$ can change from cycle to cycle, this calculati
 
 $$ s = ({k \over C})^{1/3} * &theta; $$
 
-Here, as k can slightly change from cycle to cycle, this calculation should be performed at least once for each cycle. As &theta; isn't dependent on stroke state and changes constantly, it could be recalculated continously throughout the stroke, providing the user with direct feedback of his stroke. It should be noted that this formula is also robust against missed strokes: a missed drive or recovery phase will lump two strokes together, but as the angular displacement &theta; is stroke independent, it will not be affected by it at all. Although missing strokes is undesired behaviour, this approach isolates linear distance calculations from errors in the stroke detection in practice.
+Here, as k can slightly change from cycle to cycle, this calculation should be performed at least once per cycle. As &theta; isn't dependent on stroke state and changes constantly, it could be recalculated continously throughout the stroke, providing the user with direct feedback of his stroke. It should be noted that this formula is also robust against missed strokes: a missed drive or recovery phase will lump two strokes together, but as the angular displacement &theta; is stroke independent, it will not be affected by it at all. Although missing strokes is undesired behaviour, this approach isolates linear distance calculations from errors in the stroke detection in practice.
 
 ### Drive length
 
