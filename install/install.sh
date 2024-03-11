@@ -51,7 +51,7 @@ ask() {
 CURRENT_DIR=$(pwd)
 INSTALL_DIR="/opt/openrowingmonitor"
 GIT_REMOTE="https://github.com/JaapvanEkris/openrowingmonitor.git"
-BRANCH="v1beta_updates"
+BRANCH="main"
 
 print "This script will set up Open Rowing Monitor on one of the following devices"
 print "  Raspberry Pi Zero 2 W or WH"
