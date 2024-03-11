@@ -30,7 +30,7 @@ This guide roughly explains how to set up the rowing software and hardware.
 Connect to the device with SSH and initiate the following command to set up all required dependencies and to install Open Rowing Monitor as an automatically starting system service:
 
 ```zsh
-/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/JaapvanEkris/openrowingmonitor/v1beta_updates/install/install.sh)"
+/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/jaapvanekris/openrowingmonitor/HEAD/install/install.sh)"
 ```
 
 ### Check if OpenRowingMonitor runs without issue
