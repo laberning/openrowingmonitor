@@ -11,14 +11,21 @@ The following rowers are known to work, or are even actively supported:
 | | Model D, E | Air rower | Flywheel | Modification to electrical signal | Active support | Concept2_RowErg | Yes | Yes | None | [Concept 2 Model D, Model E and RowErg setup](hardware_setup_Concept2_RowErg.md) |
 | | RowErg | Air rower | Flywheel | Modification to electrical signal | Active support | Concept2_RowErg | Yes | Yes | None | [Concept 2 Model D, Model E and RowErg setup](hardware_setup_Concept2_RowErg.md) |
 | Decathlon | Rower 120 | Physical friction | Flywheel | Adding sensor and adding magnets to the flywheel | In development | - | - | - | - | see [this discussion](https://github.com/laberning/openrowingmonitor/issues/110) |
-| DKN | R-320 | Air Rower | Flywheel | No | Full support | DKN_R320 | Yes | No | Static drag | - |
-| FDF | Neon Pro V | Air rower | Flywheel | Sensor replacement | Known to work | - | Yes | - | - | see [this](https://github.com/laberning/openrowingmonitor/discussions/87) and [this](https://github.com/JaapvanEkris/openrowingmonitor/discussions/11) discussion|
+| DKN | R-320 | Air Rower | Flywheel | No | Known to work | Sportstech_WRX700 | Yes | Yes | Static drag | [see this discussion)[https://github.com/laberning/openrowingmonitor/discussions/154] |
+| Domyos | FR120 | Air Rower | Flywheel | No | Full support | DKN_R320 | Yes | No | Static drag | - |
+| FDF | FR-E520 | Water rower | Impellor | Sensor replacement | Known to work | - | Yes | - | - | see [this discussion](https://github.com/laberning/openrowingmonitor/discussions/156) |
+| | Neon Pro V | Air rower | Flywheel | Sensor replacement | Known to work | - | Yes | - | - | see [this](https://github.com/laberning/openrowingmonitor/discussions/87) and [this](https://github.com/JaapvanEkris/openrowingmonitor/discussions/11) discussion|
 | ForceUSA | R3 | Air Rower | Flywheel | No | Supported | ForceUSA_R3 | Yes | Yes | None | - |
+| ISE | SY-1750 | Magnetic | Flywheel | Change placement of the reed switches | Known to work | Manual config | Yes | No | Static drag | (see this discussion)[https://github.com/laberning/openrowingmonitor/discussions/143] |
 | Johnson | JAR5100 | Air Rower | Flywheel | Yes, add magnets and sensor | Configuration known | - | Yes | Yes | None | [this discussion](https://github.com/laberning/openrowingmonitor/discussions/139) |
+| NOHRD | WaterRower | Water rower | Impellor | Add sensor | Configuration known | Custom profile | Yes | Yes | None | see [this discussion](https://github.com/laberning/openrowingmonitor/discussions/158) |
 | NordicTrack | RX800 | Hybrid Magnetic and Air rower | Flywheel | None | Full support | NordicTrack_RX800 | Yes | Yes | None | Also known under ProForm brand |
+| Open ergo | - | Air rower | Flywheel | Addition of magnets en sensor | Known to work | - | Yes | Yes | None | Machine specific profile is needed, but is done before, see [example 1](https://github.com/laberning/openrowingmonitor/discussions/80), [example 2](https://github.com/laberning/openrowingmonitor/discussions/105) and [example 3](https://github.com/laberning/openrowingmonitor/discussions/115) |
+| Skandika | Nytta | Water rower | Impellor | Add aditional magnets and sensor | Known to work | Unknown | Yes | Unknown | Unknown | see [this discussion](https://github.com/JaapvanEkris/openrowingmonitor/discussions/24) |
 | Sportstech | WRX700 | Water rower | Impellor | Add one magnet | Active support | Sportstech_WRX700 | Yes | Yes | Static drag | see [Sportstech WRX700 setup](hardware_setup_WRX700.md) |
 | White label | Air Rower | Air rower | Fywheel | None | Supported | Generic_Air_Rower | Yes | Yes | None | Sold under different brand names |
-| Open ergo | - | Air rower | Flywheel | Addition of magnets en sensor | Known to work | - | Yes | Yes | None | Machine specific profile is needed, but is done before, see [example 1](https://github.com/laberning/openrowingmonitor/discussions/80), [example 2](https://github.com/laberning/openrowingmonitor/discussions/105) and [example 3](https://github.com/laberning/openrowingmonitor/discussions/115) |
+| Xebex | Air Rower V2 | Air rower | Flywheel | Modification to the source code | Known to work | Default | Yes | Yes | None | [See this discussion](https://github.com/JaapvanEkris/openrowingmonitor/discussions/28) |
+
 
 If your machine isn't listed, it just means that you need to [adjust the software settings following the settings adjustment guide](rower_settings.md) yourself. But don't worry, in the [GitHub Discussions](https://github.com/laberning/openrowingmonitor/discussions) there always are friendly people to help you set up your machine and the settings.
 
