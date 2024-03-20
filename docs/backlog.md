@@ -7,8 +7,8 @@ If you would like to contribute to this project, please read the [Contributing G
 ## Soon
 
 * validate FTMS with more training applications and harden implementation (i.e. Holofit and Coxswain)
-* add an option to select the damper setting in the Web UI
-* add some more test cases to the rowing engine
+* add possibility for user to define training interval timers (Server.js can already handle this, missing is the frontend to the web and PM5)
+* add possibility for user to define workouts (i.e. training intervals with goals. Server.js can already handle this, missing is the frontend to the web and PM5)
 
 ## Later
 
@@ -19,7 +19,4 @@ If you would like to contribute to this project, please read the [Contributing G
 
 ## Ideas
 
-* add video playback to the Web UI
-* implement or integrate some rowing games (i.e. a little 2D or 3D, game implemented as Web Component)
-* add possibility for user to define training timers (Server.js can already handle this)
-* add possibility for user to define workouts (i.e. training intervals with goals)
+* Add sounds and indicators for training zones

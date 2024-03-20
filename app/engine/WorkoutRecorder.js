@@ -67,7 +67,7 @@ function createWorkoutRecorder () {
     log.info(`saving session as RowingData file ${filename}...`)
 
     // Required file header, please note this includes a typo and odd spaces as the specification demands it!
-    let RowingData = ',index, Stroke Number,TimeStamp (sec), ElapsedTime (sec), HRCur (bpm),DistanceMeters, Cadence (stokes/min), Stroke500mPace (sec/500m), Power (watts), StrokeDistance (meters),' +
+    let RowingData = ',index, Stroke Number, lapIdx,TimeStamp (sec), ElapsedTime (sec), HRCur (bpm),DistanceMeters, Cadence (stokes/min), Stroke500mPace (sec/500m), Power (watts), StrokeDistance (meters),' +
     ' DriveTime (ms), DriveLength (meters), StrokeRecoveryTime (ms),Speed, Horizontal (meters), Calories (kCal), DragFactor, PeakDriveForce (N), AverageDriveForce (N),' +
     'Handle_Force_(N),Handle_Velocity_(m/s),Handle_Power_(W)\n'
 
@@ -78,14 +78,22 @@ function createWorkoutRecorder () {
       trackPointTime = new Date(startTime.getTime() + currentstroke.totalMovingTime * 1000)
       timestamp = trackPointTime.getTime() / 1000
 
-      RowingData += `${currentstroke.totalNumberOfStrokes.toFixed(0)},${currentstroke.totalNumberOfStrokes.toFixed(0)},${currentstroke.totalNumberOfStrokes.toFixed(0)},${timestamp.toFixed(0)},` +
-      `${currentstroke.totalMovingTime.toFixed(2)},${(currentstroke.heartrate > 30 ? currentstroke.heartrate.toFixed(0) : NaN)},${currentstroke.totalLinearDistance.toFixed(1)},` +
+      RowingData += `${currentstroke.totalNumberOfStrokes.toFixed(0)},${currentstroke.totalNumberOfStrokes.toFixed(0)},${currentstroke.totalNumberOfStrokes.toFixed(0)},${currentstroke.intervalNumber.toFixed(0)},${timestamp.toFixed(5)},` +
+      `${currentstroke.totalMovingTime.toFixed(5)},${(currentstroke.heartrate > 30 ? currentstroke.heartrate.toFixed(0) : NaN)},${currentstroke.totalLinearDistance.toFixed(1)},` +
       `${currentstroke.cycleStrokeRate.toFixed(1)},${(currentstroke.totalNumberOfStrokes > 0 ? currentstroke.cyclePace.toFixed(2) : NaN)},${(currentstroke.totalNumberOfStrokes > 0 ? currentstroke.cyclePower.toFixed(0) : NaN)},` +
       `${currentstroke.cycleDistance.toFixed(2)},${(currentstroke.driveDuration * 1000).toFixed(0)},${(currentstroke.totalNumberOfStrokes > 0 ? currentstroke.driveLength.toFixed(2) : NaN)},${(currentstroke.recoveryDuration * 1000).toFixed(0)},` +
       `${(currentstroke.totalNumberOfStrokes > 0 ? currentstroke.cycleLinearVelocity.toFixed(2) : 0)},${currentstroke.totalLinearDistance.toFixed(1)},${currentstroke.totalCalories.toFixed(1)},${currentstroke.dragFactor.toFixed(1)},` +
-      `${(currentstroke.totalNumberOfStrokes > 0 ? currentstroke.drivePeakHandleForce.toFixed(1) : NaN)},${(currentstroke.totalNumberOfStrokes > 0 ? currentstroke.driveAverageHandleForce.toFixed(1) : 0)},"${currentstroke.driveHandleForceCurve}",` +
-      `"${currentstroke.driveHandleVelocityCurve}","${currentstroke.driveHandlePowerCurve}"\n`
+      `${(currentstroke.totalNumberOfStrokes > 0 ? currentstroke.drivePeakHandleForce.toFixed(1) : NaN)},${(currentstroke.totalNumberOfStrokes > 0 ? currentstroke.driveAverageHandleForce.toFixed(1) : 0)},"${currentstroke.driveHandleForceCurve.map(value => value.toFixed(2))}",` +
+      `"${currentstroke.driveHandleVelocityCurve.map(value => value.toFixed(3))}","${currentstroke.driveHandlePowerCurve.map(value => value.toFixed(1))}"\n`
       i++
+    }
+
+    try {
+      await fs.mkdir(directory, { recursive: true })
+    } catch (error) {
+      if (error.code !== 'EEXIST') {
+        log.error(`can not create directory ${directory}`, error)
+      }
     }
     await createFile(RowingData, `${filename}`, false)
   }
@@ -151,10 +159,10 @@ function createWorkoutRecorder () {
         hrrAdittion = `, HRR1: ${postExerciseHR[1] - postExerciseHR[0]} (${postExerciseHR[1]} BPM)`
       }
       if (postExerciseHR.length === 3) {
-        hrrAdittion = `, HRR1: ${postExerciseHR[1] - postExerciseHR[0]} (${postExerciseHR[1]} BPM), HRR2: ${postExerciseHR[2] - postExerciseHR[1]} (${postExerciseHR[2]} BPM)`
+        hrrAdittion = `, HRR1: ${postExerciseHR[1] - postExerciseHR[0]} (${postExerciseHR[1]} BPM), HRR2: ${postExerciseHR[2] - postExerciseHR[0]} (${postExerciseHR[2]} BPM)`
       }
       if (postExerciseHR.length >= 4) {
-        hrrAdittion = `, HRR1: ${postExerciseHR[1] - postExerciseHR[0]} (${postExerciseHR[1]} BPM), HRR2: ${postExerciseHR[2] - postExerciseHR[1]} (${postExerciseHR[2]} BPM), HRR3: ${postExerciseHR[3] - postExerciseHR[2]} (${postExerciseHR[3]} BPM)`
+        hrrAdittion = `, HRR1: ${postExerciseHR[1] - postExerciseHR[0]} (${postExerciseHR[1]} BPM), HRR2: ${postExerciseHR[2] - postExerciseHR[0]} (${postExerciseHR[2]} BPM), HRR3: ${postExerciseHR[3] - postExerciseHR[0]} (${postExerciseHR[3]} BPM)`
       }
     }
 
@@ -270,7 +278,7 @@ function createWorkoutRecorder () {
   }
 
   async function createRecordings () {
-    if (!config.createRawDataFiles && !config.createTcxFiles) {
+    if (!config.createRawDataFiles && !config.createTcxFiles && !config.createRowingDataFiles) {
       return
     }
 
@@ -278,6 +286,8 @@ function createWorkoutRecorder () {
       log.debug('workout is shorter than minimum workout time, skipping automatic creation of recordings...')
       return
     }
+
+    postExerciseHR = []
 
     const parallelCalls = []
 
@@ -301,8 +311,12 @@ function createWorkoutRecorder () {
   function minimumRecordingTimeHasPassed () {
     const minimumRecordingTimeInSeconds = 10
     const rotationImpulseTimeTotal = rotationImpulses.reduce((acc, impulse) => acc + impulse, 0)
-    const strokeTimeTotal = strokes[strokes.length - 1].totalMovingTime
-    return (Math.max(rotationImpulseTimeTotal, strokeTimeTotal) > minimumRecordingTimeInSeconds)
+    if (strokes.length > 0) {
+      const strokeTimeTotal = strokes[strokes.length - 1].totalMovingTime
+      return (Math.max(rotationImpulseTimeTotal, strokeTimeTotal) > minimumRecordingTimeInSeconds)
+    } else {
+      return (rotationImpulseTimeTotal > minimumRecordingTimeInSeconds)
+    }
   }
 
   return {

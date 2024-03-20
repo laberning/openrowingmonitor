@@ -6,12 +6,10 @@
 */
 
 import { AppElement, html, css } from './AppElement.js'
-import { APP_STATE } from '../store/appState.js'
-import { customElement, property } from 'lit/decorators.js'
-import './DashboardMetric.js'
-import './DashboardActions.js'
-import './BatteryIcon.js'
-import { icon_route, icon_stopwatch, icon_bolt, icon_paddle, icon_heartbeat, icon_fire, icon_clock } from '../lib/icons.js'
+import { customElement, property, state } from 'lit/decorators.js'
+import './SettingsDialog.js'
+import { icon_settings } from '../lib/icons.js'
+import { DASHBOARD_METRICS } from '../store/dashboardMetrics.js'
 
 @customElement('performance-dashboard')
 export class PerformanceDashboard extends AppElement {
@@ -22,7 +20,6 @@ export class PerformanceDashboard extends AppElement {
       padding: 1vw;
       grid-gap: 1vw;
       grid-template-columns: repeat(4, minmax(0, 1fr));
-      grid-template-rows: repeat(2, minmax(0, 1fr));
     }
 
     @media (orientation: portrait) {
@@ -32,7 +29,7 @@ export class PerformanceDashboard extends AppElement {
       }
     }
 
-    dashboard-metric, dashboard-actions {
+    dashboard-metric, dashboard-actions, dashboard-force-curve {
       background: var(--theme-widget-color);
       text-align: center;
       position: relative;
@@ -43,64 +40,69 @@ export class PerformanceDashboard extends AppElement {
     dashboard-actions {
       padding: 0.5em 0 0 0;
     }
+
+    .settings {
+      padding: 0.1em 0;
+      position: absolute;
+      bottom: 0;
+      right: 0;
+      z-index: 20;
+    }
+
+    .settings .icon {
+      cursor: pointer;
+      height: 1em;
+    }
+
+    .settings:hover .icon {
+      filter: brightness(150%);
+    }
   `
+  @property()
+    appState = {}
 
-  @property({ type: Object })
-    metrics
+  @state()
+    _dialog
 
-  @property({ type: Object })
-    appState = APP_STATE
+  dashboardMetricComponentsFactory = (appState) => {
+    const metrics = appState.metrics
+    const configs = appState.config
+
+    const dashboardMetricComponents = Object.keys(DASHBOARD_METRICS).reduce((dashboardMetrics, key) => {
+      dashboardMetrics[key] = DASHBOARD_METRICS[key].template(metrics, configs)
+
+      return dashboardMetrics
+    }, {})
+
+    return dashboardMetricComponents
+  }
 
   render () {
-    const metrics = this.calculateFormattedMetrics(this.appState.metrics)
+    const metricConfig = [...new Set(this.appState.config.guiConfigs.dashboardMetrics)].reduce((prev, metricName) => {
+      prev.push(this.dashboardMetricComponentsFactory(this.appState)[metricName])
+      return prev
+    }, [])
+
     return html`
-      <dashboard-metric .icon=${icon_route} .unit=${metrics?.totalLinearDistanceFormatted?.unit || 'm'} .value=${metrics?.totalLinearDistanceFormatted?.value}></dashboard-metric>
-      <dashboard-metric .icon=${icon_stopwatch} unit="/500m" .value=${metrics?.cyclePaceFormatted?.value}></dashboard-metric>
-      <dashboard-metric .icon=${icon_bolt} unit="watt" .value=${metrics?.cyclePower?.value}></dashboard-metric>
-      <dashboard-metric .icon=${icon_paddle} unit="/min" .value=${metrics?.cycleStrokeRate?.value}></dashboard-metric>
-      ${metrics?.heartrate?.value
-        ? html`
-          <dashboard-metric .icon=${icon_heartbeat} unit="bpm" .value=${metrics?.heartrate?.value}>
-            ${metrics?.heartrateBatteryLevel?.value
-              ? html`
-                <battery-icon .batteryLevel=${metrics?.heartrateBatteryLevel?.value}></battery-icon>
-              `
-              : ''
-            }
-          </dashboard-metric>`
-        : html`<dashboard-metric .icon=${icon_paddle} unit="total" .value=${metrics?.totalNumberOfStrokes?.value}></dashboard-metric>`}
-      <dashboard-metric .icon=${icon_fire} unit="kcal" .value=${metrics?.totalCalories?.value}></dashboard-metric>
-      <dashboard-metric .icon=${icon_clock} .value=${metrics?.totalMovingTimeFormatted?.value}></dashboard-metric>
-      <dashboard-actions .appState=${this.appState}></dashboard-actions>
+      <style type="text/css">
+        :host {
+          ${this.appState.config.guiConfigs.maxNumberOfTiles === 12 ? 'grid-template-rows: repeat(3, minmax(0, 1fr));' : 'grid-template-rows: repeat(2, minmax(0, 1fr));'}
+        }
+      </style>
+      <div class="settings" @click=${this.openSettings}>
+        ${icon_settings}
+        ${this._dialog ? this._dialog : ''}
+      </div>
+
+      ${metricConfig}
     `
   }
 
-  // todo: so far this is just a port of the formatter from the initial proof of concept client
-  // we could split this up to make it more readable and testable
-  calculateFormattedMetrics (metrics) {
-    const fieldFormatter = {
-      totalLinearDistanceFormatted: (value) => value >= 10000
-        ? { value: (value / 1000).toFixed(2), unit: 'km' }
-        : { value: Math.round(value), unit: 'm' },
-      totalCalories: (value) => Math.round(value),
-      cyclePower: (value) => Math.round(value),
-      cycleStrokeRate: (value) => Math.round(value)
-    }
+  openSettings () {
+    this._dialog = html`<settings-dialog .config=${this.appState.config.guiConfigs} @close=${dialogClosed}></settings-dialog>`
 
-    const formattedMetrics = {}
-    for (const [key, value] of Object.entries(metrics)) {
-      const valueFormatted = fieldFormatter[key] ? fieldFormatter[key](value) : value
-      if (valueFormatted.value !== undefined && valueFormatted.unit !== undefined) {
-        formattedMetrics[key] = {
-          value: valueFormatted.value,
-          unit: valueFormatted.unit
-        }
-      } else {
-        formattedMetrics[key] = {
-          value: valueFormatted
-        }
-      }
+    function dialogClosed (event) {
+      this._dialog = undefined
     }
-    return formattedMetrics
   }
 }

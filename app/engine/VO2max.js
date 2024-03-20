@@ -96,36 +96,31 @@ function createVO2max (config) {
 
     log.debug(`--- VO2Max Interpolated 2K pace: ${Math.floor(projectedTwoKPace / 60)}:${(projectedTwoKPace % 60).toFixed(1)}`)
     // This implements the table with formulas found at https://www.concept2.com/indoor-rowers/training/calculators/vo2max-calculator
-    if (config.userSettings.highlyTrained) {
-      // Highly trained
-      if (config.userSettings.sex === 'male') {
-        // Highly trained male
-        if (config.userSettings.weight > 75) {
-          // Highly trained male, above 75 Kg
-          Y = 15.7 - (1.5 * projectedTwoKTimeInMinutes)
-        } else {
-          // Highly trained male, equal or below 75 Kg
-          Y = 15.1 - (1.5 * projectedTwoKTimeInMinutes)
-        }
-      } else {
-        // Highly trained female
-        if (config.userSettings.weight > 61.36) {
-          // Highly trained female, above 61.36 Kg
-          Y = 14.9 - (1.5 * projectedTwoKTimeInMinutes)
-        } else {
-          // Highly trained female, equal or below 61.36 Kg
-          Y = 14.6 - (1.5 * projectedTwoKTimeInMinutes)
-        }
-      }
-    } else {
-      // Not highly trained
-      if (config.userSettings.sex === 'male') {
+    switch (true) {
+      case (config.userSettings.sex === 'male' && config.userSettings.highlyTrained && config.userSettings.weight > 75):
+        // Highly trained male, above 75 Kg
+        Y = 15.7 - (1.5 * projectedTwoKTimeInMinutes)
+        break
+      case (config.userSettings.sex === 'male' && config.userSettings.highlyTrained):
+        // Highly trained male, equal or below 75 Kg
+        Y = 15.1 - (1.5 * projectedTwoKTimeInMinutes)
+        break
+      case (config.userSettings.sex === 'male'):
         // Not highly trained male
         Y = 10.7 - (0.9 * projectedTwoKTimeInMinutes)
-      } else {
+        break
+      case (config.userSettings.sex === 'female' && config.userSettings.highlyTrained && config.userSettings.weight > 61.36):
+        // Highly trained female, above 61.36 Kg
+        Y = 14.9 - (1.5 * projectedTwoKTimeInMinutes)
+        break
+      case (config.userSettings.sex === 'female' && config.userSettings.highlyTrained):
+        // Highly trained female, equal or below 61.36 Kg
+        Y = 14.6 - (1.5 * projectedTwoKTimeInMinutes)
+        break
+      case (config.userSettings.sex === 'female'):
         // Not highly trained female
         Y = 10.26 - (0.93 * projectedTwoKTimeInMinutes)
-      }
+        break
     }
     return (Y * 1000) / config.userSettings.weight
   }

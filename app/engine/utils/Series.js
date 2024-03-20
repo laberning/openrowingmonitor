@@ -105,6 +105,22 @@ function createSeries (maxSeriesLength) {
     }
   }
 
+  function minimum () {
+    if (seriesArray.length > 0) {
+      return Math.min(...seriesArray)
+    } else {
+      return 0
+    }
+  }
+
+  function maximum () {
+    if (seriesArray.length > 0) {
+      return Math.max(...seriesArray)
+    } else {
+      return 0
+    }
+  }
+
   function median () {
     if (seriesArray.length > 0) {
       const mid = Math.floor(seriesArray.length / 2)
@@ -140,6 +156,8 @@ function createSeries (maxSeriesLength) {
     numberOfValuesEqualOrBelow,
     sum,
     average,
+    minimum,
+    maximum,
     median,
     series,
     reset

@@ -1,17 +1,17 @@
 {
   "name": "openrowingmonitor",
-  "version": "0.8.2",
+  "version": "0.9.0",
   "description": "A free and open source performance monitor for rowing machines",
   "main": "app/server.js",
-  "author": "Lars Berning",
+  "author": "Jaap van Ekris",
   "license": "GPL-3.0",
   "repository": {
     "type": "git",
-    "url": "https://github.com/laberning/openrowingmonitor.git"
+    "url": "https://github.com/JaapvanEkris/openrowingmonitor.git"
   },
   "type": "module",
   "engines": {
-    "node": ">=14"
+    "node": ">=18"
   },
   "files": [
     "*",
@@ -30,57 +30,55 @@
   "simple-git-hooks": {
     "pre-commit": "npm run lint && npm test"
   },
+  "//fix1Comment": "We install lit@2.8.0 as lit@3.0.0 breaks the webpage displaying metrics",
+  "//fix2Comment": "We hold back bleno, bluetooth-hci-socket and noble, as upgrading destroys HRM compatibility",
   "dependencies": {
-    "@abandonware/bleno": "0.5.1-4",
-    "@abandonware/noble": "1.9.2-15",
-    "ant-plus": "0.1.24",
-    "finalhandler": "1.1.2",
+    "@abandonware/bleno": "^0.5.1-4",
+    "@abandonware/bluetooth-hci-socket": "^0.5.3-7",
+    "@abandonware/noble": "^1.9.2-15",
+    "chart.js": "^4.4.1",
+    "chartjs-plugin-datalabels": "^2.2.0",
+    "finalhandler": "^1.2.0",
     "form-data": "4.0.0",
-    "lit": "2.1.3",
-    "loglevel": "1.8.0",
+    "incyclist-ant-plus": "^0.3.1",
+    "lit": "^2.8.0",
+    "loglevel": "^1.9.1",
     "nosleep.js": "0.12.0",
     "pigpio": "3.3.1",
-    "serve-static": "1.14.2",
-    "ws": "8.5.0",
-    "xml2js": "0.4.23"
+    "serve-static": "^1.15.0",
+    "ws": "^8.16.0",
+    "xml2js": "^0.6.2"
   },
-  "//fix1Comment": "version 0.5.3-8 currently does not work with bleno",
-  "optionalDependencies": {
-    "@abandonware/bluetooth-hci-socket": "0.5.3-7"
-  },
-  "//fix2Comment": "a hacky fix to not install the optional dependency xpc-connect which has a security issue",
-  "overrides": {
-    "@abandonware/bleno": {
-      "xpc-connect@": "npm:debug"
-    }
-  },
+  "//fix3Comment": "We list node-gyp@10.0.1 as an explicit dev dependency as omitting it results in node-gyp@7.1.2 being installed, which breaks the build on Node.js v20",
+  "//fix4Comment": "We stick with rollup@2.79.1 and rollup-plugin-summary@1.4.3 as rollup@3.0.0 and rollup-plugin-summary@2.0.0 break the install process",
   "devDependencies": {
-    "@babel/eslint-parser": "7.17.0",
-    "@babel/plugin-proposal-decorators": "7.17.2",
-    "@babel/preset-env": "7.16.11",
-    "@rollup/plugin-babel": "5.3.0",
-    "@rollup/plugin-commonjs": "21.0.1",
-    "@rollup/plugin-node-resolve": "13.1.3",
+    "@babel/eslint-parser": "^7.23.10",
+    "@babel/plugin-proposal-decorators": "^7.23.9",
+    "@babel/preset-env": "^7.23.9",
+    "@rollup/plugin-babel": "^6.0.4",
+    "@rollup/plugin-commonjs": "^25.0.7",
+    "@rollup/plugin-node-resolve": "^15.2.3",
     "@snowpack/plugin-babel": "2.1.7",
-    "@web/rollup-plugin-html": "1.10.1",
-    "axios": "0.25.0",
-    "eslint": "8.9.0",
-    "eslint-config-standard": "17.0.0-0",
-    "eslint-plugin-import": "2.25.4",
-    "eslint-plugin-lit": "1.6.1",
-    "eslint-plugin-n": "14.0.0",
-    "eslint-plugin-promise": "6.0.0",
-    "eslint-plugin-wc": "1.3.2",
+    "@web/rollup-plugin-html": "^2.1.2",
+    "axios": "^1.6.7",
+    "eslint": "^8.56.0",
+    "eslint-config-standard": "^17.1.0",
+    "eslint-plugin-import": "^2.29.1",
+    "eslint-plugin-lit": "^1.11.0",
+    "eslint-plugin-n": "^16.6.2",
+    "eslint-plugin-promise": "^6.1.1",
+    "eslint-plugin-wc": "^2.0.4",
     "http2-proxy": "5.0.53",
-    "markdownlint-cli2": "0.4.0",
-    "nodemon": "2.0.15",
+    "markdownlint-cli2": "^0.12.1",
+    "node-gyp": "^10.0.1",
+    "nodemon": "^3.0.3",
     "npm-run-all": "4.1.5",
-    "rollup": "2.67.2",
-    "rollup-plugin-summary": "1.3.0",
+    "rollup": "^2.79.1",
+    "rollup-plugin-summary": "^1.4.3",
     "rollup-plugin-terser": "7.0.2",
-    "simple-git-hooks": "2.7.0",
+    "simple-git-hooks": "^2.9.0",
     "snowpack": "3.8.8",
-    "tar": "6.1.11",
-    "uvu": "0.5.3"
+    "tar": "^6.2.0",
+    "uvu": "^0.5.6"
   }
 }

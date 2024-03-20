@@ -146,6 +146,22 @@ function createOLSLinearSeries (maxSeriesLength = 0) {
     return Y.sum()
   }
 
+  function minimumX () {
+    return X.minimum()
+  }
+
+  function minimumY () {
+    return Y.minimum()
+  }
+
+  function maximumX () {
+    return X.maximum()
+  }
+
+  function maximumY () {
+    return Y.maximum()
+  }
+
   function xSeries () {
     return X.series()
   }
@@ -194,6 +210,10 @@ function createOLSLinearSeries (maxSeriesLength = 0) {
     yAtSeriesEnd,
     xSum,
     ySum,
+    minimumX,
+    minimumY,
+    maximumX,
+    maximumY,
     xSeries,
     ySeries,
     reset

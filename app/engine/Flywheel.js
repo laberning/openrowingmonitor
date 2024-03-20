@@ -22,14 +22,16 @@
 
 import loglevel from 'loglevel'
 import { createStreamFilter } from './utils/StreamFilter.js'
-import { createSeries } from './utils/Series.js'
 import { createOLSLinearSeries } from './utils/OLSLinearSeries.js'
+import { createTSLinearSeries } from './utils/FullTSLinearSeries.js'
 import { createTSQuadraticSeries } from './utils/FullTSQuadraticSeries.js'
+import { createWeighedSeries } from './utils/WeighedSeries.js'
+
 const log = loglevel.getLogger('RowingEngine')
 
 function createFlywheel (rowerSettings) {
   const angularDisplacementPerImpulse = (2.0 * Math.PI) / rowerSettings.numOfImpulsesPerRevolution
-  const flankLength = Math.max(3, rowerSettings.flankLength)
+  const flankLength = rowerSettings.flankLength
   const minimumDragFactorSamples = Math.floor(rowerSettings.minimumRecoveryTime / rowerSettings.maximumTimeBetweenImpulses)
   const minumumTorqueBeforeStroke = rowerSettings.minumumForceBeforeStroke * (rowerSettings.sprocketRadius / 100)
   const currentDt = createStreamFilter(rowerSettings.smoothing, rowerSettings.maximumTimeBetweenImpulses)
@@ -37,10 +39,10 @@ function createFlywheel (rowerSettings) {
   const _angularDistance = createTSQuadraticSeries(flankLength)
   const _angularVelocityMatrix = []
   const _angularAccelerationMatrix = []
-  const drag = createStreamFilter(rowerSettings.dragFactorSmoothing, (rowerSettings.dragFactor / 1000000))
-  const recoveryDeltaTime = createOLSLinearSeries()
+  const drag = createWeighedSeries(rowerSettings.dragFactorSmoothing, (rowerSettings.dragFactor / 1000000))
+  const recoveryDeltaTime = createTSLinearSeries()
   const strokedetectionMinimalGoodnessOfFit = rowerSettings.minimumStrokeQuality
-  const minumumRecoverySlope = createStreamFilter(rowerSettings.dragFactorSmoothing, rowerSettings.minumumRecoverySlope)
+  const minumumRecoverySlope = createWeighedSeries(rowerSettings.dragFactorSmoothing, rowerSettings.minumumRecoverySlope)
   let _deltaTimeBeforeFlank
   let _angularVelocityAtBeginFlank
   let _angularVelocityBeforeFlank
@@ -58,7 +60,7 @@ function createFlywheel (rowerSettings) {
   reset()
 
   function pushValue (dataPoint) {
-    if (dataPoint > rowerSettings.maximumStrokeTimeBeforePause || dataPoint < 0) {
+    if (isNaN(dataPoint) || dataPoint < 0 || dataPoint > rowerSettings.maximumStrokeTimeBeforePause) {
       // This typicaly happends after a pause, we need to fix this as it throws off all time calculations
       log.debug(`*** WARNING: currentDt of ${dataPoint} sec isn't between 0 and maximumStrokeTimeBeforePause (${rowerSettings.maximumStrokeTimeBeforePause} sec)`)
       dataPoint = currentDt.clean()
@@ -71,7 +73,7 @@ function createFlywheel (rowerSettings) {
 
     if (dataPoint < rowerSettings.minimumTimeBetweenImpulses && maintainMetrics) {
       // This shouldn't happen, but let's log it to clarify there is some issue going on here
-      log.debug(`*** WARNING: currentDt of ${dataPoint} sec is above minimumTimeBetweenImpulses (${rowerSettings.minimumTimeBetweenImpulses} sec)`)
+      log.debug(`*** WARNING: currentDt of ${dataPoint} sec is below minimumTimeBetweenImpulses (${rowerSettings.minimumTimeBetweenImpulses} sec)`)
     }
 
     currentDt.push(dataPoint)
@@ -116,21 +118,23 @@ function createFlywheel (rowerSettings) {
     }
 
     // Let's make room for a new set of values for angular velocity and acceleration
-    _angularVelocityMatrix[_angularVelocityMatrix.length] = createSeries(flankLength)
-    _angularAccelerationMatrix[_angularAccelerationMatrix.length] = createSeries(flankLength)
+    _angularVelocityMatrix[_angularVelocityMatrix.length] = createWeighedSeries(flankLength, 0)
+    _angularAccelerationMatrix[_angularAccelerationMatrix.length] = createWeighedSeries(flankLength, 0)
 
     let i = 0
+    const goodnessOfFit = _angularDistance.goodnessOfFit()
+
     while (i < _angularVelocityMatrix.length) {
-      _angularVelocityMatrix[i].push(_angularDistance.firstDerivativeAtPosition(i))
-      _angularAccelerationMatrix[i].push(_angularDistance.secondDerivativeAtPosition(i))
+      _angularVelocityMatrix[i].push(_angularDistance.firstDerivativeAtPosition(i), goodnessOfFit)
+      _angularAccelerationMatrix[i].push(_angularDistance.secondDerivativeAtPosition(i), goodnessOfFit)
       i++
     }
 
-    _angularVelocityAtBeginFlank = _angularVelocityMatrix[0].median()
-    _angularAccelerationAtBeginFlank = _angularAccelerationMatrix[0].median()
+    _angularVelocityAtBeginFlank = _angularVelocityMatrix[0].weighedAverage()
+    _angularAccelerationAtBeginFlank = _angularAccelerationMatrix[0].weighedAverage()
 
     // And finally calculate the torque
-    _torqueAtBeginFlank = (rowerSettings.flywheelInertia * _angularAccelerationAtBeginFlank + drag.clean() * Math.pow(_angularVelocityAtBeginFlank, 2))
+    _torqueAtBeginFlank = (rowerSettings.flywheelInertia * _angularAccelerationAtBeginFlank + drag.weighedAverage() * Math.pow(_angularVelocityAtBeginFlank, 2))
   }
 
   function maintainStateOnly () {
@@ -150,24 +154,28 @@ function createFlywheel (rowerSettings) {
     // Completion of the recovery phase
     inRecoveryPhase = false
 
+    // As goodnessOfFit is calculated in-situ (for 220 datapoints on a C2) and is CPU intensive, we only calculate it only once and reuse the cached value
+    const goodnessOfFit = recoveryDeltaTime.goodnessOfFit()
+
     // Calculation of the drag-factor
-    if (rowerSettings.autoAdjustDragFactor && recoveryDeltaTime.length() > minimumDragFactorSamples && recoveryDeltaTime.slope() > 0 && (!drag.reliable() || recoveryDeltaTime.goodnessOfFit() >= rowerSettings.minimumDragQuality)) {
-      drag.push(slopeToDrag(recoveryDeltaTime.slope()))
-      log.debug(`*** Calculated drag factor: ${(slopeToDrag(recoveryDeltaTime.slope()) * 1000000).toFixed(4)}, no. samples: ${recoveryDeltaTime.length()}, Goodness of Fit: ${recoveryDeltaTime.goodnessOfFit().toFixed(4)}`)
+    if (rowerSettings.autoAdjustDragFactor && recoveryDeltaTime.length() > minimumDragFactorSamples && recoveryDeltaTime.slope() > 0 && (!drag.reliable() || goodnessOfFit >= rowerSettings.minimumDragQuality)) {
+      drag.push(slopeToDrag(recoveryDeltaTime.slope()), goodnessOfFit)
+
+      log.debug(`*** Calculated drag factor: ${(slopeToDrag(recoveryDeltaTime.slope()) * 1000000).toFixed(4)}, no. samples: ${recoveryDeltaTime.length()}, Goodness of Fit: ${goodnessOfFit.toFixed(4)}`)
       if (rowerSettings.autoAdjustRecoverySlope) {
         // We are allowed to autoadjust stroke detection slope as well, so let's do that
-        minumumRecoverySlope.push((1 - rowerSettings.autoAdjustRecoverySlopeMargin) * recoveryDeltaTime.slope())
-        log.debug(`*** Calculated recovery slope: ${recoveryDeltaTime.slope().toFixed(6)}, Goodness of Fit: ${recoveryDeltaTime.goodnessOfFit().toFixed(4)}`)
+        minumumRecoverySlope.push((1 - rowerSettings.autoAdjustRecoverySlopeMargin) * recoveryDeltaTime.slope(), goodnessOfFit)
+        log.debug(`*** Calculated recovery slope: ${recoveryDeltaTime.slope().toFixed(6)}, Goodness of Fit: ${goodnessOfFit.toFixed(4)}`)
       } else {
         // We aren't allowed to adjust the slope, let's report the slope to help help the user configure it
-        log.debug(`*** Calculated recovery slope: ${recoveryDeltaTime.slope().toFixed(6)}, Goodness of Fit: ${recoveryDeltaTime.goodnessOfFit().toFixed(4)}, not used as autoAdjustRecoverySlope isn't set to true`)
+        log.debug(`*** Calculated recovery slope: ${recoveryDeltaTime.slope().toFixed(6)}, Goodness of Fit: ${goodnessOfFit.toFixed(4)}, not used as autoAdjustRecoverySlope isn't set to true`)
       }
     } else {
       if (!rowerSettings.autoAdjustDragFactor) {
         // autoAdjustDampingConstant = false, thus the update is skipped, but let's log the dragfactor anyway
         log.debug(`*** Calculated drag factor: ${(slopeToDrag(recoveryDeltaTime.slope()) * 1000000).toFixed(4)}, slope: ${recoveryDeltaTime.slope().toFixed(8)}, not used because autoAdjustDragFactor is not true`)
       } else {
-        log.debug(`*** Calculated drag factor: ${(slopeToDrag(recoveryDeltaTime.slope()) * 1000000).toFixed(4)}, not used because reliability was too low. no. samples: ${recoveryDeltaTime.length()}, fit: ${recoveryDeltaTime.goodnessOfFit().toFixed(4)}`)
+        log.debug(`*** Calculated drag factor: ${(slopeToDrag(recoveryDeltaTime.slope()) * 1000000).toFixed(4)}, not used because reliability was too low. no. samples: ${recoveryDeltaTime.length()}, fit: ${goodnessOfFit.toFixed(4)}`)
       }
     }
   }
@@ -214,7 +222,7 @@ function createFlywheel (rowerSettings) {
 
   function dragFactor () {
     // Ths function returns the current dragfactor of the flywheel
-    return drag.clean()
+    return drag.weighedAverage()
   }
 
   function isDwelling () {
@@ -240,7 +248,7 @@ function createFlywheel (rowerSettings) {
   }
 
   function isUnpowered () {
-    if ((deltaTimeSlopeAbove(minumumRecoverySlope.clean()) || torqueAbsent()) && _deltaTime.length() >= flankLength) {
+    if (deltaTimeSlopeAbove(minumumRecoverySlope.weighedAverage()) && torqueAbsent() && _deltaTime.length() >= flankLength) {
       // We reached the minimum number of increasing currentDt values
       return true
     } else {
@@ -249,7 +257,7 @@ function createFlywheel (rowerSettings) {
   }
 
   function isPowered () {
-    if ((deltaTimeSlopeBelow(minumumRecoverySlope.clean()) && torquePresent()) || _deltaTime.length() < flankLength) {
+    if ((deltaTimeSlopeBelow(minumumRecoverySlope.weighedAverage()) && torquePresent()) || _deltaTime.length() < flankLength) {
       return true
     } else {
       return false
@@ -257,7 +265,7 @@ function createFlywheel (rowerSettings) {
   }
 
   function deltaTimesAbove (threshold) {
-    if (_deltaTime.numberOfYValuesAbove(threshold) === flankLength) {
+    if (_deltaTime.minimumY() >= threshold && _deltaTime.length() >= flankLength) {
       return true
     } else {
       return false
@@ -265,7 +273,7 @@ function createFlywheel (rowerSettings) {
   }
 
   function deltaTimesEqualorBelow (threshold) {
-    if (_deltaTime.numberOfYValuesEqualOrBelow(threshold) === flankLength) {
+    if (_deltaTime.maximumY() <= threshold && _deltaTime.length() >= flankLength) {
       return true
     } else {
       return false
@@ -354,7 +362,8 @@ function createFlywheel (rowerSettings) {
     isDwelling,
     isAboveMinimumSpeed,
     isUnpowered,
-    isPowered
+    isPowered,
+    reset
   }
 }
 

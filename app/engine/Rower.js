@@ -20,9 +20,9 @@ const log = loglevel.getLogger('RowingEngine')
 function createRower (rowerSettings) {
   const flywheel = createFlywheel(rowerSettings)
   const sprocketRadius = rowerSettings.sprocketRadius / 100
-  const driveHandleForce = createCurveMetrics(2)
-  const driveHandleVelocity = createCurveMetrics(3)
-  const driveHandlePower = createCurveMetrics(1)
+  const driveHandleForce = createCurveMetrics()
+  const driveHandleVelocity = createCurveMetrics()
+  const driveHandlePower = createCurveMetrics()
   let _strokeState = 'WaitingForDrive'
   let _totalNumberOfStrokes = -1.0
   let recoveryPhaseStartTime = 0.0
@@ -55,8 +55,8 @@ function createRower (rowerSettings) {
         break
       case (_strokeState === 'WaitingForDrive' && flywheel.isPowered() && flywheel.isAboveMinimumSpeed()):
         // We change into the "Drive" phase since were waiting for a drive phase, and we see a clear force exerted on the flywheel
-        // As we are not certain what caused the "WaitingForDrive", we explicitly start the flywheel maintaining metrics again
         log.debug(`*** Rowing (re)started with a DRIVE phase at time: ${flywheel.spinningTime().toFixed(4)} sec`)
+        // As we are not certain what caused the "WaitingForDrive" (a fresh start or a restart after pause),, we explicitly start the flywheel maintaining metrics again
         flywheel.maintainStateAndMetrics()
         _strokeState = 'Drive'
         startDrivePhase()
@@ -73,7 +73,7 @@ function createRower (rowerSettings) {
         break
       case (_strokeState === 'Drive' && flywheel.isUnpowered()):
         // We seem to have lost power to the flywheel, but it is too early according to the settings. We stay in the Drive Phase
-        log.debug(`Time: ${flywheel.spinningTime().toFixed(4)} sec: Delta Time trend is upwards, suggests no power, but waiting for for drive phase length (${(flywheel.spinningTime() - drivePhaseStartTime).toFixed(4)} sec) to exceed minimumDriveTime (${rowerSettings.minimumDriveTime} sec)`)
+        log.debug(`Time: ${flywheel.spinningTime().toFixed(4)} sec: Delta Time trend is upwards, suggests no power, but waiting for drive phase length (${(flywheel.spinningTime() - drivePhaseStartTime).toFixed(4)} sec) to exceed minimumDriveTime (${rowerSettings.minimumDriveTime} sec)`)
         updateDrivePhase()
         break
       case (_strokeState === 'Drive'):
@@ -235,18 +235,22 @@ function createRower (rowerSettings) {
   }
 
   function cycleDuration () {
+    // ToDo: return 0 in the situation where the first cycle hasn't completed yet
     return _cycleDuration
   }
 
   function cycleLinearDistance () {
+    // ToDo: return 0 in the situation where the first cycle hasn't completed yet
     return _driveLinearDistance + _recoveryLinearDistance
   }
 
   function cycleLinearVelocity () {
+    // ToDo: return 0 in the situation where the first cycle hasn't completed yet
     return _cycleLinearVelocity
   }
 
   function cyclePower () {
+    // ToDo: return 0 in the situation where the first cycle hasn't completed yet
     return _cyclePower
   }
 
@@ -299,8 +303,11 @@ function createRower (rowerSettings) {
   }
 
   function allowMovement () {
-    log.debug(`*** ALLOW MOVEMENT command by RowingEngine recieved at time: ${flywheel.spinningTime().toFixed(4)} sec`)
-    _strokeState = 'WaitingForDrive'
+    if (_strokeState === 'Stopped') {
+      // We have to check whether there actually was a stop/pause, in order to prevent weird behaviour from the state machine
+      log.debug(`*** ALLOW MOVEMENT command by RowingEngine recieved at time: ${flywheel.spinningTime().toFixed(4)} sec`)
+      _strokeState = 'WaitingForDrive'
+    }
   }
 
   function pauseMoving () {
@@ -317,7 +324,7 @@ function createRower (rowerSettings) {
 
   function reset () {
     _strokeState = 'WaitingForDrive'
-    flywheel.maintainStateOnly()
+    flywheel.reset()
     _totalNumberOfStrokes = -1.0
     drivePhaseStartTime = 0.0
     drivePhaseStartAngularPosition = 0.0

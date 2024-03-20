@@ -1,7 +1,7 @@
 # Guide for rower specific settings
 
 <!-- markdownlint-disable no-inline-html -->
-This guide helps you to adjust the rowing monitor specifically for a new type of rower or even for your specific use, when the default rowers don't suffice. In this manual, we will guide you through the settings needed to get your machine working. This is a work in progress, and please get in touch through the [GitHub Discussions](https://github.com/laberning/openrowingmonitor/discussions) when you run into problems.
+This guide helps you to adjust the rowing monitor specifically for a new type of rower or even for your specific use, when the supported rowers don't suffice (you can [find a list of supported rowers here](Supported_Rowers.md)). In this manual, we will guide you through the settings needed to get your machine working. This is a work in progress, and please get in touch through the [GitHub Discussions](https://github.com/JaapvanEkris/openrowingmonitor/discussions) when you run into problems.
 
 In this manual, we cover the following topics:
 
@@ -31,9 +31,9 @@ In this manual, we cover the following topics:
 
 ## Why we need rower specific settings
 
-No rowing machine is the same, and some physical construction parameters are important for the Rowing Monitor to be known to be able to understand your rowing stroke. By far, the easiest way to configure your rower is to select your rower profile from `config/rowerProfiles.js` and put its name in `config/config.js` (i.e. `rowerSettings: rowerProfiles.Concept2_RowErg`). The rowers mentioned there are maintained by us for OpenRowingMonitor and we also structurally test OpenRowingMonitor with samples of these machines and updates setings when needed. For you as a user, this has the benefit that updates in our software are automatically implemented, including updating the settings. So if you make a rower profile for your machine, please send the profile and some raw data (explained below) to us as well so we can maintain it for you.
+No rowing machine is the same, and some physical construction parameters are important for OpenRowingMonitor to be known to be able to understand your rowing stroke. By far, the easiest way to configure your rower is to select your rower profile from `config/rowerProfiles.js` and put its name in `config/config.js` (i.e. `rowerSettings: rowerProfiles.Concept2_RowErg`). The rowers mentioned there are maintained by us for OpenRowingMonitor and we also structurally test OpenRowingMonitor with samples of these machines and updates setings when needed. For you as a user, this has the benefit that updates in our software are automatically implemented, including updating the settings. So if you make a rower profile for your machine, please send the profile and some raw data (explained below) to us as well so we can maintain it for you.
 
-If you want something special, or if your rower isn't in there, this guide will help you set it up. Please note that determining these settings is quite labor-intensive, and typically some hard rowing is involved. If you find suitable settings for a new type of rower, please send in the data and settings, so we can add it to OpenRowingMonitor and make other users happy as well.
+If you want something special, or if your rower isn't in there, this guide will help you set it up. Please note that determining these settings is quite labor-intensive, and typically some hard rowing is involved. As said, if you find suitable settings for a new type of rower, please send in the data and settings, so we can add it to OpenRowingMonitor and make other users happy as well.
 
 ## Check that Open Rowing Monitor works
 
@@ -64,7 +64,21 @@ Please note that the process identification numbers will differ.
 
 ## Making sure the hardware is connected correctly and works as intended
 
+Because any system follows the mantra "Garbage in is garbage out", we first make sure that the signals Open Rowing Monitor recieves are decent. First we check the physical properties, then the electrical properties and last we check the quality of the incoming signal.
+
+**Please check and fix any mechanical/electrical/quality issues before proceeding, as the subsequent steps depend on a signal with decent quality!!**
+
+### Checking the physical properties of the rower
+
+One thing to check is what the original sensor actually measures. You can physically look in the rower, but most manuals also include an exploded view of all parts in the machine. There you need to look at the placement of the sensor and the magnets. Most air-rowers measure the flywheel speed, but most water-rowers measure the handle speed and direction. Open Rowing Monitor is best suited for handling a spinning flywheel or water impellor, or anything directly attached to that. If your machine measures the impellor or flywheel directly, please note the number of magnets per rotation, as you need that parameter later on. So when you encounter a handle-connected machine and it is possible and within your comfort zone, try to add sensors to the flywheel or impellor as it results in much better metrics.
+
+If you are uncomfortable modifying you machine, you can still make OpenRowingMonitor work, but with a loss of data quality. Where a flywheel or impellor can give information about the force and speeds created, the alternative can not. So you end up with a fixed distance per stroke, but you can connect to tools like EXR and the like. By setting *autoAdjustDragFactor* to false, *autoAdjustRecoverySlope* to false, *minumumRecoverySlope* to 0, *minimumStrokeQuality* to 0.01 and other parameters like dragFactor to a realistic well-choosen value (to make the metrics look plausible), OpenRowingMonitor will essentially calculate distance based on impulses encountered. Although not ideal for metrics, this can result in a working solution. Please note that the distance per stroke is essentially fixed, so many more advanced metrics are not relevant and stroke detection might be a bit vulnerable.
+
+### Checking the electrical properties of the rower
+
 Before you physically connect anything to anything else, **check the electric properties of the rower** you are connecting to. Skipping this might destroy your Raspberry Pi as some rowers are known to exceed the Raspberry Pi electrical properties. For example, a Concept 2 RowErg provides 15V signals to the monitor, which will destroy the GPIO-ports. Other rowers provide signals aren't directly detectable by the raspberry Pi. For example, the Concept 2 Model C provides 0.2V pulses, thus staying below the detectable 1.8V treshold that the Raspberry Pi uses. Using a scope or a voltmeter is highly recommended. Please observe that the maximum input a Raspberry Pi GPIO pin can handle is 3.3V and 0.5A, and it will switch at 1.8V (see [this overview of the Raspberry Pi electrical properties](https://raspberrypi.stackexchange.com/questions/3209/what-are-the-min-max-voltage-current-values-the-gpio-pins-can-handle)). In our [GitHub Discussions](https://github.com/laberning/openrowingmonitor/discussions) there are some people who are brilliant with electrical connections, so don't be affraid to ask for help there. When you have a working solution, please report it so that we can include it in the documentation, allowing us to help others.
+
+### Checking signal and measurement quality
 
 Next, when the electric connection has been made, we need to look if the data is recieved well and has sufficient quality to be used. You can change `config/config.js` by
 
@@ -72,7 +86,7 @@ Next, when the electric connection has been made, we need to look if the data is
   sudo nano /opt/openrowingmonitor/config/config.js
   ```
 
-Here, you can change the setting for **createRawDataFiles** by setting:
+Here, you can change the setting for **createRawDataFiles** by setting/adding the following BEFORE the rowerSettings element (so outside the rowerSettings scope):
 
  ```js
  createRawDataFiles: true,
@@ -84,21 +98,37 @@ You can use the following commands on the command line to restart after a config
   sudo systemctl restart openrowingmonitor
   ```
 
-After rowing a bit, there should be a csv file created with raw data. Please read this data in Excel (it is in US format, so you might need to adapt it to your local settings), to check if it is sufficiently clean. After loading it into Excel, you can visualise it, and probably see something similar to the following:
+After rowing a bit, there should be a csv file created with raw data. If no strokes or pauses are detected, you can force the writing of these files by pushing the reset button on the GUI. Please read this data in Excel (it is in US format, so you might need to adapt it to your local settings), to check if it is sufficiently clean. After loading it into Excel, you can visualise it, and probably see something similar to the following:
 
-<img src="img/CurrentDt_curve.jpg" width="700">
+<img src="img/CurrentDt_curve.jpg" alt="A curve showing the typical progress of currentDt" width="700">
 
-When the line goes up, the time between impulses from the flywheel goes up, and thus the flywheel is decellerating. When the line goes down, the time between impulses decreases, and thus the flywheel is accelerating. In the first decellerating flank, we see some noise, which Open Rowing Monitor an deal with perfectly. However, looking at the bottom of the first acceleration flank, we see a series of heavy downward spikes. This could be start-up noise, but it also could be systematic across the rowing session. This is problematic as it throws off both stroke detection and many metrics. Typically, it signals an issue in the mechanical construction of the sensor: the fram and sensor vibrate at high speeds, resulting in much noise.
+When the line goes up, the time between impulses from the flywheel goes up, and thus the flywheel is decellerating. When the line goes down, the time between impulses decreases, and thus the flywheel is accelerating. In the first decellerating flank, we see some noise, which Open Rowing Monitor an deal with perfectly. However, looking at the bottom of the first acceleration flank, we see a series of heavy downward spikes. This could be start-up noise, but it also could be systematic across the rowing session. This is problematic as it throws off both stroke detection and many metrics. Typically, it signals an issue in the mechanical construction of the sensor: the frame and sensor vibrate at high speeds, resulting in much noise. Fixing this type of errors is key. We adress two familiar measurement quality issues:
 
-A specific issue to watch out for are systemic errors in the magnet placement. For exmple, these 18 pulses from a Concept2 RowErg show a systematic error, that follows a 6 impulse cycle. As the RowErg has 6 magnets, it is very likely that it is caused by magnets not being perfectly aligned (for example due to production tollerances):
+* Switch bounce: where a single magnet triggers multiple signals
+* Magnet placement errors: where the timing of magnets is off
 
-<img src="img/Concept2_RowErg_Construction_tolerances.jpg" width="700">
+#### Fixing switch bounce
 
-In some cases, changing the magnet placing or orientation can fix this completely (see for example [this discussion](https://github.com/laberning/openrowingmonitor/discussions/87)), which yields very good results and near-perfect data. Sometimes, you can't fix this. Open Rowing Monitor can handle this kind of systematic error, as long as the *FlankLength* (described later) is set to at least two full rotations (in this case, 12 magnets).
+A specific issue to be aware of is *switch bounce*, which typically is seen as a valid signal followed by a very short spike. When looking at a set of plotted signals in Excel, it manafests itself as the following:
 
-Another specific issue to be aware of is *debounce*, which typically is seen as a valid signal followed by a very short spike. This suggests that the sensor picks up the magnet twice. The preferred solution is to fix the physical underlying cause, this is a better alignment of the magnet or replacing the sensor for a more advanced model that only picks up specific signals. However, this might not be practical: some flywheels are extremely well-balanced, and moving magnets might destroy that balance. To prevent that type of error, the **gpioMinimumPulseLength** setting allows you to require a minimal signal length, removing these ghost readings. This is a bit of a try and error process: you'll need to row and increase the value **gpioMinimumPulseLength** further when you see ghost readings, and repeat this process until the noise is acceptable.
+<img src="img/CurrentDt_With_Lots_Of_Bounce.jpg" alt="A scatter plot showing the typical progress of currentDt with switch bounce" width="700">
 
-Please fix any mechanical issues before proceeding.
+As this example scatterplot curve shows, you can vaguely recognize the typical rowing curve in the measurements between 0.02 and 0.08 seconds. However, you also see a lot of very small spikes where the measurements are below 0.01 seconds. Actually there are so many spikes that it masks the real signal completely for Open Rowing Monitor. It contains sections where the time between pulses is 0.0001 seconds, which would mean that the flywheel would be spinning at 120.000 RPM, which physically is impossible for a simple bicycle wheel used in this example. This type of scater plot and the underlying data clearly suggests that the sensor picks up the magnet twice or more. This is a measurement quality issue that must be adressed.
+
+The preferred solution is to fix the physical underlying cause, this is a better alignment of the magnet or replacing the sensor for a more advanced model that only picks up specific signals. Using smaller but more powerful magnets also tends to help. However, this might not be practical: some flywheels are extremely well-balanced, and moving or replacing magnets might destroy that balance. To fix that type of error, there are two options:
+
+* Changing the **gpioMinimumPulseLength** setting allows you to require a minimal signal length, most likely removing these ghost readings. This is a bit of a try and error process: you'll need to row and increase the value **gpioMinimumPulseLength** further with steps of 50 us when you still see ghost readings, and repeat this process until the noise is acceptable.
+* Another aveue to persue is to change the detected flank from the default 'Up' to 'Down' in the **gpioTriggeredFlank**, as sometimes the downward flank might be less affected by this issue.
+
+#### Fixing magnet placement errors
+
+Another specific issue to watch out for are systemic errors in the magnet placement. For exmple, these 18 pulses from a Concept2 RowErg show a nice clean signal, but also a systematic error, that follows a 6 impulse cycle. As the RowErg has 6 magnets, it is very likely that it is caused by magnets not being perfectly aligned (for example due to production tollerances):
+
+<img src="img/Concept2_RowErg_Construction_tolerances.jpg" alt="A curve showing the typical Concept 2 RowErg Sinoid deviation of currentDt for three cycles" width="700">
+
+In some cases, changing the magnet placing or orientation can fix this completely (see for example [this discussion](https://github.com/laberning/openrowingmonitor/discussions/87)), which yields very good results and near-perfect data. Sometimes, you can't fix this or you are unwilling to physically modify the machine. Open Rowing Monitor can handle this kind of systematic error, as long as the *flankLength* (described later) is set to at least two full rotations (in this case, 12 impulses *flankLength* for a 6 magnet machine).
+
+**Please fix any mechanical/electrical/quality issues before proceeding, as the subsequent steps depend on a signal with decent quality!!**
 
 ## Setting up a more detailed logging for a better insight into Open Rowing Monitor
 
@@ -135,7 +165,7 @@ This allows you to see the current state of the rower. Typically this will show:
   Sep 12 20:38:09 roeimachine npm[802]: websocket client connected
   ```
 
-This shows that Open Rowing Monitor is running, and that bluetooth and the webserver are alive, and that the webclient has connected. We will use this to get some grip on Open Rowing Monitor's settings throughout the process.
+This shows that OpenRowingMonitor is running, and that bluetooth and the webserver are alive, and that the webclient has connected. We will use this to get some grip on Open Rowing Monitor's settings throughout the process.
 
 ## Critical parameters you must change or review for noise reduction
 
@@ -147,17 +177,29 @@ When you look at the raw dump of *CurrentDT*, it should provide a nice curve. Wh
 
 Another option is to change the *gpioPollingInterval*, which determines how accurate the measurements are. Please note that increasing this will increase the CPU load, so setting it to 1us might come at a price. Setting this from the default value of 5us to 1us might increase precission, but it could disrupt the entire process as the CPU might get overloeded. So experimenting with this value is key.
 
-**gpioTriggeredFlank** and **gpioMinimumPulseLength** are typically used to prevent bounces in the signal: magnets passing could trigger a reed switch twice. The logs provide help here, as the logs indicate abnormal short and long times between impulses (via the minimumTimeBetweenImpulses and maximumTimeBetweenImpulses settings). Please note that during a first stroke, the **CurrentDt** values obviously are longer.
+**gpioTriggeredFlank** and **gpioMinimumPulseLength** are typically used to prevent bounces in the signal: magnets passing could trigger a reed switch twice (as described above). The logs provide help here, as the logs indicate abnormal short and long times between impulses (via the minimumTimeBetweenImpulses and maximumTimeBetweenImpulses settings). Please note that during a first stroke, the **CurrentDt** values obviously are longer.
 
 ### Setting minimumTimeBetweenImpulses and maximumTimeBetweenImpulses
 
 **minimumTimeBetweenImpulses** and **maximumTimeBetweenImpulses** provide a bandwith where values are deemed credible during an active session. The goal here is to help you detect and log any extremely obvious errors. So take a look at the raw datafiles for several damper settings (if available on your rower) and make sure that normal rowing isn't hindered by these settings (i.e. all normal values should fall within *minimumTimeBetweenImpulses* and *maximumTimeBetweenImpulses*). Here, you should rather allow too much noise, than hurt real valid signal, as Open Rowing Monitor can handle a lot of noise by itself.
 
-When using the raw datafiles, realise that the goal is to distinguish good normal strokes from noise. So at startup it is quite accepted that the flywheel starts too slow to produce valid data during the biggest part of the first drive phase. Also at the end of a session the flywheel should spin down out of valid ranges again. Please note, *maximumTimeBetweenImpulses* is also used to detect wether the flywheel is spinning down due to lack of user input. When a *flankLength* of measurements contains sufficient values above *maximumTimeBetweenImpulses*, the flywheel is still decelerating and the *maximumStrokeTimeBeforePause* is structurally exceeded, the rower will pause. So setting the value for *maximumTimeBetweenImpulses* too high might block this behaviour.
+A good quality curve of the time between impulses (as captured in the raw datafiles) looks like this:
+
+<img src="img/maximumTimeBetweenImpulses.jpg" alt="A curve showing the typical progress of currentDt throughout several strokes" width="700">
+
+Here, aside from the startup and spindown, the blue line shows that the impulses typically vary between 0.035 and 0.120 seconds. The red line depicts the *maximumTimeBetweenImpulses*, which is set to 0.120 seconds. When using the raw datafiles, realise that the goal is to distinguish good normal strokes from noise. So at startup it is quite accepted that the flywheel starts too slow to produce valid data during the biggest part of the first drive phase. Also at the end of a session the flywheel should spin down out of valid ranges again. So *maximumTimeBetweenImpulses* could be set lower, sometimes even hitting the "peaks" of the curves, without causing issues in normal use of Open Rowing Monitor (it will add warnings in the logs). Similarily, *minimumTimeBetweenImpulses* could be slightly increased to include some valleys, without causing much issues.
+
+An important note is that *maximumTimeBetweenImpulses* is also used to detect wether the flywheel is spinning down due to lack of user input. Open Rowing Monitor pauses/stops the row when:
+
+* the start of the last drive is at least *maximumStrokeTimeBeforePause* ago;
+* the entire flank (i.e. the last *flankLength* of measurements) contains only values above *maximumTimeBetweenImpulses*;
+* the flywheel is decelerating throughout the flank.
+
+So setting the value for *maximumTimeBetweenImpulses* too high might block this behaviour as there aren't enough measurements to fill the flank. Although most air-based rowers have a spin down time of around 2 minutes, water rowers typically stop quite fast (think seconds). Therefore, especially the stop behaviour of water rowers requires a bit more attention. Again looking at the behaviour of the curve and the raw data might help here: looking how many residual samples follow after *maximumTimeBetweenImpulses* is exceeded (there should be more than *flankLength*) and how much time it spans since the last drive (exceeding *maximumStrokeTimeBeforePause*) is critical here.
 
 ### Review smoothing
 
-**smoothing** is the ultimate fallback mechanism for rowers with very noisy data. For all known rowers currently maintained by Open Rowing Monitor, **NONE** needed this, so only start working with this when the raw files show you have a very noisy signal, physical measures don't work and you can't get your stroke detection to work with other means (please note that we design the mechanisms here to be robust, so they can take a hit).
+**smoothing** is the ultimate fallback mechanism for rowers with very noisy data. Please refrain from using it, unless as a last resort (typically increasing *flankLength* is more effective and leads to better results). For all known rowers currently maintained by Open Rowing Monitor, **NONE** needed this, so only start working with this when the raw files show you have a very noisy signal, physical measures don't work and you can't get your stroke detection to work with other means (please note that we design the mechanisms here to be robust, so they can take a hit).
 
 This is a running median filter, effectively killing any extreme values. By default, it is set to 1 (off). A value of 3 will allow it to completely ignore any single extreme values, which should do the trick for most rowers.
 
@@ -179,13 +221,21 @@ Their accuracy isn't super-critical. In later sections, we will describe how to 
 
 These settings are the core of the stroke detection and are the ones that require the most effort to get right. The most cricial settings are the *flankLength* and *minimumStrokeQuality*, where other metrics are much less critical.
 
-**minimumStrokeQuality** is a setting that defines the minimal goodness of fit of the beforementioned recovery slope with the datapoints. When the slope doesn't fit the data well, this will block moving to the next phase. A value of 0.1 is extrmely relaxed, where 0.95 would be extremely tight. This is set to 0.34 for most rowers, which is a working setting for all maintained rowers to date. The accuracy of this setting isn't super critical for stroke detection to work: for example, on a Concept2 values between 0.28 to 0.42 are known to give reliable stroke detection. Setting this too relaxed will result in earlier phase changes, settng this too strict will delay phase detection. This setting is primarily used to optimise the stroke detection for advanced metrics (like drive time, drive length, force curves), so unless it gets in the way, there is no immediate need to change it.
+In a nutshell, a rowingstroke contains a drive phase and a recovery phase, and OpenRowingMonitor needs to recognise both reliably to work well. Please note, that for an actual transition to another phase respectively **minimumDriveTime** or **minimumRecoveryTime** have to be exceeded as well.
 
-The **flankLength** setting determines the condition when the stroke detection is sufficiently confident that the stroke has started/ended. In essence, the stroke detection looks for a consecutive increasing/decreasing impulse lengths, and the **flankLength** determines how many consecutive flanks have to be seen before the stroke detection considers a stroke to begin or end. Generally, a *flankLength* of 3 to 4 typically works. The technical minimum is 3, the maximum is limited by CPU-time. Please note that making the flank longer does *not* change your measurement in any way: the algorithms always rely on the beginning of the flank, not at the current end. If any, increasing the *flanklength* has the side-effect that some calculations are performed with more rigour, making them more precise as they get more data. Please note that the rower itself might limit the *flankLength*: some rowers only have 4 or 5 datapoints in a drive phase, naturally limiting the number of datapoints that can be used for stroke phase detection.
+To detect strokes, OpenRowingMonitor uses the following criteria before attempting a stroke phase transition:
 
-Please note that a longer *flankLength* also requires more CPU time, where the calculation grows exponentially as *flankLength* becomes longer. On a Raspberry Pi 4B, a *flankLength* of 12 has been succesfully used without issue. What the practical limit on a Rapberry Pi Zero 2 W is, is still a matter of investigation.
+* a drive is detected when the handleforce is above **minumumForceBeforeStroke** AND the slope of a series of *flankLength* times between impulses is below the **minumumRecoverySlope** (i.e. accelerating)
+* a recovery is detected when the handleforce is below **minumumForceBeforeStroke** AND the slope of a series of *flankLength* times between impulses is above the **minumumRecoverySlope** (i.e. decelerating) where the goodness of fit of that slope exceeds the **minimumStrokeQuality**
 
-To make life a bit easier, it is possible to replay a recorded raw rowing session. To do this, uncomment and modify the following lines in `server.js`:
+**minimumStrokeQuality** is a setting that defines the minimal goodness of fit of the beforementioned minumumRecoverySlope with the datapoints. When the slope doesn't fit the data well, this will block moving to the next phase. A value of 0.1 is extrmely relaxed, where 0.95 would be extremely tight. This is set to 0.34 for most rowers, which is a working setting for all maintained rowers to date. The accuracy of this setting isn't super critical for stroke detection to work: for example, on a Concept2 values between 0.28 to 0.42 are known to give reliable stroke detection. Setting this too relaxed will result in earlier phase changes, settng this too strict will delay phase detection. But stroke detection will work. This setting is primarily used to optimise the stroke detection for advanced metrics (like drive time, drive length, force curves), so unless it gets in the way, there is no immediate need to change it. Please note that setting this value to 1, it will effectively disable half of the criteria for detecting a recovery, effectively making it completely handle-force based.
+
+The **flankLength** and **minumumRecoverySlope** settings determine the condition when the stroke detection is sufficiently confident that the stroke has started/ended. In essence, the stroke detection looks for a consecutive increasing/decreasing impulse lengths (with slope **minumumRecoverySlope**), and the **flankLength** determines how many consecutive flanks have to be seen before the stroke detection considers a stroke to begin or end. Setting these paramters requires some trial and error:
+
+* **minumumRecoverySlope** can be set to 0, where OpenRowingMonitor will use a quite robust selection on an accelerating or decelerating flywheel. This is recomended as a starting point for getting stroke detection to work. It can be further optimised later (see the later section on advanced stroke detection);
+* Generally, a *flankLength* of 3 to 4 typically works. The technical minimum is 3, the maximum is limited by CPU-time. Please note that making the flank longer does *not* change your measurement in any way: the algorithms always rely on the beginning of the flank, not at the current end. If any, increasing the *flanklength* has the side-effect that some calculations are performed with more rigour, making them more precise as they get more data. Please note that the rower itself might limit the *flankLength*: some rowers only have 4 or 5 datapoints in a drive phase, naturally limiting the number of datapoints that can be used for stroke phase detection. Increasing this number too far (beyond a significant part of the stroke) will remove the fluctuations in the flywheel speed needed for stroke detections, so there is a practical upper limit to what the value of *flankLength* can be for a specific rower. Please note that a longer *flankLength* also requires more CPU time, where the calculation grows exponentially as *flankLength* becomes longer. On a Raspberry Pi 4B, a *flankLength* of 18 has been succesfully used without issue. What the practical limit on a Rapberry Pi Zero 2 W is, is still a matter of investigation.
+
+To make life a bit easier, it is possible to replay a raw recording of a previous rowing session. To do this, uncomment and modify the following lines in `server.js`:
 
  ```js
 replayRowingSession(handleRotationImpulse, {

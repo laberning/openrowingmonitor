@@ -15,7 +15,30 @@ The choice has been made to use JavaScript to build te application, as many of t
 
 ## Main functional components
 
-We first describe the relation between the main functional components by describing the flow of the key pieces of information: the flywheel and heartrate measurements. We first follow the flow of the flywheel data, which is provided by the interrupt driven `GpioTimerService.js`. The only information retrieved by Open Rowing Monitor is *CurrentDt*: the time between impulses. This data element is transformed in meaningful metrics in the following manner:
+At the highest level, we recognise the following functional components, with their primary dataflows:
+
+```mermaid
+flowchart LR
+A(GpioTimerService.js) -->|currentDt| B(server.js)
+B(server.js) -->|currentDt| D(RowingStatistics.js)
+D(RowingStatistics.js) -->|Rowing metrics| B(server.js)
+C(PeripheralManager.js) -->|Heart rate data| B(server.js)
+B(server.js) -->|Heart rate data| D(RowingStatistics.js)
+B(server.js) -->|Rowing metrics| E(PeripheralManager.js)
+E(PeripheralManager.js) -->|Rowing metrics| F(ANT+ clients)
+E(PeripheralManager.js) -->|Rowing metrics| G(BLE clients)
+B(server.js) -->|currentDt| H(RecordingManager.js)
+B(server.js) -->|Rowing metrics| H(RecordingManager.js)
+H(RecordingManager.js) -->|currentDt| I(raw recorder)
+H(RecordingManager.js) -->|Rowing metrics| J(tcx recorder)
+H(RecordingManager.js) -->|Rowing metrics| K(RowingData recorder)
+B(server.js) -->|Rowing metrics| L(WebServer.js)
+L(WebServer.js) -->|Rowing metrics| M(Client.js)
+```
+
+Here, *currentDt* stands for the time between the impulses of the sensor, as measured by the pigpio in 'ticks' (i.e. microseconds sinds OS start).
+
+We first describe the relation between these main functional components by describing the flow of the key pieces of information in more detail: the flywheel and heartrate measurements. We first follow the flow of the flywheel data, which is provided by the interrupt driven `GpioTimerService.js`. The only information retrieved by Open Rowing Monitor is *CurrentDt*: the time between impulses. This data element is transformed in meaningful metrics in the following manner:
 
 ```mermaid
 sequenceDiagram
@@ -95,7 +118,7 @@ stateDiagram-v2
     Stopped --> [*]
 ```
 
-Please note: the 'Stopped' state isn't directly part of the state machine that is defined in `handleRotationImpulse`, it is a direct consequence of emitting the `intervalTargetReached` message to `Server.js`, where `Server.js` concludes there is no next interval left, and thus `stopTraining()` has to be called (which does set the sessionState to 'Stopped'). This is needed as RowingStatistics shouldn't be aware about the existence of next intervals, as it only deals with the current interval.
+Please note: `handleRotationImpulse` implements all these state transitions, where the state transitions for the end of an interval and the end of a session are handled individually as the metrics updates differ slightly.
 
 #### metrics maintained in RowingStatistics.js
 
@@ -107,7 +130,7 @@ In a nutshell:
 * `RowingStatistics.js` maintains the session state, thus determines whether the rowing machine is 'Rowing', or 'WaitingForDrive', etc.,
 * `RowingStatistics.js` applies a moving median filter across strokes to make metrics less volatile and thus better suited for presentation,
 * `RowingStatistics.js` calculates derived metrics (like Calories) and trands (like Calories per hour),
-* `RowingStatistics.js` gaurds interval and session boundaries, and will chop up the metrics-stream accordingly, where Rower.js will just move on without looking at these artifical boundaries.
+* `RowingStatistics.js` maintains the workout intervals, guards interval and session boundaries, and will chop up the metrics-stream accordingly, where `Rower.js` will just move on without looking at these artifical boundaries.
 
 In total, this takes full control of the displayed metrics in a specific interval.
 
@@ -166,14 +189,4 @@ Adittional benefit of this approach is that it makes transitions in intervals mo
 
 ## Open issues, Known problems and Regrettable design decissions
 
-### Use of quadratic regression instead of cubic regression
-
-For the determination of angular velocity and angular acceleration we use quadratic regression over the time versus angular distance function. When using the right algorithm, this has the strong benefit of being robust to noise, at the cost of a O(n<sup>2</sup>) calculation per new datapoint (where n is the flanklength). Quadratic regression would be fitting if the acceleration would be a constant, as the formulae used would align perfectly with this use. Unfortunatly, the nature of the rowing stroke excludes that assumption as the ideal force curve is a heystack, and thus the force on the flywheel varies in time. As an approximation on a smaller interval, quadratic regression has proven to outperform (i.e. less suspect to noise in the signal) both the numerical approach with noise filtering and the linear regression methods.
-
-From a pure mathematical perspective, a higher order polynomial would be more appropriate. A cubic regressor, or even better a fourth order polynomal have shown to be better mathematical approximation of the time versus distance function for a Concept2 RowErg. However, there are some current practical objections against using these more complex methods:
-
-* Higher order polynomials are less stable in nature, and overfitting is a real issue. As this might introduce wild shocks in our metrics, this might be a potential issue for application;
-* A key limitation is the available number of datapoints. For the determination of a polynomial of the n-th order, you need at least n+1 datapoints (which in Open Rowing Monitor translates to a `flankLength`). Some rowers, for example the Sportstech WRX700, only deliver 5 to 6 datapoints for the entire drive phase, thus putting explicit limits on the number of datapoints available for such an approximation.
-* Calculating a higher order polynomial in a robust way, for example by Theil-Senn regression, is CPU intensive. A quadratic approach requires a O(n<sup>2</sup>) calculation when a datapoint is added to the flank. Our estimate is that with current known robust polynomial regression methods, a cubic approach requires at least a O(n<sup>3</sup>) calculation, and a 4th polynomial a O(n<sup>4</sup>) calculation. With smaller flanks (which determines the n) this has proven to be doable, but for machines which produce a lot of datapoints, and thus have more noise and a typically bigger `flankLength`(like the C2 RowErg and Nordictrack RX-800, both with a 11 `flankLength`), this becomes an issue: we consider completing 10<sup>3</sup> or even 10<sup>4</sup> complex calculations within the 5 miliseconds that is available before the next datapoint arrives, impossible.
-
-This doesn't definitively exclude the use of more complex polynomial regression methods: alternative methods for higher polynomials within a datastream could be as CPU intensive as Theil-Senn Quadratic regression now, and their use could be isolated to specific combination of Raspberry hardware and settings. Thus, this will remain an active area of investigation for future versions.
+Please see [Physics behind Open Rowing Monitor](physics_openrowingmonitor.md)

@@ -1,10 +1,10 @@
 'use strict'
 /*
-  Open Rowing Monitor, https://github.com/laberning/openrowingmonitor
+  Open Rowing Monitor, https://github.com/JaapvanEkris/openrowingmonitor
 
   The TSLinearSeries is a datatype that represents a Linear Series. It allows
   values to be retrieved (like a FiFo buffer, or Queue) but it also includes
-  a TheilÃ¢â‚¬â€œSen estimator Linear Regressor to determine the slope of this timeseries.
+  a Theil-Sen estimator Linear Regressor to determine the slope of this timeseries.
 
   At creation its length is determined. After it is filled, the oldest will be pushed
   out of the queue) automatically.
@@ -19,6 +19,7 @@
 */
 
 import { createSeries } from './Series.js'
+import { createLabelledBinarySearchTree } from './BinarySearchTree.js'
 
 import loglevel from 'loglevel'
 const log = loglevel.getLogger('RowingEngine')
@@ -26,47 +27,55 @@ const log = loglevel.getLogger('RowingEngine')
 function createTSLinearSeries (maxSeriesLength = 0) {
   const X = createSeries(maxSeriesLength)
   const Y = createSeries(maxSeriesLength)
-  const slopes = []
+  const A = createLabelledBinarySearchTree()
 
   let _A = 0
   let _B = 0
-  let _goodnessOfFit = 0
 
   function push (x, y) {
+    // Invariant: A contains all a's (as in the general formula y = a * x + b)
+    // Where the a's are labeled in the Binary Search Tree with their xi when they BEGIN in the point (xi, yi)
+    if (maxSeriesLength > 0 && X.length() >= maxSeriesLength) {
+      // The maximum of the array has been reached, so when pushing the x,y into the arrays, they get shifted automatically,
+      // So, we have to remove the a's belonging to the current position X0 as well before this value is trashed
+      A.remove(X.get(0))
+    }
+
     X.push(x)
     Y.push(y)
 
-    if (maxSeriesLength > 0 && slopes.length >= maxSeriesLength) {
-      // The maximum of the array has been reached, we have to create room
-      // in the 2D array by removing the first row from the table
-      removeFirstRow()
-    }
-
-    // Invariant: the indices of the X and Y array now match up with the
-    // row numbers of the slopes array. So, the slope of (X[0],Y[0]) and (X[1],Y[1]
-    // will be stored in slopes[0][.].
-
-    // Calculate the slopes of this new point
+    // Calculate all the slopes of the newly added point
     if (X.length() > 1) {
       // There are at least two points in the X and Y arrays, so let's add the new datapoint
       let i = 0
-      let result = 0
-      while (i < slopes.length) {
-        result = calculateSlope(i, slopes.length)
-        slopes[i].push(result)
+      while (i < X.length() - 1) {
+        // Calculate the slope with all preceeding datapoints with the X.length() - 1'th datapoint (as the array starts at zero)
+        // And store it at its beginpoint (i.e. X.get(i)) to allow remove when that point gets removed from the flank
+        A.push(X.get(i), calculateSlope(i, X.length() - 1))
         i++
       }
     }
-    // Add an empty array at the end to store futurs results for the most recent points
-    slopes.push([])
 
     // Calculate the median of the slopes
     if (X.length() > 1) {
-      _A = median()
+      _A = A.median()
     } else {
       _A = 0
     }
-    _B = Y.average() - (_A * X.average())
+
+    // Calculate all the intercepts for the newly added point and the newly calculated A
+    const B = createLabelledBinarySearchTree()
+    if (X.length() > 1) {
+      // There are at least two points in the X and Y arrays, so let's calculate the intercept
+      let i = 0
+      while (i < X.length()) {
+        // Please note , as we need to recreate the B-tree for each newly added datapoint anyway, the label i isn't relevant
+        B.push(i, (Y.get(i) - (_A * X.get(i))))
+        i++
+      }
+    }
+
+    _B = B.median()
   }
 
   function slope () {
@@ -93,11 +102,35 @@ function createTSLinearSeries (maxSeriesLength = 0) {
 
   function goodnessOfFit () {
     // This function returns the R^2 as a goodness of fit indicator
+    let i = 0
+    let sse = 0
+    let sst = 0
+    let _goodnessOfFit = 0
     if (X.length() >= 2) {
-      return _goodnessOfFit
+      while (i < X.length()) {
+        sse += Math.pow((Y.get(i) - projectX(X.get(i))), 2)
+        sst += Math.pow((Y.get(i) - Y.average()), 2)
+        i++
+      }
+      switch (true) {
+        case (sse === 0):
+          _goodnessOfFit = 1
+          break
+        case (sse > sst):
+          // This is a pretty bad fit as the error is bigger than just using the line for the average y as intercept
+          _goodnessOfFit = 0
+          break
+        case (sst !== 0):
+          _goodnessOfFit = 1 - (sse / sst)
+          break
+        default:
+          // When SST = 0, R2 isn't defined
+          _goodnessOfFit = 0
+      }
     } else {
-      return 0
+      _goodnessOfFit = 0
     }
+    return _goodnessOfFit
   }
 
   function projectX (x) {
@@ -156,16 +189,20 @@ function createTSLinearSeries (maxSeriesLength = 0) {
     return Y.sum()
   }
 
+  function xAverage () {
+    return X.average()
+  }
+
+  function yAverage () {
+    return Y.average()
+  }
+
   function xSeries () {
     return X.series()
   }
 
   function ySeries () {
     return Y.series()
-  }
-
-  function removeFirstRow () {
-    slopes.shift()
   }
 
   function calculateSlope (pointOne, pointTwo) {
@@ -177,24 +214,12 @@ function createTSLinearSeries (maxSeriesLength = 0) {
     }
   }
 
-  function median () {
-    if (slopes.length > 1) {
-      const sortedArray = [...slopes.flat()].sort((a, b) => a - b)
-      const mid = Math.floor(sortedArray.length / 2)
-      return (sortedArray.length % 2 !== 0 ? sortedArray[mid] : ((sortedArray[mid - 1] + sortedArray[mid]) / 2))
-    } else {
-      log.eror('TS Linear Regressor, Median calculation on empty dataset attempted!')
-      return 0
-    }
-  }
-
   function reset () {
     X.reset()
     Y.reset()
-    slopes.splice(0, slopes.length)
+    A.reset()
     _A = 0
     _B = 0
-    _goodnessOfFit = 0
   }
 
   return {
@@ -217,6 +242,8 @@ function createTSLinearSeries (maxSeriesLength = 0) {
     yAtSeriesEnd,
     xSum,
     ySum,
+    xAverage,
+    yAverage,
     xSeries,
     ySeries,
     reset

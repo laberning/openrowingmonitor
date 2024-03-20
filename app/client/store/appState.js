@@ -6,16 +6,23 @@
 */
 
 export const APP_STATE = {
-  // currently can be STANDALONE (Mobile Home Screen App), KIOSK (Raspberry Pi deployment) or '' (default)
-  appMode: '',
   // contains all the rowing metrics that are delivered from the backend
   metrics: {},
   config: {
-    // currently can be FTMS, FTMSBIKE, PM5, CSC, CPS
-    peripheralMode: '',
+    // currently can be FTMS, FTMSBIKE, PM5, CSC, CPS, OFF
+    blePeripheralMode: '',
+    // currently can be ANT, BLE, OFF
+    hrmPeripheralMode: '',
+    // currently can be FE, OFF
+    antPeripheralMode: '',
     // true if upload to strava is enabled
     stravaUploadEnabled: false,
     // true if remote device shutdown is enabled
-    shutdownEnabled: false
+    shutdownEnabled: false,
+    guiConfigs: {
+      dashboardMetrics: ['distance', 'timer', 'pace', 'power', 'stkRate', 'totalStk', 'calories', 'actions'],
+      showIcons: true,
+      maxNumberOfTiles: 8
+    }
   }
 }

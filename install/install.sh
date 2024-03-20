@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-#  Open Rowing Monitor, https://github.com/laberning/openrowingmonitor
+#  Open Rowing Monitor, https://github.com/JaapvanEkris/openrowingmonitor
 #
 #  Installation script for Open Rowing Monitor, use at your own risk!
 #
@@ -50,16 +50,28 @@ ask() {
 
 CURRENT_DIR=$(pwd)
 INSTALL_DIR="/opt/openrowingmonitor"
-GIT_REMOTE="https://github.com/laberning/openrowingmonitor.git"
+GIT_REMOTE="https://github.com/JaapvanEkris/openrowingmonitor.git"
+BRANCH="main"
 
 print "This script will set up Open Rowing Monitor on one of the following devices"
-print "  Raspberry Pi Zero W or WH"
 print "  Raspberry Pi Zero 2 W or WH"
 print "  Raspberry Pi 3 Model A+, B or B+"
 print "  Raspberry Pi 4 Model B"
+print "  Raspberry Pi 5"
 print
 print "You should only run this script on a SD Card that contains Raspberry Pi OS (Lite)"
 print "and does not contain any important data."
+
+ARCHITECTURE=$(uname -m)
+if [[ $ARCHITECTURE == "armv6l" ]];
+then
+  print
+  print "You are running a system with ARM v6 architecture (Raspberry Pi Zero W)."
+  print "Support for this hardware configuration has been discontinued due to package conflicts beyond our control."
+  print "Your cheapest alternative for the current active branch is the Raspberry Pi Zero 2W"
+  print "A separate legacy branch can be found at https://github.com/JaapvanEkris/openrowingmonitor/tree/v1beta__Pi_Zero_W"
+  exit 1
+fi
 
 if [[ -f "/proc/device-tree/model" ]]; then
   MODEL=$(tr -d '\0' < /proc/device-tree/model)
@@ -70,12 +82,13 @@ fi
 if [[ $MODEL != Raspberry* ]]; then
   print
   cancel "This script currently only works on Raspberry Pi OS, you will have to do a manual installation."
+  exit 1
 fi
 
 VERSION=$(grep -oP '(?<=^VERSION=).+' /etc/os-release | tr -d '"')
-if [[ $VERSION != "10 (buster)" ]] && [[ $VERSION != "11 (bullseye)" ]]; then
+if [[ $VERSION != "10 (buster)" ]] && [[ $VERSION != "11 (bullseye)" ]] && [[ $VERSION != "12 (bookworm)" ]]; then
   print
-  print "Warning: So far this install script has only been tested with Raspberry Pi OS 10 (buster) and OS 11 (bullseye)."
+  print "Warning: So far this install script has only been tested with Raspberry Pi OS 10 (buster), 11 (bullseye) and 12 (bookworm)"
   if ! ask "You are running Raspberry Pi OS $VERSION, are you sure that you want to continue?" N; then
     exit 1
   fi
@@ -120,34 +133,12 @@ sudo apt-get -y install pigpio
 sudo systemctl mask pigpiod.service
 
 print
-ARCHITECTURE=$(uname -m)
-if [[ $ARCHITECTURE == "armv6l" ]];
-then
-  print "You are running a system with ARM v6 architecture. Official support for Node.js has been discontinued"
-  print "for ARM v6. Installing experimental unofficial build of Node.js..."
-
-  # we stick to node 14 as there are problem with WebAssembly on node 16 on the armv6l architecture
-  NODEJS_VERSION=v14.18.3
-  sudo rm -rf /opt/nodejs
-  sudo mkdir -p /opt/nodejs
-  sudo curl https://unofficial-builds.nodejs.org/download/release/$NODEJS_VERSION/node-$NODEJS_VERSION-linux-armv6l.tar.gz | sudo tar -xz --strip 1 -C /opt/nodejs/
-
-  sudo ln -sfn /opt/nodejs/bin/node /usr/bin/node
-  sudo ln -sfn /opt/nodejs/bin/node /usr/sbin/node
-  sudo ln -sfn /opt/nodejs/bin/node /sbin/node
-  sudo ln -sfn /opt/nodejs/bin/node /usr/local/bin/node
-  sudo ln -sfn /opt/nodejs/bin/npm /usr/bin/npm
-  sudo ln -sfn /opt/nodejs/bin/npm /usr/sbin/npm
-  sudo ln -sfn /opt/nodejs/bin/npm /sbin/npm
-  sudo ln -sfn /opt/nodejs/bin/npm /usr/local/bin/npm
-else
-  print "Installing Node.js..."
-  curl -fsSL https://deb.nodesource.com/setup_16.x | sudo -E bash -
-  sudo apt-get install -y nodejs
-fi
+print "Installing Node.js..."
+curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash -
+sudo apt-get install -y nodejs
 
 print
-print "Installing Open Rowing Monitor..."
+print "Installing Open Rowing Monitor, branch $BRANCH..."
 
 if ! [[ -d "${INSTALL_DIR}" ]]; then
   sudo mkdir -p $INSTALL_DIR
@@ -158,20 +149,17 @@ cd $INSTALL_DIR
 # get project code from repository
 sudo git init -q
 # older versions of git would use 'master' instead of 'main' for the default branch
-sudo git checkout -q -b main
+sudo git checkout -q -b $BRANCH
 sudo git config remote.origin.url $GIT_REMOTE
 sudo git config remote.origin.fetch +refs/heads/*:refs/remotes/origin/*
 # prevent altering line endings
 sudo git config core.autocrlf false
 sudo git fetch --force origin
 sudo git fetch --force --tags origin
-sudo git reset --hard origin/main
+sudo git reset --hard origin/$BRANCH
 
 # add bin directory to the system path
 echo "export PATH=\"\$PATH:$INSTALL_DIR/bin\"" >> ~/.bashrc
-
-# otherwise node-gyp would fail while building the system dependencies
-sudo npm config set user 0
 
 print
 print "Downloading and compiling Runtime dependencies..."
@@ -210,28 +198,42 @@ fi
 if $INIT_GUI; then
   print
   print "Installing Graphical User Interface..."
-  sudo apt-get -y install --no-install-recommends xserver-xorg xserver-xorg-legacy x11-xserver-utils xinit openbox chromium-browser
-  sudo gpasswd -a pi tty
-  sudo sed -i 's/allowed_users=console/allowed_users=anybody\nneeds_root_rights=yes/' /etc/X11/Xwrapper.config
-  sudo cp install/webbrowserkiosk.service /lib/systemd/system/
-  sudo systemctl daemon-reload
-  sudo systemctl enable webbrowserkiosk
-  sudo systemctl restart webbrowserkiosk
-  print "sudo systemctl status webbrowserkiosk"
-  sudo systemctl status webbrowserkiosk
+  if [[ $VERSION == "10 (buster)" ]] || [[ $VERSION == "11 (bullseye)" ]]; then
+    sudo apt-get -y install --no-install-recommends xserver-xorg xserver-xorg-legacy x11-xserver-utils xinit openbox chromium-browser
+    sudo gpasswd -a pi tty
+    sudo sed -i 's/allowed_users=console/allowed_users=anybody\nneeds_root_rights=yes/' /etc/X11/Xwrapper.config
+    sudo cp install/webbrowserkiosk.service /lib/systemd/system/
+    sudo systemctl daemon-reload
+    sudo systemctl enable webbrowserkiosk
+    sudo systemctl restart webbrowserkiosk
+    print "sudo systemctl status webbrowserkiosk"
+    sudo systemctl status webbrowserkiosk --no-pager
+  else
+    # This currently is a copy of the bullseye install, as Bookworm's Wayland install is twice as big as it still includes the X11 server
+    # When we can install Wayland in a normal way, this will change as Wayland has a better kiosk mode
+    sudo apt-get -y install --no-install-recommends xserver-xorg xserver-xorg-legacy x11-xserver-utils xinit openbox chromium-browser
+    sudo gpasswd -a pi tty
+    sudo sed -i 's/allowed_users=console/allowed_users=anybody\nneeds_root_rights=yes/' /etc/X11/Xwrapper.config
+    sudo cp install/webbrowserkiosk.service /lib/systemd/system/
+    sudo systemctl daemon-reload
+    sudo systemctl enable webbrowserkiosk
+    sudo systemctl restart webbrowserkiosk
+    print "sudo systemctl status webbrowserkiosk"
+    sudo systemctl status webbrowserkiosk --no-pager
+  fi
   print
   print "Installation of Graphical User Interface finished."
   print "If the screen resolution or the screen borders are not correct, run 'sudo raspi-config' and modify the display options."
 fi
 
-cd $CURRENT_DIR
-
 print
 print "sudo systemctl status openrowingmonitor"
-sudo systemctl status openrowingmonitor
+sudo systemctl status openrowingmonitor --no-pager
 print
 print "Installation of Open Rowing Monitor finished."
 print "Open Rowing Monitor should now be up and running."
 print "You can now adjust the configuration in $INSTALL_DIR/config/config.js either via ssh or via the network share"
 print
 print "Please reboot the device for all features and settings to take effect."
+
+cd $CURRENT_DIR

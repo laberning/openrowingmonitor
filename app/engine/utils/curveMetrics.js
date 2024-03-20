@@ -6,7 +6,7 @@
 */
 import { createSeries } from './Series.js'
 
-function createCurveMetrics (precission = 0) {
+function createCurveMetrics () {
   const _curve = createSeries()
   let _max = 0
   let totalInputXTime = 0
@@ -15,7 +15,7 @@ function createCurveMetrics (precission = 0) {
   function push (deltaTime, inputValue) {
     // add the new dataPoint to the array, we have to move datapoints starting at the oldst ones
     if (inputValue > 0) {
-      _curve.push(inputValue.toFixed(precission))
+      _curve.push(inputValue)
       _max = Math.max(_max, inputValue)
       totalInputXTime += deltaTime * inputValue
       totaltime += deltaTime

@@ -13,12 +13,12 @@ import log from 'loglevel'
 import config from './tools/ConfigManager.js'
 import { createRowingStatistics } from './engine/RowingStatistics.js'
 import { createWebServer } from './WebServer.js'
-import { createPeripheralManager } from './ble/PeripheralManager.js'
-import { createAntManager } from './ant/AntManager.js'
+import { createPeripheralManager } from './peripherals/PeripheralManager.js'
 // eslint-disable-next-line no-unused-vars
 import { replayRowingSession } from './tools/RowingRecorder.js'
 import { createWorkoutRecorder } from './engine/WorkoutRecorder.js'
 import { createWorkoutUploader } from './engine/WorkoutUploader.js'
+import { secondsToTimeString } from './tools/Helper.js'
 const exec = promisify(child_process.exec)
 
 // set the log levels
@@ -47,12 +47,26 @@ if (config.appPriority) {
 // Hopefully this will be filled through the WebGUI or through the BLE interface (PM5-BLE can do this...)
 // When set, ORM will terminate the session after reaching the target. If not set, it will behave as usual (a "Just row" session).
 // When set, the GUI will behave similar to a PM5 in that it counts down from the target to 0
-const session = {
-  targetDistance: 0, // Target distance in meters
-  targetTime: 0 // Target time in seconds
+const intervalSettings = []
+
+/* an example of the workout setting that RowingStatistics will obey: a 1 minute warmup, a 2K timed piece followed by a 1 minute cooldown
+// This should normally come from the PM5 interface or the webinterface
+intervalSettings[0] = {
+  targetDistance: 0,
+  targetTime: 60
 }
 
-log.info(`Session settings: distance limit: ${(session.targetDistance > 0 ? `${session.targetDistance} meters` : 'none')}, time limit: ${(session.targetTime > 0 ? `${session.targetTime} seconds` : 'none')}\n`)
+/* Additional intervals for testing
+intervalSettings[1] = {
+  targetDistance: 2000,
+  targetTime: 0
+}
+
+intervalSettings[2] = {
+  targetDistance: 0,
+  targetTime: 60
+}
+*/
 
 const peripheralManager = createPeripheralManager()
 
@@ -85,13 +99,25 @@ peripheralManager.on('control', (event) => {
       peripheralManager.notifyStatus({ name: 'startedOrResumedByUser' })
       event.res = true
       break
-    case 'peripheralMode':
+    case 'blePeripheralMode':
+      webServer.notifyClients('config', getConfig())
+      event.res = true
+      break
+    case 'antPeripheralMode':
+      webServer.notifyClients('config', getConfig())
+      event.res = true
+      break
+    case 'hrmPeripheralMode':
       webServer.notifyClients('config', getConfig())
       event.res = true
       break
     default:
       log.info('unhandled Command', event.req)
   }
+})
+
+peripheralManager.on('heartRateMeasurement', (heartRateMeasurement) => {
+  rowingStatistics.handleHeartRateMeasurement(heartRateMeasurement)
 })
 
 function pauseWorkout () {
@@ -115,12 +141,36 @@ function resetWorkout () {
 const gpioTimerService = child_process.fork('./app/gpio/GpioTimerService.js')
 gpioTimerService.on('message', handleRotationImpulse)
 
+process.once('SIGINT', async (signal) => {
+  log.debug(`${signal} signal was received, shutting down gracefully`)
+  await peripheralManager.shutdownAllPeripherals()
+  process.exit(0)
+})
+process.once('SIGTERM', async (signal) => {
+  log.debug(`${signal} signal was received, shutting down gracefully`)
+  await peripheralManager.shutdownAllPeripherals()
+  process.exit(0)
+})
+process.once('uncaughtException', async (error) => {
+  log.error('Uncaught Exception:', error)
+  await peripheralManager.shutdownAllPeripherals()
+  process.exit(1)
+})
+
 function handleRotationImpulse (dataPoint) {
   workoutRecorder.recordRotationImpulse(dataPoint)
   rowingStatistics.handleRotationImpulse(dataPoint)
 }
 
-const rowingStatistics = createRowingStatistics(config, session)
+const rowingStatistics = createRowingStatistics(config)
+if (intervalSettings.length > 0) {
+  // There is an interval defined at startup, let's inform RowingStatistics
+  // ToDo: update these settings when the PM5 or webinterface tells us to
+  rowingStatistics.setIntervalParameters(intervalSettings)
+} else {
+  log.info('Starting a just row session, no time or distance target set')
+}
+
 const workoutRecorder = createWorkoutRecorder()
 const workoutUploader = createWorkoutUploader(workoutRecorder)
 
@@ -153,11 +203,11 @@ rowingStatistics.on('rowingPaused', (metrics) => {
 })
 
 rowingStatistics.on('intervalTargetReached', (metrics) => {
-  // This is called when the RowingStatistics conclude the target is reached
-  // This isn't the most optimal solution yet, as this interval is the only one set. A logcal extansion would be
-  // to provide a next intervaltarget. Thus, the use case of a next interval has to be implemented as well
-  // (i.e. setting a new interval target). For now, this interval is the one and only so we stop.
-  stopWorkout()
+  // This is called when the RowingStatistics conclude the intervaltarget is reached
+  // Update all screens to reflect this change, as targetTime and targetDistance have changed
+  // ToDo: recording this event in the recordings accordingly should be done as well
+  webServer.notifyClients('metrics', metrics)
+  peripheralManager.notifyMetrics('metricsUpdate', metrics)
 })
 
 rowingStatistics.on('rowingStopped', (metrics) => {
@@ -170,19 +220,10 @@ rowingStatistics.on('rowingStopped', (metrics) => {
   workoutRecorder.writeRecordings()
 })
 
-if (config.heartrateMonitorBLE) {
-  const bleCentralService = child_process.fork('./app/ble/CentralService.js')
-  bleCentralService.on('message', (heartrateMeasurement) => {
-    rowingStatistics.handleHeartrateMeasurement(heartrateMeasurement)
-  })
-}
-
-if (config.heartrateMonitorANT) {
-  const antManager = createAntManager()
-  antManager.on('heartrateMeasurement', (heartrateMeasurement) => {
-    rowingStatistics.handleHeartrateMeasurement(heartrateMeasurement)
-  })
-}
+rowingStatistics.on('HRRecoveryUpdate', (hrMetrics) => {
+  // This is called at minute intervals after the rowingmachine has stopped, to record the Recovery heartrate in the tcx
+  workoutRecorder.updateHRRecovery(hrMetrics)
+})
 
 workoutUploader.on('authorizeStrava', (data, client) => {
   webServer.notifyClient(client, 'authorizeStrava', data)
@@ -195,8 +236,14 @@ workoutUploader.on('resetWorkout', () => {
 const webServer = createWebServer()
 webServer.on('messageReceived', async (message, client) => {
   switch (message.command) {
-    case 'switchPeripheralMode':
-      peripheralManager.switchPeripheralMode()
+    case 'switchBlePeripheralMode':
+      peripheralManager.switchBlePeripheralMode()
+      break
+    case 'switchAntPeripheralMode':
+      peripheralManager.switchAntPeripheralMode()
+      break
+    case 'switchHrmMode':
+      peripheralManager.switchHrmMode()
       break
     case 'reset':
       resetWorkout()
@@ -222,7 +269,9 @@ webServer.on('clientConnected', (client) => {
 // todo: extract this into some kind of state manager
 function getConfig () {
   return {
-    peripheralMode: peripheralManager.getPeripheralMode(),
+    blePeripheralMode: peripheralManager.getBlePeripheralMode(),
+    antPeripheralMode: peripheralManager.getAntPeripheralMode(),
+    hrmPeripheralMode: peripheralManager.getHrmPeripheralMode(),
     stravaUploadEnabled: !!config.stravaClientId && !!config.stravaClientSecret,
     shutdownEnabled: !!config.shutdownCommand
   }
@@ -247,14 +296,14 @@ async function shutdown () {
 
 function logMetrics (metrics) {
   log.info(`stroke: ${metrics.totalNumberOfStrokes}, dist: ${metrics.totalLinearDistance.toFixed(1)}m, speed: ${metrics.cycleLinearVelocity.toFixed(2)}m/s` +
-  `, pace: ${metrics.cyclePaceFormatted}/500m, power: ${Math.round(metrics.cyclePower)}W, cal: ${metrics.totalCalories.toFixed(1)}kcal` +
+  `, pace: ${secondsToTimeString(metrics.cyclePace)}/500m, power: ${Math.round(metrics.cyclePower)}W, cal: ${metrics.totalCalories.toFixed(1)}kcal` +
   `, SPM: ${metrics.cycleStrokeRate.toFixed(1)}, drive dur: ${metrics.driveDuration.toFixed(2)}s, rec. dur: ${metrics.recoveryDuration.toFixed(2)}s` +
   `, stroke dur: ${metrics.cycleDuration.toFixed(2)}s`)
 }
 
 /*
 replayRowingSession(handleRotationImpulse, {
-//  filename: 'recordings/2021/04/rx800_2021-04-21_1845_Rowing_30Minutes_Damper8.csv', // 30 minutes, damper 10
+  filename: 'recordings/Concept2_RowErg_Session_2000meters.csv', // Example row from a Concept 2 RowErg, 2000 meters
   realtime: true,
   loop: false
 })
