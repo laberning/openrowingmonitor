@@ -17,6 +17,7 @@ The following rowers are known to work, or are even actively supported:
 | | Neon Pro V | Air rower | Flywheel | Sensor replacement | Known to work | - | Yes | - | - | see [this](https://github.com/laberning/openrowingmonitor/discussions/87) and [this](https://github.com/JaapvanEkris/openrowingmonitor/discussions/11) discussion|
 | ForceUSA | R3 | Air Rower | Flywheel | No | Supported | ForceUSA_R3 | Yes | Yes | None | - |
 | ISE | SY-1750 | Magnetic | Flywheel | Change placement of the reed switches | Known to work | Manual config | Yes | No | Static drag | [see this discussion](https://github.com/laberning/openrowingmonitor/discussions/143) |
+| JLL | Ventus 2 | Hybrid Magnetic and Air rower | Flywheel | Unknown | Known to work | Unknown | Yes | Unknown | Unknown | [see this discussion](https://github.com/JaapvanEkris/openrowingmonitor/discussions/42) |
 | Johnson | JAR5100 | Air Rower | Flywheel | Yes, add magnets and sensor | Configuration known | - | Yes | Yes | None | [this discussion](https://github.com/laberning/openrowingmonitor/discussions/139) |
 | NOHRD | WaterRower | Water rower | Impellor | Add sensor | Configuration known | Custom profile | Yes | Yes | None | see [this discussion](https://github.com/laberning/openrowingmonitor/discussions/158) |
 | NordicTrack | RX800 | Hybrid Magnetic and Air rower | Flywheel | None | Full support | NordicTrack_RX800 | Yes | Yes | None | Also known under ProForm brand |
