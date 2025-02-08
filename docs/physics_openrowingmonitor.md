@@ -118,7 +118,7 @@ In the recovery phase, the only force exerted on the flywheel is the (air/water/
 
 As [[1]](#1) describes in formula 7.2, which is also experimentally verified by Nomath on a Concept 2 [[5]](#5):
 
-> $k=Id(1/\omega)/dt
+> $k=Id(1/\omega)/dt$
 
 Or in more readable form:
 
