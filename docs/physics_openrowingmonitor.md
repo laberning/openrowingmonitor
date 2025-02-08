@@ -124,7 +124,7 @@ Or in more readable form:
 
 > $`\textrm{DragFactor}=\textrm{FlywheelInertia}*(\frac{1}{\textrm{AngularVelocity}_{start}} - \frac{1}{\textrm{AngularVelocity}_{end}})*\textrm{RecoveryLength}`$
 
-Looking at the linear speed, we use the following formula [[1]](#1), formula 9.3:
+Looking at the linear distance, we use the following formula [[1]](#1), formula 9.3:
 
 > $`s=(k/c)^{1/3}\theta`$
 
