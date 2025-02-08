@@ -187,7 +187,7 @@ The power then becomes
 
 > $`P=E/\textrm{TotalCycleTime}`$
 
-Although this is an easy implementable algorithm by calculating a running sum of this function (see [[3]](#3), and more specifically [[4]](#4)). However, the presence of the many Angular Velocities makes the outcome of this calculation quite volatile. The angulate velocity is measured through the formula:
+Although this is an easy implementable algorithm by calculating a running sum of this function (see [[3]](#3), and more specifically [[4]](#4)). However, the presence of the many Angular Velocities makes the outcome of this calculation quite volatile. The angular velocity is measured through the formula:
 
 > $`\textrm{AngularVelocity}=\frac{2\pi}{\textrm{NumberOfImpulsegivers}*\textrm{TimeBetweenImpulses}}`$
 
