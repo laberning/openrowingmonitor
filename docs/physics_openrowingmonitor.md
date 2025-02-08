@@ -243,7 +243,7 @@ The most important measurement that is affected by stroke detection errors is th
 
 Our robust implementation of the drag factor is:
 
-> $`\textrm{DragFactor}=\textrm{FlywheelInertia}*(\frac{1}{\textrm{AngularVelocity}_{start}}-\frac{1}{\textrm{AngularVelocity}_{end}}*\textrm{RecoveryLength})`$
+> $`\textrm{DragFactor}=\textrm{FlywheelInertia}*(\frac{1}{\textrm{AngularVelocity}_{start}}-\frac{1}{\textrm{AngularVelocity}_{end}})*\textrm{RecoveryLength}`$
 
 Looking at the effect of erroneously starting the recovery early and ending it late, it affects two variables:
 
