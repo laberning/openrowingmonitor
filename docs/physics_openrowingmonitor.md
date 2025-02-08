@@ -122,23 +122,23 @@ As [[1]](#1) describes in formula 7.2, which is also experimentally verified by 
 
 Or in more readable form:
 
-> <img src="https://render.githubusercontent.com/render/math?math=\textrm{DragFactor}=\textrm{FlywheelInertia}*(\frac{1}{\textrm{AngularVelocity}_{start}} - \frac{1}{\textrm{AngularVelocity}_{end}})*\textrm{RecoveryLength}">
+> $\textrm{DragFactor}=\textrm{FlywheelInertia}*(\frac{1}{\textrm{AngularVelocity}_{start}} - \frac{1}{\textrm{AngularVelocity}_{end}})*\textrm{RecoveryLength}$
 
 Looking at the linear speed, we use the following formula [[1]](#1), formula 9.3:
 
-> <img src="https://render.githubusercontent.com/render/math?math=s=(k/c)^{1/3}\theta">
+> $s=(k/c)^{1/3}\theta$
 
 Or in more readable form:
 
-> <img src="https://render.githubusercontent.com/render/math?math=\textrm{LinearDistance}=(\textrm{DragFactor}/\textrm{MagicFactor})^{1/3}*\textrm{AngularDisplacement}">
+> $\textrm{LinearDistance}=(\textrm{DragFactor}/\textrm{MagicFactor})^{1/3}*\textrm{AngularDisplacement}$
 
 Looking at the linear speed, we use the following formula [[1]](#1), formula 9.2:
 
-> <img src="https://render.githubusercontent.com/render/math?math=u=(k/c)^{1/3}\omega">
+> $u=(k/c)^{1/3}\omega$
 
 Or in more readable form:
 
-> <img src="https://render.githubusercontent.com/render/math?math=\textrm{LinearVelocity}=(\textrm{DragFactor}/\textrm{MagicFactor})^{1/3}*\textrm{AngularVelocity}">
+> $\textrm{LinearVelocity}=(\textrm{DragFactor}/\textrm{MagicFactor})^{1/3}*\textrm{AngularVelocity}$
 
 ## Measurements during the drive phase
 
@@ -152,19 +152,19 @@ During the drive-phase, we again can *measure* the number of impulses and the le
 
 Looking at the linear speed, we use the following formula [[1]](#1), formula 9.3:
 
-> <img src="https://render.githubusercontent.com/render/math?math=s=(k/c)^{1/3}\theta">
+> $s=(k/c)^{1/3}\theta$
 
 Or in more readable form:
 
-> <img src="https://render.githubusercontent.com/render/math?math=\textrm{LinearDistance}=(\textrm{DragFactor}/\textrm{MagicFactor})^{1/3}*\textrm{AngularDisplacement}">
+> $\textrm{LinearDistance}=(\textrm{DragFactor}/\textrm{MagicFactor})^{1/3}*\textrm{AngularDisplacement}$
 
 Looking at the linear speed, we use the following formula [[1]](#1), formula 9.2:
 
-> <img src="https://render.githubusercontent.com/render/math?math=u=(k/c)^{1/3}\theta">
+> $u=(k/c)^{1/3}\theta$
 
 Or in more readable form:
 
-> <img src="https://render.githubusercontent.com/render/math?math=\textrm{LinearVelocity}=(\textrm{DragFactor}/\textrm{MagicFactor})^{1/3}*\textrm{AngularVelocity}">
+> $\textrm{LinearVelocity}=(\textrm{DragFactor}/\textrm{MagicFactor})^{1/3}*\textrm{AngularVelocity}$
 
 ## Power calculation
 
@@ -172,30 +172,30 @@ In the drive phase, the rower also puts a force on the flywheel, making it accel
 
 We can calculate the energy added to the flywheel through [[1]](#1), formula 8.2:
 
-> <img src="https://render.githubusercontent.com/render/math?math=dE=I(d\omega/dt)d\theta %2B k \omega^2 d\theta">
+> $dE=I(d\omega/dt)d\theta %2B k \omega^2 d\theta$
 
 Or in more readable form for each measured displacement:
 
-> <img src="https://render.githubusercontent.com/render/math?math=\textrm{Energy}=\textrm{FlywheelInertia}*(\frac{\textrm{AngularVelocity}_{start} - \textrm{AngularVelocity}_{end}}{\textrm{DriveLength}})*\textrm{AngularDisplacement}">
-> <img src="https://render.githubusercontent.com/render/math?math=%2B \textrm{DragFactor}*\textrm{InstantaneousAngularVelocity}^2*\textrm{AngularDisplacement}">
+> $\textrm{Energy}=\textrm{FlywheelInertia}*(\frac{\textrm{AngularVelocity}_{start} - \textrm{AngularVelocity}_{end}}{\textrm{DriveLength}})*\textrm{AngularDisplacement}$
+> $%2B \textrm{DragFactor}*\textrm{InstantaneousAngularVelocity}^2*\textrm{AngularDisplacement}$
 
 Where
 
-> <img src="https://render.githubusercontent.com/render/math?math=\textrm{InstantaneousAngularVelocity}=\textrm{AngularDisplacement}/\textrm{TimeBetweenImpulses}">
+> $\textrm{InstantaneousAngularVelocity}=\textrm{AngularDisplacement}/\textrm{TimeBetweenImpulses}$
 
 The power then becomes
 
-> <img src="https://render.githubusercontent.com/render/math?math=P=E/\textrm{TotalCycleTime}">
+> $P=E/\textrm{TotalCycleTime}$
 
 Although this is an easy implementable algorithm by calculating a running sum of this function (see [[3]](#3), and more specifically [[4]](#4)). However, the presence of the many Angular Velocities makes the outcome of this calculation quite volatile. The angulate velocity is measured through the formula:
 
-> <img src="https://render.githubusercontent.com/render/math?math=\textrm{AngularVelocity}=\frac{2\pi}{\textrm{NumberOfImpulsegivers}*\textrm{TimeBetweenImpulses}}">
+> $\textrm{AngularVelocity}=\frac{2\pi}{\textrm{NumberOfImpulsegivers}*\textrm{TimeBetweenImpulses}}$
 
 As *currentDt* tends to be small (typically much smaller than 1, typically between 0,1 and 0,0015 seconds), small errors tend to increase the Angular Velocity significantly, enlarging the effect of an error and potentially causing this volatility. An approach is to use a running average on the presentation layer (in `RowingStatistics.js`). However, when this is bypassed, data shows significant spikes of 20Watts in quite stable cycles due to small changes in the data.
 
 An alternative approach is given by [[3]](#3), which proposes
 
-> <img src="https://render.githubusercontent.com/render/math?math=P = k\omega^3">
+> $P = k\omega^3$
 
 Where P is the average power and ω is the average speed during the stroke. Here, the average speed can be determined in a robust manner (i.e. Angular Displacement of the Drive Phase / DriveLength).
 
@@ -243,7 +243,7 @@ The most important measurement that is affected by stroke detection errors is th
 
 Our robust implementation of the drag factor is:
 
-> <img src="https://render.githubusercontent.com/render/math?math=\textrm{DragFactor}=\textrm{FlywheelInertia}*(\frac{1}{\textrm{AngularVelocity}_{start}}-\frac{1}{\textrm{AngularVelocity}_{end}}*\textrm{RecoveryLength})">
+> $\textrm{DragFactor}=\textrm{FlywheelInertia}*(\frac{1}{\textrm{AngularVelocity}_{start}}-\frac{1}{\textrm{AngularVelocity}_{end}}*\textrm{RecoveryLength})$
 
 Looking at the effect of erroneously starting the recovery early and ending it late, it affects two variables:
 
@@ -259,7 +259,7 @@ Please note that this does imply that changing the *naturalDeceleration* when th
 
 Question is what the effect of this deviation of the drag factor is on the power calculation. The power is calculated as follows:
 
-> <img src="https://render.githubusercontent.com/render/math?math=P=k\omega^3">
+> $P=k\omega^3$
 
 Here, the drag factor is affected upwards. Here the average speed is determined by measuring the angular displacement and divided by the time, being affected in the following manner:
 
