@@ -150,7 +150,7 @@ During the drive-phase, we again can *measure* the number of impulses and the le
 
 * The angular velocity at the beginning and end of the drive phase
 
-Looking at the linear speed, we use the following formula [[1]](#1), formula 9.3:
+Looking at the linear distance, we use the following formula [[1]](#1), formula 9.3:
 
 > $`s=(k/c)^{1/3}\theta`$
 
