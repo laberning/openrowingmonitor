@@ -90,14 +90,19 @@ export default class FitnessMachineControlPointCharacteristic extends bleno.Char
         break
 
       case ControlPointOpCode.stopOrPause: {
-        const controlParameter = data.readUInt8(1)
-        if (controlParameter === 1) {
-          this.handleSimpleCommand(ControlPointOpCode.stopOrPause, 'stop', callback)
-        } else if (controlParameter === 2) {
-          this.handleSimpleCommand(ControlPointOpCode.stopOrPause, 'pause', callback)
-        } else {
-          log.error(`stopOrPause with invalid controlParameter: ${controlParameter}`)
+        if (data.length < 2) {
+          log.error('stopOrPause requires a parameter byte')
           callback(this.buildResponse(opCode, ResultCode.invalidParameter))
+        } else {
+          const controlParameter = data.readUInt8(1)
+          if (controlParameter === 1) {
+            this.handleSimpleCommand(ControlPointOpCode.stopOrPause, 'stop', callback)
+          } else if (controlParameter === 2) {
+            this.handleSimpleCommand(ControlPointOpCode.stopOrPause, 'pause', callback)
+          } else {
+            log.error(`stopOrPause with invalid controlParameter: ${controlParameter}`)
+            callback(this.buildResponse(opCode, ResultCode.invalidParameter))
+          }
         }
         break
       }
@@ -105,11 +110,16 @@ export default class FitnessMachineControlPointCharacteristic extends bleno.Char
       // todo: Most tested bike apps use these to simulate a bike ride. Not sure how we can use these in our rower
       // since there is no adjustable resistance on the rowing machine
       case ControlPointOpCode.setIndoorBikeSimulationParameters: {
-        const windspeed = data.readInt16LE(1) * 0.001
-        const grade = data.readInt16LE(3) * 0.01
-        const crr = data.readUInt8(5) * 0.0001
-        const cw = data.readUInt8(6) * 0.01
-        this.handleSimParameters(opCode, windspeed, grade, crr, cw, callback)
+        if (data.length < 7) {
+          log.error('setIndoorBikeSimulationParameters requires 7 bytes')
+          callback(this.buildResponse(opCode, ResultCode.invalidParameter))
+        } else {
+          const windspeed = data.readInt16LE(1) * 0.001
+          const grade = data.readInt16LE(3) * 0.01
+          const crr = data.readUInt8(5) * 0.0001
+          const cw = data.readUInt8(6) * 0.01
+          this.handleSimParameters(opCode, windspeed, grade, crr, cw, callback)
+        }
         break
       }
 

@@ -332,7 +332,6 @@ test('stopOrPause with invalid param returns invalidParameter', () => {
 test('setIndoorBikeSimulationParameters without requestControl returns controlNotPermitted', () => {
   let receivedCommand = null
   let receivedResponse = null
-  // Create uncontrolled characteristic (no requestControl handshake)
   const char = createCharacteristic((cmd) => {
     receivedCommand = cmd
     return true
@@ -341,12 +340,62 @@ test('setIndoorBikeSimulationParameters without requestControl returns controlNo
   const buf = buildSetIndoorBikeSimBuffer(0, 0, 0, 0)
   char.onWriteRequest(buf, 0, false, (response) => {
     receivedResponse = response
-    // Should return controlNotPermitted since requestControl was never called
     assertResponse(response, ControlPointOpCode.setIndoorBikeSimulationParameters, ResultCode.controlNotPermitted)
   })
 
   assert.is(receivedCommand, null, 'controlPointCallback should not be called without control')
   assertResponse(receivedResponse, ControlPointOpCode.setIndoorBikeSimulationParameters, ResultCode.controlNotPermitted)
+})
+
+// --- Edge cases: buffer length validation ---
+
+// 20. stopOrPause with missing parameter byte returns invalidParameter
+test('stopOrPause with missing parameter byte returns invalidParameter', () => {
+  let receivedResponse = null
+  const char = createControlledCharacteristic(() => true)
+
+  char.onWriteRequest(buildSimpleCommandBuffer(ControlPointOpCode.stopOrPause), 0, false, (response) => {
+    receivedResponse = response
+  })
+
+  assertResponse(receivedResponse, ControlPointOpCode.stopOrPause, ResultCode.invalidParameter)
+})
+
+// 21. stopOrPause with param=0 (invalid) returns invalidParameter
+test('stopOrPause with param=0 returns invalidParameter', () => {
+  let receivedResponse = null
+  const char = createControlledCharacteristic(() => true)
+
+  char.onWriteRequest(buildStopOrPauseBuffer(0), 0, false, (response) => {
+    receivedResponse = response
+  })
+
+  assertResponse(receivedResponse, ControlPointOpCode.stopOrPause, ResultCode.invalidParameter)
+})
+
+// 22. stopOrPause with param=255 (invalid) returns invalidParameter
+test('stopOrPause with param=255 returns invalidParameter', () => {
+  let receivedResponse = null
+  const char = createControlledCharacteristic(() => true)
+
+  char.onWriteRequest(buildStopOrPauseBuffer(255), 0, false, (response) => {
+    receivedResponse = response
+  })
+
+  assertResponse(receivedResponse, ControlPointOpCode.stopOrPause, ResultCode.invalidParameter)
+})
+
+// 23. setIndoorBikeSimulationParameters with truncated buffer returns invalidParameter
+test('setIndoorBikeSimulationParameters with truncated buffer returns invalidParameter', () => {
+  let receivedResponse = null
+  const char = createControlledCharacteristic(() => true)
+
+  const truncatedBuf = Buffer.from([ControlPointOpCode.setIndoorBikeSimulationParameters, 0x00, 0x00])
+  char.onWriteRequest(truncatedBuf, 0, false, (response) => {
+    receivedResponse = response
+  })
+
+  assertResponse(receivedResponse, ControlPointOpCode.setIndoorBikeSimulationParameters, ResultCode.invalidParameter)
 })
 
 test.run()
