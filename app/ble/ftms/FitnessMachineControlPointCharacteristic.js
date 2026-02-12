@@ -97,6 +97,7 @@ export default class FitnessMachineControlPointCharacteristic extends bleno.Char
           this.handleSimpleCommand(ControlPointOpCode.stopOrPause, 'pause', callback)
         } else {
           log.error(`stopOrPause with invalid controlParameter: ${controlParameter}`)
+          callback(this.buildResponse(opCode, ResultCode.invalidParameter))
         }
         break
       }
@@ -108,11 +109,7 @@ export default class FitnessMachineControlPointCharacteristic extends bleno.Char
         const grade = data.readInt16LE(3) * 0.01
         const crr = data.readUInt8(5) * 0.0001
         const cw = data.readUInt8(6) * 0.01
-        if (this.controlPointCallback({ name: 'setIndoorBikeSimulationParameters', value: { windspeed, grade, crr, cw } })) {
-          callback(this.buildResponse(opCode, ResultCode.success))
-        } else {
-          callback(this.buildResponse(opCode, ResultCode.operationFailed))
-        }
+        this.handleSimParameters(opCode, windspeed, grade, crr, cw, callback)
         break
       }
 
@@ -132,6 +129,19 @@ export default class FitnessMachineControlPointCharacteristic extends bleno.Char
       }
     } else {
       log.info(`initating command '${opName}' requires 'requestControl'`)
+      callback(this.buildResponse(opCode, ResultCode.controlNotPermitted))
+    }
+  }
+
+  handleSimParameters (opCode, windspeed, grade, crr, cw, callback) {
+    if (this.controlled) {
+      if (this.controlPointCallback({ name: 'setIndoorBikeSimulationParameters', value: { windspeed, grade, crr, cw } })) {
+        callback(this.buildResponse(opCode, ResultCode.success))
+      } else {
+        callback(this.buildResponse(opCode, ResultCode.operationFailed))
+      }
+    } else {
+      log.info(`initiating command 'setIndoorBikeSimulationParameters' requires 'requestControl'`)
       callback(this.buildResponse(opCode, ResultCode.controlNotPermitted))
     }
   }
