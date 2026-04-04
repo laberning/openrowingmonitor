@@ -1,14 +1,15 @@
 'use strict'
-/*
-  Open Rowing Monitor, https://github.com/JaapvanEkris/openrowingmonitor
-
-  This keeps an array, for all in-stroke metrics
-*/
+/**
+ * @copyright {@link https://github.com/JaapvanEkris/openrowingmonitor|OpenRowingMonitor}
+ *
+ * @file This keeps an array, for all in-stroke metrics
+ */
 import { createSeries } from './Series.js'
 
 export function createCurveMetrics () {
   const _curve = createSeries()
   let _max = 0
+  let _peakPosition = 0
   let totalInputXTime = 0
   let totaltime = 0
 
@@ -16,7 +17,10 @@ export function createCurveMetrics () {
     // add the new dataPoint to the array, we have to move datapoints starting at the oldst ones
     if (inputValue > 0) {
       _curve.push(inputValue)
-      _max = Math.max(_max, inputValue)
+      if (inputValue >= _max) {
+        _peakPosition = _curve.length()
+        _max = Math.max(_max, inputValue)
+      }
       totalInputXTime += deltaTime * inputValue
       totaltime += deltaTime
     } else {
@@ -28,6 +32,14 @@ export function createCurveMetrics () {
   function peak () {
     if (_max > 0) {
       return _max
+    } else {
+      return 0
+    }
+  }
+
+  function peakNormalizedPosition () {
+    if (_max > 0 && _peakPosition > 0 && _curve.length() > 0) {
+      return (_peakPosition / _curve.length())
     } else {
       return 0
     }
@@ -56,6 +68,7 @@ export function createCurveMetrics () {
   function reset () {
     _curve.reset()
     _max = 0
+    _peakPosition = 0
     totalInputXTime = 0
     totaltime = 0
   }
@@ -63,6 +76,7 @@ export function createCurveMetrics () {
   return {
     push,
     peak,
+    peakNormalizedPosition,
     average,
     curve,
     length,

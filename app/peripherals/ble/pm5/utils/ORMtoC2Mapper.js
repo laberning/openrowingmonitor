@@ -59,6 +59,9 @@ export function toC2WorkoutType (baseMetrics) {
     case (baseMetrics.workout.numberOfIntervals > 1 && baseMetrics.workout.type === 'time'):
       return WorkoutTypes.WORKOUTTYPE_FIXEDTIME_INTERVAL
       break
+    case (baseMetrics.workout.numberOfIntervals > 1 && baseMetrics.workout.type === 'calories'):
+      return WorkoutTypes.WORKOUTTYPE_FIXEDCALS_INTERVAL
+      break
     default:
       return WorkoutTypes.WORKOUTTYPE_JUSTROW_NOSPLITS
   }

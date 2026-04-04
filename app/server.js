@@ -143,7 +143,8 @@ async function shutdownApp () {
   // As we are shutting down, we need to make sure things are closed down nicely and save what we can
   gpioTimerService.kill()
   await recordingManager.handleCommand('shutdown')
-  await peripheralManager.handleCommand('shutdown')
+  // We don't want to wait for the peripherals to close, as then an unresponsive peripheral will block the shutdown process that can remedy it
+  peripheralManager.handleCommand('shutdown')
 }
 
 /* Uncomment the following lines to simulate a session

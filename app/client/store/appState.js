@@ -20,6 +20,7 @@ export const APP_STATE = {
     driveLength: 0,
     driveDuration: 0,
     driveHandleForceCurve: [],
+    drivePeakHandleForce: 0,
     driveDistance: 0,
     recoveryDuration: 0,
     dragFactor: undefined,
@@ -47,9 +48,11 @@ export const APP_STATE = {
     // true if remote device shutdown is enabled
     shutdownEnabled: false,
     guiConfigs: {
-      dashboardMetrics: ['distance', 'timer', 'pace', 'power', 'stkRate', 'totalStk', 'calories', 'actions'],
+      dashboardMetrics: ['distance', 'timer', 'pace', 'power', 'stkRate', 'totalStk', 'calories'],
       showIcons: true,
-      maxNumberOfTiles: 8
+      maxNumberOfTiles: 8,
+      trueBlackTheme: false,
+      forceCurveDivisionMode: 0
     }
   }
 }

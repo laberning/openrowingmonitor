@@ -1,22 +1,21 @@
 'use strict'
-/*
-  Open Rowing Monitor, https://github.com/JaapvanEkris/openrowingmonitor
-*/
 /**
- * This Module captures the metrics of a rowing session and persists them into the tcx format
+ * @copyright {@link https://github.com/JaapvanEkris/openrowingmonitor|OpenRowingMonitor}
+ *
+ * @file This Module captures the metrics of a rowing session and persists them into the tcx format
  * It provides a tcx-file content, and some metadata for the filewriter and the file-uploaders
  */
 /* eslint-disable max-lines -- The length is governed by the creation of all the tcx-parameters, which we can't control */
 import log from 'loglevel'
 import { createDragLine, createVO2MaxLine, createHRRLine } from './utils/decorators.js'
-import { createSeries } from '../engine/utils/Series.js'
+import { createInfiniteSeriesMetrics } from '../engine/utils/InfiniteSeriesMetrics.js'
 import { createVO2max } from './utils/VO2max.js'
 
 export function createTCXRecorder (config) {
   const type = 'tcx'
   const postfix = '_rowing'
   const presentationName = 'Garmin tcx'
-  const lapHRMetrics = createSeries()
+  const lapHRMetrics = createInfiniteSeriesMetrics()
   const VO2max = createVO2max(config)
   let heartRate = 0
   let sessionData
@@ -111,7 +110,7 @@ export function createTCXRecorder (config) {
     } else {
       sessionData.lap[lapnumber].strokes[strokenumber].heartrate = undefined
     }
-    VO2max.push(metrics)
+    VO2max.push(metrics, heartRate)
     tcxfileContentIsCurrent = false
     allDataHasBeenWritten = false
   }

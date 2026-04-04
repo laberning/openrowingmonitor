@@ -147,7 +147,7 @@ export class HrmService extends EventEmitter {
         }
 
         characteristics.manufacturerId.read((_errorCode, data) => {
-          resolve(data.toString())
+          resolve(data?.toString())
         })
       })
 
@@ -159,7 +159,7 @@ export class HrmService extends EventEmitter {
         }
 
         characteristics.serialNumber.read((_errorCode, data) => {
-          resolve(data.toString())
+          resolve(data?.toString())
         })
       })
     }
@@ -219,7 +219,7 @@ export class HrmService extends EventEmitter {
         return
       }
 
-      this.#batteryLevelCharacteristic.read((_errorCode, data) => resolve(data.readUInt8(0)))
+      this.#batteryLevelCharacteristic.read((_errorCode, data) => resolve(data ? data.readUInt8(0) : 0))
     })
     this.#batteryLevelCharacteristic.writeCCCD(/* enableNotifications */ true, /* enableIndications */ false)
     this.#batteryLevelCharacteristic.on('change', (level) => {
@@ -250,6 +250,11 @@ export class HrmService extends EventEmitter {
    * @param {Buffer} data
    */
   #onHeartRateNotify (data) {
+    if (!Buffer.isBuffer(data) || data.length === 0) {
+      log.error('Received invalid heart rate data, ignoring')
+
+      return
+    }
     const flags = data.readUInt8(0)
     // bits of the feature flag:
     // 0: Heart Rate Value Format
@@ -301,6 +306,8 @@ export class HrmService extends EventEmitter {
    * @param {Buffer} data
    */
   #onBatteryNotify (data) {
-    this.#batteryLevel = data.readUInt8(0)
+    if (Buffer.isBuffer(data) && data.length > 0) {
+      this.#batteryLevel = data.readUInt8(0)
+    }
   }
 }

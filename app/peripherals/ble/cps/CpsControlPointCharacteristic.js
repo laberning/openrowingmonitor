@@ -28,7 +28,7 @@ export class CyclingPowerControlPointCharacteristic {
   constructor (controlPointCallback) {
     this.#characteristic = {
       name: 'Cycling Power Meter Control Point',
-      uuid: 0x2A55,
+      uuid: 0x2A66,
       properties: ['write', 'indicate'],
       onWrite: (connection, _needsResponse, opCode, callback) => {
         log.debug(`CPS control is called: ${opCode}`)

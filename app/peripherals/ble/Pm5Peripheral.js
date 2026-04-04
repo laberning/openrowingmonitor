@@ -76,6 +76,11 @@ export function createPm5Peripheral (bleManager, config, controlCallback) {
 
     await new Promise((resolve) => { /** @type {Connection} */(_connection).gatt.exchangeMtu(resolve) })
 
+    _connection.smp.once('pairingRequest', () => {
+      _connection.smp.sendPairingFailed(NodeBleHost.SmpErrors.PAIRING_NOT_SUPPORTED)
+      log.debug('PM5 pairing request rejected')
+    })
+
     _connection.once('disconnect', async () => {
       log.debug(`PM5 client disconnected (address: ${_connection?.peerAddress}), restarting advertising`)
       _connection = undefined

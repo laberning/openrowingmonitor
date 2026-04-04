@@ -1,13 +1,12 @@
 'use strict'
-/*
-  Open Rowing Monitor, https://github.com/JaapvanEkris/openrowingmonitor
-*/
 /**
- * This Module captures the metrics of a rowing session and persists them into a RowingData format
+ * @copyright {@link https://github.com/JaapvanEkris/openrowingmonitor|OpenRowingMonitor}
+ *
+ * @file This Module captures the metrics of a rowing session and persists them into a RowingData format
  * It provides a RowingData file content, and some metadata for the filewriter and the file-uploaders
  */
 import log from 'loglevel'
-import { createSeries } from '../engine/utils/Series.js'
+import { createInfiniteSeriesMetrics } from '../engine/utils/InfiniteSeriesMetrics.js'
 import { createVO2max } from './utils/VO2max.js'
 
 export function createRowingDataRecorder (config) {
@@ -15,7 +14,7 @@ export function createRowingDataRecorder (config) {
   const postfix = '_rowingData'
   const presentationName = 'RowingData'
   const VO2max = createVO2max(config)
-  const drag = createSeries()
+  const drag = createInfiniteSeriesMetrics()
   let startTime
   let splitNumber = 0
   let heartRate = 0
@@ -117,7 +116,7 @@ export function createRowingDataRecorder (config) {
     strokes[strokeNumber].driveHandleForceCurve = metrics.driveHandleForceCurve
     strokes[strokeNumber].driveHandleVelocityCurve = metrics.driveHandleVelocityCurve
     strokes[strokeNumber].driveHandlePowerCurve = metrics.driveHandlePowerCurve
-    VO2max.push(metrics)
+    VO2max.push(metrics, heartRate)
     if (!isNaN(metrics.dragFactor) && metrics.dragFactor > 0) { drag.push(metrics.dragFactor) }
     allDataHasBeenWritten = false
     rowingDataFileContentIsCurrent = false

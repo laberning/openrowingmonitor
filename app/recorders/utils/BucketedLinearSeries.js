@@ -5,7 +5,7 @@
   This Module calculates a bucketed Linear Regression. It assumes a rising line.
 */
 
-import { createTSLinearSeries } from '../../engine/utils/FullTSLinearSeries.js'
+import { createTSLinearSeries } from '../../engine/utils/TSLinearSeries.js'
 
 /**
  * @param {number} xCutOffInterval

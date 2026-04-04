@@ -81,9 +81,7 @@ export class BleManager {
  * @param {string} uuid
  * @returns
  */
-export const toBLEStandard128BitUUID = (uuid) => {
-  return `0000${uuid}-0000-1000-8000-00805F9B34FB`
-}
+export const toBLEStandard128BitUUID = (uuid) => `0000${uuid}-0000-1000-8000-00805F9B34FB`
 
 export class GattNotifyCharacteristic {
   get characteristic () {

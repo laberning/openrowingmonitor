@@ -113,6 +113,10 @@ export function createApp (app) {
         socket.send(JSON.stringify({ command: 'reset' }))
         break
       }
+      case 'updateIntervalSettings': {
+        socket.send(JSON.stringify({ command: 'updateIntervalSettings', data: action.data }))
+        break
+      }
       case 'upload': {
         socket.send(JSON.stringify({ command: 'upload' }))
         break

@@ -94,6 +94,11 @@ export function createFtmsPeripheral (bleManager, controlCallback, config, simul
 
     await new Promise((resolve) => { /** @type {Connection} */(_connection).gatt.exchangeMtu(resolve) })
 
+    _connection.smp.once('pairingRequest', () => {
+      _connection.smp.sendPairingFailed(NodeBleHost.SmpErrors.PAIRING_NOT_SUPPORTED)
+      log.debug('FTMS pairing request rejected')
+    })
+
     _connection.once('disconnect', async () => {
       log.debug(`FTMS client disconnected (address: ${_connection?.peerAddress}), restarting advertising`)
       _connection = undefined

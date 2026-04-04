@@ -157,6 +157,8 @@ sudo apt-get -y install bluetooth bluez libbluetooth-dev libudev-dev git
 sudo apt-get -y install pigpio
 # We disable the pigpio service explicity, as the JS wrapper is alergic to the deamon
 sudo systemctl mask pigpiod.service
+sudo rfkill unblock bluetooth
+sudo systemctl restart bluetooth
 
 print
 print "Installing Node.js..."
@@ -231,11 +233,12 @@ fi
 if $INIT_GUI; then
   print
   print "Installing Graphical User Interface..."
+  USERNAME=$(logname)
   if [[ $VERSION == "10 (buster)" ]] || [[ $VERSION == "11 (bullseye)" ]]; then
-    sudo apt-get -y install --no-install-recommends xserver-xorg xserver-xorg-legacy x11-xserver-utils xinit openbox firefox
-    sudo mkdir /home/pi/.cache
-    sudo chown -R pi:pi /home/pi/.cache
-    sudo gpasswd -a pi tty
+    sudo apt-get -y install --no-install-recommends xserver-xorg xserver-xorg-legacy x11-xserver-utils xinit openbox chromium-browser
+    sudo -u $USERNAME mkdir -p /home/$USERNAME/.cache
+    sudo chown -R $USERNAME:$USERNAME /home/$USERNAME/.cache
+    sudo gpasswd -a $USERNAME tty
     sudo sed -i 's/allowed_users=console/allowed_users=anybody\nneeds_root_rights=yes/' /etc/X11/Xwrapper.config
     sudo cp install/webbrowserkiosk.service /lib/systemd/system/
     sudo systemctl daemon-reload
@@ -245,10 +248,10 @@ if $INIT_GUI; then
     sudo systemctl status webbrowserkiosk --no-pager
   else
     # ToDo: We aim to installs Wayland on Bookworm as Wayland has a better kiosk mode, as soon as we know how to do a decent Kiosk mode
-    sudo apt-get -y install --no-install-recommends xserver-xorg xserver-xorg-legacy x11-xserver-utils xinit openbox firefox
-    sudo mkdir /home/pi/.cache
-    sudo chown -R pi:pi /home/pi/.cache
-    sudo gpasswd -a pi tty
+    sudo apt-get -y install --no-install-recommends xserver-xorg xserver-xorg-legacy x11-xserver-utils xinit openbox chromium-browser
+    sudo -u $USERNAME mkdir -p /home/$USERNAME/.cache
+    sudo chown -R $USERNAME:$USERNAME /home/$USERNAME/.cache
+    sudo gpasswd -a $USERNAME tty
     sudo sed -i 's/allowed_users=console/allowed_users=anybody\nneeds_root_rights=yes/' /etc/X11/Xwrapper.config
     sudo cp install/webbrowserkiosk.service /lib/systemd/system/
     sudo systemctl daemon-reload

@@ -4,9 +4,9 @@
 */
 /**
  * Implementation of the GeneralStatus as defined in:
- * - https://www.concept2.co.uk/files/pdf/us/monitors/PM5_BluetoothSmartInterfaceDefinition.pdf
- * - https://www.concept2.co.uk/files/pdf/us/monitors/PM5_CSAFECommunicationDefinition.pdf
- * @see {@link https://github.com/JaapvanEkris/openrowingmonitor/blob/main/docs/PM5_Interface.md#0x0031-general-status|the description of desired behaviour}
+ * - @see {@link https://www.concept2.co.uk/files/pdf/us/monitors/PM5_BluetoothSmartInterfaceDefinition.pdf|the BLE specifications}
+ * - @see {@link https://www.concept2.co.uk/files/pdf/us/monitors/PM5_CSAFECommunicationDefinition.pdf|the CSafe communication specification}
+ * - @see {@link https://github.com/JaapvanEkris/openrowingmonitor/blob/main/docs/PM5_Interface.md#0x0031-general-status|the description of desired behaviour}
 */
 import { BufferBuilder } from '../../../BufferBuilder.js'
 import { GattNotifyCharacteristic } from '../../../BleManager.js'
@@ -50,10 +50,18 @@ export class GeneralStatusCharacteristic extends GattNotifyCharacteristic {
     // totalWorkDistance: UInt24LE in 1 m
     bufferBuilder.writeUInt24LE(data.interval.distance.absoluteStart > 0 ? Math.round(data.interval.distance.absoluteStart) : 0)
     // workoutDuration: UInt24LE in 0.01 sec (if type TIME)
-    if (data.interval.type === 'distance') {
-      bufferBuilder.writeUInt24LE(data.interval.distance.target > 0 ? Math.round(data.interval.distance.target) : 0)
-    } else {
-      bufferBuilder.writeUInt24LE(data.interval.movingTime.target > 0 ? Math.round(data.interval.movingTime.target * 100) : 0)
+    switch (data.interval.type) {
+      case ('distance'):
+        bufferBuilder.writeUInt24LE(data.interval.distance.target > 0 ? Math.round(data.interval.distance.target) : 0)
+        break
+      case ('time'):
+        bufferBuilder.writeUInt24LE(data.interval.movingTime.target > 0 ? Math.round(data.interval.movingTime.target * 100) : 0)
+        break
+      case ('calories'):
+        bufferBuilder.writeUInt24LE(data.interval.calories.target > 0 ? Math.round(data.interval.calories.target) : 0)
+        break
+      default:
+        bufferBuilder.writeUInt24LE(0)
     }
     // workoutDurationType: UInt8, see DurationTypes enum
     bufferBuilder.writeUInt8(toC2DurationType(data))

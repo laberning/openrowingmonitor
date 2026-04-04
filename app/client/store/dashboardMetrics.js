@@ -1,13 +1,12 @@
 'use strict'
-/*
-  Open Rowing Monitor, https://github.com/JaapvanEkris/openrowingmonitor
-*/
+/**
+ * @copyright {@link https://github.com/JaapvanEkris/openrowingmonitor|OpenRowingMonitor}
+ */
 
 import { html } from 'lit'
 import { formatDistance, formatNumber, secondsToTimeString } from '../lib/helper'
 import { iconBolt, iconClock, iconAlarmclock, iconFire, iconHeartbeat, iconPaddle, iconRoute, iconStopwatch, rowerIcon } from '../lib/icons'
 import '../components/DashboardForceCurve.js'
-import '../components/DashboardActions.js'
 import '../components/DashboardMetric.js'
 import '../components/BatteryIcon.js'
 
@@ -15,7 +14,7 @@ export const DASHBOARD_METRICS = {
   distance: {
     displayName: 'Distance',
     size: 1,
-    template: (metrics, config) => {
+    template: (metrics, config, onWorkoutOpen) => {
       let distance
       switch (true) {
         case (metrics?.interval?.type === 'rest' && metrics?.pauseCountdownTime > 0):
@@ -29,7 +28,13 @@ export const DASHBOARD_METRICS = {
       }
       const linearDistance = formatDistance(distance ?? 0)
 
-      return simpleMetricFactory(linearDistance.distance, linearDistance.unit, config?.guiConfigs?.showIcons ? iconRoute : '')
+      return html`<dashboard-metric
+        style="cursor:pointer"
+        @click=${() => onWorkoutOpen?.('distance')}
+        .icon=${config?.guiConfigs?.showIcons ? iconRoute : ''}
+        .unit=${linearDistance.unit}
+        .value=${linearDistance.distance}
+      ></dashboard-metric>`
     }
   },
 
@@ -48,22 +53,28 @@ export const DASHBOARD_METRICS = {
     </dashboard-metric>`
   },
 
-  totalStk: { displayName: 'Total strokes', size: 1, template: (metrics, config) => simpleMetricFactory(metrics?.totalNumberOfStrokes, 'stk', config?.guiConfigs?.showIcons ? iconPaddle : '') },
+  totalStk: { displayName: 'Total strokes', size: 1, template: (metrics, config) => simpleMetricFactory(metrics?.interval?.numberOfStrokes, 'stk', config?.guiConfigs?.showIcons ? iconPaddle : '') },
 
   calories: {
     displayName: 'Calories',
     size: 1,
-    template: (metrics, config) => {
-      const calories = metrics?.interval?.type === 'Calories' ? Math.max(metrics?.interval?.TargetCalories - metrics?.interval?.Calories, 0) : metrics?.totalCalories
+    template: (metrics, config, onWorkoutOpen) => {
+      const calories = metrics?.interval?.type === 'calories' ? Math.max(metrics?.interval?.calories?.toEnd, 0) : Math.max(metrics?.interval?.calories?.sinceStart, 0)
 
-      return simpleMetricFactory(formatNumber(calories ?? 0), 'kcal', config?.guiConfigs?.showIcons ? iconFire : '')
+      return html`<dashboard-metric
+        style="cursor:pointer"
+        @click=${() => onWorkoutOpen?.('calories')}
+        .icon=${config?.guiConfigs?.showIcons ? iconFire : ''}
+        .unit=${'kcal'}
+        .value=${formatNumber(calories ?? 0)}
+      ></dashboard-metric>`
     }
   },
 
   timer: {
     displayName: 'Timer',
     size: 1,
-    template: (metrics, config) => {
+    template: (metrics, config, onWorkoutOpen) => {
       let time
       let icon
       switch (true) {
@@ -80,7 +91,13 @@ export const DASHBOARD_METRICS = {
           icon = iconClock
       }
 
-      return simpleMetricFactory(secondsToTimeString(time ?? 0), '', config?.guiConfigs?.showIcons ? icon : '')
+      return html`<dashboard-metric
+        style="cursor:pointer"
+        @click=${() => onWorkoutOpen?.('time')}
+        .icon=${config?.guiConfigs?.showIcons ? icon : ''}
+        .unit=${''}
+        .value=${secondsToTimeString(time ?? 0)}
+      ></dashboard-metric>`
     }
   },
 
@@ -94,9 +111,35 @@ export const DASHBOARD_METRICS = {
 
   recoveryDuration: { displayName: 'Recovery duration', size: 1, template: (metrics, config) => simpleMetricFactory(formatNumber(metrics?.recoveryDuration, 2), 'sec', config?.guiConfigs?.showIcons ? 'Recovery' : '') },
 
-  forceCurve: { displayName: 'Force curve', size: 2, template: (metrics) => html`<dashboard-force-curve .value=${metrics?.driveHandleForceCurve} style="grid-column: span 2"></dashboard-force-curve>` },
+  forceCurve: { displayName: 'Force curve', size: 2, template: (metrics, config) => html`
+    <dashboard-force-curve 
+      .updateForceCurve=${metrics.metricsContext?.isRecoveryStart} 
+      .value=${metrics?.driveHandleForceCurve} 
+      .divisionMode=${config?.guiConfigs?.forceCurveDivisionMode ?? 0} 
+      style="grid-column: span 2"
+    ></dashboard-force-curve>
+  ` },
 
-  actions: { displayName: 'Actions', size: 1, template: (_, config) => html`<dashboard-actions .config=${config}></dashboard-actions>` }
+  peakForce: { displayName: 'Peak Force', size: 1, template: (metrics) => simpleMetricFactory(formatNumber(metrics?.drivePeakHandleForce), 'N', 'Peak Force') },
+
+  strokeRatio: {
+    displayName: 'Stroke Ratio',
+    size: 1,
+    template: (metrics) => {
+      // Check to make sure both values are truthy
+      // no 0, null, or undefined
+      const validRatio = metrics?.driveDuration && metrics?.recoveryDuration
+      let ratio
+
+      if (validRatio) {
+        ratio = `1:${(metrics.recoveryDuration / metrics.driveDuration).toFixed(1)}`
+      } else {
+        ratio = undefined
+      }
+
+      return simpleMetricFactory(ratio, '', 'Ratio')
+    }
+  }
 }
 
 /**

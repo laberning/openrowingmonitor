@@ -1,6 +1,8 @@
 # Description of the PM5 interface
 
-The design goal is to emulate PM5 communication sufficiently for users to connect easily to apps. We aim to have maximum compatibility with all these apps, making these apps to intuitively to use with OpenRowingMonitor. However, it explicitly is **NOT** our goal to completely emulate a full-blown PM5 with racing features and logbook verification. Also features that might lead to cheating or uploading results to the Concept2 logbook are explicitly excluded. Some testing is one on ErgData, as that is the definitive source how Concept2's data is to be interpreted, excluding interpretation errors by independent software developers.
+This document describes the design choices underpinning our PM5 interface. If you are not redesigning or modifying this implementation, this document probably isn't for you.
+
+The design goal is to emulate PM5 communication sufficiently for users to connect easily to apps. We aim to have maximum compatibility with all these apps, making these apps to intuitively to use with OpenRowingMonitor. However, it explicitly is **NOT** our goal to completely emulate a full-blown PM5 with racing features and logbook verification. Also features that might lead to cheating or uploading results to the Concept2 logbook are explicitly excluded. Some testing is one on ErgData, as we consider it the definitive source how Concept2's data is to be interpreted, thus excluding interpretation errors by independent software developers based on less than optimal specifications.
 
 This interface emulation is partially based on the description in Concept 2's API documentation ([[1]](#1) and [[2]](#2)). As this documentation is inconclusive about the timing/triggers for messages, as well as the exact definition of the values used, a large part is also based on analysis of the communication via recorded bluetooth traces with current PM5's.
 
@@ -9,7 +11,7 @@ This interface emulation is partially based on the description in Concept 2's AP
 We aim to be interoperable with the following apps:
 
 <!-- markdownlint-disable no-inline-html -->
-| App | Required&nbsp;characteristics&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;| Remarks |
+| App | Required&nbsp;characteristics&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; | Remarks |
 | --- | --------- | ------ |
 | [ErgArcade cloud simulation](https://ergarcade.github.io/mrdoob-clouds/) | <ul><li>[0x0031 "General Status"](#0x0031-general-status)</li><li>[0x0032 "Additional Status"](#0x0032-additional-status)</li></ul> | |
 | [ErgArcade fluid simulation](https://ergarcade.github.io/WebGL-Fluid-Simulation/) | <ul><li>[0x0031 "General Status"](#0x0031-general-status)</li></ul> | Actually only uses `STROKESTATE_DRIVING` |
@@ -24,36 +26,36 @@ Some apps, like Aviron, Ergatta, Hydrow, iFIT and Peleton claim compatibility wi
 
 ## Structural differences between OpenRowingMonitor and a PM5
 
-As OpenRowingMonitor and PM5 have been independently developed, the design choices that have been made are not consistent. Here we adress these differences, as they are quite essential in the further implementation.
+As OpenRowingMonitor and PM5 have been independently developed, the design choices that have been made are not consistent by default. Here we adress these differences, as they are quite essential in the further implementation.
 
 ### Workout Hierarchy
 
-OpenRowingMonitor recognizes three levels in a workout: the Session, the underlying Intervals and the Splits in these Intervals (see [the architecture document](./Architecture.md#session-interval-and-split-boundaries-in-sessionmanagerjs) for a more detailed description). A PM5 recognizes either a workout with one or more Intervals of varying length, or a single workout with several underlying splits with identical length. Some apps (ErgZone) even optimize workouts with multiple identical intervals to a workout with splits.
+OpenRowingMonitor recognizes three levels in a workout: the Session, the underlying Intervals and the Splits in these Intervals (see [the architecture document](./Architecture.md#session-interval-and-split-boundaries-in-sessionmanagerjs) for a more detailed description). A PM5 recognizes either a workout with one or more Intervals of varying length, or a single workout with several underlying splits with identical length. Some apps (ErgZone) even optimize workouts with multiple identical intervals to a workout with splits. This might lead to confusing situations where GUI behaviour changes radically due to trivial changes (like shortening a last interval by 1 second), but we consider that beyind our control to adresss.
 
 The [CsafeManagerService.js](../app/peripherals/ble/pm5/csafe-service/CsafeManagerService.js) therefore will map:
 
 * a fixed time/distance PM5 workout to a single OpenRowingMonitor Interval, and add the specified splits as OpenRowingMonitor splits if specified.
 * A PM5 workout with multiple intervals to multiple OpenRowingMonitor Intervals, without any splits specified (as they can't be specified by the PM5).
 
-This makes scoping of many variables challenging as it is unclear whether a variable is intended to capture a split or the interval. Concept2's ambiguous description of most variables in [[1]](#1) and [[2]](#2) does not provide any clarification here.
+This makes scoping of many summarisimg variables challenging as it is unclear whether a variable is intended to capture a split or the interval. Concept2's ambiguous description of most variables in [[1]](#1) and [[2]](#2) does not provide any clarification here.
 
-[workoutSegment.js](../app/engine/utils/workoutSegment.js)'s default behaviour with missing split information helps here to overcome the structural issues. When split nformation is mising, it 'inherits' the split parameters of the above interval (in essence making the split boundaries identical to the interval). This makes the splits always contain the most granular division of the workout regardless of how the PM5 has communicated the workout. In reporting back to the app, the splits are thus the most likely basis for reporting in the PM5 emulated reporting. However, some variables seem to be scoped to the interval or workout level. A key reason for conducting the traces is to understand the scoping of each variable.
+Our approach here is to make [workoutSegment.js](../app/engine/utils/workoutSegment.js)'s default behaviour with missing split parameters to help overcome these structural issues. When split parameters are mising, it will always 'inherit' the parameters of the above interval (in essence making the split boundaries identical to the interval). This makes the splits always contain the most granular division of the workout regardless of how the PM5 has communicated the workout. In reporting back to the app, the splits are thus the most likely basis for reporting in the PM5 emulated reporting. However, some variables seem to be scoped to the interval or workout level explicitly. A key reason for conducting the traces is to understand the scoping of each variable to prevent confusing these apps.
 
 ### Positioning split/interval reporting
 
-OpenRowingMonitor will always report on the end-of-split boundary, including a summary of the split it just completed. A PM5 will report this **after** the split has concluded (i.e. in tje mew split), reporting about the split it has completed.
+OpenRowingMonitor will always report on the end-of-split boundary, including a summary of the split it just completed. A PM5 will report this **after** the split has concluded (i.e. in the new split), reporting about the split it has completed.
 
 ### Positioning planned rest intervals
 
 OpenRowingMonitor treats planned rest intervals similar to normal time based intervals, with the exception that the rowing engine is forced to stop collecting metrics during that interval. A PM5 considers a rest interval a subordinate attribute of a normal interval, and it isn't an independent entity. In [CsafeManagerService.js](../app/peripherals/ble/pm5/csafe-service/CsafeManagerService.js) this is managed by adding a rest interval to OpenRowingMonitor's workout schedule.
 
-In reporting, we indeed see the PM5 skipping the split/interval reporting when the pause starts, and including the rest data with the split reporting after the pause has ended. This is consistent with the approach that a rest interval only is an extension of an active interval. In OpenRowingMonitor this behaviour is replicated by not reporting the start of a pause as new split, and combining the data from the active split and the rest split. Although the underlying datasets are largely disjunct (as rest intervals have little data associated with them), a key issue is the reporting of the IntervalType, WorkoutState and workoutDurationType in [0x0031 General Status](#0x0031-general-status), and the intervalType [0x0037 "Split Data"](#0x0037-split-data).
+In reporting, we indeed see the PM5 skipping the split/interval reporting when the pause starts, and including the rest data with the split reporting after the pause has ended. This is consistent with Concept2's approach that a rest interval only is an extension of an active interval. In OpenRowingMonitor this behaviour is replicated by not reporting the start of a pause as new split, and combining the data from the active split and the rest split. Although the underlying datasets are largely disjunct (as rest intervals have little data associated with them), a key issue is the reporting of the IntervalType, WorkoutState and workoutDurationType in [0x0031 General Status](#0x0031-general-status), and the intervalType [0x0037 "Split Data"](#0x0037-split-data).
 
 In starting a pause our traces show that message [0x0031 General Status](#0x0031-general-status)'s 'IntervalType' is set from `IntervalTypes.INTERVALTYPE_DIST` to `IntervalTypes.INTERVALTYPE_REST`. [0x0037 "Split Data"](#0x0037-split-data)'s 'IntervalType' reports an `IntervalTypes.INTERVALTYPE_DIST`. For the GeneralStatus message, the workout target clearly contains an element of OpenRowingMonitor's 'sessionState' object (i.e. verify if the sessionState is paused).
 
 ### Positioning unplanned rests
 
-People might deviate from their workout plan and take a break mid-session. In OpenRowingMonitor this is treated as a seperate rest split, clearly separating active and passive metrics. The PM5 essentially ignores the pause, lets time continue and does not change split/interval upon detection.
+People might deviate from their workout plan and take a break mid-session. In OpenRowingMonitor this is treated as a seperate rest split, clearly separating active and passive metrics. Especially for downstream reporting, like Strava, this simplifies analysis a lot. The PM5 essentially ignores the pause, lets time continue and does not change split/interval upon detection. This is emulated by ignoring the reporting of unplanned pauses to apps. All summarizing metrics will be aggregated accoringly, also including rest time where relevant.
 
 ### Different definition of moving time and rest time
 
@@ -84,15 +86,15 @@ Each string of commands represents an interval. It is always closed with `CSAFE_
 | WORKOUTTYPE_JUSTROW_SPLITS | A simple unlimited session with splits | single interval, type = 'justrow' | Fixed 'time' or 'distance' |
 | WORKOUTTYPE_FIXEDDIST_NOSPLITS | A simple distance session | single interval, type = 'distance' | Undefined[^1] |
 | WORKOUTTYPE_FIXEDDIST_SPLITS | A simple distance session with splits | single interval, type = 'distance' | Fixed 'distance' |
+| WORKOUTTYPE_FIXEDDIST_INTERVAL | An unlimited repeating distance based interval | repeating intervals, type = 'distance'[^2] | Undefined[^1] |
 | WORKOUTTYPE_FIXEDTIME_NOSPLITS | A simple time limited session | single interval, type = 'time' | Undefined[^1] |
 | WORKOUTTYPE_FIXEDTIME_SPLITS | A simple time limited session with splits | single interval, type = 'time' | Fixed 'time' |
 | WORKOUTTYPE_FIXEDTIME_INTERVAL | An unlimited repeating time based interval | repeating intervals, type = 'time'[^2] | Undefined[^1] |
-| WORKOUTTYPE_FIXEDDIST_INTERVAL | An unlimited repeating distance based interval | repeating intervals, type = 'distance'[^2] | Undefined[^1] |
+| WORKOUTTYPE_FIXEDCALORIE_SPLITS | A simple calories session with splits | single interval, type = 'calories' | Fixed 'calories' |
+| WORKOUTTYPE_FIXEDCALS_INTERVAL | An unlimited repeating calories based interval | repeating intervals, type = 'calories'[^2] | Undefined[^1] |
 | WORKOUTTYPE_VARIABLE_INTERVAL | A series of different variable intervals | multiple intervals | Fixed 'time' or 'distance' per interval |
 | WORKOUTTYPE_VARIABLE_UNDEFINEDREST_INTERVAL | Not implemented | Not implemented | Not implemented |
-| WORKOUTTYPE_FIXEDCALORIE_SPLITS | Not implemented | Not implemented | Not implemented |
 | WORKOUTTYPE_FIXEDWATTMINUTE_SPLITS | Not implemented | Not implemented | Not implemented |
-| WORKOUTTYPE_FIXEDCALS_INTERVAL | Not implemented | Not implemented | Not implemented |
 
 > [!NOTE]
 > Please be aware that apps like ErgData and ErgZone actually do 'optimisations' behind the scene. Three intervals of 8 minutes with 2 minute rests are typically sent as a `WORKOUTTYPE_FIXEDTIME_INTERVAL`, despite this resulting in an endless series. If the planned rests are omited, it will result in a `WORKOUTTYPE_FIXEDTIME_SPLITS` with a single time interval with splits of the length of the intervals. If one would add a single second to any of the individual intervals, it becomes a `WORKOUTTYPE_VARIABLE_INTERVAL`, and all intervals are programmed manually. Obviously, from a user perspective the target displayed in the GUI will vary across these options (see [issue 118](https://github.com/JaapvanEkris/openrowingmonitor/issues/118)).

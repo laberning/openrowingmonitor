@@ -4,8 +4,8 @@
 */
 /**
  * This Module is the interface to the Strava.com webservice
- * See https://developers.strava.com/
- * and https://gist.github.com/michaellihs/bb262e2c6ee93093485361de282c242d
+ * @see {@link https://developers.strava.com/|Official Strava documentation}
+ * @see {@link https://gist.github.com/michaellihs/bb262e2c6ee93093485361de282c242d|this practical application}
  */
 /* eslint-disable camelcase -- As Strava's url parameters use underscores, not much we can do about it */
 import log from 'loglevel'
@@ -26,6 +26,8 @@ export function createStravaInterface (config) {
     if (!recorder.minimumDataAvailable()) {
       log.info(`${recorder.presentationName} file has not been uploaded to Strava.com, as there was not enough data recorded`)
       return
+    } else {
+      log.info(`Attempting upload to ${recorder.presentationName} file to Strava.com`)
     }
 
     // ToDo: check if the uploaded file has changed since last upload based on total recorded movingtime

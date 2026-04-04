@@ -4,7 +4,7 @@
 */
 /**
  * This keeps a series of specified length, which we can ask for an moving median
- *
+ * This is used by RowingStatistics.js to aggregate over multiple stroke phasee
  */
 import { createLabelledBinarySearchTree } from './BinarySearchTree.js'
 
@@ -20,9 +20,9 @@ export function createStreamFilter (maxLength, defaultValue) {
       if (maxLength > 0) {
         position = (position + 1) % maxLength
         bst.remove(position)
-        bst.push(position, dataPoint)
+        bst.push(position, dataPoint, 1)
       } else {
-        bst.push(position, dataPoint)
+        bst.push(position, dataPoint, 1)
       }
       cleanDatapoint = bst.median()
     }

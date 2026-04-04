@@ -90,45 +90,46 @@ export class FitnessMachineControlPointCharacteristic {
       case ControlPointOpCode.reset:
         // The spec expects that after the reset command also the control shall be reset, but this leads to an error situation
         // ErgZone will send a reset at the start of communication, without pushing any workoutplan, leading to a loss of information
-        if (this.#controlled) {
-          this.#controlPointCallback({ req: { name: 'reset', data: {} } })
-          return this.#buildResponse(opCode, ResultOpCode.success)
-        } else {
+        if (!this.#controlled) {
           log.error('FTMS: Reset attempted before RequestControl')
+          return this.#buildResponse(opCode, ResultOpCode.controlNotPermitted)
         }
-        break
+        this.#controlPointCallback({ req: { name: 'reset', data: {} } })
+        return this.#buildResponse(opCode, ResultOpCode.success)
       case ControlPointOpCode.startOrResume:
-        if (this.#controlled) {
-          this.#controlPointCallback({ req: { name: 'startOrResume', data: {} } })
-          return this.#buildResponse(opCode, ResultOpCode.success)
-        } else {
+        if (!this.#controlled) {
           log.error('FTMS: startOrResume attempted before RequestControl')
+          return this.#buildResponse(opCode, ResultOpCode.controlNotPermitted)
         }
-        break
+        this.#controlPointCallback({ req: { name: 'startOrResume', data: {} } })
+        return this.#buildResponse(opCode, ResultOpCode.success)
       case ControlPointOpCode.stopOrPause: {
-        if (this.#controlled) {
-          const controlParameter = data.readUInt8(1)
-          if (controlParameter === 1) {
-            this.#controlPointCallback({ req: { name: 'stop', data: {} } })
-            return this.#buildResponse(opCode, ResultOpCode.success)
-          } else if (controlParameter === 2) {
-            this.#controlPointCallback({ req: { name: 'pause', data: {} } })
-            return this.#buildResponse(opCode, ResultOpCode.success)
-          }
-          log.error(`FitnessMachineControlPointCharacteristic: stopOrPause with invalid controlParameter: ${controlParameter}`)
-        } else {
+        if (!this.#controlled) {
           log.error('FTMS: stopOrPause attempted before RequestControl')
+          return this.#buildResponse(opCode, ResultOpCode.controlNotPermitted)
         }
-        break
+        if (data.length < 2) {
+          log.error('FTMS: stopOrPause missing parameter byte')
+          return this.#buildResponse(opCode, ResultOpCode.invalidParameter)
+        }
+        const controlParameter = data.readUInt8(1)
+        if (controlParameter === 1) {
+          this.#controlPointCallback({ req: { name: 'stop', data: {} } })
+          return this.#buildResponse(opCode, ResultOpCode.success)
+        }
+        if (controlParameter === 2) {
+          this.#controlPointCallback({ req: { name: 'pause', data: {} } })
+          return this.#buildResponse(opCode, ResultOpCode.success)
+        }
+        log.error(`FitnessMachineControlPointCharacteristic: stopOrPause with invalid controlParameter: ${controlParameter}`)
+        return this.#buildResponse(opCode, ResultOpCode.invalidParameter)
       }
       // TODO: Potentially handle setTargetPower and setDistance, etc. by integrating it into the interval/session manager. Difficulty is that this is a simple justrow like command with one target and no limits.
       // So far, no apps have been found that actually use this interaction to develop and test against.
       default:
         log.info(`FitnessMachineControlPointCharacteristic: opCode ${swapObjectPropertyValues(ControlPointOpCode)[opCode]} is not supported`)
+        return this.#buildResponse(opCode, ResultOpCode.opCodeNotSupported)
     }
-
-    log.info(`FitnessMachineControlPointCharacteristic: opCode ${swapObjectPropertyValues(ControlPointOpCode)[opCode]} is not supported`)
-    return this.#buildResponse(opCode, ResultOpCode.opCodeNotSupported)
   }
 
   /**

@@ -125,7 +125,7 @@ sequenceDiagram
 Both the `webServer.js` and `PeripheralManager.js` can trigger a command. Server.js will communicate this command to all managers, where they will handle this as they see fit. The following commands are defined:
 
 | command | description | Relvant manager behaviour |
-|---|---|---|
+| --- | --- | --- |
 | updateIntervalSettings | An update in the interval settings has to be processed. Here the `data` parameter has to be filled with a valid workout object in JSON format | The `SessionManager` will ingest it and use it to structure the workout (see its description). The `fitRecorder` will inject it in the recording |
 | start | start of a session initiated by the user. As the true start of a session is actually triggered by the flywheel, which will always be communicated via the metrics, its only purpose is to make sure that the flywheel is allowed to move. This command is routinely sent at the start of a ANT+ FE-C communication. | The `SessionManager` will activate a stopped workout. All other managers will ignore the command, but will obey the `SessionManager`'s response. |
 | startOrResume | User forced (re)start of a session. As the true start of a session is actually triggered by the flywheel, its only purpose is to clear the flywheel for further movement. This is not used in normal operation, but can functionally change a 'stopped' session into a 'paused' one. Intended use is to allow a user to continue beyond pre-programmed interval parameters as reaching them results in a session being 'stopped'. | The `SessionManager` will reactivate a stopped workout. All other managers will ignore the command, but will obey the `SessionManager`'s resonse. |
@@ -176,13 +176,13 @@ A key thing to realize is that `SessionManager.js` will process *currentDt* valu
 Part of the metrics is the metricsContext object, which provides an insight in the state of both stroke (determined in `RowingStatistics.js`) and session (determined in `SessionManager.js`), allowing the clients to trigger on these flags. The following flags are recognised:
 
 | Flag | Meaning |
-|---|---|
+| --- | --- |
 | isMoving | Rower is moving |
 | isDriveStart | Current metrics are related to the start of a drive |
 | isRecoveryStart | Current metrics are related to the start of a recovery |
 | isSessionStart | Current metrics are related to the start of a session |
 | isIntervalEnd | Current metrics are related to the end of an session interval. An interval implies that there will be no stop of the rowing session between the current and next interval unless there is an intended (temporary) rest period in the session after the interval. If a rest is specified (the flywheel is intended to stop), a "isPauseStart" is indicated as well. |
-| isSplitEnd | Current metrics are related to the end of a session split.  |
+| isSplitEnd | Current metrics are related to the end of a session split. |
 | isPauseStart | Current metrics are related to the start of a session pause. This implies that the flywheel is intended to stop after this message (interval with a forced rest period), or actually has stopped (spontanuous pause). |
 | isUnplannedPause | Indication by the sessionManager that the metrics are inside a spontanuous pause if set to 'true'. Used to distinguish between a planned and unplanned pause by the PM5 emulator. |
 | isPauseEnd | Current metrics are related to the end of a session pause, implying that the flywheel has started to move again. This is **NOT** sent upon completion of a planned rest period, as the pause is only eneded after the flywheel to reaches its minimum speed again. To identify if the SessionManager is still blocking metrics due to the pause still being active, check if the `pauseCountdownTime` is equal to 0. |
@@ -227,22 +227,22 @@ sequenceDiagram
 
 * Recieve (interrupt based) GPIO timing signals from `GpioTimerService.js` and send them to the `SessionManager.js`;
 * Recieve (interrupt based) Heartrate measurements and sent them to the all interested clients;
-* Recieve the metrics update messages from `SessionManager.js` (time-based and state-based updates of metrics) and distribut them to the webclients and periphials;
+* Recieve the metrics update messages from [`SessionManager.js`](../app/engine/SessionManager.js)` (time-based and state-based updates of metrics) and distribut them to the webclients and periphials;
 * Handle user input (through webinterface and periphials) and instruct all managers to act accordingly;
 
 #### SessionManager.js
 
-`SessionManager.js` recieves *currentDt* updates, forwards them to `RowingStatistics.js` and subsequently recieves the resulting metrics. Based on state presented, it updates the finite state machine of the sessionstate and the associated metrics. In a nutshell:
+[`SessionManager.js`](../app/engine/SessionManager.js) recieves *currentDt* updates, forwards them to `RowingStatistics.js` and subsequently recieves the resulting metrics. Based on state presented, it updates the finite state machine of the sessionstate and the associated metrics. In a nutshell:
 
-* `SessionManager.js` maintains the session state, thus determines whether the rowing machine is 'Rowing', or 'WaitingForDrive', etc.,
-* `SessionManager.js` maintains the workout intervals, guards interval and split boundaries, and will chop up the metrics-stream accordingly, where `RowingStatistics.js` will just move on without looking at these artifical boundaries.
-* `SessionManager.js` maintains the summary metrics for the entire workout, the current interval, and the current split.
+* [`SessionManager.js`](../app/engine/SessionManager.js) maintains the session state, thus determines whether the rowing machine is 'Rowing', or 'WaitingForDrive', etc.,
+* [`SessionManager.js`](../app/engine/SessionManager.js) maintains the workout intervals, guards interval and split boundaries, and will chop up the metrics-stream accordingly, where [`SessionManager.js`](../app/engine/SessionManager.js) will just move on without looking at these artifical boundaries.
+* [`SessionManager.js`](../app/engine/SessionManager.js) maintains the summary metrics for the entire workout, the current interval, and the current split.
 
 In total, this takes full control of the displayed metrics in a specific workout, interval and split (i.e. distance or time to set workout segment target, etc.).
 
 ##### session, interval and split boundaries in SessionManager.js
 
-The `handleRotationImpulse` function of the `SessionManager.js` implements guarding the boundaries of the workoutplan. The session manager maintains three levels in a workoutplan:
+The `handleRotationImpulse` function of the [`SessionManager.js`](../app/engine/SessionManager.js) implements guarding the boundaries of the workoutplan. The session manager maintains three levels in a workoutplan:
 
 * The overall session: which is derived by summarising the intervals, and provides a general context for all overall statistics
 * The planned interval(s), which can be programmed via the PM5 and MQTT interface, this defaults to 'jutrow' when no data is provided
@@ -285,7 +285,7 @@ OpenRowingMonitor will always report the ending of a split, interval and session
 
 ##### sessionStates in SessionManager.js
 
-The `handleRotationImpulse` function of the `SessionManager.js` also implements all the state transitions regarding the sessionstates:
+The `handleRotationImpulse` function of the [`SessionManager.js`](../app/engine/SessionManager.js) also implements all the state transitions regarding the sessionstates:
 
 ```mermaid
 stateDiagram-v2
@@ -304,30 +304,30 @@ stateDiagram-v2
 ```
 
 > [!NOTE]
-> The SessionManager contains a watchdog which will timeout on recieving new *currentDt* values, which forces the state machine into 'Paused' when triggered. This watchdog is needed for specific high drag magnetic rowers that completely stop their flywheel within seconds.
+> The [`SessionManager`](../app/engine/SessionManager.js) contains a watchdog which will timeout on recieving new *currentDt* values, which forces the state machine into 'Paused' when triggered. This watchdog is needed for specific high drag magnetic rowers that completely stop their flywheel within seconds.
 <!-- MD028/no-blanks-blockquote -->
 > [!NOTE]
-> A session being 'stopped' can technically be turned into a 'Paused' by sending the 'startOrResume' command to the `handleCommand` function of `SessionManager.js`. Some peripherals send this command routinely.
+> A session being 'stopped' can technically be turned into a 'Paused' by sending the 'startOrResume' command to the `handleCommand` function of [`SessionManager.js`](../app/engine/SessionManager.js). Some peripherals send this command routinely.
 
 #### RowingStatistics.js
 
-`RowingStatistics.js` recieves *currentDt* updates, forwards them to `Rower.js` and subsequently inspects `Rower.js` for the resulting strokestate and associated metrics. Based on this inspection, it updates the associated metrics (i.e. linear velocity, linear distance, power, etc.). The goal is to translate the linear state-dependent rowing metrics from `Rower.js` into meaningful stream of information for the consumers of data. As `Rower.js` can only provide a limited set of absolute metrics at a specific time (as most are stroke state dependent) and is unaware of previous strokes, `RowingStatistics.js` will consume this data and transform it into a consistent and more stable set of metrics useable for presentation. `RowingStatistics.js` also buffers data as well, providing a complete set of metrics regardless of stroke state. Adittionally, `RowingStatistics.js` also smoothens data across strokes to remove eratic behaviour of metrics due to small measurement errors.
+[`RowingStatistics.js`](../app/engine/RowingStatistics.js)  recieves *currentDt* updates, forwards them to [`Rower.js`](../app/engine/Rower.js) and subsequently inspects [`Rower.js`](../app/engine/Rower.js) for the resulting strokestate and associated metrics. Based on this inspection, it updates the associated metrics (i.e. linear velocity, linear distance, power, etc.). The goal is to translate the linear state-dependent rowing metrics from [`Rower.js`](../app/engine/Rower.js) into meaningful stream of information for the consumers of data. As [`Rower.js`](../app/engine/Rower.js) can only provide a limited set of absolute metrics at a specific time (as most are stroke state dependent) and is unaware of previous strokes, [`RowingStatistics.js`](../app/engine/RowingStatistics.js) will consume this data and transform it into a consistent and more stable set of metrics useable for presentation. [`RowingStatistics.js`](../app/engine/RowingStatistics.js) also buffers data as well, providing a complete set of metrics regardless of stroke state. Adittionally, [`RowingStatistics.js`](../app/engine/RowingStatistics.js) also smoothens data across strokes to remove eratic behaviour of metrics due to small measurement errors.
 
 In a nutshell:
 
-* `RowingStatistics.js` persists metrics to guarantee that they will always reflect the last known valid state to data consumers, removing the need for consumers to understand the effect of stroke state upon metrics validity,
-* `RowingStatistics.js` applies a moving median filter across strokes to make metrics less volatile and thus better suited for presentation,
-* `RowingStatistics.js` calculates derived metrics (like Calories) and trends (like Calories per hour),
+* [`RowingStatistics.js`](../app/engine/RowingStatistics.js) persists metrics to guarantee that they will always reflect the last known valid state to data consumers, removing the need for consumers to understand the effect of stroke state upon metrics validity,
+* [`RowingStatistics.js`](../app/engine/RowingStatistics.js) applies a moving median filter across strokes to make metrics less volatile and thus better suited for presentation,
+* [`RowingStatistics.js`](../app/engine/RowingStatistics.js) calculates derived metrics (like Calories) and trends (like Calories per hour),
 
 In total, this takes full control of buffering and stabilising the displayed metrics in a specific stroke.
 
 #### Rower.js
 
-`Rower.js` recieves *currentDt* updates, forwards them to `Flywheel.js` and subsequently inspects `Flywheel.js` for the resulting state and angular metrics, transforming it to a strokestate and linear metrics.
+[`Rower.js`](../app/engine/Rower.js) recieves *currentDt* updates, forwards them to [`Flywheel.js`](../app/engine/Flywheel.js) and subsequently inspects [`Flywheel.js`](../app/engine/Flywheel.js) for the resulting state and angular metrics, transforming it to a strokestate and linear metrics.
 
 ##### strokeStates in Rower.js
 
-`Rower.js` can have the following strokeStates:
+[`Rower.js`](../app/engine/Rower.js) can have the following strokeStates:
 
 ```mermaid
 stateDiagram-v2
@@ -344,15 +344,15 @@ stateDiagram-v2
 ```
 
 > [!NOTE]
-> The `Stopped` state is only used for external events (i.e. `RowingStatistics.js` calling the stopMoving() command), which will stop `Rower.js` from processing data. This is a different state than `WaitingForDrive`, which can automatically move into `Drive` by accelerating the flywheel. This is typically used for a forced exact stop of a rowing session (i.e. reaching the end of an interval).
+> The `Stopped` state is only used for external events (i.e. [`RowingStatistics.js`](../app/engine/RowingStatistics.js) calling the stopMoving() command), which will stop [`Rower.js`](../app/engine/Rower.js) from processing data. This is a different state than `WaitingForDrive`, which can automatically move into `Drive` by accelerating the flywheel. This is typically used for a forced exact stop of a rowing session (i.e. reaching the end of an interval).
 
 ##### Linear metrics in Rower.js
 
-`Rower.js` inspects the flywheel behaviour on each impuls and translates the flywheel state into the strokestate (i.e. 'WaitingForDrive', 'Drive', 'Recovery', 'Stopped') through a finite state machine. Based on the angular metrics (i.e.e drag, angular velocity, angular acceleration) it also calculates the updated associated linear metrics (i.e. linear velocity, linear distance, power, etc.). As most metrics can only be calculated at (specific) phase ends, it will only report the metrics it can claculate. Aside temporal metrics (Linear Velocity, Power, etc.) it also maintains several absolute metrics (like total moving time and total linear distance travelled). It only updates metrics that can be updated meaningful, and it will not resend (potentially stale) data that isn't updated.
+[`Rower.js`](../app/engine/Rower.js) inspects the flywheel behaviour on each impuls and translates the flywheel state into the strokestate (i.e. 'WaitingForDrive', 'Drive', 'Recovery', 'Stopped') through a finite state machine. Based on the angular metrics (i.e.e drag, angular velocity, angular acceleration) it also calculates the updated associated linear metrics (i.e. linear velocity, linear distance, power, etc.). As most metrics can only be calculated at (specific) phase ends, it will only report the metrics it can claculate. Aside temporal metrics (Linear Velocity, Power, etc.) it also maintains several absolute metrics (like total moving time and total linear distance travelled). It only updates metrics that can be updated meaningful, and it will not resend (potentially stale) data that isn't updated.
 
 #### Flywheel.js
 
-`Flywheel.js` recieves *currentDt* updates and translates that into a state of the flywheel and associated angular metrics. It provides a model of the key parameters of the Flywheel, to provide the rest of OpenRowingMonitor with essential physical metrics and state regarding the flywheel, without the need for considering all kinds of parameterisation. Therefore, `Flywheel.js` will provide all metrics in regular physical quantities, abstracting away from the measurement system and the associated parameters, allowing the rest of OpenRowingMonitor to focus on processing that data.
+[`Flywheel.js`](../app/engine/Flywheel.js) recieves *currentDt* updates and translates that into a state of the flywheel and associated angular metrics. It provides a model of the key parameters of the Flywheel, to provide the rest of OpenRowingMonitor with essential physical metrics and state regarding the flywheel, without the need for considering all kinds of parameterisation. Therefore, [`Flywheel.js`](../app/engine/Flywheel.js) will provide all metrics in regular physical quantities, abstracting away from the measurement system and the associated parameters, allowing the rest of OpenRowingMonitor to focus on processing that data.
 
 It provides the following types of information:
 
@@ -360,6 +360,22 @@ It provides the following types of information:
 * temporal metrics (i.e. Angular Velocity, Angular Acceleration, Torque, etc.)
 * several absolute metrics (i.e. total elapsed time and total angular distance traveled)
 * physical properties of the flywheel, (i.e. the flywheel drag and flywheel inertia)
+
+A key task also filtering noise from the measurements, providing stable and consistent measurements to the rest of the application. Internally, several different filters are employed:
+
+```mermaid
+---
+config:
+  layout: elk
+---
+flowchart LR
+    A@{ shape: text, label: "currentDt"} --> B[Cyclic Error Filter<br>cyclicErrorFilter] --> C@{ shape: text, label: "cleaned currentDt"} --> F@{ shape: text, label: "Base Metrics:<br>* Angular distance<br>* totalTimeSpinning" }
+    C@{ shape: text, label: "cleaned currentDt"} --> D[Moving Regressor<br>_angularDistance] --> E@{ shape: text, label: "Advanced Metrics:<br>* Angular velocity<br>* angular Acceleration<br>* Torque<br>* Total work"}
+    C@{ shape: text, label: "cleaned currentDt"} --> G[Linear Regression<br>recoveryDeltaTime] --> H@{ shape: text, label: "Dragfactor" }
+    G[Linear Regression<br>recoveryDeltaTime] -->|Regression line|B[Cyclic Error Filter<br>cyclicErrorFilter]
+```
+
+For a further description of the filters, see the [mathematical foundations of OpenRowingMonitor](./Mathematical_Foundations.md).
 
 ### Key components in data dissamination
 
@@ -395,8 +411,8 @@ OpenRowingMonitor allows setting the NICE-level of both the `GpioTimerService.js
 
 HOWEVER, when compared to an oracle system (the Concept2 PM5), we see quite a variation in deviation with that result.
 
-| Distance | Minimal deviation |  Average deviation | Maximal deviation | Deviation Spread |
-|---|---|---|---|---|
+| Distance | Minimal deviation | Average deviation | Maximal deviation | Deviation Spread |
+| --- | --- | --- | --- | --- |
 | 5000 meters | 0.70 sec | 1.08 sec | 1.40 sec | 0.70 sec |
 | 10000 meters | 0.70 sec | 1.05 sec | 1.40 sec | 0.80 sec |
 | 21097 meters | 0.70 sec | 1.08 sec | 1.30 sec | 0.60 sec |
@@ -411,7 +427,7 @@ Along with the introduction of Raspberry Pi 5, a new GPIO hardware architecture 
 * the possibility to measure on the upward or downward moving flank, or both
 * the provision of a built-in debounce filter
 
-An alternative is the `onoff` library, which was used in OpenRowingMonitor up to version 0.8.2, which does work with the new RPi5 architecture. Although the latter benefits could be moved to `GpioTimerService.js`, the two former benefits can't. Therefore, we decided to wait with moving to onoff until a decent alternative for `pigpio` emerges.
+An alternative is the `onoff` library, which was used in OpenRowingMonitor up to version 0.8.2. This does work with the new RPi5 architecture. Although the latter benefit could be moved to `GpioTimerService.js`, the two former benefits can't. Based on test runs with historic data, we see a significant drop in dataquality. For example, we see a significant drop in the average Goodness of Fit for drag detection from 0.97-0.99 to 0.80-0.85. We also see a very significant increase in cyclic error correction error messages, forced cyclic error filter resets and stroke detection errors, where in the `pigpio` setup these are very rare. Therefore, we decided to wait with moving to onoff until a decent alternative for `pigpio` emerges.
 
 ### Race conditions between commands and metrics
 

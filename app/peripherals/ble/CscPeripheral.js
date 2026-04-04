@@ -83,6 +83,11 @@ export function createCscPeripheral (bleManager, config) {
     })
     log.debug(`CSC Connection established, address: ${_connection.peerAddress}`)
 
+    _connection.smp.once('pairingRequest', () => {
+      _connection.smp.sendPairingFailed(NodeBleHost.SmpErrors.PAIRING_NOT_SUPPORTED)
+      log.debug('CSC pairing request rejected')
+    })
+
     _connection.once('disconnect', async () => {
       log.debug(`CSC client disconnected (address: ${_connection?.peerAddress}), restarting advertising`)
       _connection = undefined

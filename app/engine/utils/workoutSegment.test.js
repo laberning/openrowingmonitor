@@ -11,7 +11,10 @@ import * as assert from 'uvu/assert'
 import { createWorkoutSegment } from './workoutSegment.js'
 
 const basicConfig = {
-  numOfPhasesForAveragingScreenData: 4
+  numOfPhasesForAveragingScreenData: 4,
+  userSettings: {
+    sex: 'male'
+  }
 }
 
 test('Test workoutSegment initialisation behaviour without setting an interval', () => {

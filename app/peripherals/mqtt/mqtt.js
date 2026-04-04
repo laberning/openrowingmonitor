@@ -1,9 +1,8 @@
 'use strict'
-/*
-  Open Rowing Monitor, https://github.com/JaapvanEkris/openrowingmonitor
-*/
 /**
- * This Module broadcastst the rowing metrics to a MQTT broker
+ * @copyright [OpenRowingMonitor]{@link https://github.com/JaapvanEkris/openrowingmonitor}
+ *
+ * @file This Module broadcastst the rowing metrics to a MQTT broker
  * @see {@link https://github.com/JaapvanEkris/openrowingmonitor/blob/main/docs/Integrations.md#recieving-metrics|the description of the metrics provided}
  * Please note: as most brokers get easily flooded by highly frequent reporting, so we only report on a per-stroke basis
  *
@@ -75,8 +74,8 @@ export function createMQTTPeripheral (config) {
     clientId,
     clean: true,
     connectTimeout: 4000,
-    username: config.mqtt.username,
-    password: config.mqtt.password,
+    ...(config.mqtt.username !== '' ? { username: config.mqtt.username } : {}),
+    ...(config.mqtt.password !== '' ? { password: config.mqtt.password } : {}),
     reconnectPeriod: 1000
   })
 

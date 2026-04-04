@@ -99,31 +99,37 @@ export class DashboardActions extends AppElement {
   `
 
   @property({ type: Object })
-    config = {}
+   accessor config = {}
 
   @queryAll('.metric-selector input')
-    _inputs
+  accessor _inputs
 
   @query('input[name="showIcons"]')
-    _showIconInput
+  accessor _showIconInput
 
   @query('input[name="maxNumberOfTiles"]')
-    _maxNumberOfTilesInput
+  accessor _maxNumberOfTilesInput
+
+  @query('input[name="trueBlackTheme"]')
+  accessor _trueBlackThemeInput
 
   @state()
-    _selectedMetrics = []
+  accessor _selectedMetrics = []
 
   @state()
-    _sumSelectedSlots = 0
+  accessor _sumSelectedSlots = 0
 
   @state()
-    _isValid = false
+  accessor _isValid = false
 
   @state()
-    _showIcons = true
+  accessor _showIcons = true
 
   @state()
-    _maxNumberOfTiles = 8
+  accessor _maxNumberOfTiles = 8
+
+  @state()
+  accessor _trueBlackTheme = false
 
   render () {
     return html`
@@ -151,6 +157,10 @@ export class DashboardActions extends AppElement {
         <span>Use 12 cell grid</span>
         <input @change=${this.toggleMaxTiles} name="maxNumberOfTiles" type="checkbox" />
       </label>
+      <label>
+        <span>True Black theme (OLED/AMOLED)</span>
+        <input @change=${this.toggleTrueBlackTheme} name="trueBlackTheme" type="checkbox" />
+      </label>
     </p>
     </app-dialog>
   `
@@ -161,6 +171,7 @@ export class DashboardActions extends AppElement {
     this._sumSelectedSlots = this._selectedMetrics.length
     this._showIcons = this.config.showIcons
     this._maxNumberOfTiles = this.config.maxNumberOfTiles
+    this._trueBlackTheme = this.config.trueBlackTheme ?? false
     if (this._sumSelectedSlots === this._maxNumberOfTiles) {
       this._isValid = true
     } else {
@@ -171,6 +182,7 @@ export class DashboardActions extends AppElement {
     })
     this._showIconInput.checked = this._showIcons
     this._maxNumberOfTilesInput.checked = this._maxNumberOfTiles === 12
+    this._trueBlackThemeInput.checked = this._trueBlackTheme
   }
 
   renderAvailableMetricList () {
@@ -236,6 +248,10 @@ export class DashboardActions extends AppElement {
     this._isValid = this.isFormValid()
   }
 
+  toggleTrueBlackTheme (e) {
+    this._trueBlackTheme = e.target.checked
+  }
+
   isFormValid () {
     return this._sumSelectedSlots === this._maxNumberOfTiles && this._selectedMetrics[3] !== this._selectedMetrics[4] && this._selectedMetrics[7] !== this._selectedMetrics?.[8]
   }
@@ -246,7 +262,8 @@ export class DashboardActions extends AppElement {
       this.sendEvent('changeGuiSetting', {
         dashboardMetrics: this._selectedMetrics,
         showIcons: this._showIcons,
-        maxNumberOfTiles: this._maxNumberOfTiles
+        maxNumberOfTiles: this._maxNumberOfTiles,
+        trueBlackTheme: this._trueBlackTheme
       })
     }
   }

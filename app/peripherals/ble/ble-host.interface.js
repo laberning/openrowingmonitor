@@ -206,6 +206,12 @@ export class Connection extends EventEmitter {
   gatt
 
   /**
+   * @type {SecurityManager}
+   */
+  // @ts-ignore
+  smp
+
+  /**
    * Disconnects the connection.
    * @param {number} [reason] - HCI error code.
    */
@@ -222,6 +228,200 @@ export class Connection extends EventEmitter {
  * Scan filter object.
  * @typedef {object} ScanFilter
  * @property {string} uuid - UUID of the filter.
+ */
+
+/**
+ * Pairing features object for SMP operations.
+ * @typedef {object} PairingFeatures
+ * @property {number} [ioCap] - IO capabilities constant (default: IOCapabilities.NO_INPUT_NO_OUTPUT).
+ * @property {number} [bondingFlags] - 1 if a bond is requested, otherwise 0 (default: 1).
+ * @property {boolean} [mitm] - Whether MITM protection is requested (default: false).
+ * @property {boolean} [sc] - Whether Secure Connections is supported (default: true).
+ * @property {boolean} [keypress] - Whether Keypress Notifications are supported (default: false).
+ * @property {number} [maxKeySize] - Integer between 7 and 16 with max key size to be negotiated (default: 16).
+ * @property {object} [initKeyDistr] - The keys which the initiator should distribute.
+ * @property {boolean} [initKeyDistr.encKey] - Whether LTK should be distributed (default: true).
+ * @property {boolean} [initKeyDistr.idKey] - Whether IRK and Identity Address should be distributed (default: true).
+ * @property {object} [rspKeyDistr] - The keys which the responder should distribute.
+ * @property {boolean} [rspKeyDistr.encKey] - Whether LTK should be distributed (default: true).
+ * @property {boolean} [rspKeyDistr.idKey] - Whether IRK and Identity Address should be distributed (default: true).
+ */
+
+/**
+ * Security Manager for handling BLE pairing, bonding, and encryption.
+ * Each BLE connection has one instance of either SmpMasterConnection or SmpSlaveConnection.
+ * @fires SecurityManager#pairingRequest
+ * @fires SecurityManager#validatePairingFeatures
+ * @fires SecurityManager#passkeyExchange
+ * @fires SecurityManager#keypress
+ * @fires SecurityManager#pairingComplete
+ * @fires SecurityManager#pairingFailed
+ * @fires SecurityManager#encrypt
+ * @fires SecurityManager#timeout
+ */
+export class SecurityManager extends EventEmitter {
+  /**
+   * Whether the current link is encrypted or not.
+   * @type {boolean}
+   */
+  // @ts-ignore
+  isEncrypted
+
+  /**
+   * The current encryption level. This value will be null if the link is currently unencrypted.
+   * @type {{mitm: boolean, sc: boolean, keySize: number} | null}
+   */
+  // @ts-ignore
+  currentEncryptionLevel
+
+  /**
+   * Whether a bond exists to the current device.
+   * @type {boolean}
+   */
+  // @ts-ignore
+  isBonded
+
+  /**
+   * Whether a bond exists to the current device and an LTK is available that can be used to start the encryption.
+   * @type {boolean}
+   */
+  // @ts-ignore
+  hasLtk
+
+  /**
+   * The security properties for the available LTK. This value will be null if no key exists.
+   * @type {{mitm: boolean, sc: boolean, keySize: number} | null}
+   */
+  // @ts-ignore
+  availableLtkSecurityLevel
+
+  /**
+   * Sets an available LTK for the connection.
+   * This method does normally not need to be called since an available LTK is always read from the bond storage.
+   * @param {Buffer} ltk - An LTK of length 7 to 16.
+   * @param {Buffer} rand - The Random value of length 8 that identifies the LTK.
+   * @param {number} ediv - The Encrypted Diversifier that identifies the LTK (16-bit unsigned integer).
+   * @param {boolean} mitm - Whether MITM protection was used when the pairing resulting in the LTK was performed.
+   * @param {boolean} sc - Whether the Secure Connections pairing model was used to generate the LTK.
+   */
+  setAvailableLtk (ltk, rand, ediv, mitm, sc) {}
+
+  /**
+   * Starts the encryption for a connection to a device that is bonded.
+   * Note: This method is only available for the master role (for the slave role, use sendSecurityRequest instead).
+   * @returns {boolean} If SMP was in the idle state, true. Otherwise false is returned and this method does nothing.
+   */
+  startEncryption () {
+    return true
+  }
+
+  /**
+   * Starts the pairing procedure.
+   * Note: This method is only available for the master role.
+   * @param {PairingFeatures} req - The pairing features.
+   * @returns {boolean} true if an ongoing pairing procedure is not outstanding, otherwise false and this method does nothing.
+   */
+  sendPairingRequest (req) {
+    return true
+  }
+
+  /**
+   * Sends a Security Request to the master device.
+   * Note: This method is only available for the slave role.
+   * @param {boolean} bond - Whether a bond is requested.
+   * @param {boolean} mitm - Whether MITM protection is requested.
+   * @param {boolean} sc - Whether the Secure Connections pairing model is supported.
+   * @param {boolean} keypress - Whether Keypress Notifications are supported.
+   */
+  sendSecurityRequest (bond, mitm, sc, keypress) {}
+
+  /**
+   * Cancels an ongoing pairing procedure.
+   * @param {number} reason - Error code identifying why the pairing failed.
+   */
+  sendPairingFailed (reason) {}
+
+  /**
+   * Sends keypress notifications to the remote device during passkey entry.
+   * @param {number} notificationType - Notification Type (0: started, 1: digit entered, 2: digit erased, 3: cleared, 4: completed).
+   */
+  sendKeypressNotification (notificationType) {}
+}
+
+/**
+ * Event emitted when a pairing request is received.
+ * @event SecurityManager#pairingRequest
+ * @type {object}
+ * @property {PairingFeatures} req - The pairing request (slave role) or security request (master role).
+ * @property {Function} callback - Callback function to respond with pairing features.
+ */
+
+/**
+ * Event emitted when pairing features have been combined from the request and response.
+ * @event SecurityManager#validatePairingFeatures
+ * @type {object}
+ * @property {PairingFeatures} pairingFeatures - The combined pairing features.
+ * @property {Function} callback - Callback for accepting the pairing features.
+ */
+
+/**
+ * Event emitted when the Passkey Exchange starts.
+ * @event SecurityManager#passkeyExchange
+ * @type {object}
+ * @property {number} associationModel - A constant defining which association model being used.
+ * @property {string | null} userPasskey - A passkey to display to the user (null if not applicable).
+ * @property {Function} callback - Callback for passing an entered passkey.
+ */
+
+/**
+ * Event emitted when a keypress notification is received from the remote device.
+ * @event SecurityManager#keypress
+ * @type {object}
+ * @property {number} notificationType - Notification Type (0-4).
+ */
+
+/**
+ * Event emitted when the pairing has completed successfully.
+ * @event SecurityManager#pairingComplete
+ * @type {object}
+ * @property {object} res - Result object.
+ * @property {boolean} res.sc - Whether Secure Connections were used.
+ * @property {boolean} res.mitm - Whether MITM protection was used.
+ * @property {boolean} res.bond - Whether bonding occurred.
+ * @property {number | null} res.rspEdiv - Responder's Encrypted Diversifier.
+ * @property {Buffer | null} res.rspRand - Responder's Random Value.
+ * @property {Buffer | null} res.rspLtk - Responder's LTK.
+ * @property {number | null} res.initEdiv - Initiator's Encrypted Diversifier.
+ * @property {Buffer | null} res.initRand - Initiator's Random Value.
+ * @property {Buffer | null} res.initLtk - Initiator's LTK.
+ * @property {Buffer | null | undefined} res.rspIrk - Responder's IRK.
+ * @property {object | null | undefined} res.rspIdentityAddress - Responder's identity address.
+ * @property {Buffer | null | undefined} res.initIrk - Initiator's IRK.
+ * @property {object | null | undefined} res.initIdentityAddress - Initiator's identity address.
+ */
+
+/**
+ * Event emitted when the pairing has failed.
+ * @event SecurityManager#pairingFailed
+ * @type {object}
+ * @property {number} reason - Reason code.
+ * @property {boolean} isErrorFromRemote - If the remote device sent a pairing failed command.
+ */
+
+/**
+ * Event emitted when the encryption has started or failed to start.
+ * @event SecurityManager#encrypt
+ * @type {object}
+ * @property {number} status - HCI status code.
+ * @property {object | undefined} currentEncryptionLevel - Contains the current encryption level, if success.
+ * @property {boolean} currentEncryptionLevel.mitm - Whether MITM protection was used.
+ * @property {boolean} currentEncryptionLevel.sc - Whether Secure Connections were used.
+ * @property {number} currentEncryptionLevel.keySize - The key size of the key in use.
+ */
+
+/**
+ * Event emitted when the pairing protocol times out (30 seconds after the last packet).
+ * @event SecurityManager#timeout
  */
 
 /**

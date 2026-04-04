@@ -33,7 +33,8 @@ The cheapest solution is a headless Raspberry Pi Zero 2W (roughly $15), the most
 
 ### Initialization of the Raspberry Pi
 
-- Install **Raspberry Pi OS Lite** on the SD Card i.e. with the [Raspberry Pi Imager](https://www.raspberrypi.org/software). Here, Raspberry Pi OS Lite 64 Bit is recommended as it is better suited for real-time environments. This can be done by selecting "other" Raspberry Pi OS in the imager and select OS Lite 64 Bit. We typically support the current and previous (Legacy) version of Raspberry Pi OS.
+<!-- pigpio availibility problems in Trixie -->
+- Install **Raspberry Pi OS Lite (Legacy 64-bit)** on the SD Card i.e. with the [Raspberry Pi Imager](https://www.raspberrypi.org/software). This can be done by selecting "Raspberry Pi OS (other)" in the imager and then selecting "Raspberry Pi OS Lite (Legacy) 64-bit". The Legacy version is based on Debian 12 (Bookworm) and is required for compatibility - the current version of Raspberry Pi OS (based on Debian 13 Trixie) is not yet supported.
 - In the Raspbverry Pi Imager, configure the network connection and enable SSH. In the Raspberry Pi Imager, you can automatically do this while writing the SD Card, just press `Ctrl-Shift-X`(see [here](https://www.raspberrypi.org/blog/raspberry-pi-imager-update-to-v1-6/) for a description), otherwise follow the instructions below
 - Connect the device to your network ([headless](https://www.raspberrypi.org/documentation/configuration/wireless/headless.md) or via [command line](https://www.raspberrypi.org/documentation/configuration/wireless/wireless-cli.md))
 - Enable [SSH](https://www.raspberrypi.org/documentation/remote-access/ssh/README.md)

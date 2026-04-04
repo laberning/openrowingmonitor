@@ -27,15 +27,15 @@ export function createVO2max (config) {
   /**
    * @param {Metrics} metrics
    */
-  function push (metrics) {
+  function push (metrics, HRData) {
     VO2MaxResultIsCurrent = false
-    if (metrics.totalMovingTime > offset && !!metrics.heartrate && !isNaN(metrics.heartrate) && metrics.heartrate >= config.userSettings.restingHR && metrics.heartrate < config.userSettings.maxHR && !isNaN(metrics.cyclePower) && metrics.cyclePower > 0 && metrics.cyclePower <= config.userSettings.maxPower) {
+    if (metrics.totalMovingTime > offset && !!HRData && !isNaN(HRData) && HRData >= config.userSettings.restingHR && HRData < config.userSettings.maxHR && !isNaN(metrics.cyclePower) && metrics.cyclePower > 0 && metrics.cyclePower <= config.userSettings.maxPower) {
       // We are outside the startup noise and have numeric fields
       metricsArray.push({
         totalMovingTime: metrics.totalMovingTime,
         totalLinearDistance: metrics.totalLinearDistance,
         cyclePower: metrics.cyclePower,
-        heartrate: metrics.heartrate
+        heartrate: HRData
       })
     }
   }

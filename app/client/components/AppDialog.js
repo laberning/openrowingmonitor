@@ -72,10 +72,10 @@ export class AppDialog extends AppElement {
     }
   `
   @property({ type: Boolean })
-    isValid = true
+  accessor isValid = true
 
   @property({ type: Boolean, reflect: true })
-    dialogOpen
+  accessor dialogOpen
 
   render () {
     return html`
@@ -103,8 +103,7 @@ export class AppDialog extends AppElement {
 
   confirm () {
     if (this.isValid) {
-      this.close({ target: { returnValue: 'confirm' } })
-      this.dialogOpen = false
+      this.dialog.value.close('confirm')
     }
   }
 

@@ -1,8 +1,8 @@
 'use strict'
-/*
-  Open Rowing Monitor, https://github.com/JaapvanEkris/openrowingmonitor
-
-  This Module captures the metrics of a rowing session and persists them.
+/**
+ * @copyright [OpenRowingMonitor]{@link https://github.com/JaapvanEkris/openrowingmonitor}
+ *
+ * @file This Module captures the metrics of a rowing session and persists them to the log.
 */
 import log from 'loglevel'
 import { secondsToTimeString } from '../tools/Helper.js'
@@ -14,9 +14,11 @@ export function createLogRecorder () {
     totalLinearDistance: 0
   }
 
-  // This function handles all incomming commands. Here, the recordingmanager will have filtered
-  // all unneccessary commands for us, so we only need to react to 'updateIntervalSettings', 'reset' and 'shutdown'
-  // eslint-disable-next-line no-unused-vars
+  /**
+   * @description This function handles all incomming commands. Here, the recordingmanager will have filtered
+   * all unneccessary commands for us, so we only need to react to 'updateIntervalSettings', 'reset' and 'shutdown'
+   */
+  // eslint-disable-next-line no-unused-vars -- The payload 'data' will stay empty at all times, but is maintained for interfact consistency across all recorders and command handlers
   async function handleCommand (commandName, data) {
     const currentdate = new Date()
     switch (commandName) {
@@ -34,11 +36,16 @@ export function createLogRecorder () {
     }
   }
 
-  // initiated when a new heart rate value is received from heart rate sensor
+  /**
+   * @description initiated when a new heart rate value is received from heart rate sensor
+   */
   async function recordHeartRate (value) {
     heartRate = value.heartrate
   }
 
+  /**
+   * @description This handles recording metrics to the log at the right moments
+   */
   function recordRowingMetrics (metrics) {
     const currentdate = new Date()
     switch (true) {
@@ -74,14 +81,17 @@ export function createLogRecorder () {
     lastMetrics = metrics
   }
 
+  /**
+   * @description A helper function to record all relevant metrics
+   */
   function logMetrics (metrics) {
     if (heartRate !== undefined && heartRate > 0) {
       log.info(`stroke: ${metrics.totalNumberOfStrokes}, dist: ${metrics.totalLinearDistance.toFixed(1)}m, heartrate ${heartRate} BPM` +
-        `, pace: ${metrics.cyclePace > 0 ? secondsToTimeString(metrics.cyclePace) : NaN}/500m, stroke dist: ${metrics.cycleDistance > 0 ? metrics.cycleDistance.toFixed(1) : NaN}m, strokerate: ${metrics.cycleStrokeRate > 0 ? metrics.cycleStrokeRate.toFixed(1) : NaN} SPM` +
+        `, pace: ${metrics.cyclePace > 0 ? secondsToTimeString(metrics.cyclePace) : NaN}/500m, stroke dist: ${metrics.cycleDistance > 0 ? metrics.cycleDistance.toFixed(2) : NaN}m, strokerate: ${metrics.cycleStrokeRate > 0 ? metrics.cycleStrokeRate.toFixed(1) : NaN} SPM` +
         `, drive dur: ${metrics.driveDuration > 0 ? metrics.driveDuration.toFixed(2) : NaN}s, rec. dur: ${metrics.recoveryDuration > 0 ? metrics.recoveryDuration.toFixed(2) : NaN}s, stroke dur: ${metrics.cycleDuration ? metrics.cycleDuration.toFixed(2) : NaN}s`)
     } else {
       log.info(`stroke: ${metrics.totalNumberOfStrokes}, dist: ${metrics.totalLinearDistance.toFixed(1)}m, No heartrate detected` +
-        `, pace: ${metrics.cyclePace > 0 ? secondsToTimeString(metrics.cyclePace) : NaN}/500m, stroke dist: ${metrics.cycleDistance > 0 ? metrics.cycleDistance.toFixed(1) : NaN}m, strokerate: ${metrics.cycleStrokeRate > 0 ? metrics.cycleStrokeRate.toFixed(1) : NaN} SPM` +
+        `, pace: ${metrics.cyclePace > 0 ? secondsToTimeString(metrics.cyclePace) : NaN}/500m, stroke dist: ${metrics.cycleDistance > 0 ? metrics.cycleDistance.toFixed(2) : NaN}m, strokerate: ${metrics.cycleStrokeRate > 0 ? metrics.cycleStrokeRate.toFixed(1) : NaN} SPM` +
         `, drive dur: ${metrics.driveDuration > 0 ? metrics.driveDuration.toFixed(2) : NaN}s, rec. dur: ${metrics.recoveryDuration > 0 ? metrics.recoveryDuration.toFixed(2) : NaN}s, stroke dur: ${metrics.cycleDuration ? metrics.cycleDuration.toFixed(2) : NaN}s`)
     }
   }

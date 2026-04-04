@@ -47,8 +47,8 @@ export class CyclingSpeedCadenceMeasurementCharacteristic extends GattNotifyChar
 }
 
 export const cscFeaturesFlags =
-{
-  wheelRevolutionDataSupported: (0x01 << 0),
-  crankRevolutionDataSupported: (0x01 << 1),
-  multipleSensorLocationSupported: (0x01 << 2)
-}
+  {
+    wheelRevolutionDataSupported: (0x01 << 0),
+    crankRevolutionDataSupported: (0x01 << 1),
+    multipleSensorLocationSupported: (0x01 << 2)
+  }

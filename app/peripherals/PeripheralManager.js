@@ -1,9 +1,8 @@
 'use strict'
-/*
-  Open Rowing Monitor, https://github.com/JaapvanEkris/openrowingmonitor
-*/
 /**
- * This manager creates the different Bluetooth Low Energy (BLE), ANT+ and MQTT Peripherals and allows
+ * @copyright [OpenRowingMonitor]{@link https://github.com/JaapvanEkris/openrowingmonitor}
+ *
+ * @file This manager creates the different Bluetooth Low Energy (BLE), ANT+ and MQTT Peripherals and allows
  * switching between them
  */
 /* eslint-disable max-lines -- This handles quite a lot of peripherals, can't do that with less code */
@@ -44,7 +43,7 @@ export function createPeripheralManager (config) {
    * @type {EventEmitter<{heartRateMeasurement: Array<Partial<HeartRateMeasurementEvent>>, control: Array<ControlPointEvent>}>}
    */
   const emitter = new EventEmitter()
-  const mqttEnabled = (config.mqtt.mqttBroker !== '') && (config.mqtt.username !== '') && (config.mqtt.password !== '') && (config.mqtt.machineName !== '')
+  const mqttEnabled = (config.mqtt.mqttBroker !== '') && (config.mqtt.machineName !== '')
   /**
    * @type {AntManager}
    */

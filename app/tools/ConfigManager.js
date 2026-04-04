@@ -1,9 +1,8 @@
 'use strict'
-/*
-  Open Rowing Monitor, https://github.com/JaapvanEkris/openrowingmonitor
-*/
 /**
- * Merges the different config files and presents the configuration to the application
+ * @copyright {@link https://github.com/JaapvanEkris/openrowingmonitor|OpenRowingMonitor}
+ *
+ * @file Merges the different config files and presents the configuration to the application
  * Checks the config for plausibility, fixes the errors when needed
  */
 /* eslint-disable max-statements,complexity -- There simply is a lot to check before we activate a config. One of the few cases where more is better */
@@ -101,10 +100,18 @@ function checkConfig (configToCheck) {
   }
   checkIntegerValue(configToCheck.rowerSettings, 'numOfImpulsesPerRevolution', 1, null, false, false, null)
   checkIntegerValue(configToCheck.rowerSettings, 'flankLength', 3, null, false, false, null)
+  if (configToCheck.rowerSettings.numOfImpulsesPerRevolution > 1 && configToCheck.rowerSettings.autoAdjustDragFactor) {
+    // CECFilter can be activated
+    checkFloatValue(configToCheck.rowerSettings, 'systematicErrorAgressiveness', 0, 1.5, true, true, 0)
+    checkFloatValue(configToCheck.rowerSettings, 'systematicErrorNumberOfDatapoints', 0, 2100, true, true, 0)
+  } else {
+    // Preconditions for CECFilters are absent
+    if (configToCheck.rowerSettings.systematicErrorAgressiveness > 0) { log.error('Configuration Error: systematicErrorAgressiveness is configured while preconditions for the CECFilter are not met') }
+    if (configToCheck.rowerSettings.systematicErrorNumberOfDatapoints > 0) { log.error('Configuration Error: systematicErrorNumberOfDatapoints is configured while preconditions for the CECFilter are not met') }
+  }
   checkFloatValue(configToCheck.rowerSettings, 'sprocketRadius', 0, 20, false, true, 3)
   checkFloatValue(configToCheck.rowerSettings, 'minimumTimeBetweenImpulses', 0, 3, false, false, null)
   checkFloatValue(configToCheck.rowerSettings, 'maximumTimeBetweenImpulses', configToCheck.rowerSettings.minimumTimeBetweenImpulses, 3, false, false, null)
-  checkFloatValue(configToCheck.rowerSettings, 'smoothing', 1, null, false, true, 1)
   checkFloatValue(configToCheck.rowerSettings, 'dragFactor', 1, null, false, false, null)
   checkBooleanValue(configToCheck.rowerSettings, 'autoAdjustDragFactor', true, false)
   checkIntegerValue(configToCheck.rowerSettings, 'dragFactorSmoothing', 1, null, false, true, 1)

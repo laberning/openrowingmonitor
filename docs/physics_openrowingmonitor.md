@@ -1,9 +1,9 @@
-# The physics behind Open Rowing Monitor
+# The physics behind OpenRowingMonitor
 
 <!-- markdownlint-disable no-inline-html -->
-In this document we explain the physics behind the Open Rowing Monitor, to allow for independent review and software maintenance. This work wouldn't have been possible without some solid physics, described by some people with real knowledge of the subject matter. Please note that any errors in our implementation probably is on us, not them. When appropriate, we link to these sources. When possible, we also link to the source code to allow further investigation and keep the link with the actual implementation.
+In this document we explain the physics behind the OpenRowingMonitor, to allow for independent review and software maintenance. This document is to be read in conjuntion with the [mathematical foundations of OpenRowingMonitor](./Mathematical_Foundations.md), as that describes the implementation choices for the specific (regression) algorithms used for specific functions. This work wouldn't have been possible without some solid physics, described by some people with real knowledge of the subject matter. Please note that any errors in our implementation probably is on us, not them. When appropriate, we link to these sources. When possible, we also link to the source code to allow further investigation and keep the link with the actual implementation.
 
-Please note that this text is used as a rationale for design decissions of the physics used in Open Rowing Monitor. So it is of interest for people maintaining the code (as it explains why we do things the way we do) and for academics to verify or improve our solution. For these academics, we conclude with a section of open design issues as they might provide avenues of future research. If you are interested in just using Open Rowing Monitor as-is, this might not be the text you are looking for.
+Please note that this text is used as a rationale for design decissions of the physics used in OpenRowingMonitor. So it is of interest for people maintaining the code (as it explains why we do things the way we do) and for academics to verify or improve our solution. For these academics, we conclude with a section of open design issues as they might provide avenues of future research. If you are interested in just using OpenRowingMonitor as-is, this might not be the text you are looking for.
 
 ## Basic concepts
 
@@ -31,7 +31,7 @@ There are several types of rowers:
 
 * **Magnetic resistance**: where the resistance is constant
 
-There are also hybrid rowers, which combine air resistance and magnetic resistance. The differences in physical behavior can be significant, for example a magnetic rower has a constant resistance while a air rower's resistance is dependent on the flywheel's speed. We suspect that on a water rower behaves slightly different from an air rower, as the rotated water mass changes shape when the rotational velocity changes. Currently for Open Rowing Monitor, we consider that the key principle is similar enough for all these rowers (some mass is made to spin and drag brings its speed down) to treat them all as an air rower as a first approximation. However, we are still investigating how to adapt for these specific machines.
+There are also hybrid rowers, which combine air resistance and magnetic resistance. The differences in physical behavior can be significant, for example a magnetic rower has a constant resistance while a air rower's resistance is dependent on the flywheel's speed. We suspect that on a water rower behaves slightly different from an air rower, as the rotated water mass changes shape when the rotational velocity changes. Currently for OpenRowingMonitor, we consider that the key principle is similar enough for all these rowers (some mass is made to spin and drag brings its speed down) to treat them all as an air rower as a first approximation. However, we are still investigating how to adapt for these specific machines.
 
 ### Phases in the rowing stroke
 
@@ -56,7 +56,7 @@ Combined, we define a *Drive* followed by a *Recovery* a **Stroke**. In the calc
 
 ## Leading design principles of the rowing engine
 
-As described in [the architecture](Architecture.md), the rowing engine is the core of Open Rowing Monitor and consists of three major parts:
+As described in [the architecture](Architecture.md), the rowing engine is the core of OpenRowingMonitor and consists of three major parts:
 
 * `engine/Flywheel.js`, which determines rotational metrics,
 
@@ -74,13 +74,13 @@ Although the physics is well-understood and even well-described publicly (see [[
 
 ## Relevant rotational metrics
 
-Typically, actual measurements are done in the rotational part of the rower, on the flywheel. We explicitly assume that Open Rowing Monitor measures the flywheel movement (directly or indirectly). Some rowing machines are known to measure the movement of the driving axle and thus the velocity and direction of the handle, and not the driven flywheel. This type of measurement blocks access to the physical behaviour of the flywheel (especially acceleration and coast down behaviour), thus making most of the physics engine irrelevant. Open Rowing Monitor can handle some of these rowing machines by fixing specific parameters, but as this measurement approach excludes any meaningful measurement, we will exclude it in the further description.
+Typically, actual measurements are done in the rotational part of the rower, on the flywheel. We explicitly assume that OpenRowingMonitor measures the flywheel movement (directly or indirectly). Some rowing machines are known to measure the movement of the driving axle and thus the velocity and direction of the handle, and not the driven flywheel. This type of measurement blocks access to the physical behaviour of the flywheel (especially acceleration and coast down behaviour), thus making most of the physics engine irrelevant. OpenRowingMonitor can handle some of these rowing machines by fixing specific parameters, but as this measurement approach excludes any meaningful measurement, we will exclude it in the further description.
 
 In a typical rowing machine, there is a magnetic reed sensor or optical sensor that will measure time between either magnets or reflective stripes on the flywheel or impellor, which gives an **Impulse** each time a magnet or stripe passes. For example, when the flywheel rotates on a NordicTrack RX800, the passing of a magnet on the flywheel triggers a reed-switch, that delivers a pulse to our Raspberry Pi.
 
-Depending on the **number of impulse providers** (i.e. the number of magnets or stripes), the number of impulses per rotation increases, increasing the resolution of the measurement. As described in [the architecture](Architecture.md), Open Rowing Monitor's `GpioTimerService.js` measures the time between two subsequent impulses and reports as a *currentDt* value. The constant stream of *currentDt* values is the basis for all our angular calculations, which are typically performed in the `pushValue()` function of `engine/Flywheel.js`.
+Depending on the **number of impulse providers** (i.e. the number of magnets or stripes), the number of impulses per rotation increases, increasing the resolution of the measurement. As described in [the architecture](Architecture.md), OpenRowingMonitor's `GpioTimerService.js` measures the time between two subsequent impulses and reports as a *currentDt* value. The constant stream of *currentDt* values is the basis for all our angular calculations, which are typically performed in the `pushValue()` function of `engine/Flywheel.js`.
 
-Open Rowing Monitor needs to keep track of several metrics about the flywheel and its state, including:
+OpenRowingMonitor needs to keep track of several metrics about the flywheel and its state, including:
 
 * The **Angular Distance** of the flywheel in Radians (denoted with &theta;): in essence the distance the flywheel has traveled (i.e. the number of Radians the flywheel has rotated) since the start of the session;
 
@@ -133,7 +133,7 @@ Summarizing, both Angular Velocity &omega; and Angular Acceleration &alpha; are 
 
 ### Determining the "drag factor" of the flywheel
 
-In the recovery phase, the only force exerted on the flywheel is the (air-/water-/magnetic-)resistance. Thus we can calculate the *drag factor of the flywheel* based on deceleration through the recovery phase [[1]](#1). This calculation is performed in the `markRecoveryPhaseCompleted()` function of `engine/Flywheel.js`. There are several approaches described in literature [[1]](#1), which Open Rowing Monitor extends to deliver a reliable and practically applicable approach.
+In the recovery phase, the only force exerted on the flywheel is the (air-/water-/magnetic-)resistance. Thus we can calculate the *drag factor of the flywheel* based on deceleration through the recovery phase [[1]](#1). This calculation is performed in the `markRecoveryPhaseCompleted()` function of `engine/Flywheel.js`. There are several approaches described in literature [[1]](#1), which OpenRowingMonitor extends to deliver a reliable and practically applicable approach.
 
 A first numerical approach is presented by through [[1]](#1) in formula 7.2a:
 
@@ -194,7 +194,7 @@ One of the key elements of rowing is detecting the stroke phases and thus calcul
 
 * The **Recovery Phase**, where the rower returns to his starting position and the flywheel decelerates as the drag on the flywheel is slowing it down;
 
-As the rowing cycle always follows this fixed schema, Open Rowing Monitor models it as a finite state machine (implemented in `handleRotationImpulse` in `engine/Rower.js`).
+As the rowing cycle always follows this fixed schema, OpenRowingMonitor models it as a finite state machine (implemented in `handleRotationImpulse` in `engine/Rower.js`).
 
 ```mermaid
 stateDiagram-v2
@@ -207,13 +207,13 @@ stateDiagram-v2
 
 <span class="caption">Finite state machine of rowing cycle</span>
 
-From the perspective of Open Rowing Monitor, there only is a stream of *CurrentDt*'s, which should form the basis of this detection:
+From the perspective of OpenRowingMonitor, there only is a stream of *CurrentDt*'s, which should form the basis of this detection:
 
 The following picture shows the time between impulses through time:
 <img src="img/physics/flywheelmeasurement.png" alt="Image showing the currentDt measurements of the flywheel through time" width="700">
 <span class="caption">example currentDt Measurements of a flywheel</span>
 
-Open Rowing Monitor combines two types of force detection, which work independently: *basic force detection* and *advanced stroke detection*. Both can detect a stroke accuratly, and the combination has proven its use.
+OpenRowingMonitor combines two types of force detection, which work independently: *basic force detection* and *advanced stroke detection*. Both can detect a stroke accuratly, and the combination has proven its use.
 
 In `engine/Flywheel.js`, two functions provide force detection, which use the following criteria before attempting a stroke phase transition:
 
@@ -242,7 +242,7 @@ The simple force detection uses this approach by looking at the slope of *curren
 
 A more nuanced, but more vulnerable, approach is to compare the slope of this function with the typical slope encountered during the recovery phase of the stroke (which routinely is determined during the drag calculation). When the flywheel is unpowered, the slope will be close to the recovery slope, and otherwise it is powered. This is a more accurate, but more vulnerable, approach, as small deviations could lead to missed strokes. It is noted that practical testing has shown that this works reliably for many machines.
 
-In Open Rowing Monitor, the settings allow for using the more robust ascending/descending approach (by setting *minumumRecoverySlope* to 0), for a more accurate approach (by setting *minumumRecoverySlope* to a static value) or even a dynamic approach (by setting *autoAdjustRecoverySlope* to true)
+In OpenRowingMonitor, the settings allow for using the more robust ascending/descending approach (by setting *minumumRecoverySlope* to 0), for a more accurate approach (by setting *minumumRecoverySlope* to a static value) or even a dynamic approach (by setting *autoAdjustRecoverySlope* to true)
 
 ### Advanced force detection through torque &tau;
 
@@ -259,7 +259,7 @@ We do this by setting a minimum Torque (through setting *minumumForceBeforeStrok
 
 #### A note about detection accuracy
 
-Open Rowing Monitor only will get impulses at discrete points in time. As Open Rowing Monitor doesn't measure torque on the flywheel directly, it can't determine where the flywheel exactly accelerates/decelerates as there is no continous measurement. Open Rowing Monitor can only detect a change in the times across several impulses, but it can't detect the exact time of torque change. In essence, at best we only can conclude that the torque has changes somewhere near a specific impulse, but we can't be certain about where the acceleration exactly has taken place and we can only estimate how big the force must have been.
+OpenRowingMonitor only will get impulses at discrete points in time. As OpenRowingMonitor doesn't measure torque on the flywheel directly, it can't determine where the flywheel exactly accelerates/decelerates as there is no continous measurement. OpenRowingMonitor can only detect a change in the times across several impulses, but it can't detect the exact time of torque change. In essence, at best we only can conclude that the torque has changes somewhere near a specific impulse, but we can't be certain about where the acceleration exactly has taken place and we can only estimate how big the force must have been.
 
 ## Relevant linear metrics
 
@@ -322,7 +322,7 @@ Still, we currently choose to use $\overline{P}$ = k \* $\overline{&omega;}$<sup
 
 * As the *flywheelinertia* I is mostly guessed based on its effects on the Power outcome anyway (as most users aren't willing to take their rower apart for callibration purposses), a systematic error wouldn't matter much in most practical applications as it is corrected during the callibration of a monitor: the *flywheelinertia* will simply be modified to get to the correct power in the display.
 
-* It allows the user to removing/disabling all instantaneous angular velocities from linear metric calculations (i.e. only using average angular velocity calculated over the entire phase, which doesn't depend on a single measurement) by setting *autoAdjustDragFactor* to "false". This makes Open Rowing Monitor a viable option for rowers with noisy data or otherwise unstable/unreliable individual measurements;
+* It allows the user to removing/disabling all instantaneous angular velocities from linear metric calculations (i.e. only using average angular velocity calculated over the entire phase, which doesn't depend on a single measurement) by setting *autoAdjustDragFactor* to "false". This makes OpenRowingMonitor a viable option for rowers with noisy data or otherwise unstable/unreliable individual measurements;
 
 * Given the stability of the measurements, it might be a realistic option for users to remove the filter in the presentation layer completely by setting *numOfPhasesForAveragingScreenData* to 2, making the monitor much more responsive to user actions.
 
@@ -392,56 +392,6 @@ From theory [[13]](#13)), we know that the handle Power is
 
 $$ P_{Handle} = &tau; * &omega; $$
 
-## A mathematical perspective on key metrics
-
-### Noise Filtering algorithms applied
-
-For noise filtering, we use a moving median filter, which has the benefit of removing outliers completely. This is more robust than the moving average, where the effect of outliers is reduced, but not removed.
-
-### Linear regression algorithms applied for slope determination
-
-There are several different linear regression methods [[9]](#9). We have several requirements on the algorithm:
-
-* it has to delviver results in near-real-time scenarios in a datastream;
-
-* if possible, it has to be robust to outliers: an outlier shouldn't skew the results too much [[10]](#10).
-
-Ordinary Least Squares is by far the most efficient and can easily be applied to datastreams. However, it isn't robust. From a robustness perspective, most promissing methods are [least absolute deviations](https://en.wikipedia.org/wiki/Least_absolute_deviations), the [Theil–Sen estimator](https://en.wikipedia.org/wiki/Theil%E2%80%93Sen_estimator) and the [LASSO technique](https://en.wikipedia.org/wiki/Lasso_(statistics)). Most of these methods, except the Theil–Sen estimator, do not have a near-real-time solution. In the description of the linear regression methods, we describe the most promissing ones.
-
-#### Ordinary Least Squares (OLS)
-
-Ordinary Least Squares regression (see [[5]](#5)) and [[6]](#6)) produces results that are generally acceptable and the O(N) performance is well-suited for near-real-time calculations. When implemented in a datastream, the addition of a new datapoint is O(1), and the calculation of a slope also is O(1). When using a high-pass filter on the r<sup>2</sup> to disregard any unreliably approximated data, it can also be used to produce reliable results. See `engine/utils/OLSLinearSeries.js` for more information about the implementation.
-
-#### Theil–Sen estimator (Linear TS)
-
-Although the Theil–Sen estimator has a O(N log(N)) solution available, however we could not find a readily available solution. We did manage to develop a solution that has a O(N) impact during the addition of an additional datapoint in a datastream with a fixed length window, and O(log(N)) impact when determining the slope.
-
-#### Incomplete Theil–Sen estimator (Inc Linear TS)
-
-There also is an Incomplete Theis-Sen estimator for Linear Regression [[11]](#11), which is O(1) for the addition of new datapoints in a datastream with a fixed length window, and O(log(N)) for the determination of the slope. Our tests on real-life data show that in several cases the Incomplete Theil-Sen delivers more robust results than the full Theil-Sen estimator.
-
-#### Quadratic Theil–Sen estimator (Quadratic TS)
-
-The Theil–Sen estimator can be expanded to apply to Quadratic functions, where the implementation is O(N<sup>2</sup>). Based on a Lagrange interpolation, we can calculate the coefficients of the formula quite effectively, resulting in a robust estimation more fitting the data. See `engine/utils/FullTSQuadraticSeries.js` for more information about the background of the implementation.
-
-### Choices for the specific algorithms
-
-#### Regression algorithm used for drag calculation
-
-For the drag-factor calculation (and the closely related recovery slope detection), we observe three things:
-
-* The number of datapoints in the recovery phase isn't known in advance, and is subject to significant change due to variations in recovery time (i.e. sprints), making the Incomplete Theil–Sen estimator incapable of calculating their slopes in the stream as the efficient implementations require a fixed window. OLS has a O(1) complexity for continous datastreams, and has proven to be sufficiently robust for most practical use. Using the Linear Theil-sen estimator results in a near O(N) calculation at the start of the *Drive* phase (where N is the length of the recovery in datapoints). The Quadratic Theil-sen estimator results in a O(N<sup>2</sup>) calculation at the start of the *Drive* phase. Given the number of datapoints often encountered (a recoveryphase on a Concept 2 contains around 200 datapoints), this is a significant CPU-load that could disrupt the application;
-
-* In non-time critical replays of earlier recorded rowing sessions, both the Incomplete Theil–Sen estimator performed worse than OLS: OLS with a high pass filter on r<sup>2</sup> resulted in a much more stable dragfactor than the Incomplete Theil–Sen estimator did. The Theil–Sen estimator, in combination with a filter on r<sup>2</sup> has shown to be even a bit more robust than OLS. This suggests that the OLS algorithm combined with a requirement for a sufficiently high r<sup>2</sup> handles the outliers sufficiently to prevent drag poisoning and thus provide a stable dragfactor for all calculations. The Linear Theil-Sen estimator outperfomed OLS by a small margin, but noticeably improved stroke detection where OLS could not regardless of parameterisation.
-
-* Applying Quadratic OLS regression does not improve its results when compared to Linear OLS regression or Linear TS. For the drag (and thus recovery slope) calculation, the Linear Theil-Sen estimator has a slightly better performance then OLS, while keeping CPU-load acceptable for a data-intensive rowing machine (Concept 2, 12 datapoints flank, 200 datapoints in the recovery). A Quadratic theil-Sen based drag calculation has shown to be too CPU-intensive. For the stroke detection itself, OLS and Linear Theil-Sen deliver the same results, while OLS is less CPU intensive.
-
-Therefore, we choose to apply the Linear Theil-Sen estimator for the calculation of the dragfactor and the related recovery slope detection, and use OLS for the stroke detection.
-
-#### Regression algorithm used for Angular velocity and Angular Acceleration
-
-We determine the Angular Velocity &omega; and Angular Acceleration &alpha; based on the relation between &theta; and time. First of all, we observe that we use both the first derived function (i.e. &omega;) and the second derived function (i.e. &alpha;), making a quadratic or even a cubic regression algorithm more appropriate, as a liniear regressor would make the second derived function trivial. Practical testing has confirmed that Quadratic Theil-Senn outperformed all Linear Regression methods in terms of robustness and responsiveness. Based on extensive testing with multiple simulated rowing machines, Full Quadratic Theil-Senn has proven to deliver the best results and thus is selected to determine &omega; and &alpha;.
-
 ## Open Issues, Known problems and Regrettable design decissions
 
 ### Use of simplified power calculation
@@ -454,46 +404,9 @@ A simplified formula is provided by [[1]](#1) (formula 9.1), [[2]](#2) and [[3]]
 
 $$ \overline{P} = k \* \overline{\omega}^3 $$
 
-Open Rowing Monitor uses the latter simplified version. As shown by academic research [[15]](#15), this is sufficiently reliable and accurate providing that that &omega; doesn't vary much across subsequent strokes. When there is a significant acceleration or decelleration of the flywheel across subsequent strokes (at the start, during acceleration in sprints or due to stroke-by-stroke variation), the reported/calculated power starts to deviate from the externally applied power.
+OpenRowingMonitor uses the latter simplified version. As shown by academic research [[15]](#15), this is sufficiently reliable and accurate providing that that &omega; doesn't vary much across subsequent strokes. When there is a significant acceleration or decelleration of the flywheel across subsequent strokes (at the start, during acceleration in sprints or due to stroke-by-stroke variation), the reported/calculated power starts to deviate from the externally applied power.
 
 Currently, this is an accepted issue, as the simplified formula has the huge benefit of being much more robust against errors in both the *CurrentDt*/&omega; measurement and the stroke detection algorithm. As Concept 2 seems to have taken shortcut in a thoroughly matured product [[15]](#15), we are not inclined to change this quickly. Especially as the robustness of both the &omega; calculation and stroke phase detection varies across types of rowing machines, it is an improvement that should be handled with extreme caution.
-
-### Use of Quadratic Theil-Senn regression for determining &alpha; and &omega; based on time and &theta;
-
-Abandoning the numerical approach for a regression based approach has resulted with a huge improvement in metric robustness. So far, we were able to implement Quadratic Theil-Senn regression and get reliable and robust results. Currently, the use of Quadratic Theil-Senn regression represents a huge improvement from both the traditional numerical approach (as taken by [[1]](#1) and [[4]](#4)) used by earlier approaches of Open Rowing Monitor.
-
-The (implied) underlying assumption underpinning the use of Quadratic Theil-Senn regression approach is that the Angular Accelration &alpha; is constant, or near constant by approximation in the flank under measurment. In essence, quadratic Theil-Senn regression would be fitting if the acceleration would be a constant, and the relation of &theta;, &alpha; and &omega; thus would be captured in &theta; = 1/2 \* &alpha; \* t<sup>2</sup> + &omega; \* t. We do realize that in rowing the Angular Accelration &alpha;, by nature of the rowing stroke, will vary based on the position in the Drive phase: the ideal force curve is a heystack, thus the force on the flywheel varies in time.
-
-As the number of datapoints in a *Flanklength* in the relation to the total number of datapoints in a stroke is relatively small, we use quadratic Theil-Senn regression as an approximation on a smaller interval. In tests, quadratic regression has proven to outperform (i.e. less suspect to noise in the signal) both the numerical approach with noise filtering and the linear regression methods. When using the right efficient algorithm, this has the strong benefit of being robust to noise, at the cost of a O(n<sup>2</sup>) calculation per new datapoint (where n is the flanklength). Looking at the resulting fit of the Quadratic Theil-Sen estimator, we see that it consistently is above 0.98, which is an extremely good fit given the noise in the Concept 2 RowErg data. Therefore, we consider this is a sufficiently decent approximation while maintaining an sufficiently efficient algorithm to be able to process all data in the datastream in time.
-
-Although the determination of angular velocity &omega; and angular acceleration &alpha; based on Quadratic Theil-Senn regression over the time versus angular distance &theta; works decently, we realize it does not respect the true dynamic nature of angular acceleration &alpha;. From a pure mathematical perspective, a higher order polynomial would be more appropriate. A cubic regressor, or even better a fourth order polynomal have shown to be better mathematical approximation of the time versus distance function for a Concept2 RowErg. We can inmagine there are better suited third polynomal (cubic) approaches available that can robustly calculate &alpha; and &omega; as a function of time, based on the relation between time and &theta;. However, getting these to work in a datastream with very tight limitations on CPU-time and memory across many configurations is quite challenging.
-
-However, there are some current practical objections against using these more complex methods:
-
-* Higher order polynomials are less stable in nature, and overfitting is a real issue. As the displacement of magets can present itself as a sinoid-like curve (as the Concept 2 RowErg shows), 3rd or higher polynomials are inclined to follow that curve. As this might introduce wild shocks in our metrics, this might be a potential issue for application;
-* A key limitation is the available number of datapoints. For the determination of a polynomial of the n-th order, you need at least n+1 datapoints (which in Open Rowing Monitor translates to a `flankLength`). Some rowers, for example the Sportstech WRX700, only deliver 5 to 6 datapoints for the entire drive phase, thus putting explicit limits on the number of datapoints available for such an approximation.
-* Calculating a higher order polynomial in a robust way, for example by Theil-Senn regression, is CPU intensive. A quadratic approach requires a O(n<sup>2</sup>) calculation when a new datapoint is added to the sliding window (i.e. the flank). Our estimate is that with current known robust polynomial regression methods, a cubic approach requires at least a O(n<sup>3</sup>) calculation, and a 4th polynomial a O(n<sup>4</sup>) calculation. With smaller flanks (which determines the n) this has proven to be doable, but for machines which produce a lot of datapoints, and thus have more noise and a typically bigger `flankLength` (like the C2 RowErg and Nordictrack RX-800, both with a 12 `flankLength`), this becomes an issue: we consider completing 10<sup>3</sup> or even 10<sup>4</sup> complex calculations within the 5 miliseconds that is available before the next datapoint arrives, impossible.
-
-We also observe specific practical issues, which could result in structurally overfitting the dataset, nihilating its noise reduction effect. As the following sample of three rotations of a Concept2 flywheel shows, due to production tolerances or deliberate design constructs, there are **systematic** errors in the data due to magnet placement or magnet polarity. This results in systematic issues in the datastream:
-
-<img src="img/Concept2_RowErg_Construction_tolerances.jpg" alt="Image showing the sinoid measurement deviations of a Concept 2 RowErg over three full flywheel rotations" width="700">
-<span class="caption">Deviation of the Concept 2 RowErg</span>
-
-Fitting a quadratic curve with at least two full rotations of data (in this case, 12 datapoints) seems to reduce the noise to very acceptable levels. In our view, fitting a third-degree polynomial would result in a better fit with these systematic errors, but resulting in a much less robust signal.
-
-We also observe that in several areas the theoretical best approach did not deliver the best practical result (i.e. a "better" algorithm delivered a more noisy result for &alpha; and &omega;). Therefore, this avenue isn't investigated yet, but will remain a continuing area of improvement.
-
-This doesn't definitively exclude the use of more complex polynomial regression methods: alternative methods for higher polynomials within a datastream could be as CPU intensive as Theil-Senn Quadratic regression now, and their use could be isolated to specific combination of Raspberry hardware and settings. Thus, this will remain an active area of investigation for future versions.
-
-### Use of Quadratic Theil-Senn regression and a weighed average filter for determining &alpha; and &omega;
-
-For a specific flank, our quadratic regression algorithm calculates a single &alpha; for the entire flank and the individual &omega;'s for each point on that flank. The flank acts like a sliding window: on each new datapoint the window slides one datapoint, and thus recalculates the critical parameters. Thus, as a datapoint will be part of several flank calculations, we obtain several &alpha;'s and &omega;'s that are valid approximations for that specific datapoint. Once the datapoint slides out of the sliding window, there are *flankLength* number of approximations for &omega; and &alpha;. A key question is how to combine these multiple approximations &alpha; and &omega; into a single true value for these parameters.
-
-To obtain the most stable result, a median of all valid values for &alpha; and &omega; can be used to calculate the definitive approximation of &alpha; and &omega; for that specific datapoint. Although this approach has proven very robust, and even necessary to prevent noise from disturbing powercurves, it is very conservative. For example, when compared to Concept 2's results, the powercurves have the same shape, but the peak values are considerable lower. It also has the downside of producing "blocky" force cuves.
-
-Using a weighed averager resulted in slightly more stable results and resulted in smoother force curves. The weight is based on the r<sup>2</sup>: better fitting curves will result in a heiger weigt in the calculation, thus preferring approximations that are a better fit with the data. This approach resulted in smoother (less blocky) force curves while retaining the responsiveness of the force curve.
-
-Reducing extreme values while maintaining the true data responsiveness is a subject for further improvement.
 
 ## References
 

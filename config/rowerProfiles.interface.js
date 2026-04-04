@@ -32,6 +32,8 @@
  * ForceUSA_R3: RowerProfile,
  * NordicTrack_RX800: RowerProfile,
  * Sportstech_WRX700: RowerProfile,
- * KayakFirst_Blue: RowerProfile
+ * KayakFirst_Blue: RowerProfile,
+ * virtufit: RowerProfile,
+ * Merach_R50: RowerProfile
  * }}
  */

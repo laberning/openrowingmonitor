@@ -3,7 +3,7 @@
 */
 
 // Import rollup plugins
-import { rollupPluginHTML as html } from "@web/rollup-plugin-html"
+import { rollupPluginHTML as html } from '@web/rollup-plugin-html'
 import resolve from '@rollup/plugin-node-resolve'
 import commonjs from '@rollup/plugin-commonjs'
 import { babel } from '@rollup/plugin-babel'
@@ -22,7 +22,7 @@ export default {
   input: 'index.html',
   plugins: [
     htmlPlugin,
-    // transpile decorators so we can use the upcoming ES decorator syntax
+    // Babel for modern ES features (decorators supported natively in ES2022+)
     babel({
       babelrc: true,
       babelHelpers: 'bundled'
@@ -33,7 +33,7 @@ export default {
     resolve(),
     // minify JS
     terser({
-      ecma: 2020,
+      ecma: 2021,
       module: true,
       warnings: true,
       mangle: {

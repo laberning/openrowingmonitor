@@ -1,8 +1,7 @@
 'use strict'
-/*
-  Open Rowing Monitor, https://github.com/JaapvanEkris/openrowingmonitor
-/*
 /**
+ * @copyright [OpenRowingMonitor]{@link https://github.com/JaapvanEkris/openrowingmonitor}
+ *
  * @file This Module calculates the workout, interval and split specific metrics, as well as guards their boundaries
  * @see {@link https://github.com/JaapvanEkris/openrowingmonitor/blob/main/docs/Architecture.md#sessionmanagerjs|the description}
  */
@@ -142,6 +141,7 @@ export function createSessionManager (config) {
 
   function stopTraining (baseMetrics) {
     clearTimeout(watchdogTimer)
+    session.push(baseMetrics)
     interval.push(baseMetrics)
     split.push(baseMetrics)
     rowingStatistics.stopTraining()
@@ -152,6 +152,7 @@ export function createSessionManager (config) {
     clearTimeout(watchdogTimer)
     session.push(baseMetrics)
     interval.push(baseMetrics)
+    split.push(baseMetrics)
     rowingStatistics.pauseTraining()
   }
 
@@ -195,9 +196,9 @@ export function createSessionManager (config) {
     // Provide the rower with new data
     metrics = rowingStatistics.handleRotationImpulse(currentDt)
     resetMetricsSessionContext(metrics)
-    if (sessionState === 'Rowing' && split.getStartTimestamp() !== undefined && split.timeSinceStart(metrics) >= 0) {
+    if (sessionState === 'Rowing' && split.getStartTimestamp() !== undefined && split.movingTimeSinceStart(metrics) >= 0) {
       // If we are moving, timestamps should be based on movingTime as it is more accurate and consistent for the consumers
-      metrics.timestamp = new Date(split.getStartTimestamp().getTime() + (split.timeSinceStart(metrics) * 1000))
+      metrics.timestamp = new Date(split.getStartTimestamp().getTime() + (split.movingTimeSinceStart(metrics) * 1000))
     } else {
       metrics.timestamp = new Date()
     }
@@ -270,7 +271,7 @@ export function createSessionManager (config) {
         metrics.metricsContext.isPauseStart = true
         metrics.metricsContext.isSplitEnd = true
         emitMetrics(metrics)
-        activateNextSplitParameters(metrics)
+        addUnplannedRestSplit(metrics)
         break
       case (sessionState === 'Rowing' && metrics.metricsContext.isMoving && interval.isEndReached(metrics) && isNextIntervalActive()):
         // The next interval is an active one, so we just keep on going
@@ -434,7 +435,7 @@ export function createSessionManager (config) {
 
   function activateNextSplitParameters (baseMetrics) {
     splitNumber++
-    log.error(`Activating split settings for split ${splitNumber + 1}`)
+    log.debug(`Activating split settings for split ${splitNumber + 1}`)
     split.setStart(baseMetrics)
     if (splitRemainder !== null && sessionState === 'Rowing') {
       // We have a part of the split still have to complete
@@ -443,6 +444,13 @@ export function createSessionManager (config) {
     } else {
       split.setEnd(interval.getSplit())
     }
+  }
+
+  function addUnplannedRestSplit (baseMetrics) {
+    splitNumber++
+    log.info(`Adding unplanned rest split, split number ${splitNumber + 1}`)
+    split.setStart(baseMetrics)
+    split.setEnd({ type: 'rest' })
   }
 
   function onPauseTimer () {
@@ -499,6 +507,7 @@ export function createSessionManager (config) {
    * @remark FOR TESTING PURPOSSES ONLY!
    */
   function getMetrics () {
+    clearTimeout(watchdogTimer)
     enrichMetrics(metrics)
     return metrics
   }

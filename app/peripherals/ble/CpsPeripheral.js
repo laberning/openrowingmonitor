@@ -85,7 +85,12 @@ export function createCpsPeripheral (bleManager, config) {
     })
     log.debug(`CPS Connection established, address: ${_connection.peerAddress}`)
 
-    _connection.once('disconnect', async () => {
+    _connection.smp.once('pairingRequest', () => {
+      _connection.smp.sendPairingFailed(NodeBleHost.SmpErrors.PAIRING_NOT_SUPPORTED)
+      log.debug('CPS pairing request rejected')
+    })
+
+    _connection.on('disconnect', async () => {
       log.debug(`CPS client disconnected (address: ${_connection?.peerAddress}), restarting advertising`)
       _connection = undefined
       await triggerAdvertising()

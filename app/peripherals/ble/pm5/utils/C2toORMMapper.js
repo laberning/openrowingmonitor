@@ -58,6 +58,18 @@ export function createWorkoutPlan () {
           workoutplan[workoutstep].type = 'justrow'
         }
         break
+      case (type === 'calories' && data.length > 4):
+        workoutplan.push({})
+        workoutstep = workoutplan.length - 1
+        /* eslint-disable-next-line no-case-declarations -- readable code outweighs rules */
+        const targetCalories = readUInt32(data[1], data[2], data[3], data[4])
+        if (targetCalories > 0) {
+          workoutplan[workoutstep].type = 'calories'
+          workoutplan[workoutstep].targetCalories = targetCalories
+        } else {
+          workoutplan[workoutstep].type = 'justrow'
+        }
+        break
       default:
         workoutplan.push({})
         workoutstep = workoutplan.length - 1
@@ -99,16 +111,28 @@ export function createWorkoutPlan () {
         const targetTime = readUInt32(data[1], data[2], data[3], data[4]) / 100
         if (targetTime > 0) {
           workoutplan[workoutstep].split.type = 'time'
-          workoutplan[workoutstep].split.targetTime = readUInt32(data[1], data[2], data[3], data[4]) / 100
+          workoutplan[workoutstep].split.targetTime = targetTime
         } else {
           workoutplan[workoutstep].split.type = workoutplan[workoutstep].type
           workoutplan[workoutstep].split.targetTime = workoutplan[workoutstep].targetTime
+        }
+        break
+      case (type === 'calories' && data.length > 4):
+        /* eslint-disable-next-line no-case-declarations -- readable code outweighs rules */
+        const targetCalories = readUInt32(data[1], data[2], data[3], data[4])
+        if (targetCalories > 0) {
+          workoutplan[workoutstep].split.type = 'calories'
+          workoutplan[workoutstep].split.targetCalories = targetCalories
+        } else {
+          workoutplan[workoutstep].split.type = workoutplan[workoutstep].type
+          workoutplan[workoutstep].split.targetCalories = workoutplan[workoutstep].targetCalories
         }
         break
       default:
         workoutplan[workoutstep].split.type = workoutplan[workoutstep].type
         if (workoutplan[workoutstep].type === 'distance') { workoutplan[workoutstep].split.targetDistance = workoutplan[workoutstep].targetDistance }
         if (workoutplan[workoutstep].type === 'time' || workoutplan[workoutstep].type === 'rest') { workoutplan[workoutstep].split.targetTime = workoutplan[workoutstep].targetTime }
+        if (workoutplan[workoutstep].type === 'calories') { workoutplan[workoutstep].split.targetCalories = workoutplan[workoutstep].targetCalories }
     }
   }
 

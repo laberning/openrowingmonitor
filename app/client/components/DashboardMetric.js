@@ -35,13 +35,13 @@ export class DashboardMetric extends AppElement {
   `
 
   @property({ type: Object })
-    icon = ''
+  accessor icon = ''
 
   @property({ type: String })
-    unit = ''
+  accessor unit = ''
 
   @property({ type: String })
-    value
+  accessor value
 
   render () {
     return html`

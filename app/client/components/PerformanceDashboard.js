@@ -7,8 +7,8 @@
 
 import { AppElement, html, css } from './AppElement.js'
 import { customElement, property, state } from 'lit/decorators.js'
-import './SettingsDialog.js'
-import { iconSettings } from '../lib/icons.js'
+import './DashboardToolbar.js'
+import './WorkoutDialog.js'
 import { DASHBOARD_METRICS } from '../store/dashboardMetrics.js'
 
 @customElement('performance-dashboard')
@@ -16,60 +16,76 @@ export class PerformanceDashboard extends AppElement {
   static styles = css`
     :host {
       display: grid;
-      height: calc(100vh - 2vw);
-      padding: 1vw;
-      grid-gap: 1vw;
-      grid-template-columns: repeat(4, minmax(0, 1fr));
+      grid-template:
+        "toolbar" auto
+        "metrics" 1fr
+        / 1fr;
+      height: 100vh;
+      gap: 1vw;
+      box-sizing: border-box;
+    }
+
+    dashboard-toolbar {
+      grid-area: toolbar;
+    }
+
+    .metrics-grid {
+      grid-area: metrics;
+      display: grid;
+      gap: 1vw;
+      grid-template-columns: repeat(4, 1fr);
+      grid-template-rows: repeat(2, 1fr);
+      min-height: 0; /* prevent grid blowout */
+    }
+
+    .metrics-grid.rows-3 {
+      grid-template-rows: repeat(3, 1fr);
     }
 
     @media (orientation: portrait) {
-      :host {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-        grid-template-rows: repeat(4, minmax(0, 1fr));
+      .metrics-grid {
+        grid-template-columns: repeat(2, 1fr);
+        grid-template-rows: repeat(4, 1fr);
+      }
+
+      .metrics-grid.rows-3 {
+        grid-template-rows: repeat(6, 1fr);
       }
     }
 
-    dashboard-metric, dashboard-actions, dashboard-force-curve {
+    /* This should be defined within the component */
+    dashboard-metric,
+    dashboard-force-curve {
       background: var(--theme-widget-color);
       text-align: center;
-      position: relative;
-      padding: 0.5em 0.2em 0 0.2em;
+      padding: 0.2em;
       border-radius: var(--theme-border-radius);
-    }
-
-    dashboard-actions {
-      padding: 0.5em 0 0 0;
-    }
-
-    .settings {
-      padding: 0.1em 0;
-      position: absolute;
-      bottom: 0;
-      right: 0;
-      z-index: 20;
-    }
-
-    .settings .icon {
-      cursor: pointer;
-      height: 1em;
-    }
-
-    .settings:hover .icon {
-      filter: brightness(150%);
+      position: relative;
+      min-height: 0; /* prevent grid blowout */
     }
   `
   @property()
-    appState = {}
+  accessor appState = {}
 
   @state()
-    _dialog
+  accessor _dialog = null
+
+  _handleWorkoutOpen = (type) => {
+    this.sendEvent('workout-open', type)
+    this._dialog = html`
+      <workout-dialog
+        .type=${type}
+        @close=${() => { this._dialog = null }}
+      ></workout-dialog>
+    `
+  }
 
   dashboardMetricComponentsFactory = (appState) => {
     const metrics = appState.metrics
     const configs = appState.config
 
     const dashboardMetricComponents = Object.keys(DASHBOARD_METRICS).reduce((dashboardMetrics, key) => {
-      dashboardMetrics[key] = DASHBOARD_METRICS[key].template(metrics, configs)
+      dashboardMetrics[key] = DASHBOARD_METRICS[key].template(metrics, configs, this._handleWorkoutOpen)
 
       return dashboardMetrics
     }, {})
@@ -83,27 +99,12 @@ export class PerformanceDashboard extends AppElement {
       return prev
     }, [])
 
+    const gridClass = this.appState.config.guiConfigs.maxNumberOfTiles === 12 ? 'rows-3' : ''
+
     return html`
-      <style type="text/css">
-        :host {
-          ${this.appState.config.guiConfigs.maxNumberOfTiles === 12 ? 'grid-template-rows: repeat(3, minmax(0, 1fr));' : 'grid-template-rows: repeat(2, minmax(0, 1fr));'}
-        }
-      </style>
-      <div class="settings" @click=${this.openSettings}>
-        ${iconSettings}
-        ${this._dialog ? this._dialog : ''}
-      </div>
-
-      ${metricConfig}
+      <dashboard-toolbar .config=${this.appState.config}></dashboard-toolbar>
+      <section class="metrics-grid ${gridClass}">${metricConfig}</section>
+      ${this._dialog ? this._dialog : ''}
     `
-  }
-
-  openSettings () {
-    this._dialog = html`<settings-dialog .config=${this.appState.config.guiConfigs} @close=${dialogClosed}></settings-dialog>`
-
-    /* eslint-disable-next-line no-unused-vars -- Standard construct?? */
-    function dialogClosed (event) {
-      this._dialog = undefined
-    }
   }
 }

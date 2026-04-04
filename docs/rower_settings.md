@@ -176,6 +176,11 @@ Another specific issue to watch out for are systemic errors in the magnet placem
 
 In some cases, changing the magnet placing or orientation can fix this completely (see for example [this discussion](https://github.com/laberning/openrowingmonitor/discussions/87)), which yields very good results and near-perfect data. Sometimes, you can't fix this or you are unwilling to physically modify the machine. OpenRowingMonitor can handle this kind of systematic error, as long as the *flankLength* (described later) is set to at least two full rotations (in this case, 12 impulses *flankLength* for a 6 magnet machine).
 
+To help limit the errors introduced by magnet placement errors, OpenRowingMonitor provides the *cyclicErrorCorrection* filter. It contains two parameters for the rowerprofile configuration:
+
+* **systematicErrorNumberOfDatapoints**: this determines how many datapoints the filter considers in constructing the filter. As the filter depends on the revocery of the stroke, it is best to think of this in terms of number of recoveries considered. Typically, this filter works best when around two full recoveries are used to determine the structural effect of magnet errors on recorded datapoints. The length of a typical recovery is reported in the syslog as part of the reporting of the dragfactor calculation.
+* **systematicErrorAgressiveness**: this is how much of the systematic error is to be corrected. Values can range from 0 (no correction) to 1.5 ('overcorrect' with 50%). Typically, when used, a correction of 0.8 to 0.9 is very effective. A good indicator is the force curve, which might get bumpy if correction is off. Another good indicator is the goodness of fit of the dragcalculation: when the correction is benefitial, it gets closer to 1.0. Please use some restraint and avoid chocking the algorithm: less correction generally works better.
+
 > [!IMPORTANT]
 > Please fix any mechanical/electrical/quality issues before proceeding, as the subsequent steps depend on a signal with decent quality
 
@@ -349,6 +354,9 @@ After getting the stroke detection right, we now turn to getting the basic linea
 
 This results in a number, which works and can't be compared to anything else on the planet as that drag factor is highly dependent on the physical construction of the flywheel and mechanical properties of the transmission of power to the flywheel. For example, the Drag Factor for a Concept 2 ranges between 69 (Damper setting 1) and 220 (Damper setting 10). The NordicTrack RX-800 ranges from 150 to 450, where the 150 feels much lighter than a 150 on the Concept2. The Sportstech WRX700 water rower has a drag factor of 32000.
 
+> [!TIP]
+> Please realize that changing the `dragfactor` wil affect stroke detection of the first stroke, and all subsequent strokes if `autoAdjustDragFactor` is false, as increasing it makes the reported forces on the flywheel bigger. So the `minimumForceBeforeStroke` might need adjustment too.
+
 ### Setting the flywheel inertia
 
 **flywheelInertia** is the moment of inertia of the flywheel (in kg\*m<sup>2</sup>), which in practice influences the dynamically calculated dragfactor (and thus power, distance, speed and pace), but also the calculated force and power on the handle. A formal way to measure it is outlined in [Flywheel moment of inertia](https://dvernooy.github.io/projects/ergware/). However, the most practical way to set it is by rowing and see if the calculated drag factor approximates the previously set dragfactor needed to get a certain pace.
@@ -362,6 +370,9 @@ The easiest way to test this value is by rowing (or simulating rowing): in the l
 If your flywheel inertia is set correctly, the calculated drag factor will be very close to the drag factor you set manually. Please look at the "Goodness of Fit" before using the data. Due to noise, the dragfactor sometimes can't be calculated accurately, which is reflected in this Goodness of Fit being low. So when comparing the calculated dragfactor with the manually determned dragfactor, use the calculated dragffactors where the Goodness of Fit is highest.
 
 Please note that this logmessage will change when autoAdjustDragFactor is set to true, but this content will always be reported in debug mode.
+
+> [!TIP]
+> Please realize that changing the `flywheelInertia` wil affect stroke detection if `autoAdjustDragFactor` is true, as increasing it makes the reported forces on the flywheel bigger. So the `minimumForceBeforeStroke` might need adjustment too.
 
 ## Settings you COULD change for a new rower
 

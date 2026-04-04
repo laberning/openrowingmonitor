@@ -1,7 +1,7 @@
 {
-  "short_name": "Rowing Monitor",
-  "name": "Open Rowing Monitor",
-  "description": "A rowing monitor for rowing exercise machines",
+  "short_name": "ORM",
+  "name": "OpenRowingMonitor",
+  "description": "A rowing monitor for indoor rowing machines",
   "icons": [
     {
     "src": "icon.png",

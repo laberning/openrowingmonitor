@@ -1,11 +1,10 @@
 'use strict'
-/*
-  Open Rowing Monitor, https://github.com/JaapvanEkris/openrowingmonitor
-*/
 /**
- * Implementation of the StrokeData as defined in:
- * https://www.concept2.co.uk/files/pdf/us/monitors/PM5_BluetoothSmartInterfaceDefinition.pdf
- * https://www.concept2.co.uk/files/pdf/us/monitors/PM5_CSAFECommunicationDefinition.pdf
+ * @copyright [OpenRowingMonitor]{@link https://github.com/JaapvanEkris/openrowingmonitor}
+ *
+ * @file Implementation of the Force Curve Data as defined in:
+ * - @see {@link https://www.concept2.co.uk/files/pdf/us/monitors/PM5_BluetoothSmartInterfaceDefinition.pdf|The PM5 Bluetooth Smart Interface Definition}
+ * - @see {@link https://www.concept2.co.uk/files/pdf/us/monitors/PM5_CSAFECommunicationDefinition.pdf|The PM5 CSAFE Communication Definition}
  */
 import loglevel from 'loglevel'
 
@@ -48,10 +47,11 @@ export class ForceCurveCharacteristic extends GattNotifyCharacteristic {
     const dataByteSize = 2
     const maxMessageDataSize = 20
     const chunkSize = Math.floor((maxMessageDataSize - 2) / dataByteSize)
-    const split = Math.floor(data.driveHandleForceCurve.length / chunkSize + (data.driveHandleForceCurve.length % chunkSize === 0 ? 0 : 1))
+    // This must be clipped to 15 as it othwerwise will overflow the number of reported characteristics, which can happen when stroke detection has issues
+    const split = Math.min(Math.floor(data.driveHandleForceCurve.length / chunkSize + (data.driveHandleForceCurve.length % chunkSize === 0 ? 0 : 1)), 15)
 
     let i = 0
-    log.debug(`Force curve data count: ${data.driveHandleForceCurve.length} chunk size(number of values): ${chunkSize}, number of chunks: ${split}`)
+    log.trace(`Force curve data count: ${data.driveHandleForceCurve.length} chunk size(number of values): ${chunkSize}, number of chunks: ${split}`)
 
     while (i < split) {
       const end = (i + 1) * chunkSize < data.driveHandleForceCurve.length ? chunkSize * (i + 1) : data.driveHandleForceCurve.length
@@ -65,8 +65,8 @@ export class ForceCurveCharacteristic extends GattNotifyCharacteristic {
       bufferBuilder.writeUInt8(i)
 
       currentChunkedData.forEach((data) => {
-        // Data
-        bufferBuilder.writeUInt16LE(Math.round(data * 0.224809))
+        // Data, clipped to a maximum of 65535 lbs (= 291.514 Newton) to prevent an overflow
+        bufferBuilder.writeUInt16LE(Math.min(Math.round(data * 0.224809), 65535))
       })
 
       i++
