@@ -1,3 +1,6 @@
+> [!important]
+> This repository has been archived and is no longer actively maintained. Development continues on an [active fork here](https://github.com/JaapvanEkris/openrowingmonitor).
+
 # Open Rowing Monitor
 
 [![Node.js CI](https://github.com/laberning/openrowingmonitor/actions/workflows/node.js.yml/badge.svg)](https://github.com/laberning/openrowingmonitor/actions/workflows/node.js.yml)
