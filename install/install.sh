@@ -157,8 +157,6 @@ sudo apt-get -y install bluetooth bluez libbluetooth-dev libudev-dev git
 sudo apt-get -y install pigpio
 # We disable the pigpio service explicity, as the JS wrapper is alergic to the deamon
 sudo systemctl mask pigpiod.service
-sudo rfkill unblock bluetooth
-sudo systemctl restart bluetooth
 
 print
 print "Installing Node.js..."
@@ -274,5 +272,9 @@ print "Open Rowing Monitor should now be up and running."
 print "You can now adjust the configuration in $INSTALL_DIR/config/config.js either via ssh or via the network share"
 print
 print "Please reboot the device for all features and settings to take effect."
+
+# We must do this as some package installer (NOT the bluetooth ones...) rfkill softblocks the bluetooth stack
+sudo rfkill unblock bluetooth
+sudo systemctl restart bluetooth
 
 cd $CURRENT_DIR

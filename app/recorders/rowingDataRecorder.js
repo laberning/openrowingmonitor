@@ -112,6 +112,7 @@ export function createRowingDataRecorder (config) {
     strokes[strokeNumber].totalCalories = metrics.totalCalories
     strokes[strokeNumber].dragFactor = metrics.dragFactor
     strokes[strokeNumber].drivePeakHandleForce = metrics.drivePeakHandleForce
+    strokes[strokeNumber].drivePeakHandleForceNormalizedPosition = metrics.drivePeakHandleForceNormalizedPosition
     strokes[strokeNumber].driveAverageHandleForce = metrics.driveAverageHandleForce
     strokes[strokeNumber].driveHandleForceCurve = metrics.driveHandleForceCurve
     strokes[strokeNumber].driveHandleVelocityCurve = metrics.driveHandleVelocityCurve
@@ -141,7 +142,7 @@ export function createRowingDataRecorder (config) {
 
     // Required file header, please note this includes a typo and odd spaces as the specification demands it!
     let RowingData = ',index, Stroke Number, lapIdx,TimeStamp (sec), ElapsedTime (sec), HRCur (bpm),DistanceMeters, Cadence (stokes/min), Stroke500mPace (sec/500m), Power (watts), StrokeDistance (meters),' +
-      ' DriveTime (ms), DriveLength (meters), StrokeRecoveryTime (ms),Speed, Horizontal (meters), Calories (kCal), DragFactor, PeakDriveForce (N), AverageDriveForce (N),' +
+      ' DriveTime (ms), DriveLength (meters), StrokeRecoveryTime (ms),Speed, Horizontal (meters), Calories (kCal), DragFactor, PeakDriveForce (N), PeakForcePositionNorm, AverageDriveForce (N),' +
       'Handle_Force_(N),Handle_Velocity_(m/s),Handle_Power_(W)\n'
 
     // Add the strokes
@@ -154,7 +155,7 @@ export function createRowingDataRecorder (config) {
         `${currentstroke.cycleStrokeRate > 0 ? currentstroke.cycleStrokeRate.toFixed(1) : NaN},${(currentstroke.totalNumberOfStrokes > 0 && currentstroke.cyclePace > 0 ? currentstroke.cyclePace.toFixed(2) : NaN)},${(currentstroke.totalNumberOfStrokes > 0 && currentstroke.cyclePower > 0 ? currentstroke.cyclePower.toFixed(0) : NaN)},` +
         `${currentstroke.cycleDistance > 0 ? currentstroke.cycleDistance.toFixed(2) : NaN},${currentstroke.driveDuration > 0 ? (currentstroke.driveDuration * 1000).toFixed(0) : NaN},${(currentstroke.totalNumberOfStrokes > 0 && currentstroke.driveLength ? currentstroke.driveLength.toFixed(2) : NaN)},${currentstroke.recoveryDuration > 0 ? (currentstroke.recoveryDuration * 1000).toFixed(0) : NaN},` +
         `${(currentstroke.totalNumberOfStrokes > 0 && currentstroke.cycleLinearVelocity > 0 ? currentstroke.cycleLinearVelocity.toFixed(2) : NaN)},${currentstroke.totalLinearDistance.toFixed(1)},${currentstroke.totalCalories.toFixed(1)},${currentstroke.dragFactor > 0 ? currentstroke.dragFactor.toFixed(1) : NaN},` +
-        `${(currentstroke.totalNumberOfStrokes > 0 && currentstroke.drivePeakHandleForce > 0 ? currentstroke.drivePeakHandleForce.toFixed(1) : NaN)},${(currentstroke.totalNumberOfStrokes > 0 && currentstroke.driveAverageHandleForce > 0 ? currentstroke.driveAverageHandleForce.toFixed(1) : NaN)},"${currentstroke.driveAverageHandleForce > 0 ? currentstroke.driveHandleForceCurve.map((value) => value.toFixed(2)) : NaN}",` +
+        `${(currentstroke.totalNumberOfStrokes > 0 && currentstroke.drivePeakHandleForce > 0 ? currentstroke.drivePeakHandleForce.toFixed(1) : NaN)}, ${(currentstroke.totalNumberOfStrokes > 0 && currentstroke.drivePeakHandleForceNormalizedPosition > 0 ? currentstroke.drivePeakHandleForceNormalizedPosition.toFixed(1) : NaN)}, ${(currentstroke.totalNumberOfStrokes > 0 && currentstroke.driveAverageHandleForce > 0 ? currentstroke.driveAverageHandleForce.toFixed(1) : NaN)},"${currentstroke.driveAverageHandleForce > 0 ? currentstroke.driveHandleForceCurve.map((value) => value.toFixed(2)) : NaN}",` +
         `"${currentstroke.driveAverageHandleForce > 0 ? currentstroke.driveHandleVelocityCurve.map((value) => value.toFixed(3)) : NaN}","${currentstroke.driveAverageHandleForce > 0 ? currentstroke.driveHandlePowerCurve.map((value) => value.toFixed(1)) : NaN}"\n`
       i++
     }
