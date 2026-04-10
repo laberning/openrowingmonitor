@@ -126,8 +126,8 @@ export function createTCXRecorder (config) {
   function calculateLapMetrics (metrics) {
     sessionData.lap[lapnumber].endTime = metrics.timestamp
     sessionData.lap[lapnumber].summary = { ...metrics.split }
-    sessionData.lap[lapnumber].averageHeartrate = lapHRMetrics.average
-    sessionData.lap[lapnumber].maximumHeartrate = lapHRMetrics.maximum
+    sessionData.lap[lapnumber].averageHeartrate = lapHRMetrics.average()
+    sessionData.lap[lapnumber].maximumHeartrate = lapHRMetrics.maximum()
     sessionData.lap[lapnumber].complete = true
   }
 
@@ -140,8 +140,8 @@ export function createTCXRecorder (config) {
     sessionData.lap[lapnumber] = { endTime: metrics.timestamp }
     sessionData.lap[lapnumber].intensity = 'Resting'
     sessionData.lap[lapnumber].startTime = startTime
-    sessionData.lap[lapnumber].averageHeartrate = lapHRMetrics.average
-    sessionData.lap[lapnumber].maximumHeartrate = lapHRMetrics.maximum
+    sessionData.lap[lapnumber].averageHeartrate = lapHRMetrics.average()
+    sessionData.lap[lapnumber].maximumHeartrate = lapHRMetrics.maximum()
     sessionData.lap[lapnumber].summary = { ...metrics.split }
     sessionData.lap[lapnumber].complete = true
     VO2max.handleRestart(metrics.totalMovingTime)
