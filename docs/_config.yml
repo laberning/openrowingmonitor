@@ -13,28 +13,24 @@
 # you will see them accessed via {{ site.title }}, {{ site.email }}, and so on.
 # You can create any custom variable you would like, and they will be accessible
 # in the templates via {{ site.myvariable }}.
-title: Open Rowing Monitor
+title: OpenRowingMonitor
 #description: A free performance monitor for rowing machines
 # baseurl: "" # the subpath of your site, e.g. /blog
 # url: "" # the base hostname & protocol for your site, e.g. http://example.com
 
-author: Lars Berning
-twitter:
-  username: laberning
-  card: summary
+author: Jaap van Ekris
 social:
-  name: Lars Berning
+  name: Jaap van Ekris
   links:
-    - https://twitter.com/laberning
-    - http://www.linkedin.com/in/larsberning
-    - https://github.com/laberning
+    - https://www.linkedin.com/in/jaapvanekris/
+    - https://github.com/JaapvanEkris
 defaults:
   - scope:
       path: ""
     values:
       image: /img/icon.png
 
-github_username: laberning
+github_username: JaapvanEkris
 google_site_verification: kp2LqEz4JhvucGcmjdvFJXF0rpXA-asxk2uTTtQDTKA
 
 # Build settings

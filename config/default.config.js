@@ -1,6 +1,6 @@
 'use strict'
 /*
-  Open Rowing Monitor, https://github.com/laberning/openrowingmonitor
+  Open Rowing Monitor, https://github.com/JaapvanEkris/openrowingmonitor
 
   This file contains the default configuration of the Open Rowing Monitor.
 
@@ -13,13 +13,18 @@
 */
 import rowerProfiles from './rowerProfiles.js'
 
+/**
+ * The default configuration for the Open Rowing Monitor.
+ * @type {Config}
+ */
 export default {
   // Available log levels: trace, debug, info, warn, error, silent
   loglevel: {
     // The default log level
     default: 'info',
     // The log level of of the rowing engine (stroke detection and physics model)
-    RowingEngine: 'warn'
+    RowingEngine: 'warn',
+    Peripherals: 'warn'
   },
 
   // Defines the GPIO Pin that is used to read the sensor data from the rowing machine
@@ -78,17 +83,19 @@ export default {
   // - FTMSBIKE: The FTMS profile is used by Smart Bike Trainers (please note: the speed and power are still aimed for rowing, NOT for a bike!)
   // - CPS: The BLE Cycling Power Profile simulates a bike for more modern Garmin watches
   // - CSC: The BLE Cycling Speed and Cadence Profile simulates a bike for older Garmin watches
+  // - OFF: Turns Bluetooth advertisement off
   bluetoothMode: 'FTMS',
 
-  // Turn this on if you want support for Bluetooth Low Energy heart rate monitors
-  // Will currenty connect to the first device found
-  heartrateMonitorBLE: true,
+  // Selects the ANT+ that is broadcasted to external peripherals and apps. Supported modes:
+  // - FE: ANT+ Fitness Equipment
+  // - OFF: Turns ANT+ Fitness Equipment off
+  antPlusMode: 'OFF',
 
-  // Turn this on if you want support for ANT+ heart rate monitors
-  // You will need an ANT+ USB stick for this to work, the following models might work:
-  // - Garmin USB or USB2 ANT+ or an off-brand clone of it (ID 0x1008)
-  // - Garmin mini ANT+ (ID 0x1009)
-  heartrateMonitorANT: false,
+  // Selects the heart rate monitor mode. Supported modes:
+  // - BLE: Use Bluetooth Low Energy to connect Heart Rate Monitor (Will currently connect to the first device found)
+  // - ANT: Use Ant+ to connect Heart Rate Monitor
+  // - OFF: turns of Heart Rate Monitor discovery
+  heartRateMode: 'OFF',
 
   // Defines the name that is used to announce the FTMS Rower via Bluetooth Low Energy (BLE)
   // Some rowing training applications expect that the rowing device is announced with a certain name
@@ -107,7 +114,18 @@ export default {
   // Interval between updates of the bluetooth devices (miliseconds)
   // Advised is to update at least once per second, as consumers expect this interval
   // Some apps, like EXR like a more frequent interval of 200 ms to better sync the stroke
-  peripheralUpdateInterval: 1000,
+  ftmsUpdateInterval: 1000,
+
+  // Interval between updates of the clients using PM5 Bluetooth profile (miliseconds)
+  pm5UpdateInterval: 1000,
+
+  // MQTT perpipheral configuration settings
+  mqtt: {
+    mqttBroker: '',
+    username: '',
+    password: '',
+    machineName: ''
+  },
 
   // The number of stroke phases (i.e. Drive or Recovery) used to smoothen the data displayed on your
   // screens (i.e. the monitor, but also bluetooth devices, etc.) and recorded data. A nice smooth experience is found at 6
@@ -119,8 +137,11 @@ export default {
   // currently this directory holds the recorded training sessions
   dataDirectory: 'data',
 
-  // Stores the training sessions as TCX files
+  // Stores the training sessions as Garmin TCX files
   createTcxFiles: true,
+
+  // Stores the training sessions as Garmin fit files
+  createFitFiles: true,
 
   // Stores the (in-)stroke data in OpenRowingData CSV files
   createRowingDataFiles: true,
@@ -133,6 +154,9 @@ export default {
   // Some training tools can directly work with gzipped tcx file, however for most training websites
   // you will have to unzip the files before uploading
   gzipTcxFiles: false,
+
+  // Apply gzip compression to the recorded fit training sessions file (fit.gz)
+  gzipFitFiles: false,
 
   // Apply gzip compression to the raw sensor data recording files (csv.gz)
   gzipRawDataFiles: true,
@@ -165,8 +189,35 @@ export default {
     // This can be "male" or "female"
     sex: 'male',
 
-    // See for this definition: https://www.concept2.com/indoor-rowers/training/calculators/vo2max-calculator
-    highlyTrained: false
+    // Definition copied from https://www.concept2.co.uk/indoor-rowers/training/calculators/vo2max-calculator
+    // If you have been rowing regularly for several years, training at least four days per week, doing a variety of workout types
+    // and improving your rowing scores, then we suggest selecting "Highly trained" when using the calculator.
+    // If you consider yourself a fitness rower and don't push yourself very hard or do any hard pieces, then we suggest selecting "Not highly trained."
+    highlyTrained: false,
+
+    // Configuration for the RowsAndAll.com upload
+    rowsAndAll: {
+      allowUpload: false,
+      autoUpload: false,
+      apiKey: ''
+    },
+
+    // Configuration for the intervals.icu upload
+    intervals: {
+      allowUpload: false,
+      autoUpload: false,
+      athleteId: '',
+      apiKey: ''
+    },
+
+    // Configuration for the Strava.com upload
+    strava: {
+      allowUpload: false,
+      autoUpload: false,
+      clientId: '',
+      clientSecret: '',
+      refreshToken: ''
+    }
   },
 
   // The rower specific settings. Either choose a profile from config/rowerProfiles.js or

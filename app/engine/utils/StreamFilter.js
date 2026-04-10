@@ -1,23 +1,31 @@
 'use strict'
 /*
-  Open Rowing Monitor, https://github.com/laberning/openrowingmonitor
-
-  This keeps an array, which we can ask for an moving average
-
-  Please note: The array contains maxLength values
+  Open Rowing Monitor, https://github.com/JaapvanEkris/openrowingmonitor
 */
+/**
+ * This keeps a series of specified length, which we can ask for an moving median
+ * This is used by RowingStatistics.js to aggregate over multiple stroke phasee
+ */
+import { createLabelledBinarySearchTree } from './BinarySearchTree.js'
 
-import { createSeries } from './Series.js'
-
-function createStreamFilter (maxLength, defaultValue) {
-  const dataPoints = createSeries(maxLength)
+export function createStreamFilter (maxLength, defaultValue) {
   let lastRawDatapoint = defaultValue
   let cleanDatapoint = defaultValue
+  let position = 0
+  let bst = createLabelledBinarySearchTree()
 
   function push (dataPoint) {
-    lastRawDatapoint = dataPoint
-    dataPoints.push(dataPoint)
-    cleanDatapoint = dataPoints.median()
+    if (dataPoint !== undefined && !isNaN(dataPoint)) {
+      lastRawDatapoint = dataPoint
+      if (maxLength > 0) {
+        position = (position + 1) % maxLength
+        bst.remove(position)
+        bst.push(position, dataPoint, 1)
+      } else {
+        bst.push(position, dataPoint, 1)
+      }
+      cleanDatapoint = bst.median()
+    }
   }
 
   function raw () {
@@ -25,7 +33,7 @@ function createStreamFilter (maxLength, defaultValue) {
   }
 
   function clean () {
-    if (dataPoints.length() > 0) {
+    if (bst.size() > 0) {
       // The series contains sufficient values to be valid
       return cleanDatapoint
     } else {
@@ -35,11 +43,11 @@ function createStreamFilter (maxLength, defaultValue) {
   }
 
   function reliable () {
-    return dataPoints.length() > 0
+    return bst.size() > 0
   }
 
   function reset () {
-    dataPoints.reset()
+    bst.reset()
     lastRawDatapoint = defaultValue
     cleanDatapoint = defaultValue
   }
@@ -52,5 +60,3 @@ function createStreamFilter (maxLength, defaultValue) {
     reset
   }
 }
-
-export { createStreamFilter }

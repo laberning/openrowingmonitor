@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-#  Open Rowing Monitor, https://github.com/laberning/openrowingmonitor
+#  Open Rowing Monitor, https://github.com/JaapvanEkris/openrowingmonitor
 #
 #  Update script for Open Rowing Monitor, use at your own risk!
 #
@@ -97,7 +97,7 @@ switch_branch() {
 CURRENT_DIR=$(pwd)
 SCRIPT_DIR="$( cd "$(dirname "${BASH_SOURCE[0]}")" &> /dev/null && pwd )"
 INSTALL_DIR="$(dirname "$SCRIPT_DIR")"
-GIT_REMOTE="https://github.com/laberning/openrowingmonitor.git"
+GIT_REMOTE="https://github.com/JaapvanEkris/openrowingmonitor.git"
 
 cd $INSTALL_DIR
 
@@ -117,6 +117,15 @@ if getopts "b:" arg; then
     cancel "Branch \"$OPTARG\" does not exist in the repository, can not switch"
   fi
 
+  ARCHITECTURE=$(uname -m)
+  if [[ $ARCHITECTURE == "armv6l" ]] && [[ $OPTARG != "v1beta_updates_Pi_Zero_W" ]]; then
+    cancel "Branch \"$OPTARG\" doesn't work on a Pi Zero W, please use branch 'v1beta_updates_Pi_Zero_W'"
+  fi
+  if [[ $ARCHITECTURE != "armv6l" ]] && [[ $OPTARG == "v1beta_updates_Pi_Zero_W" ]]; then
+    cancel "Branch \"$OPTARG\" is a legacy version intended for the Pi Zero W, please use branch 'v1beta_updates' or similar"
+  fi
+
+
   if ask "Do you want to switch from branch \"$CURRENT_BRANCH\" to branch \"$OPTARG\"?" Y; then
     print "Switching to branch \"$OPTARG\"..."
     CURRENT_BRANCH=$OPTARG
@@ -124,9 +133,15 @@ if getopts "b:" arg; then
   else
     cancel "Stopping update - please run without -b parameter to do a regular update"
   fi
+  
 else
   print "Checking for new version..."
   REMOTE_VERSION=$(git ls-remote $GIT_REMOTE refs/heads/$CURRENT_BRANCH | awk '{print $1;}')
+
+  ARCHITECTURE=$(uname -m)
+  if [[ $ARCHITECTURE == "armv6l" ]] && [[ $CURRENT_BRANCH != "v1beta_updates_Pi_Zero_W" ]]; then
+    cancel "Branch \"$OPTARG\" doesn't work on a Pi Zero W, please use branch 'v1beta_updates_Pi_Zero_W'"
+  fi
 
   if [ "$LOCAL_VERSION" = "$REMOTE_VERSION" ]; then
       print "You are using the latest version of Open Rowing Monitor from branch \"$CURRENT_BRANCH\"."

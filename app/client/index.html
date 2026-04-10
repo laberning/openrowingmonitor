@@ -5,7 +5,7 @@
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="description" content="A rowing monitor for rowing exercise machines">
-  <meta name="author" content="Lars Berning">
+  <meta name="author" content="Jaap van Ekris">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
   <meta name="apple-mobile-web-app-status-bar-style" content="black" />
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -24,6 +24,13 @@
       --theme-font-color: #f5f5f5;
       --theme-warning-color: #ff0000;
       --theme-border-radius: 3px;
+    }
+
+    /* True Black theme for OLED/AMOLED displays */
+    html[data-theme="true-black"] {
+      --theme-background-color: #000000;
+      --theme-widget-color: #000000;
+      --theme-button-color: #000000;
     }
 
     body {
