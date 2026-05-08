@@ -1,106 +1,110 @@
 'use strict'
 /*
-  Open Rowing Monitor, https://github.com/laberning/openrowingmonitor
+  Open Rowing Monitor, https://github.com/JaapvanEkris/openrowingmonitor
 
   Component that renders the dashboard
 */
 
 import { AppElement, html, css } from './AppElement.js'
-import { APP_STATE } from '../store/appState.js'
-import { customElement, property } from 'lit/decorators.js'
-import './DashboardMetric.js'
-import './DashboardActions.js'
-import './BatteryIcon.js'
-import { icon_route, icon_stopwatch, icon_bolt, icon_paddle, icon_heartbeat, icon_fire, icon_clock } from '../lib/icons.js'
+import { customElement, property, state } from 'lit/decorators.js'
+import './DashboardToolbar.js'
+import './WorkoutDialog.js'
+import { DASHBOARD_METRICS } from '../store/dashboardMetrics.js'
 
 @customElement('performance-dashboard')
 export class PerformanceDashboard extends AppElement {
   static styles = css`
     :host {
       display: grid;
-      height: calc(100vh - 2vw);
-      padding: 1vw;
-      grid-gap: 1vw;
-      grid-template-columns: repeat(4, minmax(0, 1fr));
-      grid-template-rows: repeat(2, minmax(0, 1fr));
+      grid-template:
+        "toolbar" auto
+        "metrics" 1fr
+        / 1fr;
+      height: 100vh;
+      gap: 1vw;
+      box-sizing: border-box;
+    }
+
+    dashboard-toolbar {
+      grid-area: toolbar;
+    }
+
+    .metrics-grid {
+      grid-area: metrics;
+      display: grid;
+      gap: 1vw;
+      grid-template-columns: repeat(4, 1fr);
+      grid-template-rows: repeat(2, 1fr);
+      min-height: 0; /* prevent grid blowout */
+    }
+
+    .metrics-grid.rows-3 {
+      grid-template-rows: repeat(3, 1fr);
     }
 
     @media (orientation: portrait) {
-      :host {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-        grid-template-rows: repeat(4, minmax(0, 1fr));
+      .metrics-grid {
+        grid-template-columns: repeat(2, 1fr);
+        grid-template-rows: repeat(4, 1fr);
+      }
+
+      .metrics-grid.rows-3 {
+        grid-template-rows: repeat(6, 1fr);
       }
     }
 
-    dashboard-metric, dashboard-actions {
+    /* This should be defined within the component */
+    dashboard-metric,
+    dashboard-force-curve {
       background: var(--theme-widget-color);
       text-align: center;
-      position: relative;
-      padding: 0.5em 0.2em 0 0.2em;
+      padding: 0.2em;
       border-radius: var(--theme-border-radius);
-    }
-
-    dashboard-actions {
-      padding: 0.5em 0 0 0;
+      position: relative;
+      min-height: 0; /* prevent grid blowout */
     }
   `
+  @property()
+  accessor appState = {}
 
-  @property({ type: Object })
-    metrics
+  @state()
+  accessor _dialog = null
 
-  @property({ type: Object })
-    appState = APP_STATE
-
-  render () {
-    const metrics = this.calculateFormattedMetrics(this.appState.metrics)
-    return html`
-      <dashboard-metric .icon=${icon_route} .unit=${metrics?.totalLinearDistanceFormatted?.unit || 'm'} .value=${metrics?.totalLinearDistanceFormatted?.value}></dashboard-metric>
-      <dashboard-metric .icon=${icon_stopwatch} unit="/500m" .value=${metrics?.cyclePaceFormatted?.value}></dashboard-metric>
-      <dashboard-metric .icon=${icon_bolt} unit="watt" .value=${metrics?.cyclePower?.value}></dashboard-metric>
-      <dashboard-metric .icon=${icon_paddle} unit="/min" .value=${metrics?.cycleStrokeRate?.value}></dashboard-metric>
-      ${metrics?.heartrate?.value
-        ? html`
-          <dashboard-metric .icon=${icon_heartbeat} unit="bpm" .value=${metrics?.heartrate?.value}>
-            ${metrics?.heartrateBatteryLevel?.value
-              ? html`
-                <battery-icon .batteryLevel=${metrics?.heartrateBatteryLevel?.value}></battery-icon>
-              `
-              : ''
-            }
-          </dashboard-metric>`
-        : html`<dashboard-metric .icon=${icon_paddle} unit="total" .value=${metrics?.totalNumberOfStrokes?.value}></dashboard-metric>`}
-      <dashboard-metric .icon=${icon_fire} unit="kcal" .value=${metrics?.totalCalories?.value}></dashboard-metric>
-      <dashboard-metric .icon=${icon_clock} .value=${metrics?.totalMovingTimeFormatted?.value}></dashboard-metric>
-      <dashboard-actions .appState=${this.appState}></dashboard-actions>
+  _handleWorkoutOpen = (type) => {
+    this.sendEvent('workout-open', type)
+    this._dialog = html`
+      <workout-dialog
+        .type=${type}
+        @close=${() => { this._dialog = null }}
+      ></workout-dialog>
     `
   }
 
-  // todo: so far this is just a port of the formatter from the initial proof of concept client
-  // we could split this up to make it more readable and testable
-  calculateFormattedMetrics (metrics) {
-    const fieldFormatter = {
-      totalLinearDistanceFormatted: (value) => value >= 10000
-        ? { value: (value / 1000).toFixed(2), unit: 'km' }
-        : { value: Math.round(value), unit: 'm' },
-      totalCalories: (value) => Math.round(value),
-      cyclePower: (value) => Math.round(value),
-      cycleStrokeRate: (value) => Math.round(value)
-    }
+  dashboardMetricComponentsFactory = (appState) => {
+    const metrics = appState.metrics
+    const configs = appState.config
 
-    const formattedMetrics = {}
-    for (const [key, value] of Object.entries(metrics)) {
-      const valueFormatted = fieldFormatter[key] ? fieldFormatter[key](value) : value
-      if (valueFormatted.value !== undefined && valueFormatted.unit !== undefined) {
-        formattedMetrics[key] = {
-          value: valueFormatted.value,
-          unit: valueFormatted.unit
-        }
-      } else {
-        formattedMetrics[key] = {
-          value: valueFormatted
-        }
-      }
-    }
-    return formattedMetrics
+    const dashboardMetricComponents = Object.keys(DASHBOARD_METRICS).reduce((dashboardMetrics, key) => {
+      dashboardMetrics[key] = DASHBOARD_METRICS[key].template(metrics, configs, this._handleWorkoutOpen)
+
+      return dashboardMetrics
+    }, {})
+
+    return dashboardMetricComponents
+  }
+
+  render () {
+    const metricConfig = [...new Set(this.appState.config.guiConfigs.dashboardMetrics)].reduce((prev, metricName) => {
+      prev.push(this.dashboardMetricComponentsFactory(this.appState)[metricName])
+      return prev
+    }, [])
+
+    const gridClass = this.appState.config.guiConfigs.maxNumberOfTiles === 12 ? 'rows-3' : ''
+
+    return html`
+      <dashboard-toolbar .config=${this.appState.config}></dashboard-toolbar>
+      <section class="metrics-grid ${gridClass}">${metricConfig}</section>
+      ${this._dialog ? this._dialog : ''}
+    `
   }
 }

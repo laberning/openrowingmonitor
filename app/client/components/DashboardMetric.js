@@ -1,6 +1,6 @@
 'use strict'
 /*
-  Open Rowing Monitor, https://github.com/laberning/openrowingmonitor
+  Open Rowing Monitor, https://github.com/JaapvanEkris/openrowingmonitor
 
   Component that renders a metric of the dashboard
 */
@@ -35,19 +35,21 @@ export class DashboardMetric extends AppElement {
   `
 
   @property({ type: Object })
-    icon
+  accessor icon = ''
 
   @property({ type: String })
-    unit = ''
+  accessor unit = ''
 
   @property({ type: String })
-    value = ''
+  accessor value
 
   render () {
     return html`
-      <div class="label">${this.icon}</div>
+      <div class="${this.icon === '' ? '' : 'label'}">
+        <div class=${this.icon === '' ? '' : 'icon'}>${this.icon}</div>
+      </div>
       <div class="content">
-        <span class="metric-value">${this.value !== undefined ? this.value : '--'}</span>
+        <span class="metric-value" style="${this.icon === '' ? 'font-size: 200%;' : ''}">${this.value !== undefined ? this.value : '--'}</span>
         <span class="metric-unit">${this.unit}</span>
       </div>
       <slot></slot>

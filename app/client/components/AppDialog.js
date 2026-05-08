@@ -1,10 +1,9 @@
 'use strict'
 /*
-  Open Rowing Monitor, https://github.com/laberning/openrowingmonitor
+  Open Rowing Monitor, https://github.com/JaapvanEkris/openrowingmonitor
 
   Component that renders a html dialog
 */
-
 import { AppElement, html, css } from './AppElement.js'
 import { customElement, property } from 'lit/decorators.js'
 import { ref, createRef } from 'lit/directives/ref.js'
@@ -46,8 +45,13 @@ export class AppDialog extends AppElement {
       justify-content: center;
       align-items: center;
     }
-    button:hover {
+    button:hover:not(.disabled) {
       filter: brightness(150%);
+    }
+
+    button.disabled {
+      filter: brightness(50%);
+      pointer: none
     }
 
     fieldset {
@@ -67,20 +71,22 @@ export class AppDialog extends AppElement {
       padding: 0;
     }
   `
+  @property({ type: Boolean })
+  accessor isValid = true
 
   @property({ type: Boolean, reflect: true })
-    dialogOpen
+  accessor dialogOpen
 
   render () {
     return html`
     <dialog ${ref(this.dialog)} @close=${this.close}>
-      <form method="dialog">
+      <form >
         <fieldset role="document">
           <slot></slot>
         </fieldset>
         <menu>
-          <button value="cancel">Cancel</button>
-          <button value="confirm">OK</button>
+          <button formmethod="dialog" value="cancel">Cancel</button>
+          <button @click=${this.confirm} type="button" class="${this.isValid ? '' : 'disabled'}" value="confirm">OK</button>
         </menu>
       </form>
     </dialog>
@@ -92,6 +98,12 @@ export class AppDialog extends AppElement {
       this.dispatchEvent(new CustomEvent('close', { detail: 'cancel' }))
     } else {
       this.dispatchEvent(new CustomEvent('close', { detail: 'confirm' }))
+    }
+  }
+
+  confirm () {
+    if (this.isValid) {
+      this.dialog.value.close('confirm')
     }
   }
 
